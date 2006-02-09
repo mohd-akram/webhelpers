@@ -9,7 +9,7 @@ Ajax, controls and visual effects
 * For information on using Ajax, see `Prototype Helpers <module-railshelpers.helpers.prototype.html>`_.
 * For information on using controls and visual effects, see `Scriptaculous Helpers <module-railshelpers.helpers.scriptaculous.html>`_.
 """
-from tag import *
+from tags import *
 import re
 
 def link_to_function(name, function, **html_options):

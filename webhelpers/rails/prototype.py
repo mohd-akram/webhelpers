@@ -24,8 +24,8 @@ if sys.version < '2.4':
 
 from javascript import *
 from javascript import options_for_javascript
-from tag import tag, camelize
-from url import get_url
+from tags import tag, camelize
+from urls import get_url
 
 CALLBACKS = frozenset(['uninitialized','loading','loaded',
                        'interactive','complete','failure','success'] + [str(x) for x in range(100,599)])

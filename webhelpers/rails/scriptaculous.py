@@ -15,7 +15,7 @@ using these helpers in your application.
 from prototype import *
 from javascript import options_for_javascript, array_or_string_for_javascript
 from prototype import AJAX_OPTIONS, javascript_tag
-from tag import camelize
+from tags import camelize
 
 def visual_effect(name, element_id=False, **js_options):
     """

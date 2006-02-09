@@ -2,7 +2,7 @@
 Text Helpers
 """
 from routes import request_config
-from tag import content_tag, tag_options
+from tags import content_tag, tag_options
 import itertools, re
 
 AUTO_LINK_RE = re.compile("""(<\w+.*?>|[^=!:'"\/]|^)((?:http[s]?:\/\/)|(?:www\.))(([\w]+:?[=?&\/.-]?)*\w+[\/]?(?:\#\w*)?)([\.,"'?!;:]|\s|<|$)""")
