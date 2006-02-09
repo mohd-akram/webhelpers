@@ -3,9 +3,9 @@ use_setuptools()
 from setuptools import setup, find_packages
 
 setup(
-    name="RailsHelpers",
-    version='0.1beta',
-    description='Rails Helpers',
+    name="WebHelpers",
+    version='0.1',
+    description='Web Helpers',
     long_description="""
 Rails Helpers is a library of helper functions intended to make writing templates in web
 applications easier. As the name indicates, these helpers have been directly ported from
@@ -13,12 +13,12 @@ the Ruby on Rails version with slight adaptations on occasion to accomodate for 
 
 These helpers only require `Routes <http://routes.groovie.org/>`_ to function.
 
-* `Development svn <http://pylons.groovie.org/svn/RailsHelpers/trunk#egg=RailsHelpers-dev>`_
+* `Development svn <http://pylonshq.com/svn/WebHelpers/trunk#egg=WebHelpers-dev>`_
 
 """,
     author='Ben Bangert, James Gardner',
     author_email='ben@groovie.org',
-    url='http://pylons.groovie.org/RailsHelpers/',
+    url='http://pylonshq.com/WebHelpers/',
     packages=find_packages(exclude=['ez_setup']),
     zip_safe=False,
     include_package_data=True,
