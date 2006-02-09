@@ -1,7 +1,7 @@
 from unittest import TestCase
 import unittest
 
-from railshelpers.helpers.tag import *
+from webhelpers.rails.tag import *
 
 class TestTagHelper(TestCase):
     def test_tag(self):

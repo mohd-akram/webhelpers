@@ -2,7 +2,7 @@ from unittest import TestCase
 import unittest
 from string24 import Template
 
-from railshelpers.helpers.text import *
+from webhelpers.rails.text import *
 
 class TestTextHelper(TestCase):
     

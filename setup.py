@@ -7,11 +7,13 @@ setup(
     version='0.1',
     description='Web Helpers',
     long_description="""
-Rails Helpers is a library of helper functions intended to make writing templates in web
-applications easier. As the name indicates, these helpers have been directly ported from
-the Ruby on Rails version with slight adaptations on occasion to accomodate for Python.
+Web Helpers is a library of helper functions intended to make writing templates in web
+applications easier. 
 
-These helpers only require `Routes <http://routes.groovie.org/>`_ to function.
+One of the sub-sections of Web Helpers contains a full port of the template helpers that
+are provided by Ruby on Rails with slight adaptations on occasion to accomodate for Python.
+
+Some of these helpers only require `Routes <http://routes.groovie.org/>`_ to function.
 
 * `Development svn <http://pylonshq.com/svn/WebHelpers/trunk#egg=WebHelpers-dev>`_
 
@@ -34,6 +36,6 @@ These helpers only require `Routes <http://routes.groovie.org/>`_ to function.
                ],
     entry_points="""
     [paste.paster_command]
-    scriptaculous=railshelpers.commands:ScriptaculousCommand
+    scriptaculous=webhelpers.commands:ScriptaculousCommand
     """,
 )

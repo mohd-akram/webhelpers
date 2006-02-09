@@ -1,7 +1,7 @@
 from unittest import TestCase
 import unittest
 
-from railshelpers.helpers.scriptaculous import *
+from webhelpers.rails.scriptaculous import *
 
 class TestScriptaculousHelper(TestCase):
     def test_effect(self):

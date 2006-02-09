@@ -1,7 +1,7 @@
 from unittest import TestCase
 import unittest
 
-from railshelpers.helpers.form_tag import *
+from webhelpers.rails.form_tag import *
 
 class TestFormTagHelper(TestCase):
     def test_check_box(self):

@@ -4,7 +4,7 @@ from datetime import datetime
 from datetime import timedelta
 import time
 
-from railshelpers.helpers.date import *
+from webhelpers.rails.date import *
 
 class TestDateHelper(TestCase):
     

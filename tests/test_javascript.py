@@ -1,7 +1,7 @@
 from unittest import TestCase
 import unittest
 
-from railshelpers.helpers.javascript import *
+from webhelpers.rails.javascript import *
 
 class TestJavascriptHelper(TestCase):
     def test_escape_javascript(self):

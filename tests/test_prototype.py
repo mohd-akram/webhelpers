@@ -1,8 +1,8 @@
 from unittest import TestCase
 import unittest
 
-from railshelpers.helpers.url import *
-from railshelpers.helpers.prototype import *
+from webhelpers.rails.url import *
+from webhelpers.rails.prototype import *
 from routes import *
 
 class TestPrototypeHelper(TestCase):
