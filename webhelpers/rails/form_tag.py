@@ -3,7 +3,7 @@ Form Tag Helpers
 """
 
 from tag import *
-from railshelpers.escapes import html_escape
+from webhelpers.escapes import html_escape
 
 def form(url, **options):
     """

@@ -1,7 +1,7 @@
 """
 Tag Helpers
 """
-from railshelpers.escapes import html_escape
+from webhelpers.escapes import html_escape
 import re
 
 def camelize(name):

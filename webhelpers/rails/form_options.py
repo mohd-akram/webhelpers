@@ -2,7 +2,7 @@
 Form Options Helpers
 """
 
-from railshelpers.escapes import html_escape
+from webhelpers.escapes import html_escape
 
 def options_for_select(container, selected = None):
     """
