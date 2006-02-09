@@ -1,0 +1,11 @@
+RailsHelpers
+++++++++++++
+
+RailsHelpers is a direct port of the Rails helper functions.
+
+These functions are intended to ease web development with template languages by removing common view logic and
+encapsulating it in re-usable modules.
+
+*Requirements:* RailsHelpers requires `Routes <http://routes.groovie.org/>`_ to be active in the framework
+for a variety of functions. Currently `Pylons <http://pylons.groovie.org/>`_, `TurboGears <http://trac.turbogears.org/turbogears/wiki/RoutesIntegration>`_,
+and `Aquarium <http://aquarium.sourceforge.net/>`_ support Routes.
