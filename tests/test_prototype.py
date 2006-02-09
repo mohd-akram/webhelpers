@@ -1,7 +1,7 @@
 from unittest import TestCase
 import unittest
 
-from webhelpers.rails.url import *
+from webhelpers.rails.urls import *
 from webhelpers.rails.prototype import *
 from routes import *
 
