@@ -7,8 +7,7 @@ from webhelpers.escapes import html_escape
 
 from routes import url_for, request_config
 from javascript import *
-from tag import *
-from tag import tag_options
+import tag
 
 def get_url(url):
     if callable(url):
@@ -57,7 +56,7 @@ def link_to(name, url='', **html_options):
     """
     if html_options:
         html_options = convert_options_to_javascript(**html_options)
-        tag_op = tag_options(**html_options)
+        tag_op = tag.tag_options(**html_options)
     else:
         tag_op = ''
     if callable(url):
@@ -126,7 +125,7 @@ def button_to(name, url='', **html_options):
     html_options.update(dict(type='submit', value=name))
     
     return """<form method="post" action="%s" class="button-to"><div>""" % html_escape(url) + \
-           tag("input", **html_options) + "</div></form>"
+           tag.tag("input", **html_options) + "</div></form>"
 
 def link_to_unless_current(name, url, **html_options):
     """
