@@ -17,7 +17,11 @@ def html_escape(s):
     (actually, using ``unicode()``).  All values returned are
     non-unicode strings (using ``&#num;`` entities for all non-ASCII
     characters).
+
+    None is treated specially, and returns the empty string.
     """
+    if s is None:
+        return ''
     if not isinstance(s, basestring):
         s = unicode(s)
     s = cgi.escape(s, True)

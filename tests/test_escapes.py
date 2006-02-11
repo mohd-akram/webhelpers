@@ -9,3 +9,4 @@ def test_html_escape():
             return u'<\u1000>'
     assert html_escape(X()) == '&lt;&#4096;&gt;'
     assert html_escape(1) == '1'
+    assert html_escape(None) == ''
