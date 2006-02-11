@@ -10,5 +10,17 @@
 
 import cgi
 
-def html_escape(string):
-    return cgi.escape(string, True)
+def html_escape(s):
+    """HTML-escape a string or object
+
+    This converts any non-string objects passed into it to strings
+    (actually, using ``unicode()``).  All values returned are
+    non-unicode strings (using ``&#num;`` entities for all non-ASCII
+    characters).
+    """
+    if not isinstance(s, basestring):
+        s = unicode(s)
+    s = cgi.escape(s, True)
+    if isinstance(s, unicode):
+        s = s.encode('ascii', 'xmlcharrefreplace')
+    return s
