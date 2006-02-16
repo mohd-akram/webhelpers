@@ -44,4 +44,5 @@ class SQLAlchemyLazy(Partial):
         return self(limit=limit, offset=offset).execute()
     
     def __len__(self):
-        pass
+        s = self()
+        return self.fn([func.count(1)], from_obj=[s]).execute()
