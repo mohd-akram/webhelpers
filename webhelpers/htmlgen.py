@@ -69,7 +69,7 @@ Examples::
    happen in webhelpers.
 """
 
-from escapes import html_escape
+from util import html_escape
 
 __all__ = ['html']
 

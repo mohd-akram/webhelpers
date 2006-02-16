@@ -1,7 +1,7 @@
 """
 Tag Helpers
 """
-from webhelpers.escapes import html_escape
+from webhelpers.util import html_escape
 import re
 
 def camelize(name):

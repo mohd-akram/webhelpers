@@ -3,7 +3,7 @@ Form Tag Helpers
 """
 
 from tags import *
-from webhelpers.escapes import html_escape
+from webhelpers.util import html_escape
 
 def form(url, **options):
     """

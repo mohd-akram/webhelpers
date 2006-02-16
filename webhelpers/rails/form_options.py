@@ -2,7 +2,7 @@
 Form Options Helpers
 """
 
-from webhelpers.escapes import html_escape
+from webhelpers.util import html_escape
 
 def options_for_select(container, selected = None):
     """

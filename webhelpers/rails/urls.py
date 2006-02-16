@@ -3,7 +3,7 @@ URL Helpers
 """
 import cgi
 
-from webhelpers.escapes import html_escape
+from webhelpers.util import html_escape
 
 from routes import url_for, request_config
 from javascript import *
