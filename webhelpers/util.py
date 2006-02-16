@@ -32,4 +32,4 @@ class Partial(object):
             d.update(kw)
         else:
             d = kw or self.kw
-        return self.fn(*(self.args + args), **d)
+        return self.fn(*(args + self.args), **d)
