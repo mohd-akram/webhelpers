@@ -1,6 +1,41 @@
-"""Pagination functions and wrappers"""
-from orm import *
+"""Pagination for Collections and ORMs
 
+The Pagination module aids in the process of paging large collections of
+objects. It can be used macro-style for automatic fetching of large collections
+using one of the ORM wrappers, or handle a large collection responding to
+standard Python list slicing operations. These methods can also be used
+individually and customized to do as much or little as desired.
+
+The Paginator itself maintains pagination logic associated with each page, where
+it begins, what the first/last item on the page is, etc.
+
+Helper functions hook-up the Paginator in more conveinent methods for the more
+macro-style approach to return the Paginator and the slice of the collection
+desired.
+
+"""
+from routes import request_config
+from orm import get_wrapper
+
+def paginate(collection, page=None, per_page=10, *args, **options):
+    """Paginate a collection of data
+    
+    If the collection is a list, it will return the slice of the list along
+    with the Paginator object. If the collection is given using an ORM, the
+    collection argument must be a partial representing the function to be
+    used that will generate the proper query and extend properly for the
+    limit/offset.
+    
+    """
+    collection = get_wrapper(collection, *args, **options)
+    count = len(collection)
+    page = getattr(request_config(), environ, {}).get('QUERY_ARGS')
+    paginator = Paginator(count, per_page, page)
+    subset = collection[paginator.current.first_item-1:paginator.current.last_item]
+    
+    return paginator, subset
+    
+    
 class Paginator(object):
     def __init__(self, item_count, items_per_page=10, current_page=1):
         self.item_count = item_count
@@ -104,10 +139,10 @@ class Window(object):
         if padding < 0: self._padding = 0
         first_page_in_window = self.page.number - self._padding
         self.first = first_page_in_window in self.paginator and (
-        self.paginator[first_page_in_window]) or self.paginator.first
+            self.paginator[first_page_in_window]) or self.paginator.first
         last_page_in_window = self.page.number + self._padding
         self.last = last_page_in_window in self.paginator and (
-        self.paginator[last_page_in_window]) or self.paginator.last
+            self.paginator[last_page_in_window]) or self.paginator.last
 
     def padding__get(self):
         return self._padding
