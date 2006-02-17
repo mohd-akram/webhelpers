@@ -17,7 +17,7 @@ desired.
 from routes import request_config
 from orm import get_wrapper
 
-def paginate(collection, page=None, per_page=10, *args, **options):
+def paginate(collection, page=None, per_page=10, item_count=None, *args, **options):
     """Paginate a collection of data
     
     If the collection is a list, it will return the slice of the list along
@@ -26,11 +26,15 @@ def paginate(collection, page=None, per_page=10, *args, **options):
     used that will generate the proper query and extend properly for the
     limit/offset.
     
+    **WARNING:** Unless you pass in an item_count, a count will be performed on the
+    collection every time paginate is called. If using an ORM, it's suggested that
+    you count the items yourself and/or cache them.
+    
     """
     collection = get_wrapper(collection, *args, **options)
-    count = len(collection)
-    page = getattr(request_config(), environ, {}).get('QUERY_ARGS')
-    paginator = Paginator(count, per_page, page)
+    if not item_count:
+        item_count = len(collection)
+    paginator = Paginator(item_count, per_page, page)
     subset = collection[paginator.current.first_item-1:paginator.current.last_item]
     
     return paginator, subset
@@ -51,7 +55,7 @@ class Paginator(object):
             raise AttributeError("Page/Paginator mismatch")
         page = int(page)
         self.current_page_number = page in self and page or 1
-    current_page = property(current_page__get, current_page__set)
+    current = current_page = property(current_page__get, current_page__set)
 
     def first_page__get(self):
         return self[1]
@@ -127,6 +131,9 @@ class Page(object):
 
     def window(self, padding = 2):
         return Window(self, padding)
+    
+    def __repr__(self):
+        return str(self.number)
 
 class Window(object):
     def __init__(self, page, padding = 2):
