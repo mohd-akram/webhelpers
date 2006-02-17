@@ -28,9 +28,7 @@ class SQLObjectLazy(Partial):
     def __getitem__(self, key):
         if not isinstance(key, slice):
             raise Exception, "SQLObjectLazy doesn't support getitem without slicing"
-        limit = key.stop - key.start + 1
-        offset = key.start
-        return list(self().limit(limit).offset(offset))
+        return list(self()[key.start:key.stop])
     
     def __len__(self):
         return self().count()
