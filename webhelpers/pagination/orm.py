@@ -16,7 +16,7 @@ else:
     orms['sqlalchemy'] = True
 
 def get_wrapper(obj, *args, **kw):
-    if isinstance(obj, list):
+    if isinstance(obj, (list, tuple)):
         return obj
     if orms.get('sqlobject'):
         if issubclass(obj, sqlobject.SQLObject):
