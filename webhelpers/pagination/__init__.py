@@ -26,6 +26,15 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args, **optio
     used that will generate the proper query and extend properly for the
     limit/offset.
     
+    Example::
+    
+        # In this case, Person is a SQLObject class, or it could be a list/tuple
+        person_paginator, person_set = paginate(Person, page=1)
+    
+    Current ORM support is limited to SQLObject and SQLAlchemy. You can use any ORM
+    you'd like with the Paginator as it will give you the offset/limit data necessary
+    to make your own query.
+    
     **WARNING:** Unless you pass in an item_count, a count will be performed on the
     collection every time paginate is called. If using an ORM, it's suggested that
     you count the items yourself and/or cache them.
@@ -41,7 +50,18 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args, **optio
     
     
 class Paginator(object):
+    """Tracks paginated sets of data, and supplies common pagination operations
+    
+    The Paginator tracks data associated with pagination of groups of data, as well
+    as supplying objects and methods that make dealing with paginated results easier.
+    
+    A Paginator supports list operations, including item fetching, length, iteration,
+    and the 'in' operation. Each item in the Paginator is a Page object representing
+    data about that specific page in the set of paginated data.
+    
+    """
     def __init__(self, item_count, items_per_page=10, current_page=1):
+        """Initialize a Paginator with the item count specified."""
         self.item_count = item_count
         self.items_per_page = items_per_page
         self.pages = {}
