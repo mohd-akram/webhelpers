@@ -174,7 +174,16 @@ class Window(object):
     def padding__get(self):
         return self._padding
 
+    padding = property(padding__get, padding__set)
+
     def pages__get(self):
         return [self.paginator[page_number] for page_number in 
             range(self.first.number, self.last.number+1)]
     pages = property(pages__get)
+
+    def __add__(self, window):
+        if window.paginator != self.paginator:
+            raise AttributeError("Window/paginator mismatch")
+        assert self.last >= window.first
+        return Window(self.page.next, padding=self.padding+1)
+

@@ -1,42 +1,59 @@
 """Pagination Link Generators"""
+from webhelpers.htmlgen import html
 
-def pagelist(page, pages):
+def pagelist(page):
     """PHPbb style Pagination Links
     
-    Example (Using Kid)::
-    
-        <div py:def="display_pager(url, page, pages)" class="pager">Page ${page} of ${pages}:
-            <span py:if="page != 1">
-            <a href="${url + str(page-1)}">&lt;&lt; Previous</a>
-            </span>
-            <span py:for="i in pagelist(page, pages)"> 
-                    <span py:if="i == None">...</span>
-                            <a py:if="i != page and i != None" href="${url + str(i)}">${i}</a>
-                            <span py:if="i == page">${i}</span>
-                    </span>
-                    <span py:if="page != pages">
-                             <a href="${url + str(page+1)}">Next &gt;&gt;</a>
-                    </span>
-            </span>
-        </div>
+    This returns HTML source to be included into a page. The html is generated
+    with htmlgen
     """
-    page = max(min(page, pages), 1)
-    topstart = pages < 1 + 3 and pages or 4
-    botmid = page-1 < 1 and 1 or page - 1
-    topmid = page+2 < pages and page+2 or pages
-    bottop = pages-2 < 1 and 1 or pages - 2
-    startpastmid = topstart >= botmid
-    midpasttop = topmid >= bottop
-    if startpastmid:
-        if midpasttop:
-            display = range(1, pages+1)
+    paginator = page.paginator
+
+    first_page = paginator.first
+    first_window = first_page.window(padding=3)
+
+    page_window = page.window(padding=1)
+
+    last_page = paginator.last
+    last_window = last_page.window(padding=3)
+
+    first_past_page = first_window.last >= page_window.first
+    page_past_last = page_window.last >= last_window.first
+
+    def combine_pages(page_list):
+        seen = {}
+        result = []
+        for page in page_list:
+            if page in seen: continue
+            seen[page] = 1
+            result.append(page)
+        return result
+
+    if first_past_page:
+        if page_past_last:
+            display = first_window.pages
         else:
-            display = range(1, topmid+1) + [None] + range(bottop, pages+1)
+            first_window.last = page_window.last
+            display = (first_window.pages + [None] + last_window.pages)
     else:
-        if midpasttop:
-            display = range(1, topstart) + [None] + range(botmid-1, pages+1)
+        if page_past_last:
+            page_window.last = last_window.last
+            display = (first_window.pages + [None] + page_window.pages)
         else:
-            display = (
-                    range(1, topstart) + [None] + range(botmid, topmid) + [None] +
-                    range(bottop, pages+1))
-    return display
+            display = (first_window.pages + [None] + page_window.pages + [None]
+                    + last_window.pages)
+
+    print display
+
+    pager_c = []
+    for i in display:
+        if i is None:
+            pager_c.append(html.span(c='...'))
+        elif i == page:
+            pager_c.append(html.span(c=[i]))
+        else:
+            pager_c.append(html.a(href=i, c=[i]))
+
+    pager = html.div(class_='pager', c=pager_c)
+
+    return pager
