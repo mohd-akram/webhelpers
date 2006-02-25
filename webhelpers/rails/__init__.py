@@ -1,3 +1,4 @@
+"""Helper functions ported from Rails"""
 from urls import *
 from javascript import *
 from tags import *
