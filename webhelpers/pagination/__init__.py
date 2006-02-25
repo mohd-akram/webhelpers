@@ -30,6 +30,9 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args, **optio
     
         # In this case, Person is a SQLObject class, or it could be a list/tuple
         person_paginator, person_set = paginate(Person, page=1)
+        
+        set_count = int(person_paginator.current_page)
+        total_pages = person_paginator.page_count
     
     Current ORM support is limited to SQLObject and SQLAlchemy. You can use any ORM
     you'd like with the Paginator as it will give you the offset/limit data necessary
@@ -44,7 +47,7 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args, **optio
     if not item_count:
         item_count = len(collection)
     paginator = Paginator(item_count, per_page, page)
-    subset = collection[paginator.current.first_item-1:paginator.current.last_item]
+    subset = collection[paginator.current.first_item:paginator.current.last_item]
     
     return paginator, subset
     
@@ -60,94 +63,123 @@ class Paginator(object):
     data about that specific page in the set of paginated data.
     
     """
-    def __init__(self, item_count, items_per_page=10, current_page=1):
+    def __init__(self, item_count, items_per_page=10, current_page=0):
         """Initialize a Paginator with the item count specified."""
         self.item_count = item_count
         self.items_per_page = items_per_page
         self.pages = {}
         self.current_page = current_page
-
-    def current_page__get(self):
-        return self[self.current_page_number]
-
-    def current_page__set(self, page):
-        if isinstance(page, Page) and page.paginator != self:
-            raise AttributeError("Page/Paginator mismatch")
-        page = int(page)
-        self.current_page_number = page in self and page or 1
-    current = current_page = property(current_page__get, current_page__set)
-
-    def first_page__get(self):
-        return self[1]
-    first = first_page = property(first_page__get)
     
-    def last_page__get(self):
-        return self[self.page_count]
-    last = last_page = property(last_page__get)
+    def current():
+        doc = """\
+Page object currently being displayed
 
-    def page_count__get(self):
-        return (self.item_count == 0) and 1 or (((self.item_count -
-            1)//self.items_per_page) + 1)
-    __len__ = page_count__get
-    page_count = property(page_count__get)
+When assigning to the current page, it will set the page number for this page
+and create it if needed. If the page is a Page object and does not belong to
+this paginator, an AttributeError will be raised.
 
+"""
+        def fget(self):
+            return self[int(self.current_page)]
+        def fset(self, page):
+            if isinstance(page, Page) and page.paginator != self:
+                raise AttributeError("Page/Paginator mismatch")
+            page = int(page)
+            self.current_page = page in self and page or 0
+        return locals()
+    current = property(**current())
+    
+    def __len__(self):
+        return (self.item_count == 0) and 0 or (((self.item_count - 1)//self.items_per_page) + 1)
+    
     def __iter__(self):
-        for i in range(1, self.page_count + 1):
+        for i in range(0, len(self)):
             yield self[i]
-
+    
     def __getitem__(self, index):
+        # Handle negative indexing like a normal list
+        if index < 0:
+            index = len(self) + index
+        
+        if index not in self:
+            raise IndexError, "list index out of range"
+        
         return self.pages.setdefault(index, Page(self, index))
-
+    
     def __contains__(self, value):
-        if value >= 1 and value <= self.page_count:
+        if value >= 0 and value <= (len(self) - 1):
             return True
         return False
 
 class Page(object):
+    """Represents a single page from a paginated set."""
     def __init__(self, paginator, number):
+        """Creates a new Page for the given ``paginator`` with the index ``number``."""
         self.paginator = paginator
         self.number = int(number)
-        if self.number not in paginator: self.number = 1
-
+    
     def __int__(self):
         return self.number
-
+    
     def __eq__(self, page):
         return self.paginator == page.paginator and self.number == page.number
-
+    
     def __cmp__(self, page):
         return cmp(self.number, page.number)
-
-    def offset__get(self):
-        return self.paginator.items_per_page * (self.number - 1)
-    offset = property(offset__get)
-
-    def first_item__get(self):
-        return self.offset + 1
-    first_item = property(first_item__get)
-
-    def last_item__get(self):
-        return min(self.paginator.items_per_page * self.number,
+    
+    def offset():
+        doc = """Offset of the page, useful for database queries."""
+        def fget(self):
+            return self.paginator.items_per_page * self.number
+        return locals()
+    offset = property(**offset())
+    
+    def first_item():
+        doc = """The number of the first item in the page."""
+        def fget(self):
+            return self.offset
+        return locals()
+    first_item = property(**first_item())
+    
+    def last_item():
+        doc = """The number of the last item in the page."""
+        def fget(self):
+            return min(self.paginator.items_per_page * (self.number + 1),
                 self.paginator.item_count)
-    last_item = property(last_item__get)
-
-    def first__get(self):
-        return self == self.paginator.first
-    first = property(first__get)
-
-    def last__get(self):
-        return self == self.paginator.last
-    last = property(last__get)
-
-    def previous__get(self):
-        if self.first: return None
-        return self.paginator[self.number - 1]
-    previous = property(previous__get)
-
-    def next__get(self):
-        if self.last: return None
-        return self.paginator[self.number + 1]
-    next = property(next__get)
+        return locals()
+    last_item = property(**last_item())
+    
+    def first():
+        doc = """Boolean indiciating if this page is the first."""
+        def fget(self):
+            return self == self.paginator[0]
+        return locals()
+    first = property(**first())
+    
+    def last():
+        doc = """Boolean indicating if this page is the last."""
+        def fget(self):
+            return self == self.paginator[-1]
+        return locals()
+    last = property(**last())
+    
+    def previous():
+        doc = """Previous page if it exists, None otherwise."""
+        def fget(self):
+            if self.first:
+                return None
+            return self.paginator[self.number - 1]
+        return locals()
+    previous = property(**previous())
+    
+    def next():
+        doc = """Next page if it exists, None otherwise."""
+        def fget(self):
+            if self.last:
+                return None
+            return self.paginator[self.number + 1]
+        return locals()
+    next = property(**next())
 
     def window(self, padding = 2):
         return Window(self, padding)
@@ -156,34 +188,39 @@ class Page(object):
         return str(self.number)
 
 class Window(object):
+    """Represents ranges around a given page."""
     def __init__(self, page, padding = 2):
+        """Creates a new Window object for the given ``page`` with the specified ``padding``."""
         self.paginator = page.paginator
         self.page = page
         self.padding = padding
-
-    def padding__set(self, padding):
-        self._padding = padding
-        if padding < 0: self._padding = 0
-        first_page_in_window = self.page.number - self._padding
-        self.first = first_page_in_window in self.paginator and (
-            self.paginator[first_page_in_window]) or self.paginator.first
-        last_page_in_window = self.page.number + self._padding
-        self.last = last_page_in_window in self.paginator and (
-            self.paginator[last_page_in_window]) or self.paginator.last
-
-    def padding__get(self):
-        return self._padding
-
-    padding = property(padding__get, padding__set)
-
-    def pages__get(self):
-        return [self.paginator[page_number] for page_number in 
-            range(self.first.number, self.last.number+1)]
-    pages = property(pages__get)
+    
+    def padding():
+        doc = """Sets the window's padding (the number of pages on either side of the window page)."""
+        def fset(self, padding):
+            self._padding = padding
+            if padding < 0: self._padding = 0
+            first_page_in_window = self.page.number - self._padding
+            self.first = first_page_in_window in self.paginator and (
+                self.paginator[first_page_in_window]) or self.paginator[0]
+            last_page_in_window = self.page.number + self._padding
+            self.last = last_page_in_window in self.paginator and (
+                self.paginator[last_page_in_window]) or self.paginator[-1]
+        def fget(self):
+            return self._padding
+        return locals()
+    padding = property(**padding())
+    
+    def pages():
+        doc = """Returns a list of Page objects in the current window."""
+        def fget(self):
+            return [self.paginator[page_number] for page_number in 
+                range(self.first.number, self.last.number+1)]
+        return locals()
+    pages = property(**pages())
 
     def __add__(self, window):
         if window.paginator != self.paginator:
             raise AttributeError("Window/paginator mismatch")
         assert self.last >= window.first
         return Window(self.page.next, padding=self.padding+1)
-

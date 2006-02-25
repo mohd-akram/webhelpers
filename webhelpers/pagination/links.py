@@ -9,12 +9,12 @@ def pagelist(page):
     """
     paginator = page.paginator
 
-    first_page = paginator.first
+    first_page = paginator[0]
     first_window = first_page.window(padding=3)
 
     page_window = page.window(padding=1)
 
-    last_page = paginator.last
+    last_page = paginator[-1]
     last_window = last_page.window(padding=3)
 
     first_past_page = first_window.last >= page_window.first
