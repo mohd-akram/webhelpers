@@ -32,7 +32,7 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args, **optio
         person_paginator, person_set = paginate(Person, page=1)
         
         set_count = int(person_paginator.current_page)
-        total_pages = person_paginator.page_count
+        total_pages = len(person_paginator)
     
     Current ORM support is limited to SQLObject and SQLAlchemy. You can use any ORM
     you'd like with the Paginator as it will give you the offset/limit data necessary
