@@ -31,7 +31,7 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args, **optio
         # In this case, Person is a SQLObject class, or it could be a list/tuple
         person_paginator, person_set = paginate(Person, page=1)
         
-        set_count = int(person_paginator.current_page)
+        set_count = int(person_paginator.current)
         total_pages = len(person_paginator)
     
     Current ORM support is limited to SQLObject and SQLAlchemy. You can use any ORM
@@ -60,7 +60,8 @@ class Paginator(object):
     
     A Paginator supports list operations, including item fetching, length, iteration,
     and the 'in' operation. Each item in the Paginator is a Page object representing
-    data about that specific page in the set of paginated data.
+    data about that specific page in the set of paginated data. As with the standard
+    Python list, the Paginator list index starts at 0.
     
     """
     def __init__(self, item_count, items_per_page=10, current_page=0):
