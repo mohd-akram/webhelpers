@@ -1,5 +1,6 @@
 """Utility functions used by various web helpers"""
 import cgi
+from xml.sax.saxutils import XMLGenerator
 
 def html_escape(s):
     """HTML-escape a string or object
@@ -33,3 +34,11 @@ class Partial(object):
         else:
             d = kw or self.kw
         return self.fn(*(self.args + args), **d)
+
+class SimplerXMLGenerator(XMLGenerator):
+    def addQuickElement(self, name, contents=None, attrs={}):
+        """Convenience method for adding an element with no children"""
+        self.startElement(name, attrs)
+        if contents is not None:
+            self.characters(contents)
+        self.endElement(name)
