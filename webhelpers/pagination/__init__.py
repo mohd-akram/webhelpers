@@ -102,7 +102,10 @@ this paginator, an AttributeError will be raised.
         if index < 0:
             index = len(self) + index
         
-        if index not in self:
+        if index < 0:
+            index = 0
+        
+        if index not in self and index != 0:
             raise IndexError, "list index out of range"
         
         return self.pages.setdefault(index, Page(self, index))
