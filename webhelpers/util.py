@@ -15,7 +15,10 @@ def html_escape(s):
     if s is None:
         return ''
     if not isinstance(s, basestring):
-        s = unicode(s)
+        if hasattr(s, '__unicode__'):
+            s = unicode(s)
+        else:
+            s = str(s)
     s = cgi.escape(s, True)
     if isinstance(s, unicode):
         s = s.encode('ascii', 'xmlcharrefreplace')
