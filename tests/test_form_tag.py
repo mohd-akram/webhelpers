@@ -52,6 +52,20 @@ class TestFormTagHelper(TestCase):
             '<select id="people" name="people"><option>justin</option></select>'
         )
 
+    def test_text_area(self):
+        self.assertEqual(
+            text_area("aa", ""),
+            '<textarea id="aa" name="aa"></textarea>'
+        )
+        self.assertEqual(
+            text_area("aa", None),
+            '<textarea id="aa" name="aa"></textarea>'
+        )
+        self.assertEqual(
+            text_area("aa", "Hello!"),
+            '<textarea id="aa" name="aa">Hello!</textarea>'
+        )
+
     def test_text_area_size_string(self):
         self.assertEqual(
             text_area("body", "hello world", size = "20x40"),
@@ -59,6 +73,14 @@ class TestFormTagHelper(TestCase):
         )
 
     def test_text_field(self):
+        self.assertEqual(
+            text_field("title", ""),
+            '<input id="title" name="title" type="text" value="" />'
+        )
+        self.assertEqual(
+            text_field("title", None),
+            '<input id="title" name="title" type="text" />'
+        )
         self.assertEqual(
             text_field("title", "Hello!"),
             '<input id="title" name="title" type="text" value="Hello!" />'

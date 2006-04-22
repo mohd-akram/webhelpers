@@ -53,6 +53,8 @@ def content_tag(name, content, **options):
         >>> content_tag("div", content_tag("p", "Hello world!"), class_="strong")
         <div class="strong"><p>Hello world!</p></div>
     """
+    if content is None:
+        content = ''
     tag = '<%s%s>%s</%s>' % (name, (options and tag_options(**options)) or '', content, name)
     return tag
 
@@ -65,6 +67,8 @@ def cdata_section(content):
     ``<![CDATA[`` and end with (and may not contain) the string 
     ``]]>``. 
     """
+    if content is None:
+        content = ''
     return "<![CDATA[%s]]>" % content
 
 def tag_options(**options):
