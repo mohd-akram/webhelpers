@@ -52,7 +52,7 @@ def link_to(name, url='', **html_options):
         >>> link_to("Delete this page", url(action="destroy", id=4), confirm="Are you sure?")
         >>> link_to("Help", url(action="help"), popup=True)
         >>> link_to("Busy loop", url(action="busy"), popup=['new_window', 'height=300,width=600'])
-        >>> link_to("Destroy account", url(action="destroy"), confirm="Are you sure?", post => True)
+        >>> link_to("Destroy account", url(action="destroy"), confirm="Are you sure?", post=True)
     """
     if html_options:
         html_options = convert_options_to_javascript(**html_options)
