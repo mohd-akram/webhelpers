@@ -156,6 +156,15 @@ def link_to_if(condition, name, url, **html_options):
     link_to_unless(not condition, name, url, **html_options)
 
 def parse_querystring(environ):
+    """
+    Parses a query string into a list like ``[(name, value)]``.
+
+    You can pass the result to ``dict()``, but be aware that keys that appear multiple
+    times will be lost (only the last value will be preserved).
+
+    This function is cut and pasted from paste.request.parse_querystring (minus its
+    caching piece) to avoid requiring paste as a dependency.
+    """
     source = environ.get('QUERY_STRING', '')
     parsed = cgi.parse_qsl(source, keep_blank_values=True,
                            strict_parsing=False)
@@ -170,7 +179,7 @@ def current_page(url):
     curopts = config.mapper_dict.copy()
     if environ.get('REQUEST_METHOD', 'GET') == 'GET':
         if environ.has_key('QUERY_STRING'):
-            curopts.update(parse_querystring(environ))
+            curopts.update(dict(parse_querystring(environ)))
     currl = url_for(**curopts)
     if callable(url):
         return url() == currl
