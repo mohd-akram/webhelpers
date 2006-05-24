@@ -36,7 +36,7 @@ def button_to_function(name, function, **html_options):
     """
     options = dict(type_="button", value=name, onclick="%s; " % function)
     options.update(html_options)
-    return content_tag("input", name, **options)
+    return content_tag("input", "", **options)
 
 def escape_javascript(javascript):
     """
