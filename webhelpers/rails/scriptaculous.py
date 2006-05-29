@@ -52,7 +52,7 @@ def visual_effect(name, element_id=False, **js_options):
         return "Effect.toggle(%s,'%s',%s);" % (element, name.replace('toggle_',''), options_for_javascript(js_options))
     return "new Effect.%s(%s,%s);" % (camelize(name), element, options_for_javascript(js_options))
 
-def parallel_effects(effects, **js_options):
+def parallel_effects(*effects, **js_options):
     """
     Wraps visual effects so they occur in parallel
     
