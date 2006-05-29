@@ -63,7 +63,8 @@ def parallel_effects(*effects, **js_options):
             visual_effect('fade', 'dom_id'),
         )
     """
-    return "new Effect.Parallel([%s], %s)" % (effects.join(''), options_for_javascript(js_options))
+    str_effects = [e[:-1] for e in effects] # Remove trailing ';'
+    return "new Effect.Parallel([%s], %s)" % (','.join(str_effects), options_for_javascript(js_options))
 
 def sortable_element(element_id, **options):
     """
