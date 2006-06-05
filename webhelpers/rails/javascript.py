@@ -9,8 +9,13 @@ Ajax, controls and visual effects
 * For information on using Ajax, see `Prototype Helpers <module-railshelpers.helpers.prototype.html>`_.
 * For information on using controls and visual effects, see `Scriptaculous Helpers <module-railshelpers.helpers.scriptaculous.html>`_.
 """
-from tags import *
+import os
 import re
+from tags import *
+
+# The absolute path of the WebHelpers javascripts directory
+javascripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'javascripts')
 
 def link_to_function(name, function, **html_options):
     """
