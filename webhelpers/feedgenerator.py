@@ -18,7 +18,7 @@ http://diveintomark.org/archives/2004/02/04/incompatible-rss
 
 """
 
-from utils import SimplerXMLGenerator
+from util import SimplerXMLGenerator
 import datetime, re, time
 import email.Utils
 from xml.dom import minidom
