@@ -1,0 +1,4 @@
+WebHelpers ChangeLog
+
+0.1.3
+* Fixed type in feedgenerator import, reported by tiksin@free.fr.
