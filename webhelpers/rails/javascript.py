@@ -16,7 +16,7 @@ from routes import request_config
 
 # The absolute path of the WebHelpers javascripts directory
 javascript_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'javascripts')
+                               'javascripts')
 
 # WebHelpers' built-in javascripts. Note: scriptaculous automatically includes all of its
 # supporting .js files
