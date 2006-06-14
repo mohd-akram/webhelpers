@@ -12,10 +12,15 @@ Ajax, controls and visual effects
 import os
 import re
 from tags import *
+from routes import request_config
 
 # The absolute path of the WebHelpers javascripts directory
-javascripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+javascript_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 'javascripts')
+
+# WebHelpers' built-in javascripts. Note: scriptaculous automatically includes all of its
+# supporting .js files
+javascript_builtins = ('prototype.js', 'scriptaculous.js')
 
 def link_to_function(name, function, **html_options):
     """
@@ -62,6 +67,50 @@ def javascript_tag(content):
     """
     return content_tag("script", javascript_cdata_section(content), type="text/javascript")
 
+def javascript_include_tag(*sources, **options):
+    """
+    Returns script include tags for the specified javascript ``sources``.
+
+    Each source's URL path is prepended with '/javascripts/' unless their full path is
+    specified. Each source's URL path is ultimately prepended with the environment's
+    ``SCRIPT_NAME`` (the root path of the web application).
+
+    Optionally includes (prepended) WebHelpers' built-in javascripts when passed the
+    ``builtins=True`` keyword argument.
+
+    Examples::
+    
+        >>> print javascript_include_tag(builtins=True)
+        <script src="/javascripts/prototype.js" type="text/javascript"></script>
+        <script src="/javascripts/scriptaculous.js" type="text/javascript"></script>
+
+        >>> print javascript_include_tag('prototype.js', '/other-javascripts/util.js')
+        <script src="/javascripts/prototype.js" type="text/javascript"></script>
+        <script src="/other-javascripts/util.js" type="text/javascript"></script>
+
+        >>> print javascript_include_tag('app.js', '/test/test.js', builtins=True)
+        <script src="/javascripts/prototype.js" type="text/javascript"></script>
+        <script src="/javascripts/scriptaculous.js" type="text/javascript"></script>
+        <script src="/javascripts/app.js" type="text/javascript"></script>
+        <script src="/test/test.js" type="text/javascript"></script>
+    """
+    if options.get('builtins'):
+        sources = javascript_builtins + sources
+        
+    # Prefix apps deployed under any SCRIPT_NAME path
+    script_name = ''
+    config = request_config()
+    if hasattr(config, 'environ'):
+        script_name = config.environ.get('SCRIPT_NAME', '')
+
+    include_tags = []
+    format_source = lambda s: s.startswith('/') and '%s%s' % (script_name, s) or \
+        '%s/javascripts/%s' % (script_name, s)
+    [include_tags.append(content_tag('script', None, **dict(type='text/javascript',
+                                                            src=format_source(source)))) \
+     for source in sources]
+    return '\n'.join(include_tags)
+
 def javascript_cdata_section(content):
     return "\n//%s\n" % cdata_section("\n%s\n//" % content)
 
@@ -84,4 +133,5 @@ def array_or_string_for_javascript(option):
         jsoption = "'%s'" % option
     return jsoption
 
-__all__ = ['button_to_function', 'javascript_tag', 'escape_javascript', 'link_to_function']
+__all__ = ['javascript_path', 'javascript_builtins', 'link_to_function', 'button_to_function',
+           'escape_javascript', 'javascript_tag', 'javascript_include_tag']
