@@ -34,8 +34,4 @@ Some of these helpers only require `Routes <http://routes.groovie.org/>`_ to fun
                  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
                  "Topic :: Software Development :: Libraries :: Python Modules",
                ],
-    entry_points="""
-    [paste.paster_command]
-    scriptaculous=webhelpers.commands:ScriptaculousCommand
-    """,
 )
