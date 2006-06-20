@@ -5,6 +5,7 @@ Provides functionality for linking an HTML page together with other assets, such
 javascripts, stylesheets, and feeds.
 """
 import os
+import urlparse
 from tags import *
 from routes import request_config
 
@@ -16,14 +17,57 @@ javascript_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 # supporting .js files
 javascript_builtins = ('prototype.js', 'scriptaculous.js')
 
+def auto_discovery_link_tag(source, type='rss', **kwargs):
+    """
+    Returns a link tag allowing browsers and news readers (that support it) to auto-detect
+    an RSS or ATOM feed for current page.
+
+    ``source``
+        The URL of the feed. The URL is ultimately prepended with the environment's
+        ``SCRIPT_NAME`` (the root path of the web application), unless the URL is
+        fully-fledged (e.g. http://example.com).
+
+    ``type``
+        The type of feed. Specifying 'rss' or 'atom' automatically translates to a type of
+        'application/rss+xml' or 'application/atom+xml', respectively. Otherwise the type
+        is used as specified. Defaults to 'rss'.
+        
+    Examples::
+
+        >>> auto_discovery_link_tag('http://feed.com/feed.xml')
+        '<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />'
+
+        >>> auto_discovery_link_tag('http://feed.com/feed.xml', type='atom')
+        '<link href="http://feed.com/feed.xml" rel="alternate" title="ATOM" type="application/atom+xml" />'
+
+        >>> auto_discovery_link_tag('app.rss', type='atom', title='atom feed')
+        '<link href="app.rss" rel="alternate" title="atom feed" type="application/atom+xml" />'
+
+        >>> auto_discovery_link_tag('/app.html', type='text/html')
+        '<link href="/app.html" rel="alternate" title="" type="text/html" />'
+    """
+    title = ''
+    if type.lower() in ('rss', 'atom'):
+        title = type.upper()
+        type='application/%s+xml' % type.lower()
+
+    tag_args = dict(rel='alternate', type=type, title=title,
+                    href=compute_public_path(source))
+    kwargs.pop('href', None)
+    kwargs.pop('type', None)
+    tag_args.update(kwargs)
+    return tag('link', **tag_args)
+
 def image_tag(source, alt=None, size=None, **options):
     """
     Returns an image tag for the specified ``source``.
 
-    The source's URL path is prepended with '/images/', unless its full path is
-    specified. The source's URL path is ultimately prepended with the environment's
-    ``SCRIPT_NAME`` (the root path of the web application). A source with no filename
-    extension will be appended with the '.png' extension.
+    ``source``
+        The source URL of the image. The URL is prepended with '/images/', unless its full
+        path is specified. The URL is ultimately prepended with the environment's
+        ``SCRIPT_NAME`` (the root path of the web application), unless the URL is
+        fully-fledged (e.g. http://example.com). A source with no filename extension will
+        be automatically appended with the '.png' extension.
     
     ``alt``
         The img's alt tag. Defaults to the source's filename, title cased.
@@ -36,6 +80,7 @@ def image_tag(source, alt=None, size=None, **options):
 
         >>> image_tag('xml')
         '<img alt="Xml" src="/images/xml.png" />'
+
         >>> image_tag('rss', 'rss syndication')
         '<img alt="rss syndication" src="/images/rss.png" />'    
     """
@@ -60,8 +105,9 @@ def javascript_include_tag(*sources, **options):
 
     Each source's URL path is prepended with '/javascripts/' unless their full path is
     specified. Each source's URL path is ultimately prepended with the environment's
-    ``SCRIPT_NAME`` (the root path of the web application). Sources with no filename
-    extensions will be appended with the '.js' extension.
+    ``SCRIPT_NAME`` (the root path of the web application), unless the URL path is a
+    full-fledged URL (e.g. http://example.com). Sources with no filename extension will be
+    appended with the '.js' extension.
 
     Optionally includes (prepended) WebHelpers' built-in javascripts when passed the
     ``builtins=True`` keyword argument.
@@ -97,13 +143,15 @@ def stylesheet_link_tag(*sources, **options):
 
     Each source's URL path is prepended with '/stylesheets/' unless their full path is
     specified. Each source's URL path is ultimately prepended with the environment's
-    ``SCRIPT_NAME`` (the root path of the web application). Sources with no filename
-    extension will be appended with the '.css' extension.
+    ``SCRIPT_NAME`` (the root path of the web application), unless the URL path is a
+    full-fledged URL (e.g. http://example.com). Sources with no filename extension will be
+    appended with the '.css' extension.
     
     Examples::
 
         >>> stylesheet_link_tag('style')
         '<link href="/stylesheets/style.css" media="screen" rel="Stylesheet" type="text/css" />'
+
         >>> stylesheet_link_tag('/dir/file', media='all')
         '<link href="/dir/file.css" media="all" rel="Stylesheet" type="text/css" />'
     """
@@ -115,18 +163,21 @@ def stylesheet_link_tag(*sources, **options):
                                **tag_options)) for source in sources]
     return '\n'.join(tags)
     
-def compute_public_path(source, root_path, ext=None):
+def compute_public_path(source, root_path=None, ext=None):
     """
-    Format the specified source for publishing, via the public directory.
+    Format the specified source for publishing, via the public directory, if applicable.
     """
-    # Prefix apps deployed under any SCRIPT_NAME path
-    script_name = get_script_name()
-    if ext is not None and not os.path.splitext(os.path.basename(source))[1]:
+    if ext and not os.path.splitext(os.path.basename(source))[1]:
         source = '%s.%s' % (source, ext)
-    if source.startswith('/') or source.startswith('http://'):
-        source = '%s%s' % (script_name, source)
-    else:
-        source = '%s/%s/%s' % (script_name, root_path, source)
+
+    # Avoid munging fully-fledged URLs, including 'mailto:'
+    parsed = urlparse.urlparse(source)
+    if not (parsed[0] and (parsed[1] or parsed[2])):
+        # Prefix apps deployed under any SCRIPT_NAME path
+        if not root_path or source.startswith('/'):
+            source = '%s%s' % (get_script_name(), source)
+        else:
+            source = '%s/%s/%s' % (get_script_name(), root_path, source)
     return source
 
 def get_script_name():
@@ -139,5 +190,5 @@ def get_script_name():
         script_name = config.environ.get('SCRIPT_NAME', '')
     return script_name
 
-__all__ = ['javascript_path', 'javascript_builtins', 'image_tag', 'javascript_include_tag',
-           'stylesheet_link_tag']
+__all__ = ['javascript_path', 'javascript_builtins', 'auto_discovery_link_tag',
+           'image_tag', 'javascript_include_tag', 'stylesheet_link_tag']

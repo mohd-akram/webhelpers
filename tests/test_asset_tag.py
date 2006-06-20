@@ -2,8 +2,23 @@ from unittest import TestCase
 import unittest
 
 from webhelpers.rails.asset_tag import *
+from webhelpers.rails.asset_tag import compute_public_path
 
 class TestAssetTagHelper(TestCase):
+    def test_auto_discovery_link_tag(self):
+        self.assertEqual('<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />',
+                         auto_discovery_link_tag('http://feed.com/feed.xml'))
+        self.assertEqual('<link href="http://feed.com/feed.xml" rel="alternate" title="ATOM" type="application/atom+xml" />',
+                         auto_discovery_link_tag('http://feed.com/feed.xml', type='atom'))
+        self.assertEqual('<link href="app.rss" rel="alternate" title="atom feed" type="application/atom+xml" />',
+                         auto_discovery_link_tag('app.rss', type='atom', title='atom feed'))
+        self.assertEqual('<link href="app.rss" rel="alternate" title="My RSS" type="application/rss+xml" />',
+                         auto_discovery_link_tag('app.rss', title='My RSS'))
+        self.assertEqual('<link href="/app.rss" rel="alternate" title="" type="text/html" />',
+                         auto_discovery_link_tag('/app.rss', type='text/html'))
+        self.assertEqual('<link href="/app.html" rel="alternate" title="My RSS" type="text/html" />',
+                         auto_discovery_link_tag('/app.html', title='My RSS', type='text/html'))
+        
     def test_image_tag(self):
         self.assertEqual('<img alt="Xml" src="/images/xml.png" />',
                          image_tag('xml'))
@@ -36,6 +51,30 @@ class TestAssetTagHelper(TestCase):
         self.assertEqual('<link href="/stylesheets/random.styles" media="screen" rel="Stylesheet" type="text/css" />\n<link href="/css/stylish.css" media="screen" rel="Stylesheet" type="text/css" />',
                          stylesheet_link_tag('random.styles', '/css/stylish'))
 
+    def test_compute_public_path(self):
+        self.assertEqual('/test.js', compute_public_path('/test.js'))
+        self.assertEqual('/test.js', compute_public_path('/test.js', 'javascripts'))
+        self.assertEqual('test.js', compute_public_path('test.js'))
+        self.assertEqual('test.js', compute_public_path('test', ext='js'))
+        self.assertEqual('/javascripts/test.js',
+                         compute_public_path('test.js', 'javascripts'))
+        self.assertEqual('/javascripts/test.js',
+                         compute_public_path('test', 'javascripts', 'js'))
+        self.assertEqual('/javascripts/test.js',
+                         compute_public_path('test.js', 'javascripts', 'js'))
+        self.assertEqual('http://www.pylonshq.com',
+                         compute_public_path('http://www.pylonshq.com'))
+        self.assertEqual('http://www.pylonshq.com',
+                         compute_public_path('http://www.pylonshq.com', 'javascripts'))
+        self.assertEqual('http://www.pylonshq.com',
+                         compute_public_path('http://www.pylonshq.com', 'javascripts', 'js'))
+        self.assertEqual('mailto:bdfl@python.org',
+                         compute_public_path('mailto:bdfl@python.org'))
+        self.assertEqual('mailto:bdfl@python.org',
+                         compute_public_path('mailto:bdfl@python.org', 'javascripts'))
+        self.assertEqual('mailto:bdfl@python.org',
+                         compute_public_path('mailto:bdfl@python.org', 'javascripts', 'js'))
+        
 if __name__ == '__main__':
     suite = [unittest.makeSuite(TestAssetTagHelper)]
     for testsuite in suite:
