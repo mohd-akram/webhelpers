@@ -1,7 +1,7 @@
 from unittest import TestCase
 import unittest
 
-from webhelpers.rails.asset_tag import *
+from webhelpers.rails.asset import *
 
 class TestAssetTagHelper(TestCase):
     def test_image_tag(self):

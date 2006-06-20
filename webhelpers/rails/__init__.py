@@ -1,5 +1,5 @@
 """Helper functions ported from Rails"""
-from asset_tag import *
+from asset import *
 from urls import *
 from javascript import *
 from tags import *
