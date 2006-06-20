@@ -1,4 +1,4 @@
-from webhelpers.escapes import *
+from webhelpers.util import *
 
 def test_html_escape():
     assert html_escape('foo') == 'foo'
