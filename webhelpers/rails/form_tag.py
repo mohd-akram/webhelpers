@@ -1,7 +1,7 @@
 """
 Form Tag Helpers
 """
-
+from urls import confirm_javascript_function
 from tags import *
 from webhelpers.util import html_escape
 
@@ -139,10 +139,24 @@ def radio_button(name, value, checked=False, **options):
 def submit(value="Save changes", name='commit', **options):
     """
     Creates a submit button with the text ``value`` as the caption.
+
+    Options:
+
+    * ``confirm`` - A confirm message displayed when the button is clicked.
+    * ``disable_with`` - The value to be used to rename a disabled version of the submit
+    button.
     
     If options contains a keyword pair with the key of "disable_with", then the value will
     be used to rename a disabled version of the submit button.
     """
+    confirm = options.get('confirm')
+    if confirm:
+        options.pop('confirm')
+        onclick = options.get('onclick', '')
+        if onclick.strip() and not onclick.rstrip().endswith(';'):
+            onclick += ';'
+        options['onclick'] = "%s return %s;" % (onclick, confirm_javascript_function(confirm))
+
     if options.has_key('disable_with'):
         options["onclick"] = "this.disabled=true;this.value='%s';this.form.submit();%s" % (options['disable_with'], options.get("onclick", ''))
     o = {'type': 'submit', 'name_': name, 'value': value }

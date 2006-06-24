@@ -172,7 +172,17 @@ def parse_querystring(environ):
 
 def current_page(url):
     """
-    Returns true if the current page uri is equivilant to ``url``
+    Returns true if the current page uri is equivalent to ``url``
+    """
+    currl = current_url()
+    if callable(url):
+        return url() == currl
+    else:
+        return url == currl
+
+def current_url():
+    """
+    Returns the current page's url.
     """
     config = request_config()
     environ = config.environ
@@ -180,11 +190,7 @@ def current_page(url):
     if environ.get('REQUEST_METHOD', 'GET') == 'GET':
         if environ.has_key('QUERY_STRING'):
             curopts.update(dict(parse_querystring(environ)))
-    currl = url_for(**curopts)
-    if callable(url):
-        return url() == currl
-    else:
-        return url == currl
+    return url_for(**curopts)
 
 def convert_options_to_javascript(confirm=None, popup=None, post=None, **html_options):
     if popup and post:
@@ -226,4 +232,4 @@ def post_javascript_function():
     return "f = document.createElement('form'); document.body.appendChild(f); f.method = 'POST'; f.action = this.href; f.submit();"
 
 __all__ = ['url', 'link_to', 'button_to', 'link_to_unless_current', 'link_to_unless', 'link_to_if',
-           'current_page']
+           'current_page', 'current_url']
