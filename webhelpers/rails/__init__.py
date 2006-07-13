@@ -10,4 +10,4 @@ from text import *
 from form_options import *
 from date import *
 from number import *
-from routes import url_for, redirect_to
+from routes import url_for
