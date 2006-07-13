@@ -1,3 +1,33 @@
+# Copyright (c) 2005, the Lawrence Journal-World
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+# 
+#     1. Redistributions of source code must retain the above copyright notice, 
+#        this list of conditions and the following disclaimer.
+#     
+#     2. Redistributions in binary form must reproduce the above copyright 
+#        notice, this list of conditions and the following disclaimer in the
+#        documentation and/or other materials provided with the distribution.
+# 
+#     3. Neither the name of Django nor the names of its contributors may be used
+#        to endorse or promote products derived from this software without
+#        specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# LAST SYNCED WITH DJANGO SOURCE - JULY 12th, 2006 - DJANGO REVISION 3143
+# http://code.djangoproject.com/log/django/trunk/django/utils/feedgenerator.py
 """Syndication feed generation library -- used for generating RSS, etc.
 
 Sample usage:
@@ -38,7 +68,7 @@ def get_tag_uri(url, date):
     tag = re.sub('#', '/', tag)
     return 'tag:' + tag
 
-class SyndicationFeed:
+class SyndicationFeed(object):
     """Base class for all syndication feeds. Subclasses should provide write()"""
     def __init__(self, title, link, description, language=None, author_email=None,
             author_name=None, author_link=None, subtitle=None, categories=None,
@@ -113,7 +143,7 @@ class SyndicationFeed:
         else:
             return datetime.datetime.now()
 
-class Enclosure:
+class Enclosure(object):
     """Represents an RSS enclosure"""
     def __init__(self, url, length, mime_type):
         "All args are expected to be Python Unicode objects"
@@ -131,6 +161,8 @@ class RssFeed(SyndicationFeed):
         handler.addQuickElement(u"description", self.feed['description'])
         if self.feed['language'] is not None:
             handler.addQuickElement(u"language", self.feed['language'])
+        for cat in self.feed['categories']:
+            handler.addQuickElement(u"category", cat)
         self.write_items(handler)
         self.endChannelElement(handler)
         handler.endElement(u"rss")
@@ -161,9 +193,11 @@ class Rss201rev2Feed(RssFeed):
                 handler.addQuickElement(u"description", item['description'])
 
             # Author information.
-            if item['author_email'] is not None and item['author_name'] is not None:
-                handler.addQuickElement(u"author", u"%s (%s)" % \
+            if item["author_name"] and item["author_email"]:
+                handler.addQuickElement(u"author", "%s (%s)" % \
                     (item['author_email'], item['author_name']))
+            elif item["author_email"]:
+                handler.addQuickElement(u"author", item["author_email"])
 
             if item['pubdate'] is not None:
                 handler.addQuickElement(u"pubDate", rfc2822_date(item['pubdate']).decode('ascii'))
@@ -220,7 +254,7 @@ class Atom1Feed(SyndicationFeed):
         for item in self.items:
             handler.startElement(u"entry", {})
             handler.addQuickElement(u"title", item['title'])
-            handler.addQuickElement(u"link", u"", {u"href": item['link']})
+            handler.addQuickElement(u"link", u"", {u"href": item['link'], u"rel": u"alternate"})
             if item['pubdate'] is not None:
                 handler.addQuickElement(u"updated", rfc3339_date(item['pubdate']).decode('ascii'))
 

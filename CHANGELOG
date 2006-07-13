@@ -1,7 +1,9 @@
 WebHelpers ChangeLog
 
-0.1.3
+0.1.3 (*svn*)
+* Brought feedgenerator in line with Django's version, which fixed the missing
+  support for feed categories and updated classes for new-style. Other minor
+  feed updates as well. Now synced as of Django r3143.
 * Fixed typo in feedgenerator import, reported by tiksin@free.fr.
-
 * Added ``webhelpers.rails.asset_tag``, for generating links to other assets
   such as javascripts, stylesheets, and feeds.
