@@ -129,9 +129,7 @@ def check_box(name, value="1", checked=False, **options):
     return tag("input", **o)
 
 def radio_button(name, value, checked=False, **options):
-    """
-    Creates a radio button.
-    """
+    """Creates a radio button."""
     o = {'type': 'radio', 'name_': name, 'id': name, 'value': value}
     o.update(options)
     if checked:
@@ -139,14 +137,13 @@ def radio_button(name, value, checked=False, **options):
     return tag("input", **o)
 
 def submit(value="Save changes", name='commit', **options):
-    """
-    Creates a submit button with the text ``value`` as the caption.
+    """Creates a submit button with the text ``value`` as the caption.
 
     Options:
 
     * ``confirm`` - A confirm message displayed when the button is clicked.
     * ``disable_with`` - The value to be used to rename a disabled version of the submit
-    button.
+      button.
     
     If options contains a keyword pair with the key of "disable_with", then the value will
     be used to rename a disabled version of the submit button.
