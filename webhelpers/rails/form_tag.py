@@ -16,6 +16,7 @@ def form(url, **options):
 
     * ``multipart`` - If set to True, the enctype is set to "multipart/form-data".
     * ``method`` - The method to use when submitting the form, usually either "get" or "post".
+    
     """
     o = { "method": "post" }
     o.update(options)
@@ -49,6 +50,7 @@ def select(name, option_tags='', **options):
     Options:
     
     * ``multiple`` - If set to true the selection will allow multiple choices.
+    
     """
     o = { 'name_': name, 'id': name }
     o.update(options)
