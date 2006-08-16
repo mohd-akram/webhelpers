@@ -60,11 +60,13 @@ def initialize(t):
                    class="${mailing_list_url == destfile and 'selected' or ''}"
                    title="Mailing List">Discuss</a>
               </li>
+              <!--
               <li class="page_item">
                 <a href="${home_url}about">
                   about ${home_title}
                 </a>
               </li>
+              -->
             </ul>
           </li>
         </ul>
@@ -96,9 +98,11 @@ def initialize(t):
         <br/>
         <a name="search">
           <form method="get" id="searchform" 
-                action="http://lesscode.org/blog/index.php">
+                action="http://google.com/search">
             <div>
-              <input type="text" value="" name="s" id="s" />
+              <input type="hidden" id="domains" name="domains" value="pylonshq.com/WebHelpers"/>
+              <input type="hidden" id="sitesearch" name="sitesearch" value="pylonshq.com/WebHelpers"/>
+              <input type="text" value="" name="q" id="q" />
               <input type="submit" id="searchsubmit" value="Search" />
             </div>
           </form>
