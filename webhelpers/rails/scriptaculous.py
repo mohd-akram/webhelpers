@@ -12,6 +12,8 @@ The Scriptaculous helpers' behavior can be tweaked with various options.
 See the documentation at http://script.aculo.us for more information on
 using these helpers in your application.
 """
+# Last synced with Rails copy at Revision 3772 on Aug 19th, 2006.
+
 from prototype import *
 from javascript import options_for_javascript, array_or_string_for_javascript
 from prototype import AJAX_OPTIONS, javascript_tag
@@ -46,8 +48,12 @@ def visual_effect(name, element_id=False, **js_options):
     http://script.aculo.us for more documentation.
     """
     element = (element_id and "'%s'" % element_id) or "element"
-    if js_options.has_key('queue'):
+    if isinstance(js_options.get('queue'), dict):
+        js_options['queue'] = '{%s}' % ','.join(["%s:%s" % (k,(k == 'limit' and v) or "'%s'" % v) for k,v in js_options['queue'].iteritems()])
+    elif js_options.has_key('queue'):
         js_options['queue'] = "'%s'" % js_options['queue']
+    
+    
     if 'toggle' in name:
         return "Effect.toggle(%s,'%s',%s);" % (element, name.replace('toggle_',''), options_for_javascript(js_options))
     return "new Effect.%s(%s,%s);" % (camelize(name), element, options_for_javascript(js_options))

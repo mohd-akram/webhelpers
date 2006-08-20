@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.2 (**svn**)
+* Sync'd scriptaculous helper.
 * Sync'd javascript, prototype helpers and prototype.js to latest Rails
   modifications. Added more prototype tests.
 * Sync'd form_options, form_tag helpers. form_tag's form function can now
