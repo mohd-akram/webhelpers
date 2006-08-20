@@ -66,11 +66,15 @@ class TestURLHelper(TestCase):
                        confirm="Are you serious?"))
     
     def test_link_tag_using_post_javascript(self):
-        self.assertEqual("<a href=\"http://www.example.com\" onclick=\"f = document.createElement('form'); document.body.appendChild(f); f.method = 'POST'; f.action = this.href; f.submit();return false;\">Hello</a>",
+        self.assertEqual("<a href=\"http://www.example.com\" onclick=\"var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;f.submit();return false;\">Hello</a>",
                link_to("Hello", "http://www.example.com", post=True))
     
+    def test_link_tag_using_delete_javascript(self):
+        self.assertEqual("<a href=\"http://www.example.com\" onclick=\"var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;var m = document.createElement('input'); m.setAttribute('type', 'hidden'); m.setAttribute('name', '_method'); m.setAttribute('value', 'delete'); f.appendChild(m);f.submit();return false;\">Destroy</a>",
+                link_to("Destroy", "http://www.example.com", method='delete'))
+
     def test_link_tag_using_post_javascript_and_confirm(self):
-        self.assertEqual("<a href=\"http://www.example.com\" onclick=\"if (confirm('Are you serious?')) { f = document.createElement('form'); document.body.appendChild(f); f.method = 'POST'; f.action = this.href; f.submit(); };return false;\">Hello</a>",
+        self.assertEqual("<a href=\"http://www.example.com\" onclick=\"if (confirm('Are you serious?')) { var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;f.submit(); };return false;\">Hello</a>",
                link_to("Hello", "http://www.example.com", post=True, confirm="Are you serious?"))
     
     def test_mail_to(self):

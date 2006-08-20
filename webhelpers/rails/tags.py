@@ -1,6 +1,6 @@
-"""
-Tag Helpers
-"""
+"""Tag Helpers"""
+# Last synced with Rails copy at Revision 2543 on Aug 20th, 2006.
+
 from webhelpers.util import html_escape
 import re
 

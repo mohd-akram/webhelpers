@@ -15,6 +15,8 @@ class TestPrototypeHelper(TestCase):
             link_to_remote("Remote outpost", dict(success="alert(request.reponseText)",url='http://www.example.com/whatnot')))
         self.assertEqual("""<a href="#" onclick="new Ajax.Request('http://www.example.com/whatnot', {asynchronous:true, evalScripts:true, onFailure:function(request){alert(request.reponseText)}}); return false;">Remote outpost</a>""",
             link_to_remote("Remote outpost", dict(failure="alert(request.reponseText)",url='http://www.example.com/whatnot')))
+        self.assertEqual("<a href=\"#\" onclick=\"new Ajax.Request('http://www.example.com/whatnot?a=10&amp;b=20', {asynchronous:true, evalScripts:true, onFailure:function(request){alert(request.reponseText)}}); return false;\">Remote outpost</a>",
+            link_to_remote("Remote outpost", dict(failure="alert(request.reponseText)",url ='http://www.example.com/whatnot?a=10&b=20')))
 
     def test_periodically_call_remote(self):
         self.assertEqual("""<script type="text/javascript">\n//<![CDATA[\nnew PeriodicalExecuter(function() {new Ajax.Updater('schremser_bier', 'http://www.example.com/mehr_bier', {asynchronous:true, evalScripts:true})}, 10)\n//]]>\n</script>""",

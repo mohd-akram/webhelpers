@@ -1,6 +1,6 @@
-"""
-URL Helpers
-"""
+"""URL Helpers"""
+# Last synced with Rails copy at Revision 4374 on Aug 20th, 2006.
+
 import cgi
 import urllib
 
@@ -53,7 +53,7 @@ def link_to(name, url='', **html_options):
         >>> link_to("Delete this page", url(action="destroy", id=4), confirm="Are you sure?")
         >>> link_to("Help", url(action="help"), popup=True)
         >>> link_to("Busy loop", url(action="busy"), popup=['new_window', 'height=300,width=600'])
-        >>> link_to("Destroy account", url(action="destroy"), confirm="Are you sure?", post=True)
+        >>> link_to("Destroy account", url(action="destroy"), confirm="Are you sure?", method='delete')
     """
     if html_options:
         html_options = convert_options_to_javascript(**html_options)
@@ -193,19 +193,24 @@ def current_url():
             curopts.update(dict(parse_querystring(environ)))
     return url_for(**curopts)
 
-def convert_options_to_javascript(confirm=None, popup=None, post=None, **html_options):
-    if popup and post:
+def convert_options_to_javascript(confirm=None, popup=None, post=None, method=None, **html_options):
+    if method: method = method.lower()
+    
+    if post and not method:
+        method = 'post'
+    
+    if popup and method:
         raise "You can't use popup and post in the same link"
     elif confirm and popup:
         oc = "if (%s) { %s };return false;" % (confirm_javascript_function(confirm), 
                                                popup_javascript_function(popup))
-    elif confirm and post:
+    elif confirm and method:
         oc = "if (%s) { %s };return false;" % (confirm_javascript_function(confirm),
-                                               post_javascript_function())
+                                               method_javascript_function(method))
     elif confirm:
         oc = "return %s;" % confirm_javascript_function(confirm)
-    elif post:
-        oc = "%sreturn false;" % post_javascript_function()
+    elif method:
+        oc = "%sreturn false;" % method_javascript_function(method)
     elif popup:
         oc = popup_javascript_function(popup) + 'return false;'
     else:
@@ -229,8 +234,15 @@ def popup_javascript_function(popup):
     else:
         return "window.open(this.href);"
 
-def post_javascript_function():
-    return "f = document.createElement('form'); document.body.appendChild(f); f.method = 'POST'; f.action = this.href; f.submit();"
+def method_javascript_function(method):
+    submit_function = "var f = document.createElement('form'); f.style.display = 'none'; " + \
+        "this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;"
+    
+    if method != 'post':
+        submit_function += "var m = document.createElement('input'); m.setAttribute('type', 'hidden'); "
+        submit_function += "m.setAttribute('name', '_method'); m.setAttribute('value', '%s'); f.appendChild(m);" % method
+    
+    return submit_function + "f.submit();"
 
 
 def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, 

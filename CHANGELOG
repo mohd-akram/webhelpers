@@ -1,6 +1,9 @@
 WebHelpers ChangeLog
 
 0.2 (**svn**)
+* Finished sync'ing Rails ports (urls, tags) in WebHelpers. Closes #69.
+  url and prototype tests updated, url helpers updated to handle method
+  argument.
 * Sync'd scriptaculous helper.
 * Sync'd javascript, prototype helpers and prototype.js to latest Rails
   modifications. Added more prototype tests.
