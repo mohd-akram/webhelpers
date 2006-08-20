@@ -1,8 +1,14 @@
 """
 Text Helpers
 """
+# Last synced with Rails copy at Revision 4595 on Aug 19th, 2006.
+# Purposely left out sanitize, should be included at some point likely using
+# BeautifulSoup.
+
 from routes import request_config
-from tags import content_tag, tag_options
+from webhelpers.rails.tags import content_tag, tag_options
+import webhelpers.textile as textile
+import webhelpers.markdown as markdown
 import itertools, re
 
 AUTO_LINK_RE = re.compile("""(<\w+.*?>|[^=!:'"\/]|^)((?:http[s]?:\/\/)|(?:www\.))(([\w]+:?[=?&\/.-]?)*\w+[\/]?(?:\#\w*)?)([\.,"'?!;:]|\s|<|$)""")
@@ -202,7 +208,28 @@ def strip_links(text):
         >>> strip_links("<a href="something">else</a>")
         "else"
     """
-    return re.sub(r'<a.*?>(.*)</a>', r'\1', text, re.M)
+    return re.sub(r'<a\b.*?>(.*?)<\/a>', r'\1', text, re.M)
+
+def textilize(text, sanitize=False):
+    """Format the text with Textile formatting
+    
+    This function uses the `PyTextile library <http://dealmeida.net/>`_ which is included with WebHelpers.
+    
+    Additionally, the output can be sanitized which will fix tags like <img />,
+    <br /> and <hr /> for proper XHTML output.
+    
+    """
+    texer = textile.Textiler(text)
+    return texer.process(sanitize=sanitize)
+
+def markdown(text):
+    """Format the text with MarkDown formatting
+    
+    This function uses the `Python MarkDown library <http://www.freewisdom.org/projects/python-markdown/>`_
+    which is included with WebHelpers.
+    
+    """
+    return markdown.markdown(text)
 
 __all__ = ['cycle', 'reset_cycle', 'truncate', 'highlight', 'excerpt', 'word_wrap', 'simple_format',
-           'auto_link', 'strip_links']
+           'auto_link', 'strip_links', 'textilize', 'markdown']

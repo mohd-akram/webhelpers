@@ -1,7 +1,9 @@
 WebHelpers ChangeLog
 
 0.2 (**svn**)
-* Brought asset tag up to date with revision info.
+* Added markdown.py (python-markdown) for new markdown support in text helper.
+* Added textile.py (PyTextile) for new textilize support in text helper.
+* Brought asset/date/text helpers up to date with revision info.
 
 0.1.3 (Release)
 * Brought feedgenerator in line with Django's version, which fixed the missing

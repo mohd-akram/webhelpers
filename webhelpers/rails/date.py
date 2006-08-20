@@ -1,8 +1,12 @@
 """Date/Time Helpers"""
 # Last synced with Rails copy at Revision 4674 on Aug 19th, 2006.
+# Note that the select_ tags are purposely not ported as they're very totally useless
+# and inefficient beyond comprehension.
 
 from datetime import datetime
 import time
+
+DEFAULT_PREFIX = 'date'
 
 def distance_of_time_in_words(from_time, to_time=0, include_seconds=False):
     """
@@ -68,40 +72,5 @@ def time_ago_in_words(from_time, include_seconds=False):
     Like distance_of_time_in_words, but where ``to_time`` is fixed to ``datetime.now()``.
     """
     return distance_of_time_in_words(from_time, datetime.now(), include_seconds)
-
-def select_date(date=datetime.now(), **options):
-    """
-    Returns a set of html select-tags (one for year, month, day) pre-selected with the ``date``.
-    """
-    return select_year(date, options) + select_month(date, options) + select_day(date, options)
-
-def select_datetime(datetime=datetime.now(), **options):
-    """
-    Returns a set of html select-tags (one for year, month, day, hour and minutes) pre-selected with the ``date``.
-    """
-    return select_year(datetime, options) + select_month(datetime, options) + select_day(datetime, options) + \
-        select_hour(datetime, options) + select_minute(datetime, options)
-
-def select_time(datetime=datetime.now(), **options):
-    """Returns a set of html select-tags (one for hour and minute)
-    
-    ``include_seconds``
-        Boolean to indicate if an additional select field for seconds should
-        also be included.
-    
-    """
-    seconds = ''
-    if options.get('include_seconds'):
-        del options['include_seconds']
-        seconds = select_second(datetime, options)
-    return select_hour(datetime, options) + select_minute(datetime, options) + seconds
-
-def select_second(datetime, **options):
-    """Returns a select tag with options for each of the seconds 0 through 59 with the
-    current second selected.
-    
-    The 
-    """
-    pass
 
 __all__ = ['distance_of_time_in_words', 'time_ago_in_words']
