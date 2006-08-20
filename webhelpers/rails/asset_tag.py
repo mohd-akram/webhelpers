@@ -4,6 +4,8 @@ Asset Tag Helpers
 Provides functionality for linking an HTML page together with other assets, such as
 javascripts, stylesheets, and feeds.
 """
+# Last synced with Rails copy at Revision 4103 on Aug 19th, 2006.
+
 import os
 import urlparse
 from tags import *
