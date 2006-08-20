@@ -13,7 +13,7 @@ See the documentation at http://script.aculo.us for more information on
 using these helpers in your application.
 """
 # Last synced with Rails copy at Revision 3772 on Aug 19th, 2006.
-
+import simplejson as json
 from prototype import *
 from javascript import options_for_javascript, array_or_string_for_javascript
 from prototype import AJAX_OPTIONS, javascript_tag
@@ -47,7 +47,7 @@ def visual_effect(name, element_id=False, **js_options):
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.
     """
-    element = (element_id and "'%s'" % element_id) or "element"
+    element = (element_id and json.dumps(element_id)) or "element"
     if isinstance(js_options.get('queue'), dict):
         js_options['queue'] = '{%s}' % ','.join(["%s:%s" % (k,(k == 'limit' and v) or "'%s'" % v) for k,v in js_options['queue'].iteritems()])
     elif js_options.has_key('queue'):
@@ -108,7 +108,7 @@ def sortable_element_js(element_id, **options):
     if options.has_key('only'):
         options['only'] = array_or_string_for_javascript(options['only'])
     
-    return "Sortable.create('%s', %s)" % (element_id, options_for_javascript(options))
+    return "Sortable.create(%s, %s)" % (json.dumps(element_id), options_for_javascript(options))
 
 def draggable_element(element_id, **options):
     """
@@ -124,7 +124,7 @@ def draggable_element(element_id, **options):
     return javascript_tag(draggable_element_js(element_id, **options))
 
 def draggable_element_js(element_id, **options):
-    return "new Draggable('%s', %s)" % (element_id, options_for_javascript(options))
+    return "new Draggable(%s, %s)" % (json.dumps(element_id), options_for_javascript(options))
 
 def drop_receiving_element(element_id, **options):
     """
@@ -155,6 +155,6 @@ def drop_receiving_element_js(element_id, **options):
     if options.has_key('hoverclass'):
         options['hoverclass'] = "'%s'" % options['hoverclass']
     
-    return "Droppables.add('%s', %s)" % (element_id, options_for_javascript(options))
+    return "Droppables.add(%s, %s)" % (json.dumps(element_id), options_for_javascript(options))
 
 __all__ = ['visual_effect', 'parallel_effects', 'sortable_element', 'draggable_element', 'drop_receiving_element']
