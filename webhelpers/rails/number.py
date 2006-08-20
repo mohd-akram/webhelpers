@@ -1,6 +1,7 @@
 """
 Number Helpers
 """
+# Last synced with Rails copy at Revision 4537 on Aug 19th, 2006.
 import re
 
 def number_to_phone(number, area_code=False, delimiter="-", extension=""):
@@ -25,7 +26,7 @@ def number_to_phone(number, area_code=False, delimiter="-", extension=""):
         number = re.sub(r'([0-9]{3})([0-9]{3})([0-9]{4})', r'(\1) \2%s\3' % delimiter, str(number))
     else:
         number = re.sub(r'([0-9]{3})([0-9]{3})([0-9]{4})', r'\1%s\2%s\3' % (delimiter, delimiter), str(number))
-    if extension:
+    if extension and str(extension).strip():
         number += " x %s" % extension
     return number
 
@@ -54,7 +55,10 @@ def number_to_currency(number, unit="$", precision=2, separator=".", delimiter="
     if precision < 1:
         separator = ""
     parts = number_with_precision(number, precision).split('.')
-    return unit + number_with_delimiter(parts[0], delimiter) + separator + parts[1]
+    num = unit + number_with_delimiter(parts[0], delimiter)
+    if len(parts) > 1:
+        num += separator + parts[1]
+    return num
 
 def number_to_percentage(number, precision=3, separator="."):
     """
@@ -98,7 +102,9 @@ def number_to_human_size(size):
         >>> number_to_human_size(1234567890)
         1.1 GB
     """
-    if size < 1024:
+    if size == 1:
+        return "1 Byte"
+    elif size < 1024:
         return "%d Bytes" % size
     elif size < (1024**2):
         return "%.1f KB" % (size / 1024.00)
@@ -110,6 +116,8 @@ def number_to_human_size(size):
         return "%.1f TB" % (size / 1024.00**4)
     else:
         return ""
+
+human_size = number_to_human_size
 
 def number_with_delimiter(number, delimiter=","):
     """
@@ -135,4 +143,4 @@ def number_with_precision(number, precision=3):
     return formstr % number
 
 __all__ = ['number_to_phone', 'number_to_currency', 'number_to_percentage','number_with_delimiter', 
-           'number_with_precision', 'number_to_human_size']
+           'number_with_precision', 'number_to_human_size', 'human_size']

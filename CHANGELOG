@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.2 (**svn**)
+* Sync'd number helper, added number unit tests.
 * Added markdown.py (python-markdown) for new markdown support in text helper.
 * Added textile.py (PyTextile) for new textilize support in text helper.
 * Brought asset/date/text helpers up to date with revision info.
