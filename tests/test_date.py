@@ -43,14 +43,14 @@ class TestDateHelper(TestCase):
         
         # test to < from
         self.assertEqual("about 4 hours", distance_of_time_in_words(datetime(2004, 3, 7, 1, 20), from_time))
-        self.assertEqual("less than 20 seconds", distance_of_time_in_words(datetime(2004, 3, 6, 21, 41, 38), from_time, True))
+        self.assertEqual("less than 20 seconds", distance_of_time_in_words(datetime(2004, 3, 6, 21, 41, 37), from_time, True))
 
         # test with integers
-        self.assertEqual("less than a minute", distance_of_time_in_words(50))
+        self.assertEqual("less than a minute", distance_of_time_in_words(29))
         self.assertEqual("about 1 hour", distance_of_time_in_words(60*60))
 
         # more cumbersome test with integers
-        self.assertEqual("less than a minute", distance_of_time_in_words(0, 50))
+        self.assertEqual("less than a minute", distance_of_time_in_words(0, 29))
         self.assertEqual("about 1 hour", distance_of_time_in_words(60*60, 0))
         
         # additional tests

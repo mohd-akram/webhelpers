@@ -16,7 +16,6 @@ def distance_of_time_in_words(from_time, to_time=0, include_seconds=False):
     
     Set ``include_seconds`` to True if you want more detailed approximations if distance < 1 minute
     """
-    #print from_time, to_time
     if isinstance(from_time, int):
         from_time = time.time()+from_time
     else:
@@ -27,8 +26,7 @@ def distance_of_time_in_words(from_time, to_time=0, include_seconds=False):
         to_time = time.mktime(to_time.timetuple())
     
     distance_in_minutes = int(round(abs(to_time-from_time)/60))
-    distance_in_seconds = int(abs(to_time-from_time))
-    print distance_in_seconds, from_time, to_time
+    distance_in_seconds = int(round(abs(to_time-from_time)))
     
     if distance_in_minutes <= 1:
         if include_seconds:
