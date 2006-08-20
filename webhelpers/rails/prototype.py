@@ -18,12 +18,15 @@ for documentation of options common to all Ajax helpers.
 See also `Scriptaculous <module-railshelpers.helpers.scriptaculous.html>`_ for
 helpers which work with the Scriptaculous controls and visual effects library.
 """
+# Last synced with Rails copy at Revision 4235 on Aug 19th, 2006.
+
 import sys
 if sys.version < '2.4':
     from sets import ImmutableSet as frozenset
 
 from javascript import *
 from javascript import options_for_javascript
+from form_tag import form
 from tags import tag, camelize
 from urls import get_url
 
@@ -171,12 +174,12 @@ def form_remote_tag(**options):
     the ``url`` (and the default method is ``post``).
     """
     options['form'] = True
-    options['html'] = options.get('html') or {}
+    if 'html' not in options: options['html'] = {}
     options['html']['onsubmit'] = "%s; return false;" % remote_function(**options)
-    options['html']['action'] = options['html'].get('action') or get_url(options['url'])
-    options['html']['method'] = options['html'].get('method') or 'post'
+    action = options['html'].get('action', get_url(options['url']))
+    options['html']['method'] = options['html'].get('method', 'post')
     
-    return tag("form", open=True, **options['html'])
+    return form(action, **options['html'])
 
 def submit_to_remote(name, value, **options):
     """

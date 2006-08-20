@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
 0.2 (**svn**)
+* Sync'd javascript, prototype helpers and prototype.js to latest Rails
+  modifications. Added more prototype tests.
 * Sync'd form_options, form_tag helpers. form_tag's form function can now
   accept other HTTP methods, and will include a hidden field for them if
   its not 'get' or 'post'.

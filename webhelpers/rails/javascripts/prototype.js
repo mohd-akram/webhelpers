@@ -668,7 +668,13 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
   request: function(url) {
     var parameters = this.options.parameters || '';
     if (parameters.length > 0) parameters += '&_=';
-
+    
+    /* Simulate other verbs over post */ 
+    if (this.options.method != 'get' && this.options.method != 'post') { 
+      parameters += (parameters.length > 0 ? '&' : '') + '_method=' + this.options.method 
+      this.options.method = 'post' 
+    }
+    
     try {
       this.url = url;
       if (this.options.method == 'get' && parameters.length > 0)

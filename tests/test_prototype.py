@@ -29,6 +29,10 @@ class TestPrototypeHelper(TestCase):
             form_remote_tag(update=dict(failure="glass_of_water"),url='http://www.example.com/fast'))
         self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater({success:'glass_of_beer',failure:'glass_of_water'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
             form_remote_tag(update=dict(success='glass_of_beer',failure="glass_of_water"),url='http://www.example.com/fast'))
+    
+    def test_form_remote_tag_with_method(self):
+        self.assertEqual("""<form action=\"http://www.example.com/fast\" method=\"post\" onsubmit=\"new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;\"><input name="_method" type="hidden" value="put" />""",
+            form_remote_tag(update="glass_of_beer", url='http://www.example.com/fast', html={'method':'put'}))
 
     def test_on_callbacks(self):
         callbacks = ['uninitialized','loading','loaded','interactive','complete','success','failure']
