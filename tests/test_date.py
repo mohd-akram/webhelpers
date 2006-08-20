@@ -18,7 +18,41 @@ class TestDateHelper(TestCase):
         self.assertEqual("about 3 hours", distance_of_time_in_words(from_time, datetime(2004, 3, 7, 0, 41)))
         self.assertEqual("about 4 hours", distance_of_time_in_words(from_time, datetime(2004, 3, 7, 1, 20)))
         self.assertEqual("2 days", distance_of_time_in_words(from_time, datetime(2004, 3, 9, 15, 40)))
+        
+        # test greater date separation
+        self.assertEqual("29 days", distance_of_time_in_words(from_time, datetime(2004, 4, 5, 21, 41, 18)))
+        self.assertEqual("about 1 month", distance_of_time_in_words(from_time, datetime(2004, 4, 6, 21, 41, 18)))
+        self.assertEqual("about 1 month", distance_of_time_in_words(from_time, datetime(2004, 4, 7, 21, 41, 18)))
+        self.assertEqual("2 months", distance_of_time_in_words(from_time, datetime(2004, 5, 6, 21, 41, 18)))
+        self.assertEqual("11 months", distance_of_time_in_words(from_time, datetime(2005, 2, 6, 21, 41, 18)))
+        self.assertEqual("about 1 year", distance_of_time_in_words(from_time, datetime(2005, 4, 6, 21, 41, 18)))
+        self.assertEqual("about 1 year", distance_of_time_in_words(from_time, datetime(2005, 4, 12, 21, 41, 18)))
+        self.assertEqual("over 2 years", distance_of_time_in_words(from_time, datetime(2006, 4, 6, 21, 41, 18)))
+        
+        # include seconds 
+        self.assertEqual("less than a minute", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 41, 19), False))
+        self.assertEqual("less than 5 seconds", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 41, 19), True))
+        self.assertEqual("less than 10 seconds", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 41, 27), True))
+        self.assertEqual("less than 20 seconds", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 41, 37), True))
+        self.assertEqual("half a minute", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 41, 48), True))
+        self.assertEqual("less than a minute", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 42, 17), True))
 
+        self.assertEqual("1 minute", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 42, 18), True))
+        self.assertEqual("1 minute", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 42, 28), True))
+        self.assertEqual("2 minutes", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 42, 48), True))
+        
+        # test to < from
+        self.assertEqual("about 4 hours", distance_of_time_in_words(datetime(2004, 3, 7, 1, 20), from_time))
+        self.assertEqual("less than 20 seconds", distance_of_time_in_words(datetime(2004, 3, 6, 21, 41, 38), from_time, True))
+
+        # test with integers
+        self.assertEqual("less than a minute", distance_of_time_in_words(50))
+        self.assertEqual("about 1 hour", distance_of_time_in_words(60*60))
+
+        # more cumbersome test with integers
+        self.assertEqual("less than a minute", distance_of_time_in_words(0, 50))
+        self.assertEqual("about 1 hour", distance_of_time_in_words(60*60, 0))
+        
         # additional tests
         # exactly 24 hrs should be about 24 hrs - to be the same as Rails (it should be 1 day)
         self.assertEqual("about 24 hours", distance_of_time_in_words(from_time, datetime(2004, 3, 7, 21, 41, 18)))

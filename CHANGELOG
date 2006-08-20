@@ -1,6 +1,9 @@
 WebHelpers ChangeLog
 
-0.1.3 (*svn*)
+0.2 (**svn**)
+* Brought asset tag up to date with revision info.
+
+0.1.3 (Release)
 * Brought feedgenerator in line with Django's version, which fixed the missing
   support for feed categories and updated classes for new-style. Other minor
   feed updates as well. Now synced as of Django r3143.
