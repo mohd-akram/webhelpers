@@ -1,6 +1,9 @@
 WebHelpers ChangeLog
 
 0.2 (**svn**)
+* Sync'd form_options, form_tag helpers. form_tag's form function can now
+  accept other HTTP methods, and will include a hidden field for them if
+  its not 'get' or 'post'.
 * Sync'd number helper, added number unit tests.
 * Added markdown.py (python-markdown) for new markdown support in text helper.
 * Added textile.py (PyTextile) for new textilize support in text helper.

@@ -1,6 +1,9 @@
 """
 Form Options Helpers
 """
+# Last synced with Rails copy at Revision 4331 on Aug 19th, 2006.
+# Purposely left out a few redundant options_for_collection stuff.
+
 
 from webhelpers.util import html_escape
 

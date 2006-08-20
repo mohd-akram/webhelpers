@@ -1,34 +1,47 @@
 """
 Form Tag Helpers
 """
+# Last synced with Rails copy at Revision 4374 on Aug 19th, 2006.
+
 from urls import confirm_javascript_function
 from tags import *
 from webhelpers.util import html_escape
 
-def form(url, **options):
+def form(url, method="post", multipart=False, **options):
     """
     Starts a form tag that points the action to an url. 
     
-    The url options should be given either as a string, or as a ``url()`` function. The
-    method for the form defaults to POST.
+    The url options should be given either as a string, or as a ``url()``
+    function. The method for the form defaults to POST.
     
     Options:
 
-    * ``multipart`` - If set to True, the enctype is set to "multipart/form-data".
-    * ``method`` - The method to use when submitting the form, usually either "get" or "post".
+    ``multipart``
+        If set to True, the enctype is set to "multipart/form-data".
+    ``method``
+        The method to use when submitting the form, usually either "get" or 
+        "post". If "put", "delete", or another verb is used, a hidden input
+        with name _method is added to simulate the verb over post.
     
     """
-    o = { "method": "post" }
-    o.update(options)
-    if 'multipart' in o:
-        o["enctype"] = "multipart/form-data"
-        del o['multipart']
+    if multipart:
+        options["enctype"] = "multipart/form-data"
+    
     if callable(url):
         url = url()
     else:
         url = html_escape(url)
-    o["action"] = url
-    return tag("form", True, **o)
+    
+    method_tag = ""
+    
+    if method in ['post', 'get']:
+        options['method'] = method
+    else:
+        options['method'] = "post"
+        method_tag = tag('input', type="hidden", name_="_method", value=method)
+    
+    options["action"] = url
+    return tag("form", True, **options) + method_tag
 
 start_form = form
 
