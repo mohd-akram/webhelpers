@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
 0.2 (**svn**)
+* Adding simplejson req, adding use of json'ification. Updated scriptaculous
+  helpers to split out JS generation for use in JS Generation port.
 * Finished sync'ing Rails ports (urls, tags) in WebHelpers. Closes #69.
   url and prototype tests updated, url helpers updated to handle method
   argument.

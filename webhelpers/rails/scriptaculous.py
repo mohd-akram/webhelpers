@@ -91,6 +91,9 @@ def sortable_element(element_id, **options):
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.
     """
+    return javascript_tag(sortable_element_js(element_id, **options))
+
+def sortable_element_js(element_id, **options):
     options.setdefault('with', "Sortable.serialize('%s')" % element_id)
     options.setdefault('onUpdate', "function(){%s}" % remote_function(**options))
     for k in options.keys():
@@ -105,7 +108,7 @@ def sortable_element(element_id, **options):
     if options.has_key('only'):
         options['only'] = array_or_string_for_javascript(options['only'])
     
-    return javascript_tag("Sortable.create('%s', %s)" % (element_id, options_for_javascript(options)))
+    return "Sortable.create('%s', %s)" % (element_id, options_for_javascript(options))
 
 def draggable_element(element_id, **options):
     """
@@ -118,7 +121,10 @@ def draggable_element(element_id, **options):
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.
     """
-    return javascript_tag("new Draggable('%s', %s)" % (element_id, options_for_javascript(options)))
+    return javascript_tag(draggable_element_js(element_id, **options))
+
+def draggable_element_js(element_id, **options):
+    return "new Draggable('%s', %s)" % (element_id, options_for_javascript(options))
 
 def drop_receiving_element(element_id, **options):
     """
@@ -136,6 +142,9 @@ def drop_receiving_element(element_id, **options):
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.    
     """
+    return javascript_tag(drop_receiving_element_js(element_id, **options))
+
+def drop_receiving_element_js(element_id, **options):
     options.setdefault('with', "'id=' + encodeURIComponent(element.id)")
     options.setdefault('onDrop', "function(element){%s}" % remote_function(**options))
     for k in options.keys():
@@ -146,6 +155,6 @@ def drop_receiving_element(element_id, **options):
     if options.has_key('hoverclass'):
         options['hoverclass'] = "'%s'" % options['hoverclass']
     
-    return javascript_tag("Droppables.add('%s', %s)" % (element_id, options_for_javascript(options)))
+    return "Droppables.add('%s', %s)" % (element_id, options_for_javascript(options))
 
 __all__ = ['visual_effect', 'parallel_effects', 'sortable_element', 'draggable_element', 'drop_receiving_element']
