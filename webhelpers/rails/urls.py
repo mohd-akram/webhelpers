@@ -233,26 +233,36 @@ def post_javascript_function():
     return "f = document.createElement('form'); document.body.appendChild(f); f.method = 'POST'; f.action = this.href; f.submit();"
 
 
-def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, body=None, replace_at=None, replace_dot=None, encode=None, **html_options):
+def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, 
+    body=None, replace_at=None, replace_dot=None, encode=None, **html_options):
     """
-      Creates a link tag for starting an email to the specified <tt>email_address</tt>, which is also used as the name of the
-      link unless +name+ is specified. Additional HTML options, such as class or id, can be passed in the <tt>html_options</tt> hash.
-      
-      You can also make it difficult for spiders to harvest email address by obfuscating them.
-      Examples:
-        >>> mail_to("me@domain.com", "My email", encode = "javascript")  # =>
+    Creates a link tag for starting an email to the specified 
+    ``email_address``, which is also used as the name of the link unless
+    ``name`` is specified. Additional HTML options, such as class or id, can be
+    passed in the ``html_options`` hash.
+    
+    You can also make it difficult for spiders to harvest email address by 
+    obfuscating them.
+    
+    Examples::
+    
+        >>> mail_to("me@domain.com", "My email", encode = "javascript")
         <script type="text/javascript" language="javascript">eval(unescape('%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%65%66%3d%22%6d%61%69%6c%74%6f%3a%6d%65%40%64%6f%6d%61%69%6e%2e%63%6f%6d%22%3e%4d%79%20%65%6d%61%69%6c%3c%2f%61%3e%27%29%3b'))</script>
-      
-        >>> mail_to("me@domain.com", "My email", encode = "hex")  # =>
+    
+        >>> mail_to("me@domain.com", "My email", encode = "hex")
         <a href="mailto:%6d%65@%64%6f%6d%61%69%6e.%63%6f%6d">My email</a>
-      
-      You can also specify the cc address, bcc address, subject, and body parts of the message header to create a complex e-mail using the
-      corresponding +cc+, +bcc+, +subject+, and +body+ keyword arguments. Each of these options are URI escaped and then appended to
-      the <tt>email_address</tt> before being output. <b>Be aware that javascript keywords will not be escaped and may break this feature
-      when encoding with javascript.</b>
-      Examples:
-        >>> mail_to("me@domain.com", "My email", cc="ccaddress@domain.com", bcc="bccaddress@domain.com", subject="This is an example email",
-            body= "This is the body of the message.")   # =>
+    
+    You can also specify the cc address, bcc address, subject, and body parts
+    of the message header to create a complex e-mail using the corresponding
+    ``cc``, ``bcc``, ``subject``, and ``body`` keyword arguments. Each of these
+    options are URI escaped and then appended to the ``email_address`` before
+    being output. **Be aware that javascript keywords will not be escaped and
+    may break this feature when encoding with javascript.**
+    
+    Examples::
+    
+        >>> mail_to("me@domain.com", "My email", cc="ccaddress@domain.com", bcc="bccaddress@domain.com", 
+        subject="This is an examjust    ple email", body= "This is the body of the message.")
         <a href="mailto:me@domain.com?cc="ccaddress@domain.com"&bcc="bccaddress@domain.com"&body="This%20is%20the%20body%20of%20the%20message."&subject="This%20is%20an%20example%20email">My email</a>
     """
     extras = {}
