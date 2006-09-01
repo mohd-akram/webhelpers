@@ -347,9 +347,10 @@ def observe_field(field_id, **options):
     `link_to_remote <#link_to_remote>`_.
     """
     if options.get('frequency') > 0:
-        return build_observer('Form.Element.Observer', field_id, **options)
+        class_ = 'Form.Element.Observer'
     else:
-        return build_observer('Form.Element.EventObserver', field_id, **options)
+        class_ = 'Form.Element.EventObserver'
+    return build_observer(class_, field_id, **options)
 
 def observe_form(form_id, **options):
     """
@@ -361,9 +362,10 @@ def observe_form(form_id, **options):
     of the form.
     """
     if options.get('frequency'):
-        return build_observer('Form.Observer', form_id, **options)
+        class_ = 'Form.Observer'
     else:
-        return build_observer('Form.EventObserver', form_id, **options)
+        class_ = 'Form.EventObserver'
+    return build_observer(class_, form_id, submit=form_id, **options)
 
 def options_for_ajax(options):
     js_options = build_callbacks(options)
