@@ -19,6 +19,7 @@ class TestTextHelper(TestCase):
                        'link3_raw': 'http://manuals.ruby-on-rails.com/read/chapter.need_a-period/103#page281',
                        'link4_raw': 'http://foo.example.com/controller/action?parm=value&p2=v2#anchor123',
                        'link5_raw': 'http://www.rubyonrails.com.au',
+                       'link6_raw': 'http://example.org/cgi-bin/some%20thing.cgi?foo=x&bar=37+x'
                      }
         
         result_values_templates = { 'email_result': '<a href="mailto:${email_raw}">${email_raw}</a>',
@@ -27,7 +28,8 @@ class TestTextHelper(TestCase):
                                     'link2_result': '<a href="http://${link2_raw}">${link2_raw}</a>',
                                     'link3_result': '<a href="${link3_raw}">${link3_raw}</a>',
                                     'link4_result': '<a href="${link4_raw}">${link4_raw}</a>',
-                                    'link5_result': '<a href="${link5_raw}">${link5_raw}</a>'
+                                    'link5_result': '<a href="${link5_raw}">${link5_raw}</a>',
+                                    'link6_result': '<a href="http://example.org/cgi-bin/some%20thing.cgi?foo=x&bar=37+x">http://example.org/cgi-bin/some%20thing.cgi?foo=x&bar=37+x</a>'
                                   }
                   
         result_values = {}
@@ -65,6 +67,7 @@ class TestTextHelper(TestCase):
         self.assertEqual( '<p>%(link5_result)s Link</p>' %result_values, auto_link('<p>%(link5_raw)s Link</p>' %raw_values))
         self.assertEqual( 'Go to %(link5_result)s.' %result_values, auto_link('Go to %(link5_raw)s.' %raw_values))
         self.assertEqual( '<p>Say hello to %(email_result)s, then go to %(link5_result)s.</p>' %result_values, auto_link('<p>Say hello to %(email_raw)s, then go to %(link5_raw)s.</p>' %raw_values))
+        self.assertEqual('%(link6_result)s' % result_values, auto_link('%(link6_raw)s' % raw_values))
 
 if __name__ == '__main__':
     suite = [unittest.makeSuite(TestTextHelper)]
