@@ -15,6 +15,10 @@ class TestFormTagHelper(TestCase):
             form(url="http://www.example.com"),
             '<form action="http://www.example.com" method="post">'
         )
+        self.assertEqual(
+            form(url="http://www.example.com", method='GET'),
+            '<form action="http://www.example.com" method="GET">'
+        )
 
     def test_form_multipart(self):
         self.assertEqual(

@@ -34,7 +34,7 @@ def form(url, method="post", multipart=False, **options):
     
     method_tag = ""
     
-    if method in ['post', 'get']:
+    if method.lower() in ['post', 'get']:
         options['method'] = method
     else:
         options['method'] = "post"
