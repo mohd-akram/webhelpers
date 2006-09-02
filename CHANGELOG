@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
 0.2.1 (**svn**)
+* Sync'd text helper from latest Rails version.
+* Fixed form tag's method matching to be case insensitive.
 
 0.2 (8/31/06)
 * Adding simplejson req, adding use of json'ification. Updated scriptaculous

@@ -1,7 +1,7 @@
 """
 Text Helpers
 """
-# Last synced with Rails copy at Revision 4595 on Aug 19th, 2006.
+# Last synced with Rails copy at Revision 4896 on Sep 1st, 2006.
 # Purposely left out sanitize, should be included at some point likely using
 # BeautifulSoup.
 
@@ -11,7 +11,7 @@ import webhelpers.textile as textile
 import webhelpers.markdown as markdown
 import itertools, re
 
-AUTO_LINK_RE = re.compile("""(<\w+.*?>|[^=!:'"\/]|^)((?:http[s]?:\/\/)|(?:www\.))(([\w]+:?[=?&\/.-]?)*\w+[\/]?(?:\#\w*)?)([\.,"'?!;:]|\s|<|$)""")
+AUTO_LINK_RE = re.compile(r"""(<\w+.*?>|[^=!:'"/]|^)((?:https?://)|(?:www\.))([-\w]+(?:\.[-\w]+)*(?::\d+)?(?:/(?:[~\w%.;-]+)?)*(?:\?[\w%&=.;-]+)?(?:\#\w*)?)([\.,"'?!;:]|\s|<|$)""")
     
 def iterdict(items):
     return dict(items=items, iter=itertools.cycle(items))
@@ -184,7 +184,7 @@ def auto_link_urls(text, **href_options):
     extra_options = tag_options(**href_options)
     def handle_match(matchobj):
         all = matchobj.group()
-        a, b, c, d = matchobj.group(1,2,3,5)
+        a, b, c, d = matchobj.group(1,2,3,4)
         if re.match(r'<a\s', a, re.I):
             return all
         text = b + c
