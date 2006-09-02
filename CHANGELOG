@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.2.1 (**svn**)
+* Fixed auto_link to parse more valid url formats (Thanks Jamie Wilkinson).
 * Sync'd text helper from latest Rails version.
 * Fixed form tag's method matching to be case insensitive.
 
