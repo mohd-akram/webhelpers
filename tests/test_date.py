@@ -54,8 +54,7 @@ class TestDateHelper(TestCase):
         self.assertEqual("about 1 hour", distance_of_time_in_words(60*60, 0))
         
         # additional tests
-        # exactly 24 hrs should be about 24 hrs - to be the same as Rails (it should be 1 day)
-        self.assertEqual("about 24 hours", distance_of_time_in_words(from_time, datetime(2004, 3, 7, 21, 41, 18)))
+        # exactly 24 hrs
         self.assertEqual("1 day", distance_of_time_in_words(from_time, datetime(2004, 3, 7, 21, 51, 18)))
         # test > 30, but < 60 s, i.e. closer to a minute if rounded
         self.assertEqual("1 minute", distance_of_time_in_words(from_time, datetime(2004, 3, 6, 21, 41, 50)))
@@ -68,8 +67,8 @@ class TestDateHelper(TestCase):
         self.assertEqual("about 3 hours", distance_of_time_in_words(11160))
         self.assertEqual("about 4 hours", distance_of_time_in_words(14399))
         self.assertEqual("2 days", distance_of_time_in_words(180000))
-        # exactly 24 hrs should be about 24 hrs - to be the same as Rails (it should be 1 day)
-        self.assertEqual("about 24 hours", distance_of_time_in_words(86400))
+        # exactly 24 hrs
+        self.assertEqual("1 day", distance_of_time_in_words(86400))
         self.assertEqual("1 day", distance_of_time_in_words(87000))
 
     def test_time_ago_in_words(self):
