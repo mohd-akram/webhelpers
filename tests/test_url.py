@@ -26,6 +26,14 @@ class TestURLHelper(TestCase):
                button_to("Hello", "http://www.example.com", disabled=False))
         self.assertEqual("<form method=\"post\" action=\"http://www.example.com\" class=\"button-to\"><div><input disabled=\"disabled\" type=\"submit\" value=\"Hello\" /></div></form>",
                button_to("Hello", "http://www.example.com", disabled=True))
+    
+    def test_button_to_with_method_delete(self):
+        self.assertEqual("<form method=\"post\" action=\"http://www.example.com\" class=\"button-to\"><div><input name=\"_method\" type=\"hidden\" value=\"delete\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
+            button_to("Hello", "http://www.example.com", method='delete'))
+
+    def test_button_to_with_method_get(self):
+        self.assertEqual("<form method=\"get\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
+            button_to("Hello", "http://www.example.com", method='get'))
 
     def test_link_tag_with_straight_url(self):
         self.assertEqual("<a href=\"http://www.example.com\">Hello</a>", link_to("Hello", "http://www.example.com"))

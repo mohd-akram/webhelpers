@@ -1,5 +1,5 @@
 """URL Helpers"""
-# Last synced with Rails copy at Revision 4374 on Aug 20th, 2006.
+# Last synced with Rails copy at Revision 4914 on Sep 4th, 2006.
 
 import cgi
 import urllib
@@ -95,9 +95,11 @@ def button_to(name, url='', **html_options):
     
     Example 2::
     
-        >> button_to("Destroy", url(action='destroy', id=3), confirm="Are you sure?")
+        >> button_to("Destroy", url(action='destroy', id=3), confirm="Are you sure?", method='delete')
         <form method="post" action="/feeds/destroy/3" class="button-to">
-        <div><input onclick="return confirm('Are you sure?');" value="Destroy" type="submit" />
+        <div>
+            <input type="hidden" name="_method" value="delete" />
+            <input onclick="return confirm('Are you sure?');" value="Destroy" type="submit" />
         </div>
         </form>
     
@@ -112,6 +114,13 @@ def button_to(name, url='', **html_options):
     if html_options:
         convert_boolean_attributes(html_options, ['disabled'])
     
+    method_tag = ''
+    method = html_options.pop('method', '')
+    if method in ['put', 'delete']:
+        method_tag = tags.tag('input', type_='hidden', name_='_method', value=method)
+    
+    form_method = (method == 'get' and 'get') or 'post'
+    
     confirm = html_options.get('confirm')
     if confirm:
         del html_options['confirm']
@@ -125,8 +134,8 @@ def button_to(name, url='', **html_options):
     
     html_options.update(dict(type='submit', value=name))
     
-    return """<form method="post" action="%s" class="button-to"><div>""" % html_escape(url) + \
-           tags.tag("input", **html_options) + "</div></form>"
+    return """<form method="%s" action="%s" class="button-to"><div>""" % \
+        (form_method, html_escape(url)) + method_tag + tags.tag("input", **html_options) + "</div></form>"
 
 def link_to_unless_current(name, url, **html_options):
     """
