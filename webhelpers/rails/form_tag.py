@@ -1,7 +1,7 @@
 """
 Form Tag Helpers
 """
-# Last synced with Rails copy at Revision 4925 on Sept. 6th, 2006.
+# Last synced with Rails copy at Revision 5045 on Sept. 6th, 2006.
 
 import re
 from urls import confirm_javascript_function

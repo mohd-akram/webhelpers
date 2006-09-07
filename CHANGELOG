@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.2.1 (**svn**)
+* Sync'd Rails Form tag helper to 5045, also doesn't apply to our version.
 * Sync'd Rails Javascript func to 5039, doesn't apply to us.
 * Updated Scriptaculous to 1.6.3.
 * Updated Prototype to 1.5.0_rc1.
