@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
 0.2.1 (**svn**)
+* Sync'd Rails Text helper to 4994.
+* Sync'd Rails Asset tag helper to 4999.
 * Sync'd Rails Form tag helper to 5045, also doesn't apply to our version.
 * Sync'd Rails Javascript func to 5039, doesn't apply to us.
 * Updated Scriptaculous to 1.6.3.
