@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.2.1 (**svn**)
+* Updated Scriptaculous to 1.6.3.
 * Updated Prototype to 1.5.0_rc1.
 * Updated radio_button so that id's are unique. Brings up to date with Rails
   changeset #4925, also fixes #103.
