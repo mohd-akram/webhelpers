@@ -1,7 +1,7 @@
 """
 Text Helpers
 """
-# Last synced with Rails copy at Revision 4916 on Sep 4th, 2006.
+# Last synced with Rails copy at Revision 4994 on Sep 6th, 2006.
 # Purposely left out sanitize and strip_tags, should be included at some point likely using
 # BeautifulSoup.
 
@@ -153,7 +153,7 @@ def simple_format(text):
     text = re.sub(r'(\r\n|\n|\r)', r'\n', text)
     text = re.sub(r'\n\n+', r'\n\n', text)
     text = re.sub(r'(\n\n)', r'</p>\1<p>', text)
-    text = re.sub(r'([^\n])(\n)([^\n])', r'\1\2<br />\3', text)
+    text = re.sub(r'([^\n])(\n)(?=[^\n])', r'\1\2<br />', text)
     text = content_tag("p", text).replace('</p><p></p>', '</p>')
     text = re.sub(r'</p><p>', r'</p>\n<p>', text)
     return text
