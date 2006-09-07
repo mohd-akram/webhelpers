@@ -74,7 +74,7 @@ def reset_cycle(name='default'):
     """
     del request_config().environ['railshelpers.cycles'][name]
 
-def counter(*args, **kwargs):
+def counter(name='default', start=1, step=1):
     """Return the next cardinal in a sequence.
 
     Every time ``counter`` is called, the value returned will be the next
@@ -99,18 +99,11 @@ def counter(*args, **kwargs):
         </tr>
         % #endfor
 
-    You can used named counters to prevent clashes in nested loops.
+    You can use named counters to prevent clashes in nested loops.
     You'll have to reset the inner cycle manually though.  See the
     documentation for ``webhelpers.text.cycle()`` for a similar
     example.
     """
-    # optional name of this list
-    name = kwargs.get('name', 'default')
-    # optional starting value for this sequence
-    start = kwargs.get('start', 1)
-    # optional step size of this sequence
-    step = kwargs.get('step', 1)
-
     counters = request_config().environ.setdefault('railshelpers.counters', {})
 
     # ripped off of itertools.count
@@ -288,5 +281,5 @@ def markdown(text):
     """
     return markdown.markdown(text)
 
-__all__ = ['cycle', 'reset_cycle', 'truncate', 'highlight', 'excerpt', 'word_wrap', 'simple_format',
-           'auto_link', 'strip_links', 'textilize', 'markdown']
+__all__ = ['cycle', 'reset_cycle', 'counter', 'reset_counter', 'truncate', 'highlight', 'excerpt',
+           'word_wrap', 'simple_format', 'auto_link', 'strip_links', 'textilize', 'markdown']
