@@ -4,10 +4,11 @@ Asset Tag Helpers
 Provides functionality for linking an HTML page together with other assets, such as
 javascripts, stylesheets, and feeds.
 """
-# Last synced with Rails copy at Revision 4103 on Aug 19th, 2006.
+# Last synced with Rails copy at Revision 4999 on Sep 6th, 2006.
 
 import os
 import urlparse
+import warnings
 from tags import *
 from routes import request_config
 
@@ -68,8 +69,7 @@ def image_tag(source, alt=None, size=None, **options):
         The source URL of the image. The URL is prepended with '/images/', unless its full
         path is specified. The URL is ultimately prepended with the environment's
         ``SCRIPT_NAME`` (the root path of the web application), unless the URL is
-        fully-fledged (e.g. http://example.com). A source with no filename extension will
-        be automatically appended with the '.png' extension.
+        fully-fledged (e.g. http://example.com).
     
     ``alt``
         The img's alt tag. Defaults to the source's filename, title cased.
@@ -80,12 +80,17 @@ def image_tag(source, alt=None, size=None, **options):
         
     Examples::
 
-        >>> image_tag('xml')
+        >>> image_tag('xml.png')
         '<img alt="Xml" src="/images/xml.png" />'
 
-        >>> image_tag('rss', 'rss syndication')
+        >>> image_tag('rss.png', 'rss syndication')
         '<img alt="rss syndication" src="/images/rss.png" />'    
     """
+    if not os.path.splitext(source)[1]:
+        warnings.warn("You've called image_tag with a source that doesn't include an "
+                      "extension. Soon image_tag will no longer automatically append "
+                      "'.png' to your source. Please call image_path('%s.png') instead" % \
+                      source, DeprecationWarning, 2)
     options['src'] = compute_public_path(source, 'images', 'png')
 
     if not alt:

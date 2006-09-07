@@ -21,13 +21,13 @@ class TestAssetTagHelper(TestCase):
         
     def test_image_tag(self):
         self.assertEqual('<img alt="Xml" src="/images/xml.png" />',
-                         image_tag('xml'))
+                         image_tag('xml.png'))
         self.assertEqual('<img alt="rss syndication" src="/images/rss.png" />',
-                        image_tag('rss', alt='rss syndication'))
+                        image_tag('rss.png', alt='rss syndication'))
         self.assertEqual('<img alt="Gold" height="70" src="/images/gold.png" width="45" />',
-                         image_tag('gold', size='45x70'))
-        self.assertEqual('<img alt="Symbolize" height="70" src="/images/symbolize.png" width="45" />',
-                         image_tag('symbolize', size='45x70'))
+                         image_tag('gold.png', size='45x70'))
+        self.assertEqual('<img alt="Symbolize" height="70" src="/images/symbolize.jpg" width="45" />',
+                         image_tag('symbolize.jpg', size='45x70'))
         self.assertEqual('<img alt="Pylons-Tower-Dark1" src="http://pylons.tgtg.org/powered/_img/pylons-tower-dark1.png" />',
                          image_tag('http://pylons.tgtg.org/powered/_img/pylons-tower-dark1.png'))
 
