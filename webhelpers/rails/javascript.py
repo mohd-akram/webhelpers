@@ -9,7 +9,7 @@ Ajax, controls and visual effects
 * For information on using Ajax, see `Prototype Helpers <module-railshelpers.helpers.prototype.html>`_.
 * For information on using controls and visual effects, see `Scriptaculous Helpers <module-railshelpers.helpers.scriptaculous.html>`_.
 """
-# Last synced with Rails copy at Revision 4235 on Aug 19th, 2006.
+# Last synced with Rails copy at Revision 5039 on Sept. 6th, 2006.
 
 import re
 from tags import *
