@@ -1,5 +1,8 @@
 WebHelpers ChangeLog
 
+0.2.2 (**svn**)
+
+
 0.2.1 (9/7/06)
 * Adding counter func to text helpers, patch from Jamie Wilkinson.
 * Sync'd Rails Text helper to 4994.
