@@ -1,8 +1,9 @@
 """
 Form Tag Helpers
 """
-# Last synced with Rails copy at Revision 4374 on Aug 19th, 2006.
+# Last synced with Rails copy at Revision 4925 on Sept. 6th, 2006.
 
+import re
 from urls import confirm_javascript_function
 from tags import *
 from webhelpers.util import html_escape
@@ -142,12 +143,18 @@ def check_box(name, value="1", checked=False, **options):
     return tag("input", **o)
 
 def radio_button(name, value, checked=False, **options):
-    """Creates a radio button."""
-    o = {'type': 'radio', 'name_': name, 'id': name, 'value': value}
-    o.update(options)
+    """Creates a radio button.
+    
+    The id of the radio button will be set to the name + value with a _ in
+    between to ensure its uniqueness.
+    """
+    pretty_tag_value = re.sub(r'\s', "_", str(value))
+    pretty_tag_value = re.sub(r'(?!-)\W', "", pretty_tag_value).lower()
+    html_options = {'type': 'radio', 'name_': name, 'id': '%s_%s' % (name, pretty_tag_value), 'value': value}
+    html_options.update(options)
     if checked:
-        o["checked"] = "checked"
-    return tag("input", **o)
+        html_options["checked"] = "checked"
+    return tag("input", **html_options)
 
 def submit(value="Save changes", name='commit', confirm=None, disable_with=None, **options):
     """Creates a submit button with the text ``value`` as the caption.
