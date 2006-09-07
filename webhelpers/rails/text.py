@@ -1,8 +1,8 @@
 """
 Text Helpers
 """
-# Last synced with Rails copy at Revision 4896 on Sep 1st, 2006.
-# Purposely left out sanitize, should be included at some point likely using
+# Last synced with Rails copy at Revision 4916 on Sep 4th, 2006.
+# Purposely left out sanitize and strip_tags, should be included at some point likely using
 # BeautifulSoup.
 
 from routes import request_config
