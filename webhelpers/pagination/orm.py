@@ -23,7 +23,7 @@ def get_wrapper(obj, *args, **kw):
         if inspect.isclass(obj) and issubclass(obj, sqlobject.SQLObject):
             return SQLObjectLazy(obj.select, *args, **kw)
     if orms.get('sqlalchemy'):
-        if hasattr(obj, '_is_primary_mapper'):
+        if hasattr(obj, '_is_primary_mapper') or isinstance(obj, sqlalchemy.Query):
             return SQLAlchemyLazyMapper(obj, *args, **kw)
         if isinstance(obj, sqlalchemy.Table):
             return SQLAlchemyLazyTable(obj, *args, **kw)
