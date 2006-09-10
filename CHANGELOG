@@ -3,6 +3,8 @@ WebHelpers ChangeLog
 0.2.2 (**svn**)
 * Added sqlalchemy.Query support to the pagination orm wrappers, patch from
   Andrija Zarić
+* Fixed python 2.3 compliance in webhelpers.rails (use of sorted()) (Thanks
+  Jamie Wilkinson)
 
 0.2.1 (9/7/06)
 * Adding counter func to text helpers, patch from Jamie Wilkinson.
