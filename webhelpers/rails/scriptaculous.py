@@ -84,9 +84,11 @@ def sortable_element(element_id, **options):
 
         <% sortable_element("my_list", url=url(action="order")) %>
     
-    In the example, the action gets a "my_list" array parameter 
-    containing the values of the ids of elements the sortable consists 
-    of, in the current order.
+    In the example, the server-side action gets a "my_list" array
+    parameter containing the values of the ids of elements the
+    sortable consists of, in the current order (like
+    ``mylist=item1&mylist=item2``, where ``item1`` and ``item2`` are
+    the ids of the ``<li>`` elements).
     
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.
@@ -94,6 +96,8 @@ def sortable_element(element_id, **options):
     return javascript_tag(sortable_element_js(element_id, **options))
 
 def sortable_element_js(element_id, **options):
+    if not isinstance(element_id, basestring):
+        raise ValueError('Argument element_id must be a string')
     options.setdefault('with', "Sortable.serialize('%s')" % element_id)
     options.setdefault('onUpdate', "function(){%s}" % remote_function(**options))
     for k in options.keys():
