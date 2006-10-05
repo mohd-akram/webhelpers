@@ -20,7 +20,7 @@ class TestDateHelper(TestCase):
         self.assertEqual("2 days", distance_of_time_in_words(from_time, datetime(2004, 3, 9, 15, 40)))
         
         # test greater date separation
-        self.assertEqual("29 days", distance_of_time_in_words(from_time, datetime(2004, 4, 5, 21, 41, 18)))
+        self.assertEqual("29 days", distance_of_time_in_words(from_time, datetime(2004, 4, 5, 12, 41, 18)))
         self.assertEqual("about 1 month", distance_of_time_in_words(from_time, datetime(2004, 4, 6, 21, 41, 18)))
         self.assertEqual("about 1 month", distance_of_time_in_words(from_time, datetime(2004, 4, 7, 21, 41, 18)))
         self.assertEqual("2 months", distance_of_time_in_words(from_time, datetime(2004, 5, 6, 21, 41, 18)))
