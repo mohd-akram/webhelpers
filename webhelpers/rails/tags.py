@@ -74,7 +74,7 @@ def cdata_section(content):
 def tag_options(**options):
     strip_unders(options)
     cleaned_options = convert_booleans(dict([(x, y) for x,y in options.iteritems() if y is not None]))
-    optionlist = ['%s="%s"' % (x, html_escape(str(y))) for x,y in cleaned_options.iteritems()]
+    optionlist = ['%s="%s"' % (x, html_escape(y)) for x,y in cleaned_options.iteritems()]
     optionlist.sort()
     if optionlist:
         return ' ' + ' '.join(optionlist)
