@@ -1,6 +1,6 @@
 WebHelpers ChangeLog
 
-0.2.2 (**svn**)
+0.2.2 (10/20/06)
 * Fixed tag_options function to not str() string and let html_escape handle
   it so unicode is properly handled. Reported with fix by Michael G. Noll.
 * Added sqlalchemy.Query support to the pagination orm wrappers, patch from
