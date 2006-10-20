@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="WebHelpers",
-    version='0.2.2',
+    version='0.2.3',
     description='Web Helpers',
     long_description="""
 Web Helpers is a library of helper functions intended to make writing templates in web
