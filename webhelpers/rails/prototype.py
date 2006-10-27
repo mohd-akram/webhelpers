@@ -229,9 +229,9 @@ def update_element_function(element_id, **options):
         # Controller action
         def buy(self, **params):
             c.product = Product.find(1)
-            m.subexec('/buy.myt')
+            return render_response('/buy.myt')
     
-        # Returning view
+        # Returning view (buy.myt)
         <% update_element_function(
                 "cart", action='update', position='bottom', 
                 content="<p>New Product: %s</p>" % c.product.name) %>
