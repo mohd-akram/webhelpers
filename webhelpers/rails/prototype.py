@@ -272,7 +272,8 @@ def remote_function(**options):
     """
     Returns the JavaScript needed for a remote function.
     
-    Takes the same arguments as `link_to_remote <#link_to_remote>`_.
+    Takes the same options that can be passed as ``options`` to
+    `link_to_remote <#link_to_remote>`_.
     
     Example::
     
