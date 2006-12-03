@@ -3,6 +3,8 @@ WebHelpers ChangeLog
 0.2.3 (**svn**)
 * Updated remote_function doc-string to more clearly indicate the arguments
   it can recieve.
+* Synced Rails Javascript helper to 5245 (escape_javascript now escaping
+  backslashes and allow passing html_options to javascript_tag).
 
 0.2.2 (10/20/06)
 * Fixed tag_options function to not str() string and let html_escape handle

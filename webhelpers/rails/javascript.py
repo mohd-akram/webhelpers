@@ -9,7 +9,7 @@ Ajax, controls and visual effects
 * For information on using Ajax, see `Prototype Helpers <module-railshelpers.helpers.prototype.html>`_.
 * For information on using controls and visual effects, see `Scriptaculous Helpers <module-railshelpers.helpers.scriptaculous.html>`_.
 """
-# Last synced with Rails copy at Revision 5039 on Sept. 6th, 2006.
+# Last synced with Rails copy at Revision 5245 on Dec. 1st, 2006.
 
 import re
 from tags import *
@@ -44,11 +44,12 @@ def escape_javascript(javascript):
     """
     Escape carriage returns and single and double quotes for JavaScript segments.
     """
-    javascript = re.sub(r'\r\n|\n|\r', r'\\n', (javascript or ''))
+    javascript = re.sub(r'\\', r'\\\\', (javascript or ''))
+    javascript = re.sub(r'\r\n|\n|\r', r'\\n', javascript)
     javascript = re.sub(r'(["\'])', r'\\\1', javascript)
     return javascript
 
-def javascript_tag(content):
+def javascript_tag(content, **html_options):
     """
     Returns a JavaScript tag with the ``content`` inside.
     
@@ -57,7 +58,8 @@ def javascript_tag(content):
         >>> javascript_tag("alert('All is good')"
         '<script type="text/javascript">alert('All is good')</script>'
     """
-    return content_tag("script", javascript_cdata_section(content), type="text/javascript")
+    return content_tag("script", javascript_cdata_section(content), type="text/javascript",
+                       **html_options)
 
 def javascript_cdata_section(content):
     return "\n//%s\n" % cdata_section("\n%s\n//" % content)

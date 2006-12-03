@@ -7,6 +7,14 @@ class TestJavascriptHelper(TestCase):
     def test_escape_javascript(self):
         self.assertEqual("""This \\"thing\\" is really\\n netos\\'""",
                escape_javascript("""This "thing" is really\n netos'"""))
+        self.assertEqual("""alert(\\'C:\\\\Program Files\\');""",
+               escape_javascript("""alert('C:\Program Files');"""))
+
+    def test_escape_javascript_tag(self):
+        self.assertEqual("""<script type="text/javascript">\n//<![CDATA[\nalert(\'All is good\')\n//]]>\n</script>""",
+                         javascript_tag("alert('All is good')"))
+        self.assertEqual("""<script defer="True" type="text/javascript">\n//<![CDATA[\nalert(\'All is good\')\n//]]>\n</script>""",
+                         javascript_tag("alert('All is good')", defer=True))
     
     def test_link_to_funcion(self):
         self.assertEqual("""<a href="#" onclick="alert('Hello World!'); return false;">Greeting</a>""",
