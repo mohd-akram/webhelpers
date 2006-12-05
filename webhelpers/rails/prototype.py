@@ -338,11 +338,6 @@ def observe_field(field_id, **options):
         A JavaScript expression specifying the parameters for the
         XMLHttpRequest. This defaults to 'value', which in the evaluated
         context refers to the new field value.
-    ``on``
-        Specifies which event handler to observe. By default, it's set to
-        "changed" for text fields and areas and "click" for radio buttons
-        and checkboxes. With this, you can specify it instead to be "blur"
-        or "focus" or any other event.
     
     Additionally, you may specify any of the options documented in
     `link_to_remote <#link_to_remote>`_.
@@ -397,7 +392,11 @@ def build_observer(cls, name, **options):
     javascript = "new %s('%s', " % (cls, name)
     if options.get('frequency'): 
         javascript += "%s, " % options['frequency']
-    javascript += "function(element, value) {%s})" % callback
+    javascript += "function(element, value) {%s}" % callback
+    if options.get('on'):
+        # FIXME: our prototype isn't supporting the on arg
+        javascript +=", '%s'" % options['on']
+    javascript += ")"
     return javascript_tag(javascript)
 
 def build_callbacks(options):

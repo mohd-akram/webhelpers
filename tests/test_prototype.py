@@ -77,6 +77,8 @@ class TestPrototypeHelper(TestCase):
     def test_observe_field(self):
         self.assertEqual("""<script type="text/javascript">\n//<![CDATA[\nnew Form.Element.Observer('glass', 300, function(element, value) {new Ajax.Request('http://www.example.com/reorder_if_empty', {asynchronous:true, evalScripts:true})})\n//]]>\n</script>""",
             observe_field("glass", frequency=300,url='http://www.example.com/reorder_if_empty'))
+        self.assertEqual("""<script type="text/javascript">\n//<![CDATA[\nnew Form.Element.Observer('glass', 300, function(element, value) {new Ajax.Request('http://www.example.com/reorder_if_empty', {asynchronous:true, evalScripts:true})}, 'blur')\n//]]>\n</script>""",
+            observe_field("glass", frequency=300,url='http://www.example.com/reorder_if_empty',on="blur"))
 
     def test_observe_form(self):
         self.assertEqual("""<script type="text/javascript">\n//<![CDATA[\nnew Form.Observer('cart', 2, function(element, value) {new Ajax.Request('http://www.example.com/cart_changed', {asynchronous:true, evalScripts:true, parameters:Form.serialize('cart')})})\n//]]>\n</script>""",
