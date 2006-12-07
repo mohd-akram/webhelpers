@@ -44,8 +44,6 @@ def link_to_remote(name, options={}, **html_options):
     (using the url() format) that's called in the background using 
     XMLHttpRequest. The result of that request can then be inserted into a
     DOM object whose id can be specified with the ``update`` keyword. 
-    Usually, the result would be a partial prepared by the controller with
-    either render_partial or render_partial_collection.
     
     Any keywords given after the second dict argument are considered html options
     and assigned as html attributes/values for the element.
