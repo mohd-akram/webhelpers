@@ -141,7 +141,7 @@ def drop_receiving_element(element_id, **options):
     
     Example::
     
-        <% drop_receiving_element("my_cart", url=(controller="cart", action="add" )) %>
+        <% drop_receiving_element("my_cart", url=url_for(controller="cart", action="add" )) %>
     
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.    

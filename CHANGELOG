@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.2.3 (**svn**)
+* Fixed scriptaculous helper docs example. Fixes #178.
 * Updated scriptaculous/prototype to Prototype 1.5.0 and Scriptaculous 1.7.0.
 * Updated scriptaculous javascripts to 1.6.5. Fixes #155.
 * Updated remote_function doc-string to more clearly indicate the arguments
