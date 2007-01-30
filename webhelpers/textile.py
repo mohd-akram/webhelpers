@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# _*_ coding: latin1 _*_
+# _*_ coding: iso-8859-1 _*_
 
 """This is Textile
 A Humane Web Text Generator
