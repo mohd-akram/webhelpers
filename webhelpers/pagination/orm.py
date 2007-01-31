@@ -27,7 +27,8 @@ def get_wrapper(obj, *args, **kw):
             return SQLAlchemyLazyMapper(obj, *args, **kw)
         if isinstance(obj, sqlalchemy.Table):
             return SQLAlchemyLazyTable(obj, *args, **kw)
-    return "You shouldn't have this"
+    raise "You must call paginate() with either a sequence, an SQLObject " + \
+          "class or an SQLAlchemy query object."
     
 
 class SQLObjectLazy(Partial):
