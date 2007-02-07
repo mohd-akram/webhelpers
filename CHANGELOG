@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
 0.2.3 (**svn**)
+* Applied patch from David Smith to decude URL parts as Routes does.
+  Fixes #186.
 * Changed pagination to give better response if its passed an invalid object.
   Patch from Christoph Haas.
 * Fixed scriptaculous helper docs example. Fixes #178.

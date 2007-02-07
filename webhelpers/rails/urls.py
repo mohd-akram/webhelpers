@@ -176,8 +176,11 @@ def parse_querystring(environ):
     caching piece) to avoid requiring paste as a dependency.
     """
     source = environ.get('QUERY_STRING', '')
-    parsed = cgi.parse_qsl(source, keep_blank_values=True,
-                           strict_parsing=False)
+    _parsed = cgi.parse_qsl(source, keep_blank_values=True,
+        strict_parsing=False)
+    parsed = []
+    for k,v in _parsed:
+        parsed.append((k, v.decode('utf-8')))
     return parsed
 
 def current_page(url):
