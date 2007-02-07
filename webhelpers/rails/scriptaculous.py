@@ -98,7 +98,7 @@ def sortable_element(element_id, **options):
 def sortable_element_js(element_id, **options):
     if not isinstance(element_id, basestring):
         raise ValueError('Argument element_id must be a string')
-    options.setdefault('with', "Sortable.serialize('%s')" % element_id)
+    options.setdefault('with_', "Sortable.serialize('%s')" % element_id)
     options.setdefault('onUpdate', "function(){%s}" % remote_function(**options))
     for k in options.keys():
         if k in AJAX_OPTIONS: del options[k]
@@ -149,7 +149,7 @@ def drop_receiving_element(element_id, **options):
     return javascript_tag(drop_receiving_element_js(element_id, **options))
 
 def drop_receiving_element_js(element_id, **options):
-    options.setdefault('with', "'id=' + encodeURIComponent(element.id)")
+    options.setdefault('with_', "'id=' + encodeURIComponent(element.id)")
     options.setdefault('onDrop', "function(element){%s}" % remote_function(**options))
     for k in options.keys():
         if k in AJAX_OPTIONS: del options[k]

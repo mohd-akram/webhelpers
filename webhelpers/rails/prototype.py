@@ -34,7 +34,7 @@ CALLBACKS = frozenset(['uninitialized','loading','loaded',
                        'interactive','complete','failure','success'] + [str(x) for x in range(100,599)])
 AJAX_OPTIONS = frozenset(['before','after','condition','url',
                           'asynchronous','method','insertion','position',
-                          'form','with','update','script'] + list(CALLBACKS))
+                          'form','with','with_', 'update','script'] + list(CALLBACKS))
 
 def link_to_remote(name, options={}, **html_options):
     """
@@ -187,7 +187,7 @@ def submit_to_remote(name, value, **options):
     in the background instead of regular reloading POST arrangement. 
     Keyword args are the same as in ``form_remote_tag``.    
     """
-    options['with'] = options.get('form') or 'Form.serialize(this.form)'
+    options['with_'] = options.get('form') or 'Form.serialize(this.form)'
     
     options['html'] = options.get('html') or {}
     options['html']['type'] = 'button'
@@ -332,7 +332,7 @@ def observe_field(field_id, **options):
     ``update``
         Specifies the DOM ID of the element whose innerHTML should be
         updated with the XMLHttpRequest response text.
-    ``with``
+    ``with_``
         A JavaScript expression specifying the parameters for the
         XMLHttpRequest. This defaults to 'value', which in the evaluated
         context refers to the new field value.
@@ -352,7 +352,7 @@ def observe_form(form_id, **options):
     identified by the DOM ID ``form_id``.
     
     Keyword args are the same as observe_field, except the default value of
-    the ``with`` keyword evaluates to the serialized (request string) value
+    the ``with_`` keyword evaluates to the serialized (request string) value
     of the form.
     """
     if options.get('frequency'):
@@ -378,14 +378,14 @@ def options_for_ajax(options):
         js_options['parameters'] = 'Form.serialize(this)'
     elif options.get('submit'):
         js_options['parameters'] = "Form.serialize('%s')" % options['submit']
-    elif options.get('with'):
-        js_options['parameters'] = options['with']
+    elif options.get('with_'):
+        js_options['parameters'] = options['with_']
     
     return options_for_javascript(js_options)
 
 def build_observer(cls, name, **options):
     if options.get('update') is True:
-        options['with'] = options.get('with', 'value')
+        options['with_'] = options.get('with', options.get('with_', 'value'))
     callback = remote_function(**options)
     javascript = "new %s('%s', " % (cls, name)
     if options.get('frequency'): 

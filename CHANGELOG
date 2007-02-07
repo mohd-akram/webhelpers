@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
 0.2.3 (**svn**)
+* Updated Ajax commands to internally use 'with_' to avoid name conflicts with
+  Python 2.5 and beyond. Reported by anilj. Fixes #190.
 * Applied patch from David Smith to decude URL parts as Routes does.
   Fixes #186.
 * Changed pagination to give better response if its passed an invalid object.
