@@ -6,8 +6,10 @@ Provides functionality for working with JavaScript in your views.
 Ajax, controls and visual effects
 ---------------------------------
 
-* For information on using Ajax, see `Prototype Helpers <module-railshelpers.helpers.prototype.html>`_.
-* For information on using controls and visual effects, see `Scriptaculous Helpers <module-railshelpers.helpers.scriptaculous.html>`_.
+* For information on using Ajax, see `Prototype Helpers
+  <module-railshelpers.helpers.prototype.html>`_.
+* For information on using controls and visual effects, see `Scriptaculous Helpers
+  <module-railshelpers.helpers.scriptaculous.html>`_.
 """
 # Last synced with Rails copy at Revision 5245 on Dec. 1st, 2006.
 
