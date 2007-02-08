@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.2.3 (**svn**)
+* Sync'd Rails Number helper to 6045.
 * Updated Ajax commands to internally use 'with_' to avoid name conflicts with
   Python 2.5 and beyond. Reported by anilj. Fixes #190.
 * Applied patch from David Smith to decude URL parts as Routes does.

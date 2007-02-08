@@ -1,15 +1,26 @@
 """
 Number Helpers
-"""
-# Last synced with Rails copy at Revision 4537 on Aug 19th, 2006.
-import re
 
-def number_to_phone(number, area_code=False, delimiter="-", extension=""):
+Provides methods for converting numbers into formatted strings. Functions are provided for
+phone numbers, currencies, percentages, precision, positional notation, and file size.
+
+"""
+# Last synced with Rails copy at Revision 6045 on Feb 7th, 2007.
+import re
+import warnings
+
+def number_to_phone(number, area_code=False, delimiter="-", extension="", country_code=""):
     """
     Formats a ``number`` into a US phone number string.
-    
-    The area code can be surrounded by parentheses by setting ``area_code`` to True; default is False
-    The delimiter can be set using ``delimiter`` default is "-"
+
+    ``area_code``
+        When enabled, adds parentheses around the area code. Defaults to False
+    ``delimiter``
+        The delimiter to use, defaults to "-"
+    ``extension``
+        Specifies an extension to add to the end of the generated number
+    ``country_code``
+        Sets the country code for the phone number
     
     Examples::
     
@@ -21,27 +32,34 @@ def number_to_phone(number, area_code=False, delimiter="-", extension=""):
         123 555 1234
         >>> number_to_phone(1235551234, area_code=True, extension=555)
         (123) 555-1234 x 555
+        >>> number_to_phone(1235551234, country_code=1)
+        1-123-555-1234
     """
+    number = str(number).strip()
     if area_code:
-        number = re.sub(r'([0-9]{3})([0-9]{3})([0-9]{4})', r'(\1) \2%s\3' % delimiter, str(number))
+        number = re.sub(r'([0-9]{1,3})([0-9]{3})([0-9]{4})', r'(\1) \2%s\3' % delimiter,
+                        number)
     else:
-        number = re.sub(r'([0-9]{3})([0-9]{3})([0-9]{4})', r'\1%s\2%s\3' % (delimiter, delimiter), str(number))
+        number = re.sub(r'([0-9]{1,3})([0-9]{3})([0-9]{4})', r'\1%s\2%s\3' % \
+                        (delimiter, delimiter), number)
     if extension and str(extension).strip():
         number += " x %s" % extension
+    if country_code:
+        number = '%s%s%s' % (country_code, delimiter, number)
     return number
 
 def number_to_currency(number, unit="$", precision=2, separator=".", delimiter=","):
     """
     Formats a ``number`` into a currency string. 
     
-    ``number``
-        Indicates the level of precision
+    ``precision``
+        Indicates the level of precision. Defaults to 2
     ``unit``
-        Sets the currency type
+        Sets the currency type, defaults to "$"
     ``separator``
-        Used to set what the unit separation should be
+        Used to set what the unit separation should be. Defaults to "."
     ``delimiter``
-        The delimiter can be set using the +delimiter+ key; default is ","
+        The delimiter character to use, defaults to ","
     
     Examples::
     
@@ -64,10 +82,10 @@ def number_to_percentage(number, precision=3, separator="."):
     """
     Formats a ``number`` as into a percentage string. 
     
-    ``number``
-        Contains the level of precision
+    ``precision``
+        The level of precision, defaults to 3
     ``separator``
-        The unit separator to be used
+        The unit separator to be used. Defaults to "."
     
     Examples::
     
@@ -85,9 +103,12 @@ def number_to_percentage(number, precision=3, separator="."):
     else:
         return parts[0] + separator + parts[1] + "%"
 
-def number_to_human_size(size):
+def number_to_human_size(size, precision=1):
     """
     Returns a formatted-for-humans file size.
+
+    ``precision``
+        The level of precision, defaults to 1
     
     Examples::
     
@@ -101,43 +122,67 @@ def number_to_human_size(size):
         1.2 MB
         >>> number_to_human_size(1234567890)
         1.1 GB
+        >>> number_to_human_size(1234567890123)
+        1.1 TB
+        >>> number_to_human_size(1234567, 2)
+        1.18 TB
     """
     if size == 1:
         return "1 Byte"
     elif size < 1024:
         return "%d Bytes" % size
     elif size < (1024**2):
-        return "%.1f KB" % (size / 1024.00)
+        return ("%%.%if KB" % precision) % (size / 1024.00)
     elif size < (1024**3):
-        return "%.1f MB" % (size / 1024.00**2)
+        return ("%%.%if MB" % precision) % (size / 1024.00**2)
     elif size < (1024**4):
-        return "%.1f GB" % (size / 1024.00**3)
+        return ("%%.%if GB" % precision) % (size / 1024.00**3)
     elif size < (1024**5):
-        return "%.1f TB" % (size / 1024.00**4)
+        return ("%%.%if TB" % precision) % (size / 1024.00**4)
     else:
         return ""
 
-human_size = number_to_human_size
+def human_size(*args, **kwargs):
+    """Deprecated: Use number_to_human_size instead."""
+    warnings.warn('The human_size function has been deprecated, please use '
+                  'number_to_human_size instead.', DeprecationWarning, 2)
+    return number_to_human_size(*args, **kwargs)
 
-def number_with_delimiter(number, delimiter=","):
+def number_with_delimiter(number, delimiter=",", separator="."):
     """
-    Formats a ``number`` with a ``delimiter``.
+    Formats a ``number`` with grouped thousands using ``delimiter``.
     
+    ``delimiter``
+        The delimiter character to use, defaults to ","
+    ``separator``
+        Used to set what the unit separation should be. Defaults to "."
+
     Example::
     
         >>> number_with_delimiter(12345678)
         12,345,678
+        >>> number_with_delimiter(12345678.05)
+        12,345,678.05
+        >>> number_with_delimiter(12345678, delimiter=".")
+        12.345.678
     """
-    return re.sub(r'(\d)(?=(\d\d\d)+(?!\d))', r'\1%s' % delimiter, str(number))
+    parts = str(number).split('.')
+    parts[0] = re.sub(r'(\d)(?=(\d\d\d)+(?!\d))', r'\1%s' % delimiter, str(parts[0]))
+    return separator.join(parts)
 
 def number_with_precision(number, precision=3):
     """
     Formats a ``number`` with a level of ``precision``.
     
+    ``precision``
+        The level of precision, defaults to 3
+
     Example::
     
         >>> number_with_precision(111.2345)
         111.235
+        >>> number_with_precision(111.2345, 2)
+        111.23
     """
     formstr = '%01.' + str(precision) + 'f'
     return formstr % number
