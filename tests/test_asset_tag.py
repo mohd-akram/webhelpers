@@ -30,6 +30,12 @@ class TestAssetTagHelper(TestCase):
                          image_tag('symbolize.jpg', size='45x70'))
         self.assertEqual('<img alt="Pylons-Tower-Dark1" src="http://pylons.tgtg.org/powered/_img/pylons-tower-dark1.png" />',
                          image_tag('http://pylons.tgtg.org/powered/_img/pylons-tower-dark1.png'))
+        self.assertEqual('<img alt="Edit Entry" height="10" src="/images/icon.png" width="16" />',
+            image_tag("icon.png", size="16x10", alt="Edit Entry"))
+        self.assertEqual('<img alt="Icon" height="16" src="/icons/icon.gif" width="16" />',
+            image_tag("/icons/icon.gif", size="16x16"))
+        self.assertEqual('<img alt="Icon" src="/icons/icon.gif" width="16" />',
+            image_tag("/icons/icon.gif", size="16x"))
 
     def test_javascript_include_tag(self):
         self.assertEqual("""<script src="/javascripts/prototype.js" type="text/javascript"></script>\n<script src="/javascripts/scriptaculous.js" type="text/javascript"></script>""",
@@ -50,6 +56,8 @@ class TestAssetTagHelper(TestCase):
                          stylesheet_link_tag('style', media='all'))
         self.assertEqual('<link href="/stylesheets/random.styles" media="screen" rel="Stylesheet" type="text/css" />\n<link href="/css/stylish.css" media="screen" rel="Stylesheet" type="text/css" />',
                          stylesheet_link_tag('random.styles', '/css/stylish'))
+        self.assertEqual('<link href="/stylesheets/dir/file.css" media="all" rel="Stylesheet" type="text/css" />',
+                         stylesheet_link_tag('dir/file', media='all'))
 
     def test_compute_public_path(self):
         self.assertEqual('/test.js', compute_public_path('/test.js'))

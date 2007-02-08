@@ -2,11 +2,12 @@
 Asset Tag Helpers
 
 Provides functionality for linking an HTML page together with other assets, such as
-javascripts, stylesheets, and feeds.
+images, javascripts, stylesheets, and feeds.
 """
-# Last synced with Rails copy at Revision 4999 on Sep 6th, 2006.
+# Last synced with Rails copy at Revision 6057 on Feb 7th, 2007.
 
 import os
+import re
 import urlparse
 import warnings
 from tags import *
@@ -84,7 +85,16 @@ def image_tag(source, alt=None, size=None, **options):
         '<img alt="Xml" src="/images/xml.png" />'
 
         >>> image_tag('rss.png', 'rss syndication')
-        '<img alt="rss syndication" src="/images/rss.png" />'    
+        '<img alt="rss syndication" src="/images/rss.png" />'
+
+        >>> image_tag("icon.png", size="16x10", alt="Edit Entry")
+        '<img alt="Edit Entry" height="10" src="/images/icon.png" width="16" />'
+
+        >>> image_tag("/icons/icon.gif", size="16x16")
+        '<img alt="Icon" height="16" src="/icons/icon.gif" width="16" />'
+
+        >>> image_tag("/icons/icon.gif", size="16x")
+        '<img alt="Icon" src="/icons/icon.gif" width="16" />'
     """
     if not os.path.splitext(source)[1]:
         warnings.warn("You've called image_tag with a source that doesn't include an "
@@ -97,7 +107,7 @@ def image_tag(source, alt=None, size=None, **options):
         alt = os.path.splitext(os.path.basename(source))[0].title()
     options['alt'] = alt
     
-    if size:
+    if size and re.match('^(\d+|)x(\d+|)$', size) and size != 'x':
         width, height = size.split('x')
         if width:
             options['width'] = width
@@ -158,6 +168,9 @@ def stylesheet_link_tag(*sources, **options):
 
         >>> stylesheet_link_tag('style')
         '<link href="/stylesheets/style.css" media="screen" rel="Stylesheet" type="text/css" />'
+
+        >>> stylesheet_link_tag('dir/file', media='all')
+        '<link href="/stylesheets/dir/file.css" media="all" rel="Stylesheet" type="text/css" />'
 
         >>> stylesheet_link_tag('/dir/file', media='all')
         '<link href="/dir/file.css" media="all" rel="Stylesheet" type="text/css" />'
