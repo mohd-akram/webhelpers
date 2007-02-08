@@ -1,5 +1,5 @@
 """Date/Time Helpers"""
-# Last synced with Rails copy at Revision 4989 on Sep 4th, 2006.
+# Last synced with Rails copy at Revision 6080 on Feb 8th, 2007.
 # Note that the select_ tags are purposely not ported as they're very totally useless
 # and inefficient beyond comprehension.
 
@@ -92,12 +92,12 @@ def distance_of_time_in_words(from_time, to_time=0, include_seconds=False):
         return "%d days" % (round(distance_in_minutes / 1440))
     elif distance_in_minutes < 86400:
         return "about 1 month"
-    elif distance_in_minutes < 525960:
+    elif distance_in_minutes < 525600:
         return "%d months" % (round(distance_in_minutes / 43200))
-    elif distance_in_minutes < 1051920:
+    elif distance_in_minutes < 1051200:
         return "about 1 year"
     else:
-        return "over %d years" % (round(distance_in_minutes / 525960))
+        return "over %d years" % (round(distance_in_minutes / 525600))
 
 def time_ago_in_words(from_time, include_seconds=False):
     """
