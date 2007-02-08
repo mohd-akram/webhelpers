@@ -89,8 +89,8 @@ def image_tag(source, alt=None, size=None, **options):
     if not os.path.splitext(source)[1]:
         warnings.warn("You've called image_tag with a source that doesn't include an "
                       "extension. Soon image_tag will no longer automatically append "
-                      "'.png' to your source. Please call image_path('%s.png') instead" % \
-                      source, DeprecationWarning, 2)
+                      "'.png' to your source. Please call image_path('%s.png') "
+                      "instead." % source, DeprecationWarning, 2)
     options['src'] = compute_public_path(source, 'images', 'png')
 
     if not alt:
