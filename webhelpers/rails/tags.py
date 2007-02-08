@@ -1,5 +1,8 @@
-"""Tag Helpers"""
-# Last synced with Rails copy at Revision 2543 on Aug 20th, 2006.
+"""Tag Helpers
+
+Use these methods to generate XHTML comliant tags programmatically.
+"""
+# Last synced with Rails copy at Revision 5857 on Feb 7th, 2007.
 
 from webhelpers.util import html_escape
 import re
@@ -22,20 +25,25 @@ def strip_unders(options):
 
 def tag(name, open=False, **options):
     """
-    Create a HTML tag of type ``name``
+    Returns an XHTML compliant tag of type ``name``.
     
     ``open``
         Set to True if the tag should remain open
     
     All additional keyword args become attribute/value's for the tag. To pass in Python
-    reserved words, append _ to the name of the key.
+    reserved words, append _ to the name of the key. For attributes with no value (such as
+    disabled and readonly), a value of True is permitted.
     
     Examples::
     
         >>> tag("br")
         <br />
+        >>> tag("br", True)
+        <br>
         >>> tag("input", type="text")
         <input type="text" />
+        >>> tag("input", type='text', disabled=True))
+        <input disabled="disabled" type="text" />
     """
     tag = '<%s%s%s' % (name, (options and tag_options(**options)) or '', (open and '>') or ' />')
     return tag
@@ -60,7 +68,7 @@ def content_tag(name, content, **options):
 
 def cdata_section(content):
     """
-    Returns a CDATA section for the given ``content``.
+    Returns a CDATA section with the given ``content``.
     
     CDATA sections are used to escape blocks of text containing characters which would
     otherwise be recognized as markup. CDATA sections begin with the string
@@ -71,10 +79,24 @@ def cdata_section(content):
         content = ''
     return "<![CDATA[%s]]>" % content
 
+def escape_once(html):
+    """Escapes a given string without affecting existing escaped entities.
+
+    >>> escape_once("1 < 2 &amp; 3")
+    1 &lt; 2 &amp; 3
+    """
+    return fix_double_escape(html_escape(html))
+
+def fix_double_escape(escaped):
+    """Fix double-escaped entities, such as &amp;amp;, &amp;#123;, etc"""
+    return re.sub(r'&amp;([a-z]+|(#\d+));', r'&\1;', escaped)
+
 def tag_options(**options):
     strip_unders(options)
+    print options
     cleaned_options = convert_booleans(dict([(x, y) for x,y in options.iteritems() if y is not None]))
-    optionlist = ['%s="%s"' % (x, html_escape(y)) for x,y in cleaned_options.iteritems()]
+    optionlist = ['%s="%s"' % (x, escape_once(y)) for x,y in cleaned_options.iteritems()]
+    print optionlist
     optionlist.sort()
     if optionlist:
         return ' ' + ' '.join(optionlist)
@@ -92,4 +114,4 @@ def boolean_attribute(options, attribute):
     elif options.has_key(attribute):
         del options[attribute]
 
-__all__ = ['tag', 'content_tag', 'cdata_section', 'camelize']
+__all__ = ['tag', 'content_tag', 'cdata_section', 'camelize', 'escape_once']

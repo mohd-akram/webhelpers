@@ -6,6 +6,7 @@ from webhelpers.rails.tags import *
 class TestTagHelper(TestCase):
     def test_tag(self):
         self.assertEqual("<p class=\"show\" />", tag("p", class_='show'))
+        self.assertEqual("<br>", tag("br", True))
     
     def test_tag_options(self):
         self.assertEqual("<p class=\"elsewhere\" />", tag("p", class_='elsewhere'))
@@ -19,9 +20,17 @@ class TestTagHelper(TestCase):
     def test_tag_options_converts_boolean_option(self):
         self.assertEqual('<p disabled="disabled" multiple="multiple" readonly="readonly" />',
                tag("p", disabled=True, multiple=True, readonly=True))
+        self.assertEqual('<input disabled="disabled" type="text" />',
+                         tag("input", type='text', disabled=True))
+        
+    def test_tag_options_double_escaped(self):
+        self.assertEqual('<p included="AT&amp;amp;T" />', tag("p", included='AT&amp;amp;T'))
     
     def test_content_tag(self):
         self.assertEqual("<a href=\"create\">Create</a>", content_tag("a", "Create", href="create"))
+
+    def test_escape_once(self):
+        self.assertEqual("1 &lt; 2 &amp; 3", escape_once("1 < 2 &amp; 3"))
     
         
 if __name__ == '__main__':
