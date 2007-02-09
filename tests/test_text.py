@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from unittest import TestCase
 import unittest
 from string24 import Template
@@ -7,6 +8,7 @@ from webhelpers.rails.text import *
 class TestTextHelper(TestCase):
     
     def test_simple_format(self):
+        self.assertEqual("<p></p>", simple_format(None))
         self.assertEqual("<p>crazy\n<br /> cross\n<br /> platform linebreaks</p>", simple_format("crazy\r\n cross\r platform linebreaks"))
         self.assertEqual("<p>A paragraph</p>\n\n<p>and another one!</p>", simple_format("A paragraph\n\nand another one!"))
         self.assertEqual("<p>A paragraph\n<br /> With a newline</p>", simple_format("A paragraph\n With a newline"))
@@ -68,6 +70,62 @@ class TestTextHelper(TestCase):
         self.assertEqual( 'Go to %(link5_result)s.' %result_values, auto_link('Go to %(link5_raw)s.' %raw_values))
         self.assertEqual( '<p>Say hello to %(email_result)s, then go to %(link5_result)s.</p>' %result_values, auto_link('<p>Say hello to %(email_raw)s, then go to %(link5_raw)s.</p>' %raw_values))
         self.assertEqual('%(link6_result)s' % result_values, auto_link('%(link6_raw)s' % raw_values))
+
+    def test_excerpt(self):
+        self.assertEqual("...lo my wo...",
+                         excerpt("hello my world", "my", 3))
+        self.assertEqual("...is a beautiful morn...",
+                         excerpt("This is a beautiful morning", "beautiful", 5))
+        self.assertEqual("This is a...",
+                         excerpt("This is a beautiful morning", "this", 5))
+        self.assertEqual("...iful morning",
+                         excerpt("This is a beautiful morning", "morning", 5))
+        self.assertEqual('',
+                         excerpt("This is a beautiful morning", "day"))
+
+    def test_excerpt_with_regex(self):
+        self.assertEqual('...is a beautiful! mor...',
+                         excerpt('This is a beautiful! morning', 'beautiful', 5))
+        self.assertEqual('...is a beautiful? mor...',
+                         excerpt('This is a beautiful? morning', 'beautiful', 5))
+
+    def test_excerpt_with_utf8(self):
+        self.assertEqual(u"...ﬃciency could not be ...",
+                         excerpt(u"That's why eﬃciency could not be helped", 'could', 8))
+
+
+    def test_highlighter(self):
+        self.assertEqual("This is a <strong class=\"hilight\">beautiful</strong> morning",
+                         highlight("This is a beautiful morning", "beautiful"))
+        self.assertEqual(
+            "This is a <strong class=\"hilight\">beautiful</strong> morning, but also a <strong class=\"hilight\">beautiful</strong> day",
+            highlight("This is a beautiful morning, but also a beautiful day", "beautiful"))
+        self.assertEqual("This is a <b>beautiful</b> morning, but also a <b>beautiful</b> day",
+                         highlight("This is a beautiful morning, but also a beautiful day",
+                                   "beautiful", r'<b>\1</b>'))
+        self.assertEqual("This text is not changed because we supplied an empty phrase",
+                         highlight("This text is not changed because we supplied an empty phrase",
+                                   None))
+
+    def test_highlighter_with_regex(self):
+        self.assertEqual("This is a <strong class=\"hilight\">beautiful!</strong> morning",
+                     highlight("This is a beautiful! morning", "beautiful!"))
+
+        self.assertEqual("This is a <strong class=\"hilight\">beautiful! morning</strong>",
+                     highlight("This is a beautiful! morning", "beautiful! morning"))
+
+        self.assertEqual("This is a <strong class=\"hilight\">beautiful? morning</strong>",
+                     highlight("This is a beautiful? morning", "beautiful? morning"))
+
+    def test_strip_links(self):
+        self.assertEqual("on my mind", strip_links("<a href='almost'>on my mind</a>"))
+        self.assertEqual("on my mind", strip_links("<A href='almost'>on my mind</A>"))
+        self.assertEqual("on my mind\nall day long",
+                         strip_links("<a href='almost'>on my mind</a>\n<A href='almost'>all day long</A>"))
+
+    def test_truncate(self):
+        self.assertEqual("Hello World!", truncate("Hello World!", 12))
+        self.assertEqual("Hello Wor...", truncate("Hello World!!", 12))
 
 if __name__ == '__main__':
     suite = [unittest.makeSuite(TestTextHelper)]

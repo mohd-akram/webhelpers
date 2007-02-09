@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.2.3 (**svn**)
+* Sync'd Text helper to 5629.
 * Sync'd Date helper to 6080.
 * Sync'd Tags helper to 5857.
 * Sync'd Asset tag helper to 6057.

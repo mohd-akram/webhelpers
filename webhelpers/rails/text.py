@@ -1,21 +1,26 @@
 """
 Text Helpers
+
+Provides a set of methods for filtering, formatting and transforming strings.
 """
-# Last synced with Rails copy at Revision 4994 on Sep 6th, 2006.
+# Last synced with Rails copy at Revision 5629 on Feb 8th, 2007.
 # Purposely left out sanitize and strip_tags, should be included at some point likely using
 # BeautifulSoup.
 
-from routes import request_config
-from webhelpers.rails.tags import content_tag, tag_options
+import itertools
+import re
+import textwrap
+import warnings
 import webhelpers.textile as textile
 import webhelpers.markdown as markdown
-import itertools, re
+from routes import request_config
+from webhelpers.rails.tags import content_tag, tag_options
 
 AUTO_LINK_RE = re.compile(r"""
                         (                        # leading text
-                          <\w+.*?>|              #   leading HTML tag, or
-                          [^=!:'"/]|             #   leading punctuation, or 
-                          ^                      #   beginning of line
+                          <\w+.*?>|              # leading HTML tag, or
+                          [^=!:'"/]|             # leading punctuation, or 
+                          ^                      # beginning of line
                         )
                         (
                           (?:https?://)|         # protocol spec, or
@@ -152,6 +157,11 @@ def truncate(text, length=30, truncate_string='...'):
     ``truncate_string``
         If ``text`` exceeds the ``length``, this string will replace
         the end of the string
+
+    Example::
+
+        >>> truncate('Once upon a time in a world far far away', 14)
+        'Once upon a...'
     """
     if not text: return ''
     
@@ -174,6 +184,11 @@ def highlight(text, phrase, hilighter='<strong class="hilight">\\1</strong>'):
         with ``\\1`` where the phrase is supposed to be inserted.
         
     Note: The ``phrase`` is sanitized to include only letters, digits, and spaces before use.
+
+    Example::
+
+        >>> highlight('You searched for: Pylons', 'Pylons')
+        'You searched for: <strong class="hilight">Pylons</strong>'
     """
     if not phrase or not text:
         return text
@@ -182,8 +197,9 @@ def highlight(text, phrase, hilighter='<strong class="hilight">\\1</strong>'):
 
 def excerpt(text, phrase, radius=100, excerpt_string="..."):
     """
-    Extracts an excerpt from the ``text``
-    
+    Extracts an excerpt from the ``text``. Returns an empty string if the phrase
+    isn't found.
+
     ``phrase``
         Phrase to excerpt from ``text``
     ``radius``
@@ -198,28 +214,40 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
     """
     if not text or not phrase:
         return text
-    
-    pat = re.compile('(.{0,%s}%s.{0,%s})' % (radius, re.escape(phrase), radius))
+
+    pat = re.compile('(.{0,%s}%s.{0,%s})' % (radius, re.escape(phrase), radius), re.I)
     match = pat.search(text)
     if not match:
         return ""
-    return excerpt_string + match.expand(r'\1') + excerpt_string
+    excerpt = match.expand(r'\1')
+    if match.start(1) > 0:
+        excerpt = excerpt_string + excerpt
+    if match.end(1) < len(text):
+        excerpt = excerpt + excerpt_string
+    return excerpt
 
 def word_wrap(text, line_width=80):
     """
-    Word wrap long lines to ``line_width``
+    Wraps ``text`` into lines no longer than ``line_width`` width. This function
+    breaks on the first whitespace character that does not exceed ``line_width``.
+
+    Deprecated: Use python's builtin textwrap.fill instead.
     """
-    text = re.sub(r'\n', '\n\n', text)
-    return re.sub(r'(.{1,%s})(\s+|$)' % line_width, r'\1\n', text).strip()
+    warnings.warn("The word_wrap function has been deprecated: Use python's builtin "
+                  "textwrap.fill function instead.", DeprecationWarning, 2)
+    return textwrap.fill(text, line_width)
 
 def simple_format(text):
     """
     Returns ``text`` transformed into HTML using very simple formatting rules
     
-    Surrounds paragraphs with ``<p>`` tags, and converts line breaks into ``<br />``
-    Two consecutive newlines(``\\n\\n``) are considered as a paragraph, one newline (``\\n``) is
-    considered a linebreak, three or more consecutive newlines are turned into two newlines.
+    Two or more consecutive newlines(``\\n\\n``) are considered as a paragraph
+    and wrapped in ``<p>`` tags. One newline (``\\n``) is considered a
+    linebreak and a ``<br />`` tag is appended. This method does not remove the
+    newlines from the text.
     """
+    if text is None:
+        text = ''
     text = re.sub(r'(\r\n|\n|\r)', r'\n', text)
     text = re.sub(r'\n\n+', r'\n\n', text)
     text = re.sub(r'(\n\n)', r'</p>\1<p>', text)
@@ -230,7 +258,7 @@ def simple_format(text):
 
 def auto_link(text, link="all", **href_options):
     """
-    Turns all urls and email addresses into clickable links. 
+    Turns all urls and email addresses into clickable links.
     
     ``link``
         Used to determine what to link. Options are "all", "email_addresses", or "urls"
@@ -271,14 +299,14 @@ def auto_link_email_addresses(text):
 
 def strip_links(text):
     """
-    Turns all links into words
+    Strips link tags from ``text`` leaving just the link label.
     
     Example::
     
         >>> strip_links("<a href="something">else</a>")
         "else"
     """
-    strip_re = re.compile(r'<a\b.*?>(.*?)<\/a>', re.M)
+    strip_re = re.compile(r'<a\b.*?>(.*?)<\/a>', re.I | re.M)
     return strip_re.sub(r'\1', text)
 
 def textilize(text, sanitize=False):
