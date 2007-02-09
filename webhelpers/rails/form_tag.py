@@ -50,6 +50,11 @@ start_form = form
 def end_form():
     """
     Outputs "</form>"
+    
+    Example::
+
+        >>> end_form()
+        '</form>'
     """
     return "</form>"
 
@@ -102,6 +107,11 @@ def file_field(name, value=None, **options):
     Creates a file upload field.
     
     If you are using file uploads then you will also need to set the multipart option for the form.
+
+    Example::
+
+        >>> file_field('myfile')
+        '<input id="myfile" name="myfile" type="file" />'
     """
     return text_field(name, value=value, type="file", **options)
 
@@ -166,7 +176,6 @@ def submit(value="Save changes", name='commit', confirm=None, disable_with=None,
     * ``disable_with`` - The value to be used to rename a disabled version of the submit
       button.
     """
-
     if confirm:
         onclick = options.get('onclick', '')
         if onclick.strip() and not onclick.rstrip().endswith(';'):

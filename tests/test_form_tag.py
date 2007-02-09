@@ -69,7 +69,12 @@ class TestFormTagHelper(TestCase):
             radio_button("opinion", "-1") + radio_button("opinion", "1"),
             '<input id="opinion_-1" name="opinion" type="radio" value="-1" /><input id="opinion_1" name="opinion" type="radio" value="1" />'
         )
-    
+
+        self.assertEqual(
+            radio_button("num_people", 5, selected=True),
+            '<input id="num_people_5" name="num_people" selected="True" type="radio" value="5" />'
+        )
+
     def test_select(self):
         self.assertEqual(
             select("people", "<option>justin</option>"),
