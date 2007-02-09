@@ -2,13 +2,14 @@
 # Last synced with Rails copy at Revision 4914 on Sep 4th, 2006.
 
 import cgi
+import re
 import urllib
 
-from webhelpers.util import html_escape
-
 from routes import url_for, request_config
-from javascript import *
+
 import tags
+from javascript import *
+from webhelpers.util import html_escape
 
 def get_url(url):
     if callable(url):
@@ -128,14 +129,15 @@ def button_to(name, url='', **html_options):
     
     if callable(url):
         ur = url()
-        url, name = ur, name or html_escape(ur)
+        url, name = ur, name or tags.escape_once(ur)
     else:
         url, name = url, name or url
     
     html_options.update(dict(type='submit', value=name))
     
     return """<form method="%s" action="%s" class="button-to"><div>""" % \
-        (form_method, html_escape(url)) + method_tag + tags.tag("input", **html_options) + "</div></form>"
+        (form_method, tags.escape_once(url)) + method_tag + \
+        tags.tag("input", **html_options) + "</div></form>"
 
 def link_to_unless_current(name, url, **html_options):
     """
@@ -294,6 +296,7 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         if option:
             extras[key] = option
     options_query = urllib.urlencode(extras).replace("+", "%20")
+    protocol = 'mailto:'
 
     email_address_obfuscated = email_address
     if replace_at:
@@ -301,17 +304,27 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
     if replace_dot:
         email_address_obfuscated = email_address_obfuscated.replace('.', replace_dot)
 
-    if encode=='hex':
-        email_address = ''.join(['%%%x' % ord(x) for x in email_address])
+    if encode == 'hex':
+        email_address_obfuscated = ''.join(['&#%d;' % ord(x) for x in email_address_obfuscated])
+        protocol = ''.join(['&#%d;' % ord(x) for x in protocol])
 
-    url = 'mailto:' + email_address
+        word_re = re.compile('\w')
+        encoded_parts = []
+        for x in email_address:
+            if word_re.match(x):
+                encoded_parts.append('%%%x' % ord(x))
+            else:
+                encoded_parts.append(x)
+        email_address = ''.join(encoded_parts)
+
+    url = protocol + email_address
     if options_query:
         url += '?' + options_query
     html_options['href'] = url
 
     tag = tags.content_tag('a', name or email_address_obfuscated, **html_options)
 
-    if encode =='javascript':
+    if encode == 'javascript':
         tmp = "document.write('%s');" % tag
         string = ''.join(['%%%x' % ord(x) for x in tmp])
         return javascript_tag("eval(unescape('%s'))" % string)
