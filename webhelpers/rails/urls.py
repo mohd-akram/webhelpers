@@ -1,5 +1,5 @@
 """URL Helpers"""
-# Last synced with Rails copy at Revision 4914 on Sep 4th, 2006.
+# Last synced with Rails copy at Revision 6070 on Feb 8th, 2007.
 
 import cgi
 import re
