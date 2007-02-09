@@ -177,7 +177,8 @@ def highlight(text, phrase, hilighter='<strong class="hilight">\\1</strong>'):
     """
     if not phrase or not text:
         return text
-    return re.sub(re.compile('(%s)' % re.escape(phrase)), hilighter, text, re.I)
+    highlight_re = re.compile('(%s)' % re.escape(phrase), re.I)
+    return highlight_re.sub(hilighter, text)
 
 def excerpt(text, phrase, radius=100, excerpt_string="..."):
     """
@@ -277,7 +278,8 @@ def strip_links(text):
         >>> strip_links("<a href="something">else</a>")
         "else"
     """
-    return re.sub(r'<a\b.*?>(.*?)<\/a>', r'\1', text, re.M)
+    strip_re = re.compile(r'<a\b.*?>(.*?)<\/a>', re.M)
+    return strip_re.sub(r'\1', text)
 
 def textilize(text, sanitize=False):
     """Format the text with Textile formatting
