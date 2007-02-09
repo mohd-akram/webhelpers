@@ -34,7 +34,7 @@ attribute) you can append an underscore to the name, like
 
 Examples::
 
-    >>> print html.html(
+    >>> html.html(
     ...    html.head(html.title(\"Page Title\")),
     ...    html.body(
     ...    bgcolor='#000066',
@@ -42,20 +42,9 @@ Examples::
     ...    c=[html.h1('Page Title'),
     ...       html.p('Hello world!')],
     ...    ))
-    <html>
-    <head>
-    <title>Page Title</title>
-    </head>
-    <body text=\"#ffffff\" bgcolor=\"#000066\">
-    <h1>Page Title</h1><p>
-    Hello world!
-    </p>
-    </body>
-    </html>
+    '<html><head><title>Page Title</title></head><body text="#ffffff" bgcolor="#000066"><h1>Page Title</h1><p>Hello world!</p></body></html>'
     >>> html.a(href='#top', c='return to top')
     '<a href=\"#top\">return to top</a>'
-    >>> 1.4
-    1.4
 
 .. note::
 
