@@ -12,7 +12,7 @@ The Scriptaculous helpers' behavior can be tweaked with various options.
 See the documentation at http://script.aculo.us for more information on
 using these helpers in your application.
 """
-# Last synced with Rails copy at Revision 3772 on Aug 19th, 2006.
+# Last synced with Rails copy at Revision 6057 on Feb 9th, 2007.
 import simplejson as json
 from prototype import *
 from javascript import options_for_javascript, array_or_string_for_javascript
@@ -89,6 +89,11 @@ def sortable_element(element_id, **options):
     sortable consists of, in the current order (like
     ``mylist=item1&mylist=item2``, where ``item1`` and ``item2`` are
     the ids of the ``<li>`` elements).
+
+    Note: For this to work, the sortable elements must have id
+    attributes in the form ``string_identifier``. For example,
+    ``item_1``. Only the identifier part of the id attribute will be
+    serialized.
     
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.

@@ -18,7 +18,7 @@ for documentation of options common to all Ajax helpers.
 See also `Scriptaculous <module-railshelpers.helpers.scriptaculous.html>`_ for
 helpers which work with the Scriptaculous controls and visual effects library.
 """
-# Last synced with Rails copy at Revision 4235 on Aug 19th, 2006.
+# Last synced with Rails copy at Revision 6057 on Feb 9th, 2007.
 
 import sys
 if sys.version < '2.4':
