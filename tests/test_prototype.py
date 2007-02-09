@@ -23,51 +23,53 @@ class TestPrototypeHelper(TestCase):
             periodically_call_remote(update="schremser_bier",url='http://www.example.com/mehr_bier'))
 
     def test_form_remote_tag(self):
-        self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
+        self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
             form_remote_tag(update="glass_of_beer",url='http://www.example.com/fast'))
-        self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater({success:'glass_of_beer'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
+        self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater({success:'glass_of_beer'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
             form_remote_tag(update=dict(success="glass_of_beer"), url='http://www.example.com/fast'))
-        self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater({failure:'glass_of_water'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
+        self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater({failure:'glass_of_water'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
             form_remote_tag(update=dict(failure="glass_of_water"),url='http://www.example.com/fast'))
-        self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater({success:'glass_of_beer',failure:'glass_of_water'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
+        self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater({success:'glass_of_beer',failure:'glass_of_water'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
             form_remote_tag(update=dict(success='glass_of_beer',failure="glass_of_water"),url='http://www.example.com/fast'))
     
     def test_form_remote_tag_with_method(self):
-        self.assertEqual("""<form action=\"http://www.example.com/fast\" method=\"post\" onsubmit=\"new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;\"><input name="_method" type="hidden" value="put" />""",
+        self.assertEqual("""<form action=\"http://www.example.com/fast\" method=\"POST\" onsubmit=\"new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;\"><input name="_method" type="hidden" value="PUT" />""",
+            form_remote_tag(update="glass_of_beer", url='http://www.example.com/fast', html={'method':'PUT'}))
+        self.assertEqual("""<form action=\"http://www.example.com/fast\" method=\"POST\" onsubmit=\"new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;\"><input name="_method" type="hidden" value="put" />""",
             form_remote_tag(update="glass_of_beer", url='http://www.example.com/fast', html={'method':'put'}))
 
     def test_on_callbacks(self):
         callbacks = ['uninitialized','loading','loaded','interactive','complete','success','failure']
         for callback in callbacks:
-            self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback.title(),
+            self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback.title(),
                 form_remote_tag(update="glass_of_beer", url='http://www.example.com/fast',**{callback:"monkeys();"}))
-            self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater({success:'glass_of_beer'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback.title(),
+            self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater({success:'glass_of_beer'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback.title(),
                 form_remote_tag(update={'success':"glass_of_beer"},url='http://www.example.com/fast',**{callback:"monkeys();"}))
-            self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater({failure:'glass_of_beer'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback.title(),
+            self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater({failure:'glass_of_beer'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback.title(),
                 form_remote_tag(update={'failure':"glass_of_beer"},url='http://www.example.com/fast',**{callback:"monkeys();"}))
-            self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater({success:'glass_of_beer',failure:'glass_of_water'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback.title(),
+            self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater({success:'glass_of_beer',failure:'glass_of_water'}, 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback.title(),
                 form_remote_tag(update={'success':"glass_of_beer",'failure':"glass_of_water"},url='http://www.example.com/fast',**{callback:"monkeys();"}))
 
         #HTTP status codes 100 up to 599 have callbacks
         #these should work
         for callback in [str(x) for x in range(100,599)]:
-            self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback,
+            self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on%s:function(request){monkeys();}, parameters:Form.serialize(this)}); return false;">""" % callback,
                 form_remote_tag(update="glass_of_beer",url='http://www.example.com/fast', **{callback:"monkeys();"}))
 
         #test 200 and 404
-        self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on200:function(request){monkeys();}, on404:function(request){bananas();}, parameters:Form.serialize(this)}); return false;">""",
+        self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on200:function(request){monkeys();}, on404:function(request){bananas();}, parameters:Form.serialize(this)}); return false;">""",
             form_remote_tag(update="glass_of_beer",url='http://www.example.com/fast',**{'200':"monkeys();",'404':"bananas();"}))
 
         #these shouldn't
         for callback in [str(x) for x in range(1,99)]:
-            self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
+            self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
                 form_remote_tag(update="glass_of_beer",url='http://www.example.com/fast',**{callback:"monkeys();"}))
         for callback in [str(x) for x in range(600,999)]:
-            self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
+            self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;">""",
                 form_remote_tag(update="glass_of_beer",url='http://www.example.com/fast',**{callback:"monkeys();"}))
 
         #test ultimate combo
-        self.assertEqual("""<form action="http://www.example.com/fast" method="post" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on200:function(request){monkeys();}, on404:function(request){bananas();}, onComplete:function(request){c();}, onFailure:function(request){f();}, onLoading:function(request){c1()}, onSuccess:function(request){s()}, parameters:Form.serialize(this)}); return false;">""",
+        self.assertEqual("""<form action="http://www.example.com/fast" method="POST" onsubmit="new Ajax.Updater('glass_of_beer', 'http://www.example.com/fast', {asynchronous:true, evalScripts:true, on200:function(request){monkeys();}, on404:function(request){bananas();}, onComplete:function(request){c();}, onFailure:function(request){f();}, onLoading:function(request){c1()}, onSuccess:function(request){s()}, parameters:Form.serialize(this)}); return false;">""",
             form_remote_tag(update="glass_of_beer",url='http://www.example.com/fast',loading="c1()",success="s()",failure="f();",complete="c();",**{'200':"monkeys();",'404':"bananas();"}))
 
     def test_submit_to_remote(self):

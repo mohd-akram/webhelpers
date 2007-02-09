@@ -169,13 +169,13 @@ def form_remote_tag(**options):
                                     controller="some", action="place")))
     
     By default the fall-through action is the same as the one specified in 
-    the ``url`` (and the default method is ``post``).
+    the ``url`` (and the default method is ``POST``).
     """
     options['form'] = True
     if 'html' not in options: options['html'] = {}
     options['html']['onsubmit'] = "%s; return false;" % remote_function(**options)
     action = options['html'].get('action', get_url(options['url']))
-    options['html']['method'] = options['html'].get('method', 'post')
+    options['html']['method'] = options['html'].get('method', 'POST')
     
     return form(action, **options['html'])
 

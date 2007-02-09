@@ -90,16 +90,16 @@ def button_to(name, url='', **html_options):
     
         # inside of controller for "feeds"
         >>> button_to("Edit", url(action='edit', id=3))
-        <form method="post" action="/feeds/edit/3" class="button-to">
+        <form method="POST" action="/feeds/edit/3" class="button-to">
         <div><input value="Edit" type="submit" /></div>
         </form>
     
     Example 2::
     
-        >> button_to("Destroy", url(action='destroy', id=3), confirm="Are you sure?", method='delete')
-        <form method="post" action="/feeds/destroy/3" class="button-to">
+        >> button_to("Destroy", url(action='destroy', id=3), confirm="Are you sure?", method='DELETE')
+        <form method="POST" action="/feeds/destroy/3" class="button-to">
         <div>
-            <input type="hidden" name="_method" value="delete" />
+            <input type="hidden" name="_method" value="DELETE" />
             <input onclick="return confirm('Are you sure?');" value="Destroy" type="submit" />
         </div>
         </form>
@@ -117,10 +117,10 @@ def button_to(name, url='', **html_options):
     
     method_tag = ''
     method = html_options.pop('method', '')
-    if method in ['put', 'delete']:
+    if method.upper() in ['PUT', 'DELETE']:
         method_tag = tags.tag('input', type_='hidden', name_='_method', value=method)
     
-    form_method = (method == 'get' and 'get') or 'post'
+    form_method = (method.upper() == 'GET' and method) or 'POST'
     
     confirm = html_options.get('confirm')
     if confirm:
@@ -208,10 +208,8 @@ def current_url():
     return url_for(**curopts)
 
 def convert_options_to_javascript(confirm=None, popup=None, post=None, method=None, **html_options):
-    if method: method = method.lower()
-    
     if post and not method:
-        method = 'post'
+        method = 'POST'
     
     if popup and method:
         raise "You can't use popup and post in the same link"
@@ -252,7 +250,7 @@ def method_javascript_function(method):
     submit_function = "var f = document.createElement('form'); f.style.display = 'none'; " + \
         "this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;"
     
-    if method != 'post':
+    if method.upper() != 'POST':
         submit_function += "var m = document.createElement('input'); m.setAttribute('type', 'hidden'); "
         submit_function += "m.setAttribute('name', '_method'); m.setAttribute('value', '%s'); f.appendChild(m);" % method
     

@@ -8,7 +8,7 @@ from urls import confirm_javascript_function
 from tags import *
 from webhelpers.util import html_escape
 
-def form(url, method="post", multipart=False, **options):
+def form(url, method="POST", multipart=False, **options):
     """
     Starts a form tag that points the action to an url. 
     
@@ -20,9 +20,9 @@ def form(url, method="post", multipart=False, **options):
     ``multipart``
         If set to True, the enctype is set to "multipart/form-data".
     ``method``
-        The method to use when submitting the form, usually either "get" or 
-        "post". If "put", "delete", or another verb is used, a hidden input
-        with name _method is added to simulate the verb over post.
+        The method to use when submitting the form, usually either "GET" or 
+        "POST". If "PUT", "DELETE", or another verb is used, a hidden input
+        with name _method is added to simulate the verb over POST.
     
     """
     if multipart:
@@ -34,11 +34,11 @@ def form(url, method="post", multipart=False, **options):
         url = html_escape(url)
     
     method_tag = ""
-    
-    if method.lower() in ['post', 'get']:
+
+    if method.upper() in ['POST', 'GET']:
         options['method'] = method
     else:
-        options['method'] = "post"
+        options['method'] = "POST"
         method_tag = tag('input', type="hidden", name_="_method", value=method)
     
     options["action"] = url

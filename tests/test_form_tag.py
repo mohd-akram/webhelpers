@@ -13,7 +13,7 @@ class TestFormTagHelper(TestCase):
     def test_form(self):
         self.assertEqual(
             form(url="http://www.example.com"),
-            '<form action="http://www.example.com" method="post">'
+            '<form action="http://www.example.com" method="POST">'
         )
         self.assertEqual(
             form(url="http://www.example.com", method='GET'),
@@ -23,7 +23,7 @@ class TestFormTagHelper(TestCase):
     def test_form_multipart(self):
         self.assertEqual(
             form(url='http://www.example.com', multipart=True),
-            '<form action="http://www.example.com" enctype="multipart/form-data" method="post">'
+            '<form action="http://www.example.com" enctype="multipart/form-data" method="POST">'
         )
             
     def test_hidden_field(self):

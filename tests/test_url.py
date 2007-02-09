@@ -6,38 +6,42 @@ from routes import *
 
 class TestURLHelper(TestCase):
     def test_button_to_with_straight_url(self):
-        self.assertEqual("<form method=\"post\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>", 
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>", 
                button_to("Hello", "http://www.example.com"))
 
     def test_button_to_with_query(self):
-        self.assertEqual("<form method=\"post\" action=\"http://www.example.com/q1=v1&amp;q2=v2\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>", 
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com/q1=v1&amp;q2=v2\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>", 
                button_to("Hello", "http://www.example.com/q1=v1&q2=v2"))
 
     def test_button_to_with_escaped_query(self):
-        self.assertEqual("<form method=\"post\" action=\"http://www.example.com/q1=v1&amp;q2=v2\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com/q1=v1&amp;q2=v2\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
                          button_to("Hello", "http://www.example.com/q1=v1&amp;q2=v2"))
     
     def test_button_to_with_query_and_no_name(self):
-        self.assertEqual("<form method=\"post\" action=\"http://www.example.com?q1=v1&amp;q2=v2\" class=\"button-to\"><div><input type=\"submit\" value=\"http://www.example.com?q1=v1&amp;q2=v2\" /></div></form>", 
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com?q1=v1&amp;q2=v2\" class=\"button-to\"><div><input type=\"submit\" value=\"http://www.example.com?q1=v1&amp;q2=v2\" /></div></form>", 
                button_to(None, "http://www.example.com?q1=v1&q2=v2"))
     
     def test_button_to_with_javascript_confirm(self):
-        self.assertEqual("<form method=\"post\" action=\"http://www.example.com\" class=\"button-to\"><div><input onclick=\"return confirm('Are you sure?');\" type=\"submit\" value=\"Hello\" /></div></form>",
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input onclick=\"return confirm('Are you sure?');\" type=\"submit\" value=\"Hello\" /></div></form>",
                button_to("Hello", "http://www.example.com", confirm="Are you sure?"))
     
     def test_button_to_enabled_disabled(self):
-        self.assertEqual("<form method=\"post\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
                button_to("Hello", "http://www.example.com", disabled=False))
-        self.assertEqual("<form method=\"post\" action=\"http://www.example.com\" class=\"button-to\"><div><input disabled=\"disabled\" type=\"submit\" value=\"Hello\" /></div></form>",
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input disabled=\"disabled\" type=\"submit\" value=\"Hello\" /></div></form>",
                button_to("Hello", "http://www.example.com", disabled=True))
     
     def test_button_to_with_method_delete(self):
-        self.assertEqual("<form method=\"post\" action=\"http://www.example.com\" class=\"button-to\"><div><input name=\"_method\" type=\"hidden\" value=\"delete\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input name=\"_method\" type=\"hidden\" value=\"DELETE\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
+            button_to("Hello", "http://www.example.com", method='DELETE'))
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input name=\"_method\" type=\"hidden\" value=\"delete\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
             button_to("Hello", "http://www.example.com", method='delete'))
 
     def test_button_to_with_method_get(self):
         self.assertEqual("<form method=\"get\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
             button_to("Hello", "http://www.example.com", method='get'))
+        self.assertEqual("<form method=\"GET\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
+            button_to("Hello", "http://www.example.com", method='GET'))
 
     def test_link_tag_with_straight_url(self):
         self.assertEqual("<a href=\"http://www.example.com\">Hello</a>", link_to("Hello", "http://www.example.com"))
@@ -82,6 +86,8 @@ class TestURLHelper(TestCase):
                link_to("Hello", "http://www.example.com", post=True))
     
     def test_link_tag_using_delete_javascript(self):
+        self.assertEqual("<a href=\"http://www.example.com\" onclick=\"var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;var m = document.createElement('input'); m.setAttribute('type', 'hidden'); m.setAttribute('name', '_method'); m.setAttribute('value', 'DELETE'); f.appendChild(m);f.submit();return false;\">Destroy</a>",
+                link_to("Destroy", "http://www.example.com", method='DELETE'))
         self.assertEqual("<a href=\"http://www.example.com\" onclick=\"var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;var m = document.createElement('input'); m.setAttribute('type', 'hidden'); m.setAttribute('name', '_method'); m.setAttribute('value', 'delete'); f.appendChild(m);f.submit();return false;\">Destroy</a>",
                 link_to("Destroy", "http://www.example.com", method='delete'))
 
