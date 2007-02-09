@@ -5,6 +5,7 @@ WebHelpers ChangeLog
   highlights text with the CSS class name 'hilight' by default: it now uses the
   CSS class name 'highlight' instead. The function's 'hilighter' keyword
   argument has also been deprecated, use 'highlighter' instead.
+* Upgraded markdown from 1.5 to 1.6a.
 * Sync'd Prototype helper to 6057.
 * Sync'd Urls helper to 6070.
 * Sync'd Text helper to 6096.
