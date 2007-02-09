@@ -171,11 +171,12 @@ def truncate(text, length=30, truncate_string='...'):
     else:
         return text
 
-def highlight(text, phrase, hilighter='<strong class="hilight">\\1</strong>'):
+def highlight(text, phrase, highlighter='<strong class="highlight">\\1</strong>',
+              hilighter=None):
     """
     Highlights the ``phrase`` where it is found in the ``text``
     
-    The highlighted phrase will be surrounded by the hilighter, by default::
+    The highlighted phrase will be surrounded by the highlighter, by default::
     
         <strong class="highlight">I'm a highlight phrase</strong>
     
@@ -188,12 +189,17 @@ def highlight(text, phrase, hilighter='<strong class="hilight">\\1</strong>'):
     Example::
 
         >>> highlight('You searched for: Pylons', 'Pylons')
-        'You searched for: <strong class="hilight">Pylons</strong>'
+        'You searched for: <strong class="highlight">Pylons</strong>'
     """
+    if hilighter is not None:
+        warnings.warn("The highlight function's hilight keyword argument is deprecated: "
+                      "Please use the highlight keyword argument instead.",
+                      DeprecationWarning, 2)
+        highlighter = hilighter
     if not phrase or not text:
         return text
     highlight_re = re.compile('(%s)' % re.escape(phrase), re.I)
-    return highlight_re.sub(hilighter, text)
+    return highlight_re.sub(highlighter, text)
 
 def excerpt(text, phrase, radius=100, excerpt_string="..."):
     """

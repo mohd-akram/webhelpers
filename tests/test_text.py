@@ -95,10 +95,10 @@ class TestTextHelper(TestCase):
 
 
     def test_highlighter(self):
-        self.assertEqual("This is a <strong class=\"hilight\">beautiful</strong> morning",
+        self.assertEqual("This is a <strong class=\"highlight\">beautiful</strong> morning",
                          highlight("This is a beautiful morning", "beautiful"))
         self.assertEqual(
-            "This is a <strong class=\"hilight\">beautiful</strong> morning, but also a <strong class=\"hilight\">beautiful</strong> day",
+            "This is a <strong class=\"highlight\">beautiful</strong> morning, but also a <strong class=\"highlight\">beautiful</strong> day",
             highlight("This is a beautiful morning, but also a beautiful day", "beautiful"))
         self.assertEqual("This is a <b>beautiful</b> morning, but also a <b>beautiful</b> day",
                          highlight("This is a beautiful morning, but also a beautiful day",
@@ -108,13 +108,13 @@ class TestTextHelper(TestCase):
                                    None))
 
     def test_highlighter_with_regex(self):
-        self.assertEqual("This is a <strong class=\"hilight\">beautiful!</strong> morning",
+        self.assertEqual("This is a <strong class=\"highlight\">beautiful!</strong> morning",
                      highlight("This is a beautiful! morning", "beautiful!"))
 
-        self.assertEqual("This is a <strong class=\"hilight\">beautiful! morning</strong>",
+        self.assertEqual("This is a <strong class=\"highlight\">beautiful! morning</strong>",
                      highlight("This is a beautiful! morning", "beautiful! morning"))
 
-        self.assertEqual("This is a <strong class=\"hilight\">beautiful? morning</strong>",
+        self.assertEqual("This is a <strong class=\"highlight\">beautiful? morning</strong>",
                      highlight("This is a beautiful? morning", "beautiful? morning"))
 
     def test_strip_links(self):
