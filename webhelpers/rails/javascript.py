@@ -11,7 +11,7 @@ Ajax, controls and visual effects
 * For information on using controls and visual effects, see `Scriptaculous Helpers
   <module-railshelpers.helpers.scriptaculous.html>`_.
 """
-# Last synced with Rails copy at Revision 5245 on Dec. 1st, 2006.
+# Last synced with Rails copy at Revision 6057 on Feb 8th, 2007.
 
 import re
 from tags import *
