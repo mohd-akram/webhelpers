@@ -31,6 +31,10 @@ class TestTagHelper(TestCase):
 
     def test_escape_once(self):
         self.assertEqual("1 &lt; 2 &amp; 3", escape_once("1 < 2 &amp; 3"))
+
+    def test_cdata_section(self):
+        self.assertEqual('<![CDATA[Hello]]>', cdata_section('Hello'))
+        self.assertEqual('<![CDATA[]]>', cdata_section(None))
     
         
 if __name__ == '__main__':
