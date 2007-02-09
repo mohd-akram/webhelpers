@@ -93,10 +93,8 @@ def fix_double_escape(escaped):
 
 def tag_options(**options):
     strip_unders(options)
-    print options
     cleaned_options = convert_booleans(dict([(x, y) for x,y in options.iteritems() if y is not None]))
     optionlist = ['%s="%s"' % (x, escape_once(y)) for x,y in cleaned_options.iteritems()]
-    print optionlist
     optionlist.sort()
     if optionlist:
         return ' ' + ' '.join(optionlist)
