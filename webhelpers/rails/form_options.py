@@ -4,7 +4,6 @@ Form Options Helpers
 # Last synced with Rails copy at Revision 6057 on Feb 7th, 2007.
 # Purposely left out a few redundant options_for_collection stuff.
 
-
 from webhelpers.util import html_escape
 
 def options_for_select(container, selected = None):
@@ -87,7 +86,7 @@ def options_for_select_from_dicts(container, name_key, value_key = None, selecte
     if value_key:
         def make_elem(elem):
             return elem[name_key], elem[value_key]
-    else :
+    else:
         def make_elem(elem):
             return elem[name_key]
 
