@@ -41,24 +41,35 @@ class TestFormOptionsHelper(TestCase):
             "<option value=\"&lt;Kroner&gt;\" selected=\"selected\">&lt;DKR&gt;</option>\n<option value=\"Dollar\" selected=\"selected\">$</option>",
             options_for_select({ "$": "Dollar", "<DKR>": "<Kroner>" }, [ "Dollar", "<Kroner>" ]))
 
-        """
-    def test_ducktyped_options_for_select
-    quack = Struct.new(:first, :last)
-    self.assertEqual(
-      "<option value=\"&lt;Kroner&gt;\">&lt;DKR&gt;</option>\n<option value=\"Dollar\">$</option>",
-      options_for_select([quack.new("<DKR>", "<Kroner>"), quack.new("$", "Dollar")])
-    )
-    self.assertEqual(
-      "<option value=\"&lt;Kroner&gt;\">&lt;DKR&gt;</option>\n<option value=\"Dollar\" selected=\"selected\">$</option>",
-      options_for_select([quack.new("<DKR>", "<Kroner>"), quack.new("$", "Dollar")], "Dollar")
-    )
-    self.assertEqual(
-      "<option value=\"&lt;Kroner&gt;\" selected=\"selected\">&lt;DKR&gt;</option>\n<option value=\"Dollar\" selected=\"selected\">$</option>",
-      options_for_select([quack.new("<DKR>", "<Kroner>"), quack.new("$", "Dollar")], ["Dollar", "<Kroner>"])
-    )
-  end
+    def test_options_for_select_from_objects(self):
+        class Something(object):
+            select_name = "something"
+            select_value = "The Something"
+        class SomethingElse(object):
+            select_name = "somethingelse"
+            select_value = "The Something Else"
+        self.assertEqual('<option value="something">something</option>\n<option value="somethingelse">somethingelse</option>',
+                         options_for_select_from_objects([Something(), SomethingElse()], 'select_name'))
+        self.assertEqual('<option value="something" selected="selected">something</option>\n<option value="somethingelse">somethingelse</option>',
+                         options_for_select_from_objects([Something(), SomethingElse()], 'select_name', selected='something'))
+        self.assertEqual('<option value="The Something">something</option>\n<option value="The Something Else">somethingelse</option>',
+                         options_for_select_from_objects([Something(), SomethingElse()], 'select_name', 'select_value'))
+        self.assertEqual('<option value="The Something" selected="selected">something</option>\n<option value="The Something Else">somethingelse</option>',
+                         options_for_select_from_objects([Something(), SomethingElse()], 'select_name', 'select_value', 'The Something'))
 
-  """
+    def test_options_for_select_from_dicts(self):
+        something = dict(select_name="something",
+                         select_value="The Something")
+        somethingelse = dict(select_name="somethingelse",
+                         select_value="The Something Else")
+        self.assertEqual('<option value="something">something</option>\n<option value="somethingelse">somethingelse</option>',
+                         options_for_select_from_dicts([something, somethingelse], 'select_name'))
+        self.assertEqual('<option value="something" selected="selected">something</option>\n<option value="somethingelse">somethingelse</option>',
+                         options_for_select_from_dicts([something, somethingelse], 'select_name', selected='something'))
+        self.assertEqual('<option value="The Something">something</option>\n<option value="The Something Else">somethingelse</option>',
+                         options_for_select_from_dicts([something, somethingelse], 'select_name', 'select_value'))
+        self.assertEqual('<option value="The Something" selected="selected">something</option>\n<option value="The Something Else">somethingelse</option>',
+                         options_for_select_from_dicts([something, somethingelse], 'select_name', 'select_value', 'The Something'))
     
 if __name__ == '__main__':
     suite = [unittest.makeSuite(TestFormOptionsHelper)]
