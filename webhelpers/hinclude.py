@@ -11,7 +11,7 @@ from webhelpers.rails.tags import content_tag
 
 def include(url, default=''):
     """Do a client-side include of ``url``, defaulting to ``default```
-        >>> hinclude.include("/foo","hello")
+        >>> include("/foo","hello")
         '<hx:include src="/foo">hello</hx:include>'
     """
     

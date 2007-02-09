@@ -42,6 +42,7 @@ def distance_of_time_in_words(from_time, to_time=0, include_seconds=False):
 
     Examples:
 
+        >>> from datetime import datetime, timedelta
         >>> from_time = datetime.now()
         >>> distance_of_time_in_words(from_time, from_time + timedelta(minutes=50))
         'about 1 hour'
