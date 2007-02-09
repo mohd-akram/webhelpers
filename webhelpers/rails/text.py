@@ -3,7 +3,7 @@ Text Helpers
 
 Provides a set of methods for filtering, formatting and transforming strings.
 """
-# Last synced with Rails copy at Revision 5629 on Feb 8th, 2007.
+# Last synced with Rails copy at Revision 6096 on Feb 8th, 2007.
 # Purposely left out sanitize and strip_tags, should be included at some point likely using
 # BeautifulSoup.
 
@@ -17,24 +17,24 @@ from routes import request_config
 from webhelpers.rails.tags import content_tag, tag_options
 
 AUTO_LINK_RE = re.compile(r"""
-                        (                        # leading text
-                          <\w+.*?>|              # leading HTML tag, or
-                          [^=!:'"/]|             # leading punctuation, or 
-                          ^                      # beginning of line
+                        (                          # leading text
+                          <\w+.*?>|                # leading HTML tag, or
+                          [^=!:'"/]|               # leading punctuation, or 
+                          ^                        # beginning of line
                         )
                         (
-                          (?:https?://)|         # protocol spec, or
-                          (?:www\.)              # www.*
+                          (?:https?://)|           # protocol spec, or
+                          (?:www\.)                # www.*
                         ) 
                         (
-                          [-\w]+                 # subdomain or domain
-                          (?:\.[-\w]+)*          # remaining subdomains or domain
-                          (?::\d+)?              # port
-                          (?:/(?:[~\w%.;-]+)?)*  # path
-                          (?:\?[\w%&+=.;-]+)?    # query string
-                          (?:\#\w*)?             # trailing anchor
+                          [-\w]+                   # subdomain or domain
+                          (?:\.[-\w]+)*            # remaining subdomains or domain
+                          (?::\d+)?                # port
+                          (?:/(?:(?:[~\w\+%-]|(?:[,.;:][^\s$]))+)?)* # path
+                          (?:\?[\w\+%&=.;-]+)?     # query string
+                          (?:\#[\w\-]*)?           # trailing anchor
                         )
-                        ([\.,"'?!;:]|\s|<|$)     # trailing text
+                        ([\.,"'?!;:]|\s|<|$)       # trailing text
                            """, re.X)
     
 def iterdict(items):
