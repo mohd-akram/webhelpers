@@ -11,7 +11,26 @@ import webhelpers.textile as textile
 import webhelpers.markdown as markdown
 import itertools, re
 
-AUTO_LINK_RE = re.compile(r"""(<\w+.*?>|[^=!:'"/]|^)((?:https?://)|(?:www\.))([-\w]+(?:\.[-\w]+)*(?::\d+)?(?:/(?:[~\w%.;-]+)?)*(?:\?[\w%&+=.;-]+)?(?:\#\w*)?)([\.,"'?!;:]|\s|<|$)""")
+AUTO_LINK_RE = re.compile(r"""
+                        (                        # leading text
+                          <\w+.*?>|              #   leading HTML tag, or
+                          [^=!:'"/]|             #   leading punctuation, or 
+                          ^                      #   beginning of line
+                        )
+                        (
+                          (?:https?://)|         # protocol spec, or
+                          (?:www\.)              # www.*
+                        ) 
+                        (
+                          [-\w]+                 # subdomain or domain
+                          (?:\.[-\w]+)*          # remaining subdomains or domain
+                          (?::\d+)?              # port
+                          (?:/(?:[~\w%.;-]+)?)*  # path
+                          (?:\?[\w%&+=.;-]+)?    # query string
+                          (?:\#\w*)?             # trailing anchor
+                        )
+                        ([\.,"'?!;:]|\s|<|$)     # trailing text
+                           """, re.X)
     
 def iterdict(items):
     return dict(items=items, iter=itertools.cycle(items))
