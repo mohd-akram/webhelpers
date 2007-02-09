@@ -32,9 +32,9 @@ class TestURLHelper(TestCase):
                button_to("Hello", "http://www.example.com", disabled=True))
     
     def test_button_to_with_method_delete(self):
-        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input name=\"_method\" type=\"hidden\" value=\"DELETE\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input id=\"_method\" name=\"_method\" type=\"hidden\" value=\"DELETE\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
             button_to("Hello", "http://www.example.com", method='DELETE'))
-        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input name=\"_method\" type=\"hidden\" value=\"delete\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
+        self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input id=\"_method\" name=\"_method\" type=\"hidden\" value=\"delete\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
             button_to("Hello", "http://www.example.com", method='delete'))
 
     def test_button_to_with_method_get(self):

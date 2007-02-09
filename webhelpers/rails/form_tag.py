@@ -1,7 +1,7 @@
 """
 Form Tag Helpers
 """
-# Last synced with Rails copy at Revision 5045 on Sept. 6th, 2006.
+# Last synced with Rails copy at Revision 6057 on Feb 9th, 2007.
 
 import re
 from urls import confirm_javascript_function
@@ -39,7 +39,8 @@ def form(url, method="POST", multipart=False, **options):
         options['method'] = method
     else:
         options['method'] = "POST"
-        method_tag = tag('input', type="hidden", name_="_method", value=method)
+        method_tag = tag('input', type="hidden", id="_method", name_="_method",
+                         value=method)
     
     options["action"] = url
     return tag("form", True, **options) + method_tag

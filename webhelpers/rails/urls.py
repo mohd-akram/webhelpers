@@ -118,7 +118,8 @@ def button_to(name, url='', **html_options):
     method_tag = ''
     method = html_options.pop('method', '')
     if method.upper() in ['PUT', 'DELETE']:
-        method_tag = tags.tag('input', type_='hidden', name_='_method', value=method)
+        method_tag = tags.tag('input', type_='hidden', id='_method', name_='_method',
+                              value=method)
     
     form_method = (method.upper() == 'GET' and method) or 'POST'
     
