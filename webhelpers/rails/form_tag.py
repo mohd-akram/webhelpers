@@ -60,7 +60,7 @@ def select(name, option_tags='', **options):
     ``option_tags`` is a string containing the option tags for the select box::
 
         >>> select("people", "<option>George</option>")
-        <select id="people" name="people"><option>George</option></select>
+        '<select id="people" name="people"><option>George</option></select>'
     
     Options:
     
@@ -124,7 +124,7 @@ def text_area(name, content='', **options):
     Example::
     
         >>> text_area("body", '', size="25x10")
-        <textarea name="body" id="body" cols="25" rows="10"></textarea>
+        '<textarea cols="25" id="body" name="body" rows="10"></textarea>'
     """
     if 'size' in options:
         options["cols"], options["rows"] = options["size"].split("x")

@@ -19,14 +19,13 @@ def options_for_select(container, selected = None):
     Examples (call, result)::
     
         >>> options_for_select([["Dollar", "$"], ["Kroner", "DKK"]])
-        <option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>
+        '<option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>'
         >>> options_for_select([ "VISA", "MasterCard" ], "MasterCard")
-        <option value="VISA">VISA</option>\\n<option value="MasterCard" selected="selected">MasterCard</option>
+        '<option value="VISA">VISA</option>\\n<option value="MasterCard" selected="selected">MasterCard</option>'
         >>> options_for_select(dict(Basic="$20", Plus="$40"), "$40")
-        <option value="$20">Basic</option>\\n<option value="$40" selected="selected">Plus</option>
+        <option value="$40" selected="selected">Plus</option>\n<option value="$20">Basic</option>
         >>> options_for_select([ "VISA", "MasterCard", "Discover" ], ["VISA", "Discover"])
-        <option value="VISA" selected="selected">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n
-        <option value="Discover" selected="selected">Discover</option>
+        '<option value="VISA" selected="selected">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option value="Discover" selected="selected">Discover</option>'
 
     Note: Only the option tags are returned, you have to wrap this call in a regular HTML select tag.
     """

@@ -37,13 +37,13 @@ def tag(name, open=False, **options):
     Examples::
     
         >>> tag("br")
-        <br />
+        '<br />'
         >>> tag("br", True)
-        <br>
+        '<br>'
         >>> tag("input", type="text")
-        <input type="text" />
-        >>> tag("input", type='text', disabled=True))
-        <input disabled="disabled" type="text" />
+        '<input type="text" />'
+        >>> tag("input", type='text', disabled=True)
+        '<input disabled="disabled" type="text" />'
     """
     tag = '<%s%s%s' % (name, (options and tag_options(**options)) or '', (open and '>') or ' />')
     return tag
@@ -57,9 +57,9 @@ def content_tag(name, content, **options):
     Examples::
     
         >>> content_tag("p", "Hello world!")
-        <p>Hello world!</p>
+        '<p>Hello world!</p>'
         >>> content_tag("div", content_tag("p", "Hello world!"), class_="strong")
-        <div class="strong"><p>Hello world!</p></div>
+        '<div class="strong"><p>Hello world!</p></div>'
     """
     if content is None:
         content = ''
@@ -83,7 +83,7 @@ def escape_once(html):
     """Escapes a given string without affecting existing escaped entities.
 
     >>> escape_once("1 < 2 &amp; 3")
-    1 &lt; 2 &amp; 3
+    '1 &lt; 2 &amp; 3'
     """
     return fix_double_escape(html_escape(html))
 

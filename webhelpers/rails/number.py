@@ -25,15 +25,15 @@ def number_to_phone(number, area_code=False, delimiter="-", extension="", countr
     Examples::
     
         >>> number_to_phone(1235551234)
-        123-555-1234
+        '123-555-1234'
         >>> number_to_phone(1235551234, area_code=True)
-        (123) 555-1234
+        '(123) 555-1234'
         >>> number_to_phone(1235551234, delimiter=" ")
-        123 555 1234
+        '123 555 1234'
         >>> number_to_phone(1235551234, area_code=True, extension=555)
-        (123) 555-1234 x 555
+        '(123) 555-1234 x 555'
         >>> number_to_phone(1235551234, country_code=1)
-        1-123-555-1234
+        '1-123-555-1234'
     """
     number = str(number).strip()
     if area_code:
@@ -64,11 +64,11 @@ def number_to_currency(number, unit="$", precision=2, separator=".", delimiter="
     Examples::
     
         >>> number_to_currency(1234567890.50)
-        $1,234,567,890.50
+        '$1,234,567,890.50'
         >>> number_to_currency(1234567890.506)
-        $1,234,567,890.51
+        '$1,234,567,890.51'
         >>> number_to_currency(1234567890.50, unit="&pound;", separator=",", delimiter="")
-        &pound;1234567890,50
+        '&pound;1234567890,50'
     """
     if precision < 1:
         separator = ""
@@ -90,11 +90,11 @@ def number_to_percentage(number, precision=3, separator="."):
     Examples::
     
         >>> number_to_percentage(100)
-        100.000%
+        '100.000%'
         >>> number_to_percentage(100, precision=0)
-        100%
+        '100%'
         >>> number_to_percentage(302.0574, precision=2)
-        302.06%
+        '302.06%'
     """
     number = number_with_precision(number, precision)
     parts = number.split('.')
@@ -113,19 +113,19 @@ def number_to_human_size(size, precision=1):
     Examples::
     
         >>> number_to_human_size(123)
-        123 Bytes
+        '123 Bytes'
         >>> number_to_human_size(1234)
-        1.2 KB
+        '1.2 KB'
         >>> number_to_human_size(12345)
-        12.1 KB
+        '12.1 KB'
         >>> number_to_human_size(1234567)
-        1.2 MB
+        '1.2 MB'
         >>> number_to_human_size(1234567890)
-        1.1 GB
+        '1.1 GB'
         >>> number_to_human_size(1234567890123)
-        1.1 TB
+        '1.1 TB'
         >>> number_to_human_size(1234567, 2)
-        1.18 TB
+        '1.18 MB'
     """
     if size == 1:
         return "1 Byte"
@@ -160,11 +160,11 @@ def number_with_delimiter(number, delimiter=",", separator="."):
     Example::
     
         >>> number_with_delimiter(12345678)
-        12,345,678
+        '12,345,678'
         >>> number_with_delimiter(12345678.05)
-        12,345,678.05
+        '12,345,678.05'
         >>> number_with_delimiter(12345678, delimiter=".")
-        12.345.678
+        '12.345.678'
     """
     parts = str(number).split('.')
     parts[0] = re.sub(r'(\d)(?=(\d\d\d)+(?!\d))', r'\1%s' % delimiter, str(parts[0]))
@@ -180,9 +180,9 @@ def number_with_precision(number, precision=3):
     Example::
     
         >>> number_with_precision(111.2345)
-        111.235
+        '111.234'
         >>> number_with_precision(111.2345, 2)
-        111.23
+        '111.23'
     """
     formstr = '%01.' + str(precision) + 'f'
     return formstr % number

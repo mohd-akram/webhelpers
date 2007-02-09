@@ -216,7 +216,7 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
     Example::
     
         >>> excerpt("hello my world", "my", 3)
-        "...lo my wo..."
+        '...lo my wo...'
     """
     if not text or not phrase:
         return text
@@ -272,8 +272,7 @@ def auto_link(text, link="all", **href_options):
     Example::
     
         >>> auto_link("Go to http://www.planetpython.com and say hello to guido@python.org")
-        'Go to <a href="http://www.planetpython.com">http://www.planetpython.com</a> and say
-        hello to <a href="mailto:guido@python.org">guido@python.org</a>'
+        'Go to <a href="http://www.planetpython.com">http://www.planetpython.com</a> and say hello to <a href="mailto:guido@python.org">guido@python.org</a>'
     """
     if not text:
         return ""
@@ -309,8 +308,8 @@ def strip_links(text):
     
     Example::
     
-        >>> strip_links("<a href="something">else</a>")
-        "else"
+        >>> strip_links('<a href="something">else</a>')
+        'else'
     """
     strip_re = re.compile(r'<a\b.*?>(.*?)<\/a>', re.I | re.M)
     return strip_re.sub(r'\1', text)
