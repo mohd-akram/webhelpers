@@ -30,11 +30,13 @@ from form_tag import form
 from tags import tag, camelize
 from urls import get_url
 
-CALLBACKS = frozenset(['uninitialized','loading','loaded',
-                       'interactive','complete','failure','success'] + [str(x) for x in range(100,599)])
-AJAX_OPTIONS = frozenset(['before','after','condition','url',
-                          'asynchronous','method','insertion','position',
-                          'form','with','with_', 'update','script'] + list(CALLBACKS))
+CALLBACKS = frozenset(['uninitialized', 'loading', 'loaded',
+                       'interactive', 'complete', 'failure', 'success'] + \
+                          [str(x) for x in range(100,599)])
+AJAX_OPTIONS = frozenset(['before', 'after', 'condition', 'url',
+                          'asynchronous', 'method', 'insertion', 'position',
+                          'form', 'with', 'with_', 'update', 'script'] + \
+                             list(CALLBACKS))
 
 def link_to_remote(name, options={}, **html_options):
     """

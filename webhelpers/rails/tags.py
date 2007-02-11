@@ -18,7 +18,7 @@ def camelize(name):
     return name
 
 def strip_unders(options):
-    for x,y in options.iteritems():
+    for x, y in options.iteritems():
         if x.endswith('_'):
             options[x[:-1]] = y
             del options[x]
@@ -93,8 +93,8 @@ def fix_double_escape(escaped):
 
 def tag_options(**options):
     strip_unders(options)
-    cleaned_options = convert_booleans(dict([(x, y) for x,y in options.iteritems() if y is not None]))
-    optionlist = ['%s="%s"' % (x, escape_once(y)) for x,y in cleaned_options.iteritems()]
+    cleaned_options = convert_booleans(dict([(x, y) for x, y in options.iteritems() if y is not None]))
+    optionlist = ['%s="%s"' % (x, escape_once(y)) for x, y in cleaned_options.iteritems()]
     optionlist.sort()
     if optionlist:
         return ' ' + ' '.join(optionlist)

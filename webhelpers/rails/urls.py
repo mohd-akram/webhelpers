@@ -182,7 +182,7 @@ def parse_querystring(environ):
     _parsed = cgi.parse_qsl(source, keep_blank_values=True,
         strict_parsing=False)
     parsed = []
-    for k,v in _parsed:
+    for k, v in _parsed:
         parsed.append((k, v.decode('utf-8')))
     return parsed
 

@@ -53,7 +53,7 @@ def auto_discovery_link_tag(source, type='rss', **kwargs):
     title = ''
     if type.lower() in ('rss', 'atom'):
         title = type.upper()
-        type='application/%s+xml' % type.lower()
+        type = 'application/%s+xml' % type.lower()
 
     tag_args = dict(rel='alternate', type=type, title=title,
                     href=compute_public_path(source))

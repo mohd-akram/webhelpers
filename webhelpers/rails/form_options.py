@@ -6,7 +6,7 @@ Form Options Helpers
 
 from webhelpers.util import html_escape
 
-def options_for_select(container, selected = None):
+def options_for_select(container, selected=None):
     """
     Creates select options from a container (list, tuple, dict)
     
@@ -32,7 +32,7 @@ def options_for_select(container, selected = None):
     if hasattr(container, 'values'):
         container = container.items()
     
-    if not isinstance(selected, (list,tuple)):
+    if not isinstance(selected, (list, tuple)):
         selected = (selected,)
     
     options = []
@@ -53,7 +53,7 @@ def options_for_select(container, selected = None):
             options.append('<option value="%s">%s</option>' % (v, n))
     return "\n".join(options)
 
-def options_for_select_from_objects(container, name_attr, value_attr = None, selected = None):
+def options_for_select_from_objects(container, name_attr, value_attr=None, selected=None):
     """
     Create select options from objects in a container
     
@@ -72,7 +72,7 @@ def options_for_select_from_objects(container, name_attr, value_attr = None, sel
     
     return options_for_select([make_elem(x) for x in container], selected)
 
-def options_for_select_from_dicts(container, name_key, value_key = None, selected = None):
+def options_for_select_from_dicts(container, name_key, value_key=None, selected=None):
     """
     Create select options from dicts in a container
     

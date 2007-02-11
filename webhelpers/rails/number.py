@@ -187,5 +187,6 @@ def number_with_precision(number, precision=3):
     formstr = '%01.' + str(precision) + 'f'
     return formstr % number
 
-__all__ = ['number_to_phone', 'number_to_currency', 'number_to_percentage','number_with_delimiter', 
-           'number_with_precision', 'number_to_human_size', 'human_size']
+__all__ = ['number_to_phone', 'number_to_currency', 'number_to_percentage',
+           'number_with_delimiter', 'number_with_precision', 'number_to_human_size',
+           'human_size']

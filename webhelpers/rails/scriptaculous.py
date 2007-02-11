@@ -49,7 +49,9 @@ def visual_effect(name, element_id=False, **js_options):
     """
     element = (element_id and json.dumps(element_id)) or "element"
     if isinstance(js_options.get('queue'), dict):
-        js_options['queue'] = '{%s}' % ','.join(["%s:%s" % (k,(k == 'limit' and v) or "'%s'" % v) for k,v in js_options['queue'].iteritems()])
+        js_options['queue'] = '{%s}' % \
+            ','.join(["%s:%s" % (k, (k == 'limit' and v) or "'%s'" % v) \
+                          for k,v in js_options['queue'].iteritems()])
     elif js_options.has_key('queue'):
         js_options['queue'] = "'%s'" % js_options['queue']
     
