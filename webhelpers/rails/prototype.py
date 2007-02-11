@@ -252,7 +252,7 @@ def update_element_function(element_id, **options):
     elif opval == 'remove':
         jsf = "Element.remove('%s')" % element_id
     else:
-        raise "Invalid action, choose one of update, remove, or empty"
+        raise ValueError("Invalid action, choose one of update, remove, or empty")
     
     jsf += ";\n"
     if options.get('binding'):

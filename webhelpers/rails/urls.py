@@ -213,7 +213,7 @@ def convert_options_to_javascript(confirm=None, popup=None, post=None, method=No
         method = 'POST'
     
     if popup and method:
-        raise "You can't use popup and post in the same link"
+        raise ValueError("You can't use popup and post in the same link")
     elif confirm and popup:
         oc = "if (%s) { %s };return false;" % (confirm_javascript_function(confirm), 
                                                popup_javascript_function(popup))
