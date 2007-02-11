@@ -38,7 +38,7 @@ AJAX_OPTIONS = frozenset(['before', 'after', 'condition', 'url',
                           'form', 'with', 'with_', 'update', 'script'] + \
                              list(CALLBACKS))
 
-def link_to_remote(name, options={}, **html_options):
+def link_to_remote(name, options=None, **html_options):
     """
     Links to a remote function
     
@@ -136,6 +136,8 @@ def link_to_remote(name, options={}, **html_options):
         elements. By default this is the current form, but it could just as
         well be the ID of a table row or any other DOM element.    
     """
+    if options is None:
+        options = {}
     return link_to_function(name, remote_function(**options), **html_options)
 
 def periodically_call_remote(**options):
