@@ -12,7 +12,7 @@ import re
 import textwrap
 import warnings
 import webhelpers.textile as textile
-import webhelpers.markdown as markdown
+import webhelpers.markdown as _markdown
 from routes import request_config
 from webhelpers.rails.tags import content_tag, tag_options
 
@@ -287,7 +287,7 @@ def auto_link_urls(text, **href_options):
     extra_options = tag_options(**href_options)
     def handle_match(matchobj):
         all = matchobj.group()
-        a, b, c, d = matchobj.group(1,2,3,4)
+        a, b, c, d = matchobj.group(1, 2, 3, 4)
         if re.match(r'<a\s', a, re.I):
             return all
         text = b + c
@@ -297,10 +297,8 @@ def auto_link_urls(text, **href_options):
     return re.sub(AUTO_LINK_RE, handle_match, text)
 
 def auto_link_email_addresses(text):
-    def fix_email(match):
-        text = matchobj.group()
-        return '<a href="mailto:%s>%s</a>' % (text, text)
-    return re.sub(r'([\w\.!#\$%\-+.]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+)', r'<a href="mailto:\1">\1</a>', text)
+    return re.sub(r'([\w\.!#\$%\-+.]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+)',
+                  r'<a href="mailto:\1">\1</a>', text)
 
 def strip_links(text):
     """
@@ -326,14 +324,14 @@ def textilize(text, sanitize=False):
     texer = textile.Textiler(text)
     return texer.process(sanitize=sanitize)
 
-def markdown(text):
+def markdown(text, **kwargs):
     """Format the text with MarkDown formatting
     
     This function uses the `Python MarkDown library <http://www.freewisdom.org/projects/python-markdown/>`_
     which is included with WebHelpers.
     
     """
-    return markdown.markdown(text)
+    return _markdown.markdown(text, **kwargs)
 
 __all__ = ['cycle', 'reset_cycle', 'counter', 'reset_counter', 'truncate', 'highlight', 'excerpt',
            'word_wrap', 'simple_format', 'auto_link', 'strip_links', 'textilize', 'markdown']
