@@ -20,6 +20,10 @@ class TestFormTagHelper(WebHelpersTestCase):
             form(url="http://www.example.com", method='GET'),
             '<form action="http://www.example.com" method="GET">'
         )
+        self.assertEqual(
+            form(url('/test/edit/1')),
+            '<form action="/test/edit/1" method="POST">'
+        )
 
     def test_form_multipart(self):
         self.assertEqual(
@@ -72,14 +76,36 @@ class TestFormTagHelper(WebHelpersTestCase):
         )
 
         self.assertEqual(
-            radio_button("num_people", 5, selected=True),
-            '<input id="num_people_5" name="num_people" selected="True" type="radio" value="5" />'
+            radio_button("num_people", 5, checked=True),
+            '<input checked="checked" id="num_people_5" name="num_people" type="radio" value="5" />'
         )
 
     def test_select(self):
         self.assertEqual(
             select("people", "<option>justin</option>"),
             '<select id="people" name="people"><option>justin</option></select>'
+        )
+
+    def test_submit(self):
+        self.assertEqual(
+            '<input name="commit" type="submit" value="Save changes" />',
+            submit()
+        )
+        self.assertEqual(
+            '<input name="commit" onclick="return confirm(\'Are you sure?\');" type="submit" value="Save" />',
+            submit("Save", confirm='Are you sure?')
+        )
+        self.assertEqual(
+            '<input name="commit" onclick="alert(\'Clicked!\');return confirm(\'Are you sure?\');" type="submit" value="Save" />',
+            submit("Save", onclick="alert('Clicked!')", confirm='Are you sure?')
+        )
+        self.assertEqual(
+            '<input name="commit" onclick="alert(\'Clicked!\');return confirm(\'Are you sure?\');" type="submit" value="Save" />',
+            submit("Save", onclick="alert('Clicked!');", confirm='Are you sure?')
+        )
+        self.assertEqual(
+            '<input name="commit" onclick="this.disabled=true;this.value=\'Saving...\';this.form.submit();alert(\'hello!\')" type="submit" value="Save" />',
+            submit("Save", disable_with="Saving...", onclick="alert('hello!')")
         )
 
     def test_text_area(self):
