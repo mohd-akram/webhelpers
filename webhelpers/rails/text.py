@@ -96,7 +96,10 @@ def reset_cycle(name='default'):
     Resets the cycle so that it starts from the first element in the array
     the next time it is used.
     """
-    del request_config().environ['railshelpers.cycles'][name]
+    try:
+        del request_config().environ['railshelpers.cycles'][name]
+    except KeyError:
+        pass
 
 def counter(name='default', start=1, step=1):
     """Return the next cardinal in a sequence.
@@ -146,7 +149,10 @@ def reset_counter(name='default'):
     Resets the counter so that it starts from the ``start`` cardinal in
     the sequence next time it is used.
     """
-    del request_config().environ['railshelpers.counters'][name]
+    try:
+        del request_config().environ['railshelpers.counters'][name]
+    except KeyError:
+        pass
 
 def truncate(text, length=30, truncate_string='...'):
     """
