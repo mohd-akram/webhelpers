@@ -180,7 +180,7 @@ def submit(value="Save changes", name='commit', confirm=None, disable_with=None,
         onclick = options.get('onclick', '')
         if onclick.strip() and not onclick.rstrip().endswith(';'):
             onclick += ';'
-        options['onclick'] = "%s return %s;" % (onclick, confirm_javascript_function(confirm))
+        options['onclick'] = "%sreturn %s;" % (onclick, confirm_javascript_function(confirm))
 
     if disable_with:
         options["onclick"] = "this.disabled=true;this.value='%s';this.form.submit();%s" % (disable_with, options.get("onclick", ''))
