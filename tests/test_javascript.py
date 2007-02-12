@@ -1,9 +1,9 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.javascript import *
 
-class TestJavascriptHelper(TestCase):
+class TestJavascriptHelper(WebHelpersTestCase):
     def test_escape_javascript(self):
         self.assertEqual("""This \\"thing\\" is really\\n netos\\'""",
                escape_javascript("""This "thing" is really\n netos'"""))

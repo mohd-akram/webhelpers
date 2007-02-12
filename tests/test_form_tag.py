@@ -1,9 +1,10 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.form_tag import *
+from webhelpers.rails.urls import url
 
-class TestFormTagHelper(TestCase):
+class TestFormTagHelper(WebHelpersTestCase):
     def test_check_box(self):
         self.assertEqual(
             check_box("admin"),

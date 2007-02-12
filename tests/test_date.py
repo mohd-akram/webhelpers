@@ -1,4 +1,4 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 from datetime import datetime
 from datetime import timedelta
@@ -6,7 +6,7 @@ import time
 
 from webhelpers.rails.date import *
 
-class TestDateHelper(TestCase):
+class TestDateHelper(WebHelpersTestCase):
     
     def test_distance_of_time_in_words(self):
         from_time = datetime(2004, 3, 6, 21, 41, 18)

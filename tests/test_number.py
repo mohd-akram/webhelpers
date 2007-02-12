@@ -1,9 +1,9 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.number import *
 
-class TestTextHelper(TestCase):
+class TestTextHelper(WebHelpersTestCase):
     def test_number_to_phone(self):
         self.assertEqual("123-555-1234", number_to_phone(1235551234))
         self.assertEqual("(123) 555-1234", number_to_phone(1235551234, area_code=True))

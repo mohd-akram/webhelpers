@@ -1,9 +1,9 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.tags import *
 
-class TestTagHelper(TestCase):
+class TestTagHelper(WebHelpersTestCase):
     def test_tag(self):
         self.assertEqual("<p class=\"show\" />", tag("p", class_='show'))
         self.assertEqual("<br>", tag("br", True))

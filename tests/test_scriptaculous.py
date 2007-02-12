@@ -1,9 +1,9 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.scriptaculous import *
 
-class TestScriptaculousHelper(TestCase):
+class TestScriptaculousHelper(WebHelpersTestCase):
     def test_effect(self):
         self.assertEqual("new Effect.Highlight(\"posts\",{});", visual_effect('highlight', "posts"))
         self.assertEqual("new Effect.Fade(\"fademe\",{duration:4.0});", visual_effect('fade', "fademe", duration=4.0))

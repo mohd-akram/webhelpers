@@ -1,10 +1,10 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.urls import *
 from routes import *
 
-class TestURLHelper(TestCase):
+class TestURLHelper(WebHelpersTestCase):
     def test_button_to_with_straight_url(self):
         self.assertEqual("<form method=\"POST\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>", 
                button_to("Hello", "http://www.example.com"))

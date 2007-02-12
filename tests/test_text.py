@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 from string24 import Template
 
 from webhelpers.rails.text import *
 
-class TestTextHelper(TestCase):
+class TestTextHelper(WebHelpersTestCase):
     
     def test_simple_format(self):
         self.assertEqual("<p></p>", simple_format(None))
@@ -104,6 +104,74 @@ class TestTextHelper(TestCase):
         self.assertEqual("<p>Go to %(link9_result)s. seriously, %(link9_result)s? i think I'll say hello to %(email_result)s. instead.</p>" % result_values, auto_link("<p>Go to %(link9_raw)s. seriously, %(link9_raw)s? i think I'll say hello to %(email_raw)s. instead.</p>" % raw_values))
         self.assertEqual("", auto_link(None))
         self.assertEqual("", auto_link(""))
+
+    def test_cycle(self):
+        self.assertEqual("one", cycle("one", "2", "3"))
+        self.assertEqual("2", cycle("one", "2", "3"))
+        self.assertEqual("3", cycle("one", "2", "3"))
+        self.assertEqual("one", cycle("one", "2", "3"))
+        self.assertEqual("2", cycle("one", "2", "3"))
+        self.assertEqual("3", cycle("one", "2", "3"))
+
+        self.assertEqual("3", cycle("3", "2", "one", name='ordered'))
+        self.assertEqual("2", cycle("3", "2", "one", name='ordered'))
+        self.assertEqual("one", cycle("3", "2", "one", name='ordered'))
+        self.assertEqual("2", cycle("2", "3", "one", name='ordered'))
+        self.assertEqual("3", cycle("2", "3", "one", name='ordered'))
+        self.assertEqual("one", cycle("2", "3", "one", name='ordered'))
+
+    def test_named_cycles(self):
+        self.assertEqual(1, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("red", cycle("red", "blue", name="colors"))
+        self.assertEqual(2, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("blue", cycle("red", "blue", name="colors"))
+        self.assertEqual(3, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("red", cycle("red", "blue", name="colors"))
+  
+    def test_default_named_cycle(self):
+        self.assertEqual(1, cycle(1, 2, 3))
+        self.assertEqual(2, cycle(1, 2, 3, name="default"))
+        self.assertEqual(3, cycle(1, 2, 3))
+
+    def test_reset_cycle(self):
+        self.assertEqual(1, cycle(1, 2, 3))
+        self.assertEqual(2, cycle(1, 2, 3))
+        reset_cycle()
+        self.assertEqual(1, cycle(1, 2, 3))
+
+    def test_reset_unknown_cycle(self):
+        reset_cycle("colors")
+  
+    def test_recet_named_cycle(self):
+        self.assertEqual(1, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("red", cycle("red", "blue", name="colors"))
+        reset_cycle("numbers")
+        self.assertEqual(1, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("blue", cycle("red", "blue", name="colors"))
+        self.assertEqual(2, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("red", cycle("red", "blue", name="colors"))
+
+
+    def test_counters(self):
+        for i in range(1, 4):
+            self.assertEqual(i, counter())
+        reset_counter()
+        for i in range(3):
+            self.assertEqual(i, counter(start=0))
+        reset_counter()
+        for i in range(2, 5):
+            self.assertEqual(i, counter(start=2))
+        reset_counter()
+        for i in range(1, -2, -1):
+            self.assertEqual(i, counter(step=-1))
+
+    def test_named_counters(self):
+        for i in range(1, 4):
+            self.assertEqual(i, counter(name="a"))
+        for i in range(1, 4):
+            self.assertEqual(i, counter(name="b"))
+        for i in range(4, 7):
+            self.assertEqual(i, counter(name="a"))
 
     def test_excerpt(self):
         self.assertEqual("...lo my wo...",

@@ -1,10 +1,10 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.asset_tag import *
 from webhelpers.rails.asset_tag import compute_public_path
 
-class TestAssetTagHelper(TestCase):
+class TestAssetTagHelper(WebHelpersTestCase):
     def test_auto_discovery_link_tag(self):
         self.assertEqual('<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />',
                          auto_discovery_link_tag('http://feed.com/feed.xml'))

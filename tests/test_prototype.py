@@ -1,11 +1,11 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.urls import *
 from webhelpers.rails.prototype import *
 from routes import *
 
-class TestPrototypeHelper(TestCase):
+class TestPrototypeHelper(WebHelpersTestCase):
     def test_link_to_remote(self):
         self.assertEqual("""<a class="fine" href="#" onclick="new Ajax.Request('http://www.example.com/whatnot', {asynchronous:true, evalScripts:true}); return false;">Remote outpost</a>""",
             link_to_remote("Remote outpost", dict(url='http://www.example.com/whatnot'), class_="fine"))

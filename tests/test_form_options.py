@@ -1,9 +1,9 @@
-from unittest import TestCase
+from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.rails.form_options import *
 
-class TestFormOptionsHelper(TestCase):
+class TestFormOptionsHelper(WebHelpersTestCase):
     def test_array_options_for_select(self):
         self.assertEqual(
             "<option value=\"&lt;Denmark&gt;\">&lt;Denmark&gt;</option>\n<option value=\"USA\">USA</option>\n<option value=\"Sweden\">Sweden</option>",
