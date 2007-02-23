@@ -94,7 +94,38 @@ class TestURLHelper(WebHelpersTestCase):
     def test_link_tag_using_post_javascript_and_confirm(self):
         self.assertEqual("<a href=\"http://www.example.com\" onclick=\"if (confirm('Are you serious?')) { var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;f.submit(); };return false;\">Hello</a>",
                link_to("Hello", "http://www.example.com", post=True, confirm="Are you serious?"))
+        self.assertRaises(ValueError, lambda: \
+                          link_to("Hello", "http://www.example.com", post=True, popup=True, confirm="Are you serious?"))
+
+    def test_link_to_unless_current(self):
+        self.assertEqual('Click Here',
+                         link_to_unless_current('Click Here',
+                                                '/test?test=webhelpers&framework=pylons'))
+        self.assertEqual('<a href="/test?test=routes&amp;framework=pylons">Click Here</a>',
+                         link_to_unless_current('Click Here',
+                                                '/test?test=routes&framework=pylons'))
+        self.assertEqual('<a href="/test2?test=webhelpers&amp;framework=pylons">Click Here</a>',
+                         link_to_unless_current('Click Here',
+                                                '/test2?test=webhelpers&framework=pylons'))
     
+    def test_link_to_unless(self, func=link_to_unless):
+        condition = func == link_to_unless and True or False
+        self.assertEqual('Click Here',
+                         func(condition, 'Click Here',
+                                        '/test?test=webhelpers&framework=pylons'))
+        self.assertEqual('<a href="/test?test=webhelpers&amp;framework=pylons">Click Here</a>',
+                         func(not condition, 'Click Here',
+                                        '/test?test=webhelpers&framework=pylons'))
+        self.assertEqual('<a href="/test?test=routes&amp;framework=pylons">Click Here</a>',
+                         func(not condition, 'Click Here',
+                                        '/test?test=routes&framework=pylons'))
+        self.assertEqual('Click Here',
+                         func(condition, 'Click Here',
+                                        '/test2?test=webhelpers&framework=pylons'))
+
+    def test_link_to_if(self):
+        self.test_link_to_unless(func=link_to_if)
+
     def test_mail_to(self):
         self.assertEqual('<a href="mailto:justin@example.com">justin@example.com</a>', mail_to("justin@example.com"))
         self.assertEqual('<a href="mailto:justin@example.com">Justin Example</a>', mail_to("justin@example.com", "Justin Example"))
@@ -131,6 +162,14 @@ class TestURLHelper(WebHelpersTestCase):
                          mail_to("me@domain.com", None, encode = "hex", replace_at = "(at)", replace_dot = "(dot)"))
         self.assertEqual("<script type=\"text/javascript\">\n//<![CDATA[\neval(unescape('%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%65%66%3d%22%6d%61%69%6c%74%6f%3a%6d%65%40%64%6f%6d%61%69%6e%2e%63%6f%6d%22%3e%4d%79%20%65%6d%61%69%6c%3c%2f%61%3e%27%29%3b'))\n//]]>\n</script>",
                          mail_to("me@domain.com", "My email", encode = "javascript", replace_at = "(at)", replace_dot = "(dot)"))
+
+    def test_current_page(self):
+        self.assertTrue(current_page('/test?test=webhelpers&framework=pylons'))
+        self.assertTrue(current_page(url('/test?test=webhelpers&framework=pylons')))
+
+    def test_current_url(self):
+        self.assertEquals('/test?test=webhelpers&framework=pylons', current_url())
+        self.assertTrue(isinstance(current_url(), str))
 
 if __name__ == '__main__':
     suite = [unittest.makeSuite(TestURLHelper)]

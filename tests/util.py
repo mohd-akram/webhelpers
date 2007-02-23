@@ -8,6 +8,8 @@ class WebHelpersTestCase(TestCase):
         return {
             'HTTP_HOST': 'bob.local:5000',
             'PATH_INFO': '/test',
+            'QUERY_STRING': 'test=webhelpers&framework=pylons',
+            'REQUEST_METHOD': 'GET',
             'SERVER_NAME': '0.0.0.0',
             'SCRIPT_NAME': '',
             'wsgi.multiprocess': False,
@@ -17,7 +19,11 @@ class WebHelpersTestCase(TestCase):
             }
 
     def setUp(self):
-        self.routes_config = routes.request_config()
-        self.routes_config.environ = self.test_environ()
         map = routes.Mapper()
+        map.connect('test')
         map.connect(':controller/:action/:id')
+
+        self.routes_config = routes.request_config()
+        self.routes_config.mapper = map
+        self.routes_config.environ = self.test_environ()
+        assert self.routes_config.mapper_dict
