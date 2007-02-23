@@ -1,7 +1,6 @@
 """URL Helpers"""
 # Last synced with Rails copy at Revision 6070 on Feb 8th, 2007.
 
-import cgi
 import re
 import urllib
 
@@ -153,7 +152,7 @@ def link_to_unless(condition, name, url, **html_options):
     """
     Conditionally create a link tag of the given ``name`` using the ``url``
     
-    If ``condition`` is false only the name is returned.
+    If ``condition`` is True only the name is returned.
     """
     if condition:
         return name
@@ -166,25 +165,7 @@ def link_to_if(condition, name, url, **html_options):
     
     If ``condition`` is True only the name is returned.
     """
-    link_to_unless(not condition, name, url, **html_options)
-
-def parse_querystring(environ):
-    """
-    Parses a query string into a list like ``[(name, value)]``.
-
-    You can pass the result to ``dict()``, but be aware that keys that appear multiple
-    times will be lost (only the last value will be preserved).
-
-    This function is cut and pasted from paste.request.parse_querystring (minus its
-    caching piece) to avoid requiring paste as a dependency.
-    """
-    source = environ.get('QUERY_STRING', '')
-    _parsed = cgi.parse_qsl(source, keep_blank_values=True,
-        strict_parsing=False)
-    parsed = []
-    for k, v in _parsed:
-        parsed.append((k, v.decode('utf-8')))
-    return parsed
+    return link_to_unless(not condition, name, url, **html_options)
 
 def current_page(url):
     """
@@ -202,11 +183,10 @@ def current_url():
     """
     config = request_config()
     environ = config.environ
-    curopts = config.mapper_dict.copy()
-    if environ.get('REQUEST_METHOD', 'GET') == 'GET':
-        if environ.has_key('QUERY_STRING'):
-            curopts.update(dict(parse_querystring(environ)))
-    return url_for(**curopts)
+    qs = environ.get('QUERY_STRING', '')
+    if qs:
+        qs = '?' + qs
+    return url_for() + qs
 
 def convert_options_to_javascript(confirm=None, popup=None, post=None, method=None, **html_options):
     if post and not method:
