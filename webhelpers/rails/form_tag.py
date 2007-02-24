@@ -80,7 +80,7 @@ def text_field(name, value=None, **options):
     """
     Creates a standard text field.
     
-    ``value`` is a string that will the contents of the text field will be set to
+    ``value`` is a string, the content of the text field
     
     Options:
     
