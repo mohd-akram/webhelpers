@@ -44,6 +44,17 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args,
     ORM you'd like with the Paginator as it will give you the offset/limit 
     data necessary to make your own query.
     
+    If you fail to pass in a page value, paginate will attempt to find a page
+    value in the QUERY_STRING from environ, or the Routes match dict. This 
+    feature only works if routes was used to resolve the URL.
+    
+    Example::
+        
+        # Using an SQLAlchemy object with assign_mapper under Pylons
+        # with an order_by passed in
+        c.paginator, c.people = paginate(model.Person,
+                                         order_by=[model.Person.c.date])
+    
     **WARNING:** Unless you pass in an item_count, a count will be performed 
     on the collection every time paginate is called. If using an ORM, it's 
     suggested that you count the items yourself and/or cache them.
