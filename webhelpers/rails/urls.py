@@ -309,7 +309,18 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         return javascript_tag("eval(unescape('%s'))" % string)
     else : 
         return tag
+
+def js_obfuscate(data):
+    """Obfuscates data in a Javascript tag
     
+    Example::
+        
+        >>> js_obfuscate("<input type='hidden' name='check' value='valid' />")
+        '<script type="text/javascript">\n//<![CDATA[\neval(unescape(\'%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%69%6e%70%75%74%20%74%79%70%65%3d%27%68%69%64%64%65%6e%27%20%6e%61%6d%65%3d%27%63%68%65%63%6b%27%20%76%61%6c%75%65%3d%27%76%61%6c%69%64%27%20%2f%3e%27%29%3b\'))\n//]]>\n</script>'
+    """
+    tmp = "document.write('%s');" % data
+    string = ''.join(['%%%x' % ord(x) for x in tmp])
+    return javascript_tag("eval(unescape('%s'))" % string)
 
 __all__ = ['url', 'link_to', 'button_to', 'link_to_unless_current', 'link_to_unless', 'link_to_if',
-           'current_page', 'current_url', 'mail_to']
+           'current_page', 'current_url', 'mail_to', 'js_obfuscate']
