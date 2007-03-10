@@ -85,6 +85,9 @@ def paginate(collection, page=None, per_page=10, item_count=None,
         if page is None:
             page = 0
     
+    if query_args is None:
+        query_args = []
+    
     collection = get_wrapper(collection, *query_args, **options)
     if not item_count:
         item_count = len(collection)
