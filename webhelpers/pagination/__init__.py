@@ -21,8 +21,8 @@ from orm import get_wrapper
 
 find_page = re.compile('page=(\d+)', re.I)
 
-def paginate(collection, page=None, per_page=10, item_count=None, *args,
-             **options):
+def paginate(collection, page=None, per_page=10, item_count=None, 
+             query_args=None, **options):
     """Paginate a collection of data
     
     If the collection is a list, it will return the slice of the list along
@@ -30,6 +30,10 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args,
     collection argument must be a partial representing the function to be
     used that will generate the proper query and extend properly for the
     limit/offset.
+    
+    query_args will be passed to the partial and is for use in generating
+    limiting conditions that your collection object may take, the remaining
+    unused keyword arguments will also be passed into the collection object.
     
     Example::
     
@@ -81,7 +85,7 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args,
         if page is None:
             page = 0
     
-    collection = get_wrapper(collection, *args, **options)
+    collection = get_wrapper(collection, *query_args, **options)
     if not item_count:
         item_count = len(collection)
     paginator = Paginator(item_count, per_page, page)
