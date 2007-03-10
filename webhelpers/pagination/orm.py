@@ -69,4 +69,8 @@ class SQLAlchemyLazyMapper(Partial):
         return results
     
     def __len__(self):
-        return self.fn.count(*self.args, **self.kw)
+        kw = {}
+        for k, v in self.kw.iteritems():
+            if k != 'order_by':
+                kw[k] = v
+        return self.fn.count(*self.args, **kw)
