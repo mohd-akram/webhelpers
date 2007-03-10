@@ -25,6 +25,8 @@ def get_wrapper(obj, *args, **kw):
     if orms.get('sqlalchemy'):
         if hasattr(obj, '_is_primary_mapper') or isinstance(obj, sqlalchemy.Query):
             return SQLAlchemyLazyMapper(obj, *args, **kw)
+        if hasattr(obj, 'mapper') and hasattr(obj, 'select') and hasattr(obj, 'count'):
+            return SQLAlchemyLazyMapper(obj, *args, **kw)
         if isinstance(obj, sqlalchemy.Table):
             return SQLAlchemyLazyTable(obj, *args, **kw)
     raise TypeError("You must call paginate() with either a sequence, an "

@@ -6,18 +6,23 @@ using one of the ORM wrappers, or handle a large collection responding to
 standard Python list slicing operations. These methods can also be used
 individually and customized to do as much or little as desired.
 
-The Paginator itself maintains pagination logic associated with each page, where
-it begins, what the first/last item on the page is, etc.
+The Paginator itself maintains pagination logic associated with each page, 
+where begins, what the first/last item on the page is, etc.
 
 Helper functions hook-up the Paginator in more conveinent methods for the more
 macro-style approach to return the Paginator and the slice of the collection
 desired.
 
 """
+import re
+
 from routes import request_config
 from orm import get_wrapper
 
-def paginate(collection, page=None, per_page=10, item_count=None, *args, **options):
+find_page = re.compile('page=(\d+)', re.I)
+
+def paginate(collection, page=None, per_page=10, item_count=None, *args,
+             **options):
     """Paginate a collection of data
     
     If the collection is a list, it will return the slice of the list along
@@ -28,26 +33,51 @@ def paginate(collection, page=None, per_page=10, item_count=None, *args, **optio
     
     Example::
     
-        # In this case, Person is a SQLObject class, or it could be a list/tuple
+        # In this case, Person is a SQLObject class, or it could be a 
+        # list/tuple
         person_paginator, person_set = paginate(Person, page=1)
         
         set_count = int(person_paginator.current)
         total_pages = len(person_paginator)
     
-    Current ORM support is limited to SQLObject and SQLAlchemy. You can use any ORM
-    you'd like with the Paginator as it will give you the offset/limit data necessary
-    to make your own query.
+    Current ORM support is limited to SQLObject and SQLAlchemy. You can use any
+    ORM you'd like with the Paginator as it will give you the offset/limit 
+    data necessary to make your own query.
     
-    **WARNING:** Unless you pass in an item_count, a count will be performed on the
-    collection every time paginate is called. If using an ORM, it's suggested that
-    you count the items yourself and/or cache them.
-    
+    **WARNING:** Unless you pass in an item_count, a count will be performed 
+    on the collection every time paginate is called. If using an ORM, it's 
+    suggested that you count the items yourself and/or cache them.
     """
+    # If our page wasn't passed in, attempt to pull out either a page arg from
+    # the routes route path, or try the environ GET.
+    if page is None:
+        config = request_config()
+        if hasattr(config, 'mapper_dict'):
+            page = config.mapper_dict.get('page')
+        if page is not None:
+            if re.match(r'\d+', page):
+                page = int(page)
+            else:
+                page = 0
+        elif page is None and hasattr(config, 'environ'):
+            page_match = re.match(find_page, 
+                                  config.environ.get('QUERY_STRING', ''))
+            if page_match:
+                page = int(page_match.groups()[0])
+        
+        # If environ is set, and no page has been we will assume they wanted to
+        # find a page value but didn't so we default to 0 now.
+        if page is None:
+            page = 0
+    
     collection = get_wrapper(collection, *args, **options)
     if not item_count:
         item_count = len(collection)
     paginator = Paginator(item_count, per_page, page)
-    subset = collection[paginator.current.first_item:paginator.current.last_item]
+    if page < 0 or page >= len(paginator):
+        subset = []
+    else:
+        subset = collection[paginator.current.first_item:paginator.current.last_item]
     
     return paginator, subset
     
