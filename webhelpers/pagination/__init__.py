@@ -139,7 +139,10 @@ this paginator, an AttributeError will be raised.
     current = property(**current())
     
     def __len__(self):
-        return (self.item_count == 0) and 0 or (((self.item_count - 1)//self.items_per_page) + 1)
+        if self.item_count == 0:
+            return 0
+        else:
+            return ((self.item_count - 1)//self.items_per_page) + 1
     
     def __iter__(self):
         for i in range(0, len(self)):
