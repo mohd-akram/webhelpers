@@ -1,6 +1,6 @@
 WebHelpers ChangeLog
 
-0.2.3 (**svn**)
+0.3 (**svn**)
 * WARNING: paginate now takes arguments intended for the collection object as
   query_args. This could affect backwards compatibility. This fixes a common
   issue that non-keyword arguments passed into paginate get eaten by paginate's
