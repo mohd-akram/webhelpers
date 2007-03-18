@@ -1,13 +1,14 @@
 WebHelpers ChangeLog
 
-0.3 (**svn**)
+0.3 (03/18/2007)
 * WARNING: paginate now takes arguments intended for the collection object as
   query_args. This could affect backwards compatibility. This fixes a common
   issue that non-keyword arguments passed into paginate get eaten by paginate's
   keyword arguments instead of being in *args to go on to the collection.
 * Added environ checking with Routes so that page will be automatically pulled
   out of the query string, or from the Routes match dict if available.
-* Added checking for objects that had assign_mapper applied to them.
+* Added checking for objects that had SQLAlchemy's assign_mapper applied to 
+  them.
 * Added better range checking to paginator to require a positive value that is
   less than the total amount of pages available for a page.
 * WARNING: Due to a typo, the Text helper highlight function no longer
@@ -25,7 +26,7 @@ WebHelpers ChangeLog
 * Sync'd Rails Number helper to 6045.
 * Updated Ajax commands to internally use 'with_' to avoid name conflicts with
   Python 2.5 and beyond. Reported by anilj. Fixes #190.
-* Applied patch from David Smith to decude URL parts as Routes does.
+* Applied patch from David Smith to decode URL parts as Routes does.
   Fixes #186.
 * Changed pagination to give better response if its passed an invalid object.
   Patch from Christoph Haas.
@@ -33,7 +34,7 @@ WebHelpers ChangeLog
 * Updated scriptaculous/prototype to Prototype 1.5.0 and Scriptaculous 1.7.0.
 * Updated scriptaculous javascripts to 1.6.5. Fixes #155.
 * Updated remote_function doc-string to more clearly indicate the arguments
-  it can recieve.
+  it can receive.
 * Synced Rails Javascript helper to 5245 (escape_javascript now escaping
   backslashes and allow passing html_options to javascript_tag).
 
