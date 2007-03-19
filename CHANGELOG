@@ -7,8 +7,8 @@ WebHelpers ChangeLog
   keyword arguments instead of being in *args to go on to the collection.
 * Added environ checking with Routes so that page will be automatically pulled
   out of the query string, or from the Routes match dict if available.
-* Added checking for objects that had SQLAlchemy's assign_mapper applied to 
-  them.
+* Added ability for paginate to check for objects that had SQLAlchemy's 
+  assign_mapper applied to them.
 * Added better range checking to paginator to require a positive value that is
   less than the total amount of pages available for a page.
 * WARNING: Due to a typo, the Text helper highlight function no longer
