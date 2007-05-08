@@ -1,5 +1,9 @@
 WebHelpers ChangeLog
 
+0.3.1 (**svn**)
+* Added support for the defer attribute to javascript_include_tag. Suggested by
+  s0undt3ch. Fixes #214.
+
 0.3 (03/18/2007)
 * WARNING: paginate now takes arguments intended for the collection object as
   query_args. This could affect backwards compatibility. This fixes a common

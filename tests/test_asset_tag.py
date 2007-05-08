@@ -42,6 +42,10 @@ class TestAssetTagHelper(WebHelpersTestCase):
                          javascript_include_tag(builtins=True))
         self.assertEqual("""<script src="/javascripts/prototype.js" type="text/javascript"></script>\n<script src="/other-javascripts/util.js" type="text/javascript"></script>""",
                          javascript_include_tag('prototype', '/other-javascripts/util.js'))
+        self.assertEqual("""<script defer="defer" src="/js/pngfix.js" type="text/javascript"></script>""",
+                         javascript_include_tag('/js/pngfix.js', defer=True))
+        self.assertEqual("""<script defer="defer" src="/js/pngfix.js" type="text/javascript"></script>""",
+                         javascript_include_tag('/js/pngfix.js', defer="defer"))
         self.assertEqual("""<script src="/javascripts/prototype.js" type="text/javascript"></script>\n<script src="/javascripts/scriptaculous.js" type="text/javascript"></script>\n<script src="/javascripts/app.js" type="text/javascript"></script>\n<script src="/test/test.1.js" type="text/javascript"></script>""",
                          javascript_include_tag('app', '/test/test.1.js', builtins=True))
 

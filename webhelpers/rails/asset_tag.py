@@ -129,11 +129,17 @@ def javascript_include_tag(*sources, **options):
     Optionally includes (prepended) WebHelpers' built-in javascripts when passed the
     ``builtins=True`` keyword argument.
 
+    Specify the keyword argument ``defer=True`` to enable the script defer attribute.
+
     Examples::
     
         >>> print javascript_include_tag(builtins=True)
         <script src="/javascripts/prototype.js" type="text/javascript"></script>
         <script src="/javascripts/scriptaculous.js" type="text/javascript"></script>
+
+        >>> print javascript_include_tag(builtins=True, defer=True)
+        <script defer="defer" src="/javascripts/prototype.js" type="text/javascript"></script>
+        <script defer="defer" src="/javascripts/scriptaculous.js" type="text/javascript"></script>
 
         >>> print javascript_include_tag('prototype', '/other-javascripts/util.js')
         <script src="/javascripts/prototype.js" type="text/javascript"></script>
@@ -145,13 +151,18 @@ def javascript_include_tag(*sources, **options):
         <script src="/javascripts/app.js" type="text/javascript"></script>
         <script src="/test/test.1.js" type="text/javascript"></script>
     """
-    if options.get('builtins'):
+    if options.pop('builtins', False):
         sources = javascript_builtins + sources
-        
-    tags = [content_tag('script', None,
-                        **dict(type='text/javascript',
-                               src=compute_public_path(source, 'javascripts', 'js'))) \
-            for source in sources]
+    if options.get('defer') == True:
+        options['defer'] = 'defer'
+
+    tags = []
+    for source in sources:
+        content_options = dict(type='text/javascript',
+                               src=compute_public_path(source, 'javascripts',
+                                                       'js'))
+        content_options.update(options)
+        tags.append(content_tag('script', None, **content_options))
     return '\n'.join(tags)
 
 def stylesheet_link_tag(*sources, **options):
