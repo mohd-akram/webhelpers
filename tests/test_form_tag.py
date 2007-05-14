@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 from util import WebHelpersTestCase
 import unittest
 
@@ -78,6 +79,11 @@ class TestFormTagHelper(WebHelpersTestCase):
         self.assertEqual(
             radio_button("num_people", 5, checked=True),
             '<input checked="checked" id="num_people_5" name="num_people" type="radio" value="5" />'
+        )
+
+        self.assertEqual(
+            radio_button("people", u'josé', checked=True),
+            '<input checked="checked" id="people_jos" name="people" type="radio" value="jos&#233;" />'
         )
 
     def test_select(self):

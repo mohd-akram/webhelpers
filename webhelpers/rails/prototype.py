@@ -197,7 +197,7 @@ def submit_to_remote(name, value, **options):
     options['html']['type'] = 'button'
     options['html']['onclick'] = "%s; return false;" % remote_function(**options)
     options['html']['name_'] = name
-    options['html']['value'] = str(value)
+    options['html']['value'] = '%s' % value
     
     return tag("input", open=False, **options['html'])
 

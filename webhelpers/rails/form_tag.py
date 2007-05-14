@@ -159,7 +159,7 @@ def radio_button(name, value, checked=False, **options):
     The id of the radio button will be set to the name + value with a _ in
     between to ensure its uniqueness.
     """
-    pretty_tag_value = re.sub(r'\s', "_", str(value))
+    pretty_tag_value = re.sub(r'\s', "_", '%s' % value)
     pretty_tag_value = re.sub(r'(?!-)\W', "", pretty_tag_value).lower()
     html_options = {'type': 'radio', 'name_': name, 'id': '%s_%s' % (name, pretty_tag_value), 'value': value}
     html_options.update(options)
