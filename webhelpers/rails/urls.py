@@ -7,6 +7,7 @@ import urllib
 from routes import url_for, request_config
 
 import tags
+from asset_tag import compute_public_path
 from javascript import *
 from webhelpers.util import html_escape
 
@@ -85,6 +86,14 @@ def button_to(name, url='', **html_options):
     'button-to', to which you can attach CSS styles for display
     purposes.
     
+    The submit button itself will be displayed as an image if you provide both
+    ``type`` and ``src`` as followed:
+
+         type='image', src='icon_delete.gif'
+
+    The ``src`` path will be computed as the image_tag() computes it's ``source``
+    argument.
+
     Example 1::
     
         # inside of controller for "feeds"
@@ -101,6 +110,14 @@ def button_to(name, url='', **html_options):
             <input type="hidden" name="_method" value="DELETE" />
             <input onclick="return confirm('Are you sure?');" value="Destroy" type="submit" />
         </div>
+        </form>
+
+    Example 3::
+
+        # Button as an image.
+        >>> button_to("Edit", url(action='edit', id=3), type='image', src='icon_delete.gif')
+        <form method="POST" action="/feeds/edit/3" class="button-to">
+        <div><input alt="Edit" src="/images/icon_delete.gif" type="image" value="Edit" /></div>
         </form>
     
     *NOTE*: This method generates HTML code that represents a form.
@@ -133,7 +150,14 @@ def button_to(name, url='', **html_options):
     else:
         url, name = url, name or url
     
-    html_options.update(dict(type='submit', value=name))
+    submit_type = html_options.get('type')
+    img_source = html_options.get('src')
+    if submit_type == 'image' and img_source:
+        html_options.update(dict(type=submit_type, value=name,
+                                 alt=html_options.get('alt', name)))
+        html_options['src'] = compute_public_path(img_source, 'images', 'png')
+    else:
+        html_options.update(dict(type='submit', value=name))
     
     return """<form method="%s" action="%s" class="button-to"><div>""" % \
         (form_method, tags.escape_once(url)) + method_tag + \

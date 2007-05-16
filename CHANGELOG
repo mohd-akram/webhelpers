@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.3.1 (**svn**)
+* Added image support to button_to. Patch by Alex Conrad. Fixes #184.
 * Fix radio_button and submit_to_remote not handling unicode values.
   Fixes #235.
 * Added support for the defer attribute to javascript_include_tag. Suggested by

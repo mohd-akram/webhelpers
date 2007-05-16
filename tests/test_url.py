@@ -43,6 +43,12 @@ class TestURLHelper(WebHelpersTestCase):
         self.assertEqual("<form method=\"GET\" action=\"http://www.example.com\" class=\"button-to\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
             button_to("Hello", "http://www.example.com", method='GET'))
 
+    def test_button_to_with_img(self):
+        self.assertEqual('<form method="POST" action="/content/edit/3" class="button-to"><div><input alt="Edit" src="/images/icon_delete.gif" type="image" value="Edit" /></div></form>',
+                         button_to("Edit", url(action='edit', id=3), type='image', src='icon_delete.gif'))
+        self.assertEqual('<form method="POST" action="/content/submit/3" class="button-to"><div><input alt="Complete the form" src="/images/submit.png" type="image" value="Submit" /></div></form>',
+                         button_to("Submit", url(action='submit', id=3), type='image', src='submit', alt='Complete the form'))
+
     def test_link_tag_with_straight_url(self):
         self.assertEqual("<a href=\"http://www.example.com\">Hello</a>", link_to("Hello", "http://www.example.com"))
     
