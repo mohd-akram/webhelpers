@@ -7,6 +7,10 @@ WebHelpers ChangeLog
   Fixes #235.
 * Added support for the defer attribute to javascript_include_tag. Suggested by
   s0undt3ch. Fixes #214.
+* Added a distutils command compress_resources, which can combine CSS
+  and Javascript files, and compress Javascript via ShrinkSafe.  Add
+  "command_packages=webhelpers.commands" in [global] in setup.cfg to
+  enable this command for your package.
 
 0.3 (03/18/2007)
 * WARNING: paginate now takes arguments intended for the collection object as

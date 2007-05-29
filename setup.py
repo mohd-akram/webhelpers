@@ -34,4 +34,8 @@ Some of these helpers only require `Routes <http://routes.groovie.org/>`_ to fun
                  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
                  "Topic :: Software Development :: Libraries :: Python Modules",
                ],
+    entry_points="""
+    [buildutils.optional_commands]
+    compress_resources = webhelpers.commands
+    """,
 )
