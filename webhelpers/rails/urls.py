@@ -201,7 +201,7 @@ def current_page(url):
     else:
         return url == currl
 
-def current_url():
+def current_url(*args, **kwargs):
     """
     Returns the current page's url.
     """
@@ -210,7 +210,7 @@ def current_url():
     qs = environ.get('QUERY_STRING', '')
     if qs:
         qs = '?' + qs
-    return url_for() + qs
+    return url_for(*args, **kwargs) + qs
 
 def convert_options_to_javascript(confirm=None, popup=None, post=None, method=None, **html_options):
     if post and not method:
