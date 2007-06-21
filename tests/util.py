@@ -12,6 +12,8 @@ class WebHelpersTestCase(TestCase):
             'REQUEST_METHOD': 'GET',
             'SERVER_NAME': '0.0.0.0',
             'SCRIPT_NAME': '',
+            'pylons.environ_config': dict(session='test.session'),
+            'test.session': {},
             'wsgi.multiprocess': False,
             'wsgi.multithread': True,
             'wsgi.run_once': False,
