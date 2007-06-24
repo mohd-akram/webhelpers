@@ -6,6 +6,7 @@ from tags import *
 from prototype import *
 from scriptaculous import *
 from form_tag import *
+from secure_form_tag import *
 from text import *
 from form_options import *
 from date import *
