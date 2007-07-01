@@ -5,7 +5,7 @@ WebHelpers ChangeLog
   including client-specific authorization tokens for preventing CSRF
   attacks. Original patch by David Turner. Fixes #157.
 * current_url now accepts arguments to pass along to url_for. Fixes #251.
-* Updated prototype to 1.5.1.
+* Updated prototype to 1.5.1.1.
 * Added image support to button_to. Patch by Alex Conrad. Fixes #184.
 * Fix radio_button and submit_to_remote not handling unicode values.
   Fixes #235.
