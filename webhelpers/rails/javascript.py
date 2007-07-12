@@ -58,7 +58,7 @@ def javascript_tag(content, **html_options):
     Example::
     
         >>> javascript_tag("alert('All is good')")
-        '<script type="text/javascript">\\n//<![CDATA[\nalert(\'All is good\')\\n//]]>\\n</script>'
+        '<script type="text/javascript">\\n//<![CDATA[\\nalert(\'All is good\')\\n//]]>\\n</script>'
     """
     return content_tag("script", javascript_cdata_section(content), type="text/javascript",
                        **html_options)
