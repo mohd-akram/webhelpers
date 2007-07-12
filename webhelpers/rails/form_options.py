@@ -23,7 +23,7 @@ def options_for_select(container, selected=None):
         >>> options_for_select([ "VISA", "MasterCard" ], "MasterCard")
         '<option value="VISA">VISA</option>\\n<option value="MasterCard" selected="selected">MasterCard</option>'
         >>> options_for_select(dict(Basic="$20", Plus="$40"), "$40")
-        <option value="$40" selected="selected">Plus</option>\n<option value="$20">Basic</option>
+        '<option value="$40" selected="selected">Plus</option>\\n<option value="$20">Basic</option>'
         >>> options_for_select([ "VISA", "MasterCard", "Discover" ], ["VISA", "Discover"])
         '<option value="VISA" selected="selected">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option value="Discover" selected="selected">Discover</option>'
 
