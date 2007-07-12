@@ -170,12 +170,12 @@ class TestURLHelper(WebHelpersTestCase):
                          mail_to("me@domain.com", "My email", encode = "javascript", replace_at = "(at)", replace_dot = "(dot)"))
 
     def test_current_page(self):
-        self.assertTrue(current_page('/test?test=webhelpers&framework=pylons'))
-        self.assertTrue(current_page(url('/test?test=webhelpers&framework=pylons')))
+        self.assertEqual(True, (current_page('/test?test=webhelpers&framework=pylons'))
+        self.assertEqual(True, current_page(url('/test?test=webhelpers&framework=pylons')))
 
     def test_current_url(self):
         self.assertEquals('/test?test=webhelpers&framework=pylons', current_url())
-        self.assertTrue(isinstance(current_url(), str))
+        self.assertEquals(True, isinstance(current_url(), str))
 
 if __name__ == '__main__':
     suite = [unittest.makeSuite(TestURLHelper)]
