@@ -170,7 +170,7 @@ class TestURLHelper(WebHelpersTestCase):
                          mail_to("me@domain.com", "My email", encode = "javascript", replace_at = "(at)", replace_dot = "(dot)"))
 
     def test_current_page(self):
-        self.assertEqual(True, (current_page('/test?test=webhelpers&framework=pylons'))
+        self.assertEqual(True, (current_page('/test?test=webhelpers&framework=pylons')))
         self.assertEqual(True, current_page(url('/test?test=webhelpers&framework=pylons')))
 
     def test_current_url(self):
