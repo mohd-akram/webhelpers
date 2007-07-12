@@ -38,7 +38,11 @@ def authentication_token():
     already exist."""
     session = get_session()
     if not token_key in session:
-        session[token_key] = str(random.getrandbits(128))
+        try:
+            token = str(random.getrandbits(128))
+        except AttributeError: # Python < 2.4
+            token = str(random.randrange(2**128))
+        session[token_key] = token
         if hasattr(session, 'save'):
             session.save()
     return session[token_key]
