@@ -51,10 +51,10 @@ def link_to(name, url='', **html_options):
     
     Examples::
     
-        >>> link_to("Delete this page", url(action="destroy", id=4), confirm="Are you sure?")
-        >>> link_to("Help", url(action="help"), popup=True)
-        >>> link_to("Busy loop", url(action="busy"), popup=['new_window', 'height=300,width=600'])
-        >>> link_to("Destroy account", url(action="destroy"), confirm="Are you sure?", method='delete')
+        >> link_to("Delete this page", url(action="destroy", id=4), confirm="Are you sure?")
+        >> link_to("Help", url(action="help"), popup=True)
+        >> link_to("Busy loop", url(action="busy"), popup=['new_window', 'height=300,width=600'])
+        >> link_to("Destroy account", url(action="destroy"), confirm="Are you sure?", method='delete')
     """
     if html_options:
         html_options = convert_options_to_javascript(**html_options)
@@ -97,7 +97,7 @@ def button_to(name, url='', **html_options):
     Example 1::
     
         # inside of controller for "feeds"
-        >>> button_to("Edit", url(action='edit', id=3))
+        >> button_to("Edit", url(action='edit', id=3))
         <form method="POST" action="/feeds/edit/3" class="button-to">
         <div><input value="Edit" type="submit" /></div>
         </form>
@@ -115,7 +115,7 @@ def button_to(name, url='', **html_options):
     Example 3::
 
         # Button as an image.
-        >>> button_to("Edit", url(action='edit', id=3), type='image', src='icon_delete.gif')
+        >> button_to("Edit", url(action='edit', id=3), type='image', src='icon_delete.gif')
         <form method="POST" action="/feeds/edit/3" class="button-to">
         <div><input alt="Edit" src="/images/icon_delete.gif" type="image" value="Edit" /></div>
         </form>
@@ -276,7 +276,7 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
     Examples::
     
         >>> mail_to("me@domain.com", "My email", encode = "javascript")
-        '<script type="text/javascript">\\n//<![CDATA[\\neval(unescape(\'%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%65%66%3d%22%6d%61%69%6c%74%6f%3a%6d%65%40%64%6f%6d%61%69%6e%2e%63%6f%6d%22%3e%4d%79%20%65%6d%61%69%6c%3c%2f%61%3e%27%29%3b\'))\n//]]>\\n</script>'
+        '<script type="text/javascript">\\n//<![CDATA[\\neval(unescape(\\'%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%65%66%3d%22%6d%61%69%6c%74%6f%3a%6d%65%40%64%6f%6d%61%69%6e%2e%63%6f%6d%22%3e%4d%79%20%65%6d%61%69%6c%3c%2f%61%3e%27%29%3b\\'))\\n//]]>\\n</script>'
     
         >>> mail_to("me@domain.com", "My email", encode = "hex")
         '<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%6d%65@%64%6f%6d%61%69%6e.%63%6f%6d">My email</a>'
@@ -290,9 +290,8 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
     
     Examples::
     
-        >>> mail_to("me@domain.com", "My email", cc="ccaddress@domain.com", bcc="bccaddress@domain.com", 
-        subject="This is an examjust    ple email", body= "This is the body of the message.")
-        '<a href="mailto:me@domain.com?cc="ccaddress@domain.com"&bcc="bccaddress@domain.com"&body="This%20is%20the%20body%20of%20the%20message."&subject="This%20is%20an%20example%20email">My email</a>'
+        >>> mail_to("me@domain.com", "My email", cc="ccaddress@domain.com", bcc="bccaddress@domain.com", subject="This is an example email", body= "This is the body of the message.")
+        '<a href="mailto:me@domain.com?cc=ccaddress%40domain.com&amp;body=This%20is%20the%20body%20of%20the%20message.&amp;subject=This%20is%20an%20example%20email&amp;bcc=bccaddress%40domain.com">My email</a>'
     """
     extras = {}
     for key, option in ('cc', cc), ('bcc', bcc), ('subject', subject), ('body', body):
@@ -340,7 +339,7 @@ def js_obfuscate(data):
     Example::
         
         >>> js_obfuscate("<input type='hidden' name='check' value='valid' />")
-        '<script type="text/javascript">\\n//<![CDATA[\\neval(unescape(\'%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%69%6e%70%75%74%20%74%79%70%65%3d%27%68%69%64%64%65%6e%27%20%6e%61%6d%65%3d%27%63%68%65%63%6b%27%20%76%61%6c%75%65%3d%27%76%61%6c%69%64%27%20%2f%3e%27%29%3b\'))\\n//]]>\\n</script>'
+        '<script type="text/javascript">\\n//<![CDATA[\\neval(unescape(\\'%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%69%6e%70%75%74%20%74%79%70%65%3d%27%68%69%64%64%65%6e%27%20%6e%61%6d%65%3d%27%63%68%65%63%6b%27%20%76%61%6c%75%65%3d%27%76%61%6c%69%64%27%20%2f%3e%27%29%3b\\'))\\n//]]>\\n</script>'
     """
     tmp = "document.write('%s');" % data
     string = ''.join(['%%%x' % ord(x) for x in tmp])
