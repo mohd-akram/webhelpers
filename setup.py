@@ -2,9 +2,11 @@ from ez_setup import use_setuptools
 use_setuptools()
 from setuptools import setup, find_packages
 
+version = '0.3.1'
+
 setup(
     name="WebHelpers",
-    version='0.3.1',
+    version=version,
     description='Web Helpers',
     long_description="""
 Web Helpers is a library of helper functions intended to make writing templates in web
