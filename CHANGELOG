@@ -1,6 +1,6 @@
 WebHelpers ChangeLog
 
-0.3.1 (**svn**)
+0.3.1 (07/14/07)
 * Added the secure_form_tag helper module, for generating form tags
   including client-specific authorization tokens for preventing CSRF
   attacks. Original patch by David Turner. Fixes #157.
