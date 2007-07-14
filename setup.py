@@ -18,8 +18,8 @@ Some of these helpers only require `Routes <http://routes.groovie.org/>`_ to fun
 * `Development svn <http://pylonshq.com/svn/WebHelpers/trunk#egg=WebHelpers-dev>`_
 
 """,
-    author='Ben Bangert, James Gardner',
-    author_email='ben@groovie.org',
+    author='Ben Bangert, Phil Jenvey',
+    author_email='ben@groovie.org, pjenvey@groovie.org',
     url='http://pylonshq.com/WebHelpers/',
     packages=find_packages(exclude=['ez_setup']),
     zip_safe=False,
