@@ -1,7 +1,8 @@
 WebHelpers ChangeLog
 
 0.4 (**svn**)
-
+* Updated Scriptaculous to 1.7.1 beta 3 (1.7.0 is incompatbile with Prototype
+  1.5.1). Thanks errcw. Fixes #288.
 
 0.3.1 (07/14/07)
 * Added the secure_form_tag helper module, for generating form tags
