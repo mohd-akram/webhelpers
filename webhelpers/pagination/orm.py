@@ -23,12 +23,16 @@ def get_wrapper(obj, *args, **kw):
         if inspect.isclass(obj) and issubclass(obj, sqlobject.SQLObject):
             return SQLObjectLazy(obj.select, *args, **kw)
     if orms.get('sqlalchemy'):
-        if hasattr(obj, '_is_primary_mapper') or isinstance(obj, sqlalchemy.Query):
+        if hasattr(obj, '_is_primary_mapper') or \
+           (not sqlalchemy.__version__.startswith('0.4') and \
+            isinstance(obj, sqlalchemy.Query)):
             return SQLAlchemyLazyMapper(obj, *args, **kw)
         if hasattr(obj, 'mapper') and hasattr(obj, 'select') and hasattr(obj, 'count'):
             return SQLAlchemyLazyMapper(obj, *args, **kw)
         if isinstance(obj, sqlalchemy.Table):
             return SQLAlchemyLazyTable(obj, *args, **kw)
+        if hasattr(obj, 'query'):
+            return SQLAlchemy04LazyMapper(obj, *args, **kw)
     raise TypeError("You must call paginate() with either a sequence, an "
                     "SQLObject class or an SQLAlchemy query object.")
     
@@ -76,3 +80,25 @@ class SQLAlchemyLazyMapper(Partial):
             if k != 'order_by':
                 kw[k] = v
         return self.fn.count(*self.args, **kw)
+
+class SQLAlchemy04LazyMapper(Partial):
+    def __getitem__(self, key):
+        if not isinstance(key, slice):
+            raise Exception, "SQLAlchemyLazy doesn't support getitem without slicing"
+        limit = key.stop - key.start
+        offset = key.start
+        fn = self.fn
+        result = fn.query
+        
+        # Translate keyword args like 'order_by=blah' into func calls for SA 0.4
+        # such that its .order_by(blah) on the query object
+        for key, val in self.kw.iteritems():
+            result = getattr(result, key)(val)
+        return result.limit(limit).offset(offset).all()
+    
+    def __len__(self):
+        kw = {}
+        fn = self.fn.query
+        for key, val in self.kw.iteritems():
+            fn = getattr(fn, key)(val)
+        return fn.count()
