@@ -89,6 +89,8 @@ class SQLAlchemy04LazyMapper(Partial):
         offset = key.start
         fn = self.fn
         result = fn.query
+        if self.args:
+            result = result.filter(*self.args)
         
         # Translate keyword args like 'order_by=blah' into func calls for SA 0.4
         # such that its .order_by(blah) on the query object
@@ -99,6 +101,9 @@ class SQLAlchemy04LazyMapper(Partial):
     def __len__(self):
         kw = {}
         fn = self.fn.query
+        if self.args:
+            fn = fn.filter(*self.args)
+        
         for key, val in self.kw.iteritems():
             fn = getattr(fn, key)(val)
         return fn.count()
