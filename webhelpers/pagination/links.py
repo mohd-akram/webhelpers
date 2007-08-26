@@ -43,8 +43,6 @@ def pagelist(page):
             display = (first_window.pages + [None] + page_window.pages + [None]
                     + last_window.pages)
 
-    print display
-
     pager_c = []
     for i in display:
         if i is None:
