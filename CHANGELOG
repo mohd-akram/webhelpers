@@ -1,6 +1,9 @@
 WebHelpers ChangeLog
 
 0.3.2 (**svn**)
+* Added capability to pass pagination a SA 0.4 Session object which will be 
+  used for queries. This allows compatibility with Session.mapper'd objects
+  and normal SA 0.4 mapper relations.
 * Updated SQLAlchemy ORM pagination for SA 0.4 Session.mapper objects.
 * Updated Scriptaculous to 1.7.1 beta 3 (1.7.0 is incompatible with Prototype
   1.5.1). Thanks errcw. Fixes #288.

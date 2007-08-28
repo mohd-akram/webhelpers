@@ -32,6 +32,8 @@ def get_wrapper(obj, *args, **kw):
         if isinstance(obj, sqlalchemy.Table):
             return SQLAlchemyLazyTable(obj, *args, **kw)
         if hasattr(obj, 'query'):
+            return SQLAlchemy04LazySessionMapper(obj, *args, **kw)
+        if '_session' in kw:
             return SQLAlchemy04LazyMapper(obj, *args, **kw)
     raise TypeError("You must call paginate() with either a sequence, an "
                     "SQLObject class or an SQLAlchemy query object.")
@@ -81,7 +83,7 @@ class SQLAlchemyLazyMapper(Partial):
                 kw[k] = v
         return self.fn.count(*self.args, **kw)
 
-class SQLAlchemy04LazyMapper(Partial):
+class SQLAlchemy04LazySessionMapper(Partial):
     def __getitem__(self, key):
         if not isinstance(key, slice):
             raise Exception, "SQLAlchemyLazy doesn't support getitem without slicing"
@@ -107,3 +109,36 @@ class SQLAlchemy04LazyMapper(Partial):
         for key, val in self.kw.iteritems():
             fn = getattr(fn, key)(val)
         return fn.count()
+
+class SQLAlchemy04LazyMapper(Partial):
+    def __getitem__(self, key):
+        if not isinstance(key, slice):
+            raise Exception, "SQLAlchemyLazy doesn't support getitem without slicing"
+        Session = self.kw.pop('_session')
+        limit = key.stop - key.start
+        offset = key.start
+        fn = self.fn
+        result = Session.query(fn)
+        if self.args:
+            result = result.filter(*self.args)
+        
+        # Translate keyword args like 'order_by=blah' into func calls for SA 0.4
+        # such that its .order_by(blah) on the query object
+        for key, val in self.kw.iteritems():
+            result = getattr(result, key)(val)
+        query = result.limit(limit).offset(offset)
+        self.kw['_session'] = Session
+        return query.all()
+    
+    def __len__(self):
+        Session = self.kw.pop('_session')
+        kw = {}
+        fn = Session.query(self.fn)
+        if self.args:
+            fn = fn.filter(*self.args)
+        
+        for key, val in self.kw.iteritems():
+            fn = getattr(fn, key)(val)
+        count = fn.count()
+        self.kw['_session'] = Session
+        return count
