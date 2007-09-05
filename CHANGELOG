@@ -1,6 +1,6 @@
 WebHelpers ChangeLog
 
-0.3.2 (**svn**)
+0.3.2 (09/05/07)
 * Added capability to pass pagination a SA 0.4 Session object which will be 
   used for queries. This allows compatibility with Session.mapper'd objects
   and normal SA 0.4 mapper relations.
