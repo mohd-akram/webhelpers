@@ -2,6 +2,7 @@
 import cgi
 import copy
 import sys
+import urllib
 from UserDict import DictMixin
 from xml.sax.saxutils import XMLGenerator
 
@@ -26,6 +27,26 @@ def html_escape(s):
     if isinstance(s, unicode):
         s = s.encode('ascii', 'xmlcharrefreplace')
     return s
+
+
+def iri_to_uri(iri):
+    """
+    Convert an Internationalized Resource Identifier (IRI) portion to a URI
+    portion that is suitable for inclusion in a URL.
+
+    This is the algorithm from section 3.1 of RFC 3987.  However, since we are
+    assuming input is either UTF-8 or unicode already, we can simplify things a
+    little from the full method.
+
+    Returns an ASCII string containing the encoded result.
+    """
+    # The list of safe characters here is constructed from the printable ASCII
+    # characters that are not explicitly excluded by the list at the end of
+    # section 3.1 of RFC 3987.
+    if iri is None:
+        return iri
+    return urllib.quote(iri, safe='/#%[]=:;$&()+,!?')
+
 
 class Partial(object):
     """partial object, which will be in Python 2.5"""

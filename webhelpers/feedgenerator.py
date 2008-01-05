@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# LAST SYNCED WITH DJANGO SOURCE - JULY 12th, 2006 - DJANGO REVISION 3143
+# LAST SYNCED WITH DJANGO SOURCE - JANUARY 5th, 2008 - DJANGO REVISION 6996
 # http://code.djangoproject.com/log/django/trunk/django/utils/feedgenerator.py
 """Syndication feed generation library -- used for generating RSS, etc.
 
@@ -48,17 +48,18 @@ http://diveintomark.org/archives/2004/02/04/incompatible-rss
 
 """
 
-from util import SimplerXMLGenerator
+from util import SimplerXMLGenerator, iri_to_uri
 import datetime, re, time
 import email.Utils
-from xml.dom import minidom
-from xml.parsers.expat import ExpatError
 
 def rfc2822_date(date):
     return email.Utils.formatdate(time.mktime(date.timetuple()))
 
 def rfc3339_date(date):
-    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
+    if date.tzinfo:
+        return date.strftime('%Y-%m-%dT%H:%M:%S%z')
+    else:
+        return date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 def get_tag_uri(url, date):
     """Creates a TagURI. See http://diveintomark.org/archives/2004/05/28/howto-atom-id"""
@@ -72,7 +73,7 @@ class SyndicationFeed(object):
     """Base class for all syndication feeds. Subclasses should provide write()"""
     def __init__(self, title, link, description, language=None, author_email=None,
             author_name=None, author_link=None, subtitle=None, categories=None,
-            feed_url=None):
+            feed_url=None, feed_copyright=None, feed_guid=None, ttl=None):
         self.feed = {
             'title': title,
             'link': link,
@@ -83,23 +84,25 @@ class SyndicationFeed(object):
             'author_link': author_link,
             'subtitle': subtitle,
             'categories': categories or (),
-            'feed_url': feed_url,
+            'feed_url': iri_to_uri(feed_url),
+            'feed_copyright': feed_copyright,
+            'id': feed_guid or link,
+            'ttl': ttl,
         }
         self.items = []
 
     def add_item(self, title, link, description, author_email=None,
         author_name=None, author_link=None, pubdate=None, comments=None,
-        unique_id=None, enclosure=None, categories=()):
-        """Adds an item to the feed. 
-        
-        All args are expected to be Python Unicode
+        unique_id=None, enclosure=None, categories=(), item_copyright=None, ttl=None):
+        """
+        Adds an item to the feed. All args are expected to be Python Unicode
         objects except pubdate, which is a datetime.datetime object, and
         enclosure, which is an instance of the Enclosure class.
         
         """
         self.items.append({
             'title': title,
-            'link': link,
+            'link': iri_to_uri(link),
             'description': description,
             'author_email': author_email,
             'author_name': author_name,
@@ -109,6 +112,8 @@ class SyndicationFeed(object):
             'unique_id': unique_id,
             'enclosure': enclosure,
             'categories': categories or (),
+            'item_copyright': item_copyright,
+            'ttl': ttl,
         })
 
     def num_items(self):
@@ -116,9 +121,7 @@ class SyndicationFeed(object):
 
     def write(self, outfile, encoding):
         """Outputs the feed in the given encoding to outfile, which is a file-like
-        object. 
-        
-        Subclasses should override this.
+        object. Subclasses should override this.
         
         """
         raise NotImplementedError
@@ -147,7 +150,8 @@ class Enclosure(object):
     """Represents an RSS enclosure"""
     def __init__(self, url, length, mime_type):
         "All args are expected to be Python Unicode objects"
-        self.url, self.length, self.mime_type = url, length, mime_type
+        self.length, self.mime_type = length, mime_type
+        self.url = iri_to_uri(url)
 
 class RssFeed(SyndicationFeed):
     mime_type = 'application/rss+xml'
@@ -163,6 +167,11 @@ class RssFeed(SyndicationFeed):
             handler.addQuickElement(u"language", self.feed['language'])
         for cat in self.feed['categories']:
             handler.addQuickElement(u"category", cat)
+        if self.feed['feed_copyright'] is not None:
+            handler.addQuickElement(u"copyright", self.feed['feed_copyright'])
+        handler.addQuickElement(u"lastBuildDate", rfc2822_date(self.latest_post_date()).decode('ascii'))
+        if self.feed['ttl'] is not None:
+            handler.addQuickElement(u"ttl", self.feed['ttl'])
         self.write_items(handler)
         self.endChannelElement(handler)
         handler.endElement(u"rss")
@@ -198,6 +207,8 @@ class Rss201rev2Feed(RssFeed):
                     (item['author_email'], item['author_name']))
             elif item["author_email"]:
                 handler.addQuickElement(u"author", item["author_email"])
+            elif item["author_name"]:
+                handler.addQuickElement(u"dc:creator", item["author_name"], {"xmlns:dc": u"http://purl.org/dc/elements/1.1/"})
 
             if item['pubdate'] is not None:
                 handler.addQuickElement(u"pubDate", rfc2822_date(item['pubdate']).decode('ascii'))
@@ -205,6 +216,8 @@ class Rss201rev2Feed(RssFeed):
                 handler.addQuickElement(u"comments", item['comments'])
             if item['unique_id'] is not None:
                 handler.addQuickElement(u"guid", item['unique_id'])
+            if item['ttl'] is not None:
+                handler.addQuickElement(u"ttl", item['ttl'])
 
             # Enclosure.
             if item['enclosure'] is not None:
@@ -247,6 +260,8 @@ class Atom1Feed(SyndicationFeed):
             handler.addQuickElement(u"subtitle", self.feed['subtitle'])
         for cat in self.feed['categories']:
             handler.addQuickElement(u"category", "", {u"term": cat})
+        if self.feed['feed_copyright'] is not None:
+            handler.addQuickElement(u"rights", self.feed['feed_copyright'])
         self.write_items(handler)
         handler.endElement(u"feed")
 
@@ -290,6 +305,10 @@ class Atom1Feed(SyndicationFeed):
             # Categories:
             for cat in item['categories']:
                 handler.addQuickElement(u"category", u"", {u"term": cat})
+
+            # Rights.
+            if item['item_copyright'] is not None:
+                handler.addQuickElement(u"rights", item['item_copyright'])
 
             handler.endElement(u"entry")
 
