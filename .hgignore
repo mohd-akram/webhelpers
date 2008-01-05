@@ -3,3 +3,4 @@
 syntax:glob
 .svn
 *.pyc
+WebHelpers.egg-info
