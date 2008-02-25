@@ -18,7 +18,7 @@ def camelize(name):
     return name
 
 def strip_unders(options):
-    for x, y in options.iteritems():
+    for x, y in options.items():
         if x.endswith('_'):
             options[x[:-1]] = y
             del options[x]
