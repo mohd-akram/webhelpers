@@ -23,8 +23,8 @@ WebHelpers ChangeLog
 * Added image support to button_to. Patch by Alex Conrad. Fixes #184.
 * Fix radio_button and submit_to_remote not handling unicode values.
   Fixes #235.
-* Added support for the defer attribute to javascript_include_tag. Suggested by
-  s0undt3ch. Fixes #214.
+* Added support for the defer attribute to javascript_include_tag. Suggested
+  by s0undt3ch. Fixes #214.
 * Added a distutils command compress_resources, which can combine CSS
   and Javascript files, and compress Javascript via ShrinkSafe.  Add
   "command_packages=webhelpers.commands" in [global] in setup.cfg to
@@ -33,8 +33,9 @@ WebHelpers ChangeLog
 0.3 (03/18/2007)
 * WARNING: paginate now takes arguments intended for the collection object as
   query_args. This could affect backwards compatibility. This fixes a common
-  issue that non-keyword arguments passed into paginate get eaten by paginate's
-  keyword arguments instead of being in *args to go on to the collection.
+  issue that non-keyword arguments passed into paginate get eaten by
+  paginate's keyword arguments instead of being in *args to go on to the
+  collection.
 * Added environ checking with Routes so that page will be automatically pulled
   out of the query string, or from the Routes match dict if available.
 * Added ability for paginate to check for objects that had SQLAlchemy's 
@@ -42,8 +43,8 @@ WebHelpers ChangeLog
 * Added better range checking to paginator to require a positive value that is
   less than the total amount of pages available for a page.
 * WARNING: Due to a typo, the Text helper highlight function no longer
-  highlights text with the CSS class name 'hilight' by default: it now uses the
-  CSS class name 'highlight' instead. The function's 'hilighter' keyword
+  highlights text with the CSS class name 'hilight' by default: it now uses
+  the CSS class name 'highlight' instead. The function's 'hilighter' keyword
   argument has also been deprecated, use 'highlighter' instead.
 * Fixed the broken markdown function.
 * Upgraded markdown from 1.5 to 1.6a.
