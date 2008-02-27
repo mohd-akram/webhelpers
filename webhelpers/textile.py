@@ -161,7 +161,10 @@ import re
 import sys
 import os
 import sgmllib
-import unicodedata
+try:
+    import unicodedata
+except ImportError:
+    unicodedata = None
 
 
 def _in_tag(text, tag):
@@ -2358,11 +2361,15 @@ class Textiler:
             # Try the key.
             entity = macros[entity]
         except KeyError:
-            try:
-                # Try a unicode entity.
-                entity = unicodedata.lookup(entity)
-                entity = entity.encode('ascii', 'xmlcharrefreplace')
-            except:
+            if unicodedata:
+                try:
+                    # Try a unicode entity.
+                    entity = unicodedata.lookup(entity)
+                    entity = entity.encode('ascii', 'xmlcharrefreplace')
+                except:
+                    # Return the unmodified entity.
+                    entity = '{%s}' % entity
+            else:
                 # Return the unmodified entity.
                 entity = '{%s}' % entity
 
