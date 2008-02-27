@@ -17,7 +17,7 @@ desired.
 import re
 
 from routes import request_config
-from orm import get_wrapper
+from webhelpers.pagination.orm import get_wrapper
 
 find_page = re.compile('page=(\d+)', re.I)
 
