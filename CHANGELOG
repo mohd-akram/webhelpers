@@ -1,6 +1,6 @@
 WebHelpers ChangeLog
 
-0.3.3 (**tip**)
+0.3.3 (02/27/08)
 * Fixed strip_unders so that it won't explode during iteration when the size
   changes.
 * Updated feedgenerator with the latest changes from Django's version (only
