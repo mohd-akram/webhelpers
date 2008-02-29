@@ -30,7 +30,7 @@ Some of these helpers only require `Routes <http://routes.groovie.org/>`_ to fun
     zip_safe=False,
     include_package_data=True,
     install_requires=[
-        "Routes>=1.7", "simplejson>=1.4",
+        "Routes>=1.7",
         ],
     classifiers=["Development Status :: 4 - Beta",
                  "Intended Audience :: Developers",
