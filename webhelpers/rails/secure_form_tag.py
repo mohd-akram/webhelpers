@@ -22,6 +22,7 @@ from routes import request_config
 from form_tag import form, hidden_field
 from prototype import form_remote_tag
 from tags import content_tag
+from urls import _button_to
 
 token_key = '_authentication_token'
 
@@ -67,4 +68,14 @@ def secure_form_remote_tag(**args):
                        content_tag('div', hidden_field(token_key, id),
                                    style='display: none;'))
 
-__all__ = ['secure_form', 'secure_form_remote_tag']
+def secure_button_to(name, url='', **html_options):
+    """ Create a button (like webhelpers.rails.urls.button_to) including a
+    hidden authentication token field.    
+    """
+    id = authentication_token()
+    button_html = _button_to(name, url, **html_options)
+    return '%s\n%s</form>' % (button_html,
+                              content_tag('div', hidden_field(token_key, id),
+                                          style='display:none;'))
+
+__all__ = ['secure_form', 'secure_form_remote_tag', 'secure_button_to']
