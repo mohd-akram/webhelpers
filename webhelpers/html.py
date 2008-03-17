@@ -35,26 +35,19 @@ from cgi import escape
 from types import *
 from UserDict import DictMixin
 
-XHTML_ENDTAGS = ('base', 'link', 'meta', 'hr', 'br', 'img', 'embed', 'param', 
-                 'area', 'col', 'input')
-
 class Exclude(object):
     pass
 
 class UnfinishedTag(object):
 
-    def __init__(self, tag, xhtml):
+    def __init__(self, tag):
         self._tag = tag
-        self._xhtml = xhtml
 
     def __call__(self, *args, **kw):
-        return Tag(self._tag, _xhtml=self._xhtml, *args, **kw)
+        return Tag(self._tag, *args, **kw)
 
     def __str__(self):
-        if self._xhtml or self._tag.lower() not in XHTML_ENDTAGS:
-            return literal('<%s />' % self._tag)
-        else:
-            return literal('<%s>' % self._tag)
+        return literal('<%s />' % self._tag)
 
     def __html__(self):
         return str(self)
@@ -83,18 +76,11 @@ class Base(object):
 
     comment = UnfinishedComment()
     literal = UnfinishedLiteral()
-    
-    def __init__(self, xhtml=True):
-        self._xhtml = xhtml
-    
+        
     def __getattr__(self, attr):
         if attr.startswith('_'):
             raise AttributeError
-        if self._xhtml:
-            tag_name = attr.lower()
-        else:
-            tag_name = attr
-        result = self.__dict__[attr] = UnfinishedTag(tag_name, self._xhtml)
+        result = self.__dict__[attr] = UnfinishedTag(attr.lower())
         return result
 
     def __call__(self, *args):
@@ -106,8 +92,7 @@ def attrEncode(v):
     else:
         return v
 
-def Tag(tag, _xhtml, *args, **kw):
-    xhtml = _xhtml
+def Tag(tag, *args, **kw):
     if kw.has_key("c"):
         assert not args, "The special 'c' keyword argument cannot be used in conjunction with non-keyword arguments"
         args = kw.pop("c")
@@ -117,17 +102,14 @@ def Tag(tag, _xhtml, *args, **kw):
                 for attr, value in kw.items()
                 if value is not Exclude]
     if not args and emptyTags.has_key(tag):
-        if xhtml or tag.lower() not in XHTML_ENDTAGS:
-            substr = '<%s%s />'
-        else:
-            substr = '<%s%s>'
+        substr = '<%s%s />'
         if blockTags.has_key(tag):
             return literal(substr % (tag, "".join(htmlArgs)))
         else:
             return literal(substr % (tag, "".join(htmlArgs)))
     else:
         if blockTags.has_key(tag):
-            return literal("<%s%s>\n%s\n</%s>\n" % (
+            return literal("<%s%s>%s</%s>" % (
                 tag,
                 "".join(htmlArgs),
                 "".join(quote(x) for x in args),
@@ -263,8 +245,7 @@ blockTags = {}
 for tag in blockTagString.split():
     blockTags[tag] = 1
 
-HTML = Base(xhtml=False)
-XHTML = Base()
+HTML = Base()
 
 __all__ = ["html", "Exclude", "quote", "literal", "xhtml"]
 
