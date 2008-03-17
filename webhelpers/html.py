@@ -1,4 +1,4 @@
-"""HTML Tag generator
+"""HTML/XHTML Tag generator
 
 You create tags with attribute access.  I.e., the "A" anchor tag is
 html.a.  The attributes of the HTML tag are done with keyword
@@ -11,7 +11,7 @@ and it's unintuitive to give your content before your attributes).
 If the value of an attribute is Exclude, then no attribute will be
 inserted.  Think of it as "does not apply".  So::
 
-    >>> html.a(href="http://www.yahoo.com">, name=html.Exclude, c="Click Here")
+    >>> HTML.a(href="http://www.yahoo.com">, name=html.Exclude, c="Click Here")
     u'<a href="http://www.yahoo.com">Click Here</a>'
 
 If the value is None, then the empty string is used.  Otherwise str()
@@ -20,103 +20,85 @@ is called on the value.
 ``html`` can also be called, and it will concatenate the quoted string
 representations of its arguments.
 
-``html.input`` is special, in that you can use ``html.input.radio()``
-to get an ``<input type="radio">`` tag.  You can still use
-``html.input(type="radio")`` though, just like normal.
-
-``html.comment`` will generate an HTML comment, like
-``html.comment('comment text', 'and some more text')`` -- note that
+``HTML.comment`` will generate an HTML comment, like
+``HTML.comment('comment text', 'and some more text')`` -- note that
 it cannot take keyword arguments (because they wouldn't mean anything).
 
-``html.javascript`` will wrap its arguments in <script>... tags.
-
-``html.literal`` will allow you to give HTML source without any quoting.
+``HTML.literal`` will allow you to give HTML source without any quoting.
 
 If you cannot define an attribute because it conflicts with a Python
 keyword (particularly ``class``), you can append an underscore and
 it will be removed (like ``class_='whatever'``).
 
 """
-from UserDict import DictMixin
 from cgi import escape
 from types import *
+from UserDict import DictMixin
 
-class Exclude:
+XHTML_ENDTAGS = ('base', 'link', 'meta', 'hr', 'br', 'img', 'embed', 'param', 
+                 'area', 'col', 'input')
+
+class Exclude(object):
     pass
 
-class UnfinishedTag:
+class UnfinishedTag(object):
 
-    def __init__(self, tag):
+    def __init__(self, tag, xhtml):
         self._tag = tag
+        self._xhtml = xhtml
 
     def __call__(self, *args, **kw):
-        return Tag(self._tag, *args, **kw)
+        return Tag(self._tag, _xhtml=self._xhtml, *args, **kw)
 
     def __str__(self):
-        return '<%s />' % self._tag
+        if self._xhtml or self._tag not in XHTML_ENDTAGS:
+            return '<%s />' % self._tag
+        else:
+            return '<%>' % self._tag
 
-    def __htmlrepr__(self):
+    def __html__(self):
         return str(self)
 
-class UnfinishedInput:
 
-    def __init__(self, tag, type=None):
-        self._tag = tag
-        self._type = type
-
-    def __call__(self, *args, **kw):
-        if self._type:
-            kw['type'] = self._type
-        return Tag(self._tag, *args, **kw)
-
-    def __getattr__(self, attr):
-        return UnfinishedInput(self._tag, type=attr.lower())
-
-    def __htmlrepr__(self):
-        if self._type:
-            raise UnfinishedTag, '<input type="%s"> unfinished' % self._type
-        else:
-            raise UnfinishedTag, '<input> unfinished' % self._type
-
-class UnfinishedComment:
+class UnfinishedComment(object):
 
     def __call__(self, *args):
-        return literal('<!--%s-->' % ''.join(map(str, args)))
+        return literal('<!--%s-->' % ''.join(str(x) for x in args))
         
-    def __htmlrepr__(self):
+    def __html__(self):
         raise UnfinishedTag
 
-class UnfinishedJavascript:
 
-    def __call__(self, *args):
-        return literal('<script type="text/javascript"><!--\n%s\n// --></script>\n' \
-               % '\n'.join(args))
-
-class UnfinishedLiteral:
+class UnfinishedLiteral(object):
 
     def __call__(self, *args):
         return literal(*args)
 
-    def __htmlrepr__(self):
+    def __html__(self):
         raise UnfinishedTag
 
-class Base:
+class Base(object):
 
     Exclude = Exclude
 
-    input = UnfinishedInput('input')
     comment = UnfinishedComment()
     literal = UnfinishedLiteral()
-    javascript = UnfinishedJavascript()
-
+    
+    def __init__(self, xhtml=True):
+        self._xhtml = xhtml
+    
     def __getattr__(self, attr):
         if attr.startswith('_'):
             raise AttributeError
-        result = self.__dict__[attr] = UnfinishedTag(attr.lower())
+        if self._xhtml:
+            tag_name = attr.lower()
+        else:
+            tag_name = attr
+        result = self.__dict__[attr] = UnfinishedTag(tag_name, self._xhtml)
         return result
 
     def __call__(self, *args):
-        return ''.join(map(htmlrepr, args))
+        return ''.join(quote(x) for x in args)
 
 def attrEncode(v):
     if v.endswith('_'):
@@ -124,32 +106,37 @@ def attrEncode(v):
     else:
         return v
 
-def Tag(tag, *args, **kw):
+def Tag(tag, _xhtml, *args, **kw):
+    xhtml = _xhtml
     if kw.has_key("c"):
         assert not args, "The special 'c' keyword argument cannot be used in conjunction with non-keyword arguments"
         args = kw.pop("c")
     if type(args) not in (type(()), type([])):
         args = (args,)
-    htmlArgs = [' %s="%s"' % (attrEncode(attr), htmlrepr(value))
+    htmlArgs = [' %s="%s"' % (attrEncode(attr), quote(value))
                 for attr, value in kw.items()
                 if value is not Exclude]
     if not args and emptyTags.has_key(tag):
-        if blockTags.has_key(tag):
-            return literal("<%s%s />\n" % (tag, "".join(htmlArgs)))
+        if xhtml:
+            substr = '<%s%s />'
         else:
-            return literal("<%s%s />" % (tag, "".join(htmlArgs)))
+            substr = '<%s%s>'
+        if blockTags.has_key(tag):
+            return literal((substr + "\n") % (tag, "".join(htmlArgs)))
+        else:
+            return literal(substr % (tag, "".join(htmlArgs)))
     else:
         if blockTags.has_key(tag):
             return literal("<%s%s>\n%s\n</%s>\n" % (
                 tag,
                 "".join(htmlArgs),
-                "".join(map(htmlrepr, args)),
+                "".join(quote(x) for x in args),
                 tag))
         else:
             return literal("<%s%s>%s</%s>" % (
                 tag,
                 "".join(htmlArgs),
-                "".join(map(htmlrepr, args)),
+                "".join(quote(x) for x in args),
                 tag))
 
 
@@ -276,9 +263,10 @@ blockTags = {}
 for tag in blockTagString.split():
     blockTags[tag] = 1
 
-html = Base()
+HTML = Base(xhtml=False)
+XHTML = Base()
 
-__all__ = ["html", "Exclude", "htmlrepr", "literal"]
+__all__ = ["html", "Exclude", "quote", "literal", "xhtml"]
 
 if __name__ == "__main__":
     print html.html(
