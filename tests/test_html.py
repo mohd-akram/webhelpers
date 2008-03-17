@@ -1,4 +1,4 @@
-from webhelpers.html import literal, quote, HTML, XHTML
+from webhelpers.html import literal, quote, HTML
 
 def test_double_quote():
     quoted = quote(u'This string is "quoted"')
@@ -47,17 +47,7 @@ def test_html():
     assert u'<a href="http://mostlysafe&quot; &lt;tag">Bad &lt;script&gt; tag</a>' == a
     
     img = HTML.img(src='http://some/image.jpg')
-    assert u'<img src="http://some/image.jpg">' == img
-    
-    br = HTML.br()
-    assert u'<br>' == br
-
-def test_xhtml():
-    a = XHTML.a(href='http://mostlysafe\" <tag', c="Bad <script> tag")
-    assert u'<a href="http://mostlysafe&quot; &lt;tag">Bad &lt;script&gt; tag</a>' == a
-    
-    img = XHTML.img(src='http://some/image.jpg')
     assert u'<img src="http://some/image.jpg" />' == img
     
-    br = XHTML.br()
+    br = HTML.br()
     assert u'<br />' == br
