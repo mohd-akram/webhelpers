@@ -31,6 +31,12 @@ class TestFormTagHelper(WebHelpersTestCase):
             form(url='http://www.example.com', multipart=True),
             '<form action="http://www.example.com" enctype="multipart/form-data" method="POST">'
         )
+        
+    def test_start_form(self):
+        self.assertEqual(
+            start_form(url='http://www.example.com', name='testForm'),
+            '<form action="http://www.example.com" method="POST" name="testForm">'
+        )
             
     def test_hidden_field(self):
         self.assertEqual(
