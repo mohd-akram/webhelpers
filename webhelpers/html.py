@@ -11,8 +11,8 @@ and it's unintuitive to give your content before your attributes).
 If the value of an attribute is Exclude, then no attribute will be
 inserted.  Think of it as "does not apply".  So::
 
-    >>> HTML.a(href="http://www.yahoo.com">, name=html.Exclude, c="Click Here")
-    u'<a href="http://www.yahoo.com">Click Here</a>'
+    >>> HTML.a(href="http://www.yahoo.com", name=HTML.Exclude, c="Click Here")
+    literal(u'<a href="http://www.yahoo.com">Click Here</a>')
 
 If the value is None, then the empty string is used.  Otherwise str()
 is called on the value.
@@ -51,10 +51,10 @@ class UnfinishedTag(object):
         return Tag(self._tag, _xhtml=self._xhtml, *args, **kw)
 
     def __str__(self):
-        if self._xhtml or self._tag not in XHTML_ENDTAGS:
-            return '<%s />' % self._tag
+        if self._xhtml or self._tag.lower() not in XHTML_ENDTAGS:
+            return literal('<%s />' % self._tag)
         else:
-            return '<%>' % self._tag
+            return literal('<%s>' % self._tag)
 
     def __html__(self):
         return str(self)
@@ -117,12 +117,12 @@ def Tag(tag, _xhtml, *args, **kw):
                 for attr, value in kw.items()
                 if value is not Exclude]
     if not args and emptyTags.has_key(tag):
-        if xhtml:
+        if xhtml or tag.lower() not in XHTML_ENDTAGS:
             substr = '<%s%s />'
         else:
             substr = '<%s%s>'
         if blockTags.has_key(tag):
-            return literal((substr + "\n") % (tag, "".join(htmlArgs)))
+            return literal(substr % (tag, "".join(htmlArgs)))
         else:
             return literal(substr % (tag, "".join(htmlArgs)))
     else:
