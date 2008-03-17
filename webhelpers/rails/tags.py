@@ -23,9 +23,9 @@ def strip_unders(options):
             options[x[:-1]] = y
             del options[x]
 
-def tag(name, open=False, **options):
+def tag(tag_name, open=False, **options):
     """
-    Returns an XHTML compliant tag of type ``name``.
+    Returns an XHTML compliant tag of type ``tag_name``.
     
     ``open``
         Set to True if the tag should remain open
@@ -45,7 +45,7 @@ def tag(name, open=False, **options):
         >>> tag("input", type='text', disabled=True)
         '<input disabled="disabled" type="text" />'
     """
-    tag = '<%s%s%s' % (name, (options and tag_options(**options)) or '', (open and '>') or ' />')
+    tag = '<%s%s%s' % (tag_name, (options and tag_options(**options)) or '', (open and '>') or ' />')
     return tag
 
 def content_tag(name, content, **options):
