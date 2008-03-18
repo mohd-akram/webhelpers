@@ -32,6 +32,7 @@ keyword (particularly ``class``), you can append an underscore and
 it will be removed (like ``class_='whatever'``).
 
 """
+import re
 from cgi import escape as cgi_escape
 from urllib import quote as url_escape
 from UserDict import DictMixin
@@ -46,7 +47,7 @@ class UnfinishedTag(object):
 
     def __call__(self, *args, **kw):
         """Create the tag with the arguments passed in."""
-        return Tag(self._tag, *args, **kw)
+        return make_tag(self._tag, *args, **kw)
 
     def __str__(self):
         """Return a literal representation."""
@@ -110,15 +111,13 @@ def attrEncode(v):
         return v
 
 
-def Tag(tag, *args, **kw):
+def make_tag(tag, *args, **kw):
     if kw.has_key("c"):
         assert not args, "The special 'c' keyword argument cannot be used "\
 "in conjunction with non-keyword arguments"
         args = kw.pop("c")
-    if type(args) not in (type(()), type([])):
-        args = (args,)
     htmlArgs = [' %s="%s"' % (attrEncode(attr), escape(value))
-                for attr, value in kw.items()
+                for attr, value in sorted(kw.iteritems())
                 if value is not None]
     if not args and emptyTags.has_key(tag):
         substr = '<%s%s />'
@@ -195,7 +194,20 @@ class literal(unicode):
  
     def join(self, items):
         return self.__class__(unicode.join(self, (escape(i) for i in items)))
- 
+
+
+def lit_sub(*args, **kw):
+    """Ensures that if the string re.sub operates on is a literal, it
+    will still be a literal returned"""
+    lit = hasattr(args[2], '__html__')
+    cls = args[2].__class__
+    result = re.sub(*args, **kw)
+    if lit:
+        return cls(result)
+    else:
+        return result
+
+
 def escape(val, force=False):
     """Does HTML-escaping of a value.
     
