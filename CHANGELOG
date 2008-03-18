@@ -1,5 +1,8 @@
 WebHelpers ChangeLog
 
+0.3.4 (03/18/08)
+* Fixed missing javascripts dir.
+
 0.3.3 (02/27/08)
 * Fixed strip_unders so that it won't explode during iteration when the size
   changes.
