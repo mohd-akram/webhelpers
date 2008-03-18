@@ -8,6 +8,9 @@ WebHelpers ChangeLog
 * Removed dependency on simplejson and normalized quotes. Patch by Elisha 
   Cook.
 
+0.3.4 (03/18/08)
+* Fixed missing javascripts dir.
+
 0.3.3 (02/27/08)
 * Fixed strip_unders so that it won't explode during iteration when the size
   changes.

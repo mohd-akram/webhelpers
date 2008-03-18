@@ -1,9 +1,9 @@
-from webhelpers.html import literal, quote, HTML
+from webhelpers.html import literal, lit_sub, escape, HTML
 
-def test_double_quote():
-    quoted = quote(u'This string is "quoted"')
+def test_double_escape():
+    quoted = escape(u'This string is "quoted"')
     assert quoted == u'This string is &quot;quoted&quot;'
-    dbl_quoted = quote(quoted)
+    dbl_quoted = escape(quoted)
     assert quoted == dbl_quoted
 
 def test_literal():
@@ -51,3 +51,13 @@ def test_html():
     
     br = HTML.br()
     assert u'<br />' == br
+
+def test_lit_re():
+    lit = literal('This is a <string>')
+    unlit = 'This is also a <string>'
+    
+    result = lit_sub(r'<str', '<b', lit)
+    assert u'This is a <bing>' == escape(result)
+    
+    result = lit_sub(r'a <str', 'a <b> <b', unlit)
+    assert u'This is also a &lt;b&gt; &lt;bing&gt;' == escape(result)
