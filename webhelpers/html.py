@@ -33,7 +33,7 @@ it will be removed (like ``class_='whatever'``).
 
 """
 from cgi import escape as cgi_escape
-from types import *
+from urllib import quote as url_escape
 from UserDict import DictMixin
 
 class UnfinishedTag(object):
