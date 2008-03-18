@@ -11,13 +11,14 @@ and it's unintuitive to give your content before your attributes).
 If the value of an attribute is Exclude, then no attribute will be
 inserted.  Think of it as "does not apply".  So::
 
-    >>> HTML.a(href="http://www.yahoo.com", name=HTML.Exclude, c="Click Here")
+    >>> HTML.a(href="http://www.yahoo.com", name=HTML.Exclude, 
+    ... c="Click Here")
     literal(u'<a href="http://www.yahoo.com">Click Here</a>')
 
 If the value is None, then the empty string is used.  Otherwise str()
 is called on the value.
 
-``html`` can also be called, and it will concatenate the quoted string
+``HTML`` can also be called, and it will concatenate the quoted string
 representations of its arguments.
 
 ``HTML.comment`` will generate an HTML comment, like

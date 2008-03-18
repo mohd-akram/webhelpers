@@ -1,6 +1,10 @@
 WebHelpers ChangeLog
 
-0.3.4 (**tip**)
+0.6 (**tip**)
+* Wrap all rails helpers in a literal for use with template systems that honor
+  the literal.
+* Added html.py to generate HTML tags in a sane manner, along with literal
+  type.
 * Removed dependency on simplejson and normalized quotes. Patch by Elisha 
   Cook.
 
