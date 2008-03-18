@@ -32,7 +32,7 @@ keyword (particularly ``class``), you can append an underscore and
 it will be removed (like ``class_='whatever'``).
 
 """
-from cgi import escape
+from cgi import escape as cgi_escape
 from types import *
 from UserDict import DictMixin
 
@@ -99,7 +99,7 @@ class Base(object):
 
     def __call__(self, *args):
         """Join raw HTML and HTML escape it."""
-        return ''.join(quote(x) for x in args)
+        return ''.join(escape(x) for x in args)
 
 
 def attrEncode(v):
@@ -117,7 +117,7 @@ def Tag(tag, *args, **kw):
         args = kw.pop("c")
     if type(args) not in (type(()), type([])):
         args = (args,)
-    htmlArgs = [' %s="%s"' % (attrEncode(attr), quote(value))
+    htmlArgs = [' %s="%s"' % (attrEncode(attr), escape(value))
                 for attr, value in kw.items()
                 if value is not None]
     if not args and emptyTags.has_key(tag):
@@ -131,13 +131,13 @@ def Tag(tag, *args, **kw):
             return literal("<%s%s>%s</%s>" % (
                 tag,
                 "".join(htmlArgs),
-                "".join(quote(x) for x in args),
+                "".join(escape(x) for x in args),
                 tag))
         else:
             return literal("<%s%s>%s</%s>" % (
                 tag,
                 "".join(htmlArgs),
-                "".join(quote(x) for x in args),
+                "".join(escape(x) for x in args),
                 tag))
 
 
@@ -146,13 +146,13 @@ class literal(unicode):
     """Represents an HTML literal.
     
     This subclass of unicode has a ``.__html__()`` method that is 
-    detected by the ``quote()`` function.
+    detected by the ``escape()`` function.
     
     Also, if you add another string to this string, the other string 
     will be quoted and you will get back another literal object.  Also
     ``literal(...) % obj`` will quote any value(s) from ``obj``.  If
     you do something like ``literal(...) + literal(...)``, neither
-    string will be changed because ``quote(literal(...))`` doesn't
+    string will be changed because ``escape(literal(...))`` doesn't
     change the original literal.
     
     """
@@ -177,34 +177,34 @@ class literal(unicode):
         return self
         
     def __add__(self, other):
-        return self.__class__(unicode.__add__(self, quote(other)))
+        return self.__class__(unicode.__add__(self, escape(other)))
         
     def __radd__(self, other):
         if not isinstance(other, basestring):
             raise NotImplemented
-        return self.__class__(unicode.__add__(quote(other), self))
+        return self.__class__(unicode.__add__(escape(other), self))
     
     def __mul__(self, count):
         return self.__class__(unicode.__mul__(self, count))
     
     def __mod__(self, obj):
         if isinstance(obj, tuple):
-            return unicode.__mod__(self, tuple(QuotedItem(item, self.encoding, self.error_mode) for item in obj))
+            return unicode.__mod__(self, tuple(_EscapedItem(item, self.encoding, self.error_mode) for item in obj))
         else:
-            return unicode.__mod__(self, QuotedItem(obj, self.encoding, self.error_mode))
+            return unicode.__mod__(self, _EscapedItem(obj, self.encoding, self.error_mode))
  
     def join(self, items):
-        return self.__class__(unicode.join(self, (quote(i) for i in items)))
+        return self.__class__(unicode.join(self, (escape(i) for i in items)))
  
-def quote(val, force=False):
-    """Does HTML-quoting of a value.
+def escape(val, force=False):
+    """Does HTML-escaping of a value.
     
     Objects with a ``.__html__()`` method will have that method called,
     and the return value will *not* be quoted.  Thus objects with that
     magic method can be used to represent HTML that should not be
     quoted.
     
-    As a special case, ``quote(None)`` returns ''
+    As a special case, ``escape(None)`` returns ''
     
     If ``force`` is true, then it will always be quoted regardless of
     ``__html__()``.
@@ -215,11 +215,11 @@ def quote(val, force=False):
     elif not force and hasattr(val, '__html__'):
         return literal(val.__html__())
     elif isinstance(val, basestring):
-        return literal(escape(val, True))
+        return literal(cgi_escape(val, True))
     else:
-        return literal(escape(unicode(val), True))
+        return literal(cgi_escape(unicode(val), True))
 
-class QuotedItem(DictMixin):
+class _EscapedItem(DictMixin):
     
     """Wrapper/helper for literal(...) % obj
     
@@ -235,16 +235,16 @@ class QuotedItem(DictMixin):
         self.error_mode = error_mode
         
     def __getitem__(self, key):
-        return QuotedItem(self.obj[key], self.encoding, self.error_mode)
+        return _EscapedItem(self.obj[key], self.encoding, self.error_mode)
         
     def __str__(self):
-        v = quote(self.obj)
+        v = escape(self.obj)
         if isinstance(v, unicode):
             v = v.encode(self.encoding)
         return v
         
     def __unicode__(self):
-        v = quote(self.obj)
+        v = escape(self.obj)
         if isinstance(v, str):
             v = v.decode(self.encoding, self.error_mode)
         return v
@@ -256,7 +256,7 @@ class QuotedItem(DictMixin):
         return float(self.obj)
     
     def __repr__(self):
-        return quote(repr(self.obj))
+        return escape(repr(self.obj))
 
 
 emptyTagString = """

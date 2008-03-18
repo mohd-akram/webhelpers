@@ -1,9 +1,9 @@
-from webhelpers.html import literal, quote, HTML
+from webhelpers.html import literal, escape, HTML
 
-def test_double_quote():
-    quoted = quote(u'This string is "quoted"')
+def test_double_escape():
+    quoted = escape(u'This string is "quoted"')
     assert quoted == u'This string is &quot;quoted&quot;'
-    dbl_quoted = quote(quoted)
+    dbl_quoted = escape(quoted)
     assert quoted == dbl_quoted
 
 def test_literal():
