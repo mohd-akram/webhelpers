@@ -10,25 +10,26 @@ DEFAULT_PREFIX = 'date'
 
 def distance_of_time_in_words(from_time, to_time=0, include_seconds=False):
     """
-    Reports the approximate distance in time between two datetime objects or
-    integers as seconds.
+    Return approximate-time-distance string for two datetimes or ints.
+    
+    If times are integers, they are interpreted as seconds.
 
-    Set ``include_seconds`` to True for more more detailed approximations when
-    distance < 1 min, 29 secs
+    Set ``include_seconds`` to True for more more detailed approximations 
+    when distance < 1 min, 29 secs
 
     Distances are reported based on the following table:
 
-    0 <-> 29 secs                                                           => less than a minute
-    30 secs <-> 1 min, 29 secs                                              => 1 minute
-    1 min, 30 secs <-> 44 mins, 29 secs                                     => [2..44] minutes
-    44 mins, 30 secs <-> 89 mins, 29 secs                                   => about 1 hour
-    89 mins, 29 secs <-> 23 hrs, 59 mins, 29 secs                           => about [2..24] hours
-    23 hrs, 59 mins, 29 secs <-> 47 hrs, 59 mins, 29 secs                   => 1 day
-    47 hrs, 59 mins, 29 secs <-> 29 days, 23 hrs, 59 mins, 29 secs          => [2..29] days
-    29 days, 23 hrs, 59 mins, 30 secs <-> 59 days, 23 hrs, 59 mins, 29 secs => about 1 month
-    59 days, 23 hrs, 59 mins, 30 secs <-> 1 yr minus 31 secs                => [2..12] months
-    1 yr minus 30 secs <-> 2 yrs minus 31 secs                              => about 1 year
-    2 yrs minus 30 secs <-> max time or date                                => over [2..X] years
+    0 <-> 29 secs                                   => less than a minute
+    30 secs <-> 1 min, 29 secs                      => 1 minute
+    1 min, 30 secs <-> 44 mins, 29 secs             => [2..44] minutes
+    44 mins, 30 secs <-> 89 mins, 29 secs           => about 1 hour
+    89 mins, 30 secs <-> 1 day minus 31 secs        => about [2..24] hours
+    1 day minus 30 secs <-> 2 days minus 31 secs    => 1 day
+    2 days minus 30 secs <-> 30 days minus 31 secs  => [2..29] days
+    30 days minus 30 secs <-> 60 days minus 31 secs => about 1 month
+    60 days minus 30 secs <-> 1 yr minus 31 secs    => [2..12] months
+    1 yr minus 30 secs <-> 2 yrs minus 31 secs      => about 1 year
+    2 yrs minus 30 secs <-> max time or date        => over [2..X] years
 
     With ``include_seconds`` set to True and the difference < 1 minute 29
     seconds:
@@ -52,6 +53,7 @@ def distance_of_time_in_words(from_time, to_time=0, include_seconds=False):
         'less than 20 seconds'
 
     Note: ``distance_of_time_in_words`` calculates one year as 365.25 days.
+    
     """
     if isinstance(from_time, int):
         from_time = time.time()+from_time
@@ -102,7 +104,11 @@ def distance_of_time_in_words(from_time, to_time=0, include_seconds=False):
 
 def time_ago_in_words(from_time, include_seconds=False):
     """
-    Like distance_of_time_in_words, but where ``to_time`` is fixed to ``datetime.now()``.
+    Return approximate-time-distance string for ``from_time`` til now.
+
+    See ``distance_of_time_in_words`` -- same here, but ``to_time`` is 
+    fixed to ``datetime.now()``.
+    
     """
     return distance_of_time_in_words(from_time, datetime.now(), include_seconds)
 

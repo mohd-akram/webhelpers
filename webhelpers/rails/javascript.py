@@ -8,8 +8,9 @@ Ajax, controls and visual effects
 
 * For information on using Ajax, see `Prototype Helpers
   <module-railshelpers.helpers.prototype.html>`_.
-* For information on using controls and visual effects, see `Scriptaculous Helpers
-  <module-railshelpers.helpers.scriptaculous.html>`_.
+* For information on using controls and visual effects, see 
+  `Scriptaculous Helpers <module-railshelpers.helpers.scriptaculous.html>`_.
+  
 """
 # Last synced with Rails copy at Revision 6057 on Feb 8th, 2007.
 
@@ -18,12 +19,13 @@ from tags import *
 
 def link_to_function(name, function, **html_options):
     """
-    Returns a link that'll trigger a JavaScript ``function`` using the 
+    Return a link that'll trigger a JavaScript ``function`` using the 
     onclick handler and return false after the fact.
     
     Example::
     
         link_to_function("Greeting", "alert('Hello world!')")
+        
     """
     options = dict(href="#", onclick="%s; return false;" % function)
     options.update(html_options)
@@ -31,12 +33,13 @@ def link_to_function(name, function, **html_options):
 
 def button_to_function(name, function, **html_options):
     """
-    Returns a link that'll trigger a JavaScript ``function`` using the 
+    Return a link that'll trigger a JavaScript ``function`` using the 
     onclick handler and return false after the fact.
     
     Example::
     
         button_to_function("Greeting", "alert('Hello world!')")
+        
     """
     options = dict(type_="button", value=name, onclick="%s; " % function)
     options.update(html_options)
@@ -44,7 +47,7 @@ def button_to_function(name, function, **html_options):
 
 def escape_javascript(javascript):
     """
-    Escape carriage returns and single and double quotes for JavaScript segments.
+    Escape carriage returns and single and double quotes in ``javascript``.
     """
     javascript = re.sub(r'\\', r'\\\\', (javascript or ''))
     javascript = re.sub(r'\r\n|\n|\r', r'\\n', javascript)
@@ -53,7 +56,7 @@ def escape_javascript(javascript):
 
 def javascript_tag(content, **html_options):
     """
-    Returns a JavaScript tag with the ``content`` inside.
+    Return a JavaScript tag with the ``content`` inside.
     
     Example::
     

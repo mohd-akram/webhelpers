@@ -50,7 +50,7 @@ Examples::
 
    Should this return objects instead of strings?  That would allow
    things like ``html.a(href='foo')('title')``.  Also, the objects
-   could have a method that shows that they are trully HTML, and thus
+   could have a method that shows that they are truly HTML, and thus
    should not be further quoted.
 
    However, in some contexts you can't use objects, you need actual

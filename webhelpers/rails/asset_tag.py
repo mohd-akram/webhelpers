@@ -1,8 +1,9 @@
 """
 Asset Tag Helpers
 
-Provides functionality for linking an HTML page together with other assets, such as
-images, javascripts, stylesheets, and feeds.
+Provides functionality for linking an HTML page together with other 
+assets, such as images, javascripts, stylesheets, and feeds.
+
 """
 # Last synced with Rails copy at Revision 6057 on Feb 7th, 2007.
 
@@ -23,18 +24,22 @@ javascript_builtins = ('prototype.js', 'scriptaculous.js')
 
 def auto_discovery_link_tag(source, type='rss', **kwargs):
     """
-    Returns a link tag allowing browsers and news readers (that support it) to auto-detect
-    an RSS or ATOM feed for current page.
+    Return a link tag allowing auto-detecting of RSS or ATOM feed.
+    
+    The auto-detection of feed for the current page is only for browsers
+    and news readers that support it.
 
     ``source``
-        The URL of the feed. The URL is ultimately prepended with the environment's
-        ``SCRIPT_NAME`` (the root path of the web application), unless the URL is
-        fully-fledged (e.g. http://example.com).
+        The URL of the feed. The URL is ultimately prepended with the 
+        environment's ``SCRIPT_NAME`` (the root path of the web 
+        application), unless the URL is fully-fledged 
+        (e.g. http://example.com).
 
     ``type``
-        The type of feed. Specifying 'rss' or 'atom' automatically translates to a type of
-        'application/rss+xml' or 'application/atom+xml', respectively. Otherwise the type
-        is used as specified. Defaults to 'rss'.
+        The type of feed. Specifying 'rss' or 'atom' automatically 
+        translates to a type of 'application/rss+xml' or 
+        'application/atom+xml', respectively. Otherwise the type is used 
+        as specified. Defaults to 'rss'.
         
     Examples::
 
@@ -49,6 +54,7 @@ def auto_discovery_link_tag(source, type='rss', **kwargs):
 
         >>> auto_discovery_link_tag('/app.html', type='text/html')
         '<link href="/app.html" rel="alternate" title="" type="text/html" />'
+        
     """
     title = ''
     if type.lower() in ('rss', 'atom'):
@@ -64,13 +70,14 @@ def auto_discovery_link_tag(source, type='rss', **kwargs):
 
 def image_tag(source, alt=None, size=None, **options):
     """
-    Returns an image tag for the specified ``source``.
+    Return an image tag for the specified ``source``.
 
     ``source``
-        The source URL of the image. The URL is prepended with '/images/', unless its full
-        path is specified. The URL is ultimately prepended with the environment's
-        ``SCRIPT_NAME`` (the root path of the web application), unless the URL is
-        fully-fledged (e.g. http://example.com).
+        The source URL of the image. The URL is prepended with '/images/', 
+        unless its full path is specified. The URL is ultimately 
+        prepended with the environment's ``SCRIPT_NAME`` (the root path 
+        of the web application), unless the URL is fully-fledged (e.g. 
+        http://example.com).
     
     ``alt``
         The img's alt tag. Defaults to the source's filename, title cased.
@@ -95,6 +102,7 @@ def image_tag(source, alt=None, size=None, **options):
 
         >>> image_tag("/icons/icon.gif", size="16x")
         '<img alt="Icon" src="/icons/icon.gif" width="16" />'
+        
     """
     if not os.path.splitext(source)[1]:
         warnings.warn("You've called image_tag with a source that doesn't include an "
@@ -118,18 +126,20 @@ def image_tag(source, alt=None, size=None, **options):
 
 def javascript_include_tag(*sources, **options):
     """
-    Returns script include tags for the specified javascript ``sources``.
+    Return script include tags for the specified javascript ``sources``.
 
-    Each source's URL path is prepended with '/javascripts/' unless their full path is
-    specified. Each source's URL path is ultimately prepended with the environment's
-    ``SCRIPT_NAME`` (the root path of the web application), unless the URL path is a
-    full-fledged URL (e.g. http://example.com). Sources with no filename extension will be
-    appended with the '.js' extension.
+    Each source's URL path is prepended with '/javascripts/' unless 
+    their full path is specified. Each source's URL path is ultimately 
+    prepended with the environment's ``SCRIPT_NAME`` (the root path of 
+    the web application), unless the URL path is a full-fledged URL 
+    (e.g. http://example.com). Sources with no filename extension will 
+    be appended with the '.js' extension.
 
-    Optionally includes (prepended) WebHelpers' built-in javascripts when passed the
-    ``builtins=True`` keyword argument.
+    Optionally includes (prepended) WebHelpers' built-in javascripts 
+    when passed the ``builtins=True`` keyword argument.
 
-    Specify the keyword argument ``defer=True`` to enable the script defer attribute.
+    Specify the keyword argument ``defer=True`` to enable the script 
+    defer attribute.
 
     Examples::
     
@@ -150,6 +160,7 @@ def javascript_include_tag(*sources, **options):
         <script src="/javascripts/scriptaculous.js" type="text/javascript"></script>
         <script src="/javascripts/app.js" type="text/javascript"></script>
         <script src="/test/test.1.js" type="text/javascript"></script>
+        
     """
     if options.pop('builtins', False):
         sources = javascript_builtins + sources
@@ -167,13 +178,14 @@ def javascript_include_tag(*sources, **options):
 
 def stylesheet_link_tag(*sources, **options):
     """
-    Returns CSS link tags for the specified stylesheet ``sources``.
+    Return CSS link tags for the specified stylesheet ``sources``.
 
-    Each source's URL path is prepended with '/stylesheets/' unless their full path is
-    specified. Each source's URL path is ultimately prepended with the environment's
-    ``SCRIPT_NAME`` (the root path of the web application), unless the URL path is a
-    full-fledged URL (e.g. http://example.com). Sources with no filename extension will be
-    appended with the '.css' extension.
+    Each source's URL path is prepended with '/stylesheets/' unless 
+    their full path is specified. Each source's URL path is ultimately 
+    prepended with the environment's ``SCRIPT_NAME`` (the root path of 
+    the web application), unless the URL path is a full-fledged URL 
+    (e.g., http://example.com). Sources with no filename extension will 
+    be appended with the '.css' extension.
     
     Examples::
 
@@ -185,6 +197,7 @@ def stylesheet_link_tag(*sources, **options):
 
         >>> stylesheet_link_tag('/dir/file', media='all')
         '<link href="/dir/file.css" media="all" rel="Stylesheet" type="text/css" />'
+        
     """
     tag_options = dict(rel='Stylesheet', type='text/css', media='screen')
     tag_options.update(options)
@@ -196,7 +209,10 @@ def stylesheet_link_tag(*sources, **options):
     
 def compute_public_path(source, root_path=None, ext=None):
     """
-    Format the specified source for publishing, via the public directory, if applicable.
+    Format the specified source for publishing.
+    
+    Use the public directory, if applicable.
+    
     """
     if ext and not os.path.splitext(os.path.basename(source))[1]:
         source = '%s.%s' % (source, ext)
