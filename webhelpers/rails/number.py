@@ -179,9 +179,9 @@ def number_with_precision(number, precision=3):
 
     Example::
     
-        >>> number_with_precision(111.2345)
-        '111.234'
-        >>> number_with_precision(111.2345, 2)
+        >>> number_with_precision(111.2346)
+        '111.235'
+        >>> number_with_precision(111.2346, 2)
         '111.23'
     """
     formstr = '%01.' + str(precision) + 'f'

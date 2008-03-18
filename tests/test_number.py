@@ -15,7 +15,7 @@ class TestTextHelper(WebHelpersTestCase):
     def test_number_to_currency(self):
         self.assertEqual("$1,234,567,890.50", number_to_currency(1234567890.50))
         self.assertEqual("$1,234,567,890.51", number_to_currency(1234567890.506))
-        self.assertEqual("$1,234,567,890", number_to_currency(1234567890.50, precision=0))
+        self.assertEqual("$1,234,567,890", number_to_currency(1234567890.499, precision=0))
         self.assertEqual("$1,234,567,890.5", number_to_currency(1234567890.50, precision=1))
         self.assertEqual("&pound;1234567890,50", number_to_currency(1234567890.50, unit="&pound;", separator=",", delimiter=""))
 
