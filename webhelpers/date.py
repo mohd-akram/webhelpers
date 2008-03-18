@@ -3,46 +3,58 @@
 from datetime import datetime
 import time
 
+__all__ = ['distance_of_time_in_words']
+
 def _process_carryover(deltas, carry_over):
-    """A helper function to process negative deltas based on the deltas and the list of tuples that contain the carry over values"""
+    """A helper function to process negative deltas based on the deltas
+    and the list of tuples that contain the carry over values"""
     for smaller, larger, amount in carry_over:
-        if(deltas[smaller] < 0):
+        if deltas[smaller] < 0:
             deltas[larger] -= 1
             deltas[smaller] += amount
-            
+
+
 def _pluralize_granularity(granularity):
     """Pluralize the given granularity"""
-    if('century' == granularity):
+    if 'century' == granularity:
         return "centuries"
     return granularity + "s"
 
+
 def _delta_string(delta, granularity):
     """Return the string to use for the given delta and ordinality"""
-    if (1 == delta):
+    if 1 == delta:
         return "1 " + granularity
-    elif (delta > 1):
-        return (str(delta) + " " + _pluralize_granularity(granularity))
+    elif delta > 1:
+        return str(delta) + " " + _pluralize_granularity(granularity)
+
 
 def _is_leap_year(year):
-    if(year % 4 == 0 and
-       year % 400 != 0):
+    if year % 4 == 0 and year % 400 != 0:
         return True
     return False
 
-def distance_of_time_in_words(from_time, to_time=0, granularity="second", round=False):
+
+def distance_of_time_in_words(from_time, to_time=0, granularity="second",
+                              round=False):
     """
-    Return the absolute time-distance string for two datetime objects, ints or any combination of which you can dream
+    Return the absolute time-distance string for two datetime objects,
+    ints or any combination of which you can dream
     
     If times are integers, they are interpreted as seconds from now
     
-    ``granularity`` dictates where the string calculation is stopped.  If set to seconds (default)
-    you will receive the full string.  If another accuracy is supplied you will be provided with
-    an approximation stopping at the granularity supplied.  Available parameter values are:
+    ``granularity`` dictates where the string calculation is stopped.
+    If set to seconds (default) you will receive the full string. If
+    another accuracy is supplied you will be provided with an
+    approximation stopping at the granularity supplied.  Available
+    parameter values are:
     
-    'century', 'decade', 'year', 'month', 'day', 'hour', 'minute', 'second'
+    'century', 'decade', 'year', 'month', 'day', 'hour', 'minute',
+    'second'
     
-    Setting ``round`` to true will check the granularity finer than the set granularity and if
-    the value is greater than 50% of it's range the value at granularity will be increased by 1
+    Setting ``round`` to true will check the granularity finer than the
+    set granularity and if the value is greater than 50% of it's range
+    the value at granularity will be increased by 1
     
     Examples:
 
@@ -52,31 +64,28 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second", round=
     'less than 1 day'
     >>> distance_of_time_in_words(86399)
     '23 hours, 59 minutes and 59 seconds'
-    >>> distance_of_time_in_words(datetime(2008,3,21, 16,34), datetime(2008,2,6,9,45))
+    >>> distance_of_time_in_words(datetime(2008,3,21, 16,34),
+    ... datetime(2008,2,6,9,45))
     '1 month, 15 days, 6 hours and 49 minutes'
-    >>> distance_of_time_in_words(datetime(2008,3,21, 16,34), datetime(2008,2,6,9,45), granularity='decade')
+    >>> distance_of_time_in_words(datetime(2008,3,21, 16,34), 
+    ... datetime(2008,2,6,9,45), granularity='decade')
     'less than 1 decade'
-    >>> distance_of_time_in_words(datetime(2008,3,21, 16,34), datetime(2008,2,6,9,45), granularity='second')
+    >>> distance_of_time_in_words(datetime(2008,3,21, 16,34), 
+    ... datetime(2008,2,6,9,45), granularity='second')
     '1 month, 15 days, 6 hours and 49 minutes'
     """
     granularities = ['century', 'decade', 'year', 'month', 'day', 'hour',
                      'minute', 'second']
     
-    granularity_size = {
-        'century': 10,
-        'decade': 10,
-        'year': 10,
-        'month': 12,
-        # 15 days in the month is a gross approximation, but this
-        # value is only used if rounding to the nearest month
-        'day': 15,
-        'hour': 24,
-        'minute': 60,
-        'second': 60 }
+    # 15 days in the month is a gross approximation, but this
+    # value is only used if rounding to the nearest month
+    granularity_size = {'century': 10, 'decade': 10, 'year': 10, 'month': 12,
+                        'day': 15, 'hour': 24, 'minute': 60, 'second': 60 }
     
     if granularity not in granularities:
-        raise Exception("Please provide a valid granularity: %s" %(granularities))
-                        
+        raise Exception("Please provide a valid granularity: %s" %
+                        (granularities))
+    
     # Get everything into datetimes
     if isinstance(from_time, int):
         from_time = datetime.fromtimestamp(time.time()+from_time)
@@ -85,25 +94,17 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second", round=
         to_time = datetime.fromtimestamp(time.time()+to_time)
     
     # Ensure that the to_time is the larger
-    if(from_time > to_time):
+    if from_time > to_time:
         s = from_time
         from_time = to_time
         to_time = s
     # Stop if the tiems are equal
-    elif(from_time == to_time):
+    elif from_time == to_time:
         return "0 " + _pluralize_granularity(granularity)
                 
     # Collect up all the differences
-    deltas = {
-        'century': 0,
-        'decade': 0,
-        'year': 0,
-        'month': 0,
-        'day': 0,
-        'hour': 0,
-        'minute': 0,
-        'second' : 0,
-    }
+    deltas = {'century': 0, 'decade': 0, 'year': 0, 'month': 0, 'day': 0,
+              'hour': 0, 'minute': 0, 'second' : 0}
 
     # Collect the easy deltas
     for field in ['month', 'hour', 'day', 'minute', 'second']:
@@ -111,11 +112,11 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second", round=
     
     # deal with year, century and decade    
     delta_year = to_time.year - from_time.year
-    if(delta_year >= 100):
+    if delta_year >= 100:
         deltas['century'] = delta_year // 100
-    if(delta_year % 100 >= 10):
+    if delta_year % 100 >= 10:
         deltas['decade'] = delta_year // 10 - deltas['century'] * 10
-    if(delta_year % 10):
+    if delta_year % 10:
         deltas['year'] = delta_year % 10
             
     # Now we need to deal with the negative deltas, as we move from
@@ -133,60 +134,60 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second", round=
     # look up the from_time.month value in order to bring the number of days
     # to the end of the month.
     month_carry = [None, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    if(deltas['day'] < 0):
+    if deltas['day'] < 0:
         deltas['month'] -= 1
         # Deal with leap years
-        if((from_time.month) == 2 and _is_leap_year(from_time.year)):
+        if (from_time.month) == 2 and _is_leap_year(from_time.year):
             deltas['day'] += 29
         else:
             deltas['day'] += month_carry[from_time.month]
-            
+    
     carry_over = [('month', 'year', granularity_size['month']),
                   ('year', 'decade', granularity_size['year']),
                   ('decade', 'centry', granularity_size['decade'])]
     
     _process_carryover(deltas, carry_over)
     
-    # Display the differences we care about, at this point we should only have positive deltas
+    # Display the differences we care about, at this point we should only have
+    # positive deltas
     return_strings = []
     for g in granularities:
         delta = deltas[g]
         # This is the finest granularity we will display
-        if(g == granularity):
-            # We can only use rounding if the granularity is higher than seconds
-            if (round and g != 'second'):
+        if g == granularity:
+            # We can only use rounding if the granularity is higher than
+            # seconds
+            if round and g != 'second':
                 i = granularities.index(g)
                 # Get the next finest granularity and it's delta
                 g_p = granularities[i + 1]
                 delta_p = deltas[g_p]
                 # Determine if we should round up
-                if(delta_p > granularity_size[g_p] / 2):
+                if delta_p > granularity_size[g_p] / 2:
                     delta += 1
                 
-                if(delta != 0):
+                if delta != 0:
                     return_strings.append(_delta_string(delta, g))
                 
-                if(not return_strings):
+                if not return_strings:
                     return "less than 1 " + granularity
                 break
                 
             else:
-                if(delta != 0):
+                if delta != 0:
                     return_strings.append(_delta_string(delta, g))
 
                 # We're not rounding, check to see if we have encountered
                 # any deltas to display, if not our time difference
                 # is less than our finest granularity
-                if(not return_strings):
+                if not return_strings:
                     return "less than 1 " + granularity
                 break
         # Read the value and continue   
         else:          
-            if(delta != 0):
+            if delta != 0:
                 return_strings.append(_delta_string(delta, g))
 
-    if(len(return_strings) == 1):
+    if len(return_strings) == 1:
         return return_strings[0]
     return ", ".join(return_strings[:-1]) + " and " + return_strings[-1]
-        
-__all__ = ['distance_of_time_in_words', ]
