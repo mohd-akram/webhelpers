@@ -15,8 +15,10 @@ JavaScript framework in your pages.
 See `link_to_remote <module-railshelpers.helpers.javascript.html#link_to_function>`_ 
 for documentation of options common to all Ajax helpers.
 
-See also `Scriptaculous <module-railshelpers.helpers.scriptaculous.html>`_ for
-helpers which work with the Scriptaculous controls and visual effects library.
+See also `Scriptaculous <module-railshelpers.helpers.scriptaculous.html>`_ 
+for helpers which work with the Scriptaculous controls and visual effects 
+library.
+
 """
 # Last synced with Rails copy at Revision 6057 on Feb 9th, 2007.
 
@@ -40,23 +42,24 @@ AJAX_OPTIONS = frozenset(['before', 'after', 'condition', 'url',
 
 def link_to_remote(name, options=None, **html_options):
     """
-    Links to a remote function
+    Links to a remote function.
     
     Returns a link to a remote action defined ``dict(url=url())``
     (using the url() format) that's called in the background using 
-    XMLHttpRequest. The result of that request can then be inserted into a
-    DOM object whose id can be specified with the ``update`` keyword. 
+    XMLHttpRequest. The result of that request can then be inserted into 
+    a DOM object whose id can be specified with the ``update`` keyword. 
     
-    Any keywords given after the second dict argument are considered html options
-    and assigned as html attributes/values for the element.
+    Any keywords given after the second dict argument are considered 
+    html options and assigned as html attributes/values for the element.
     
     Example::
     
         link_to_remote("Delete this post", dict(update="posts", 
                        url=url(action="destroy", id=post.id)))
     
-    You can also specify a dict for ``update`` to allow for easy redirection
-    of output to an other DOM element if a server-side error occurs:
+    You can also specify a dict for ``update`` to allow for easy 
+    redirection of output to an other DOM element if a server-side error 
+    occurs:
     
     Example::
 
@@ -64,17 +67,17 @@ def link_to_remote(name, options=None, **html_options):
                 dict(url=url(action="destroy", id=post.id),
                      update=dict(success="posts", failure="error")))
     
-    Optionally, you can use the ``position`` parameter to influence how the
-    target DOM element is updated. It must be one of 'before', 'top', 'bottom',
-    or 'after'.
+    Optionally, you can use the ``position`` parameter to influence how 
+    the target DOM element is updated. It must be one of 'before', 'top', 
+    'bottom', or 'after'.
     
     By default, these remote requests are processed asynchronous during 
     which various JavaScript callbacks can be triggered (for progress 
     indicators and the likes). All callbacks get access to the 
     ``request`` object, which holds the underlying XMLHttpRequest. 
     
-    To access the server response, use ``request.responseText``, to
-    find out the HTTP status, use ``request.status``.
+    To access the server response, use ``request.responseText``, to find 
+    out the HTTP status, use ``request.status``.
     
     Example::
 
@@ -85,7 +88,8 @@ def link_to_remote(name, options=None, **html_options):
     The callbacks that may be specified are (in order):
     
     ``loading``
-        Called when the remote document is being loaded with data by the browser.
+        Called when the remote document is being loaded with data by the 
+        browser.
     ``loaded``
         Called when the browser has finished loading the remote document.
     ``interactive``
@@ -95,14 +99,14 @@ def link_to_remote(name, options=None, **html_options):
         Called when the XMLHttpRequest is completed, and the HTTP status
         code is in the 2XX range.
     ``failure``
-        Called when the XMLHttpRequest is completed, and the HTTP status code is
-        not in the 2XX range.
+        Called when the XMLHttpRequest is completed, and the HTTP status 
+        code is not in the 2XX range.
     ``complete``
-        Called when the XMLHttpRequest is complete (fires after success/failure
-        if they are present).
+        Called when the XMLHttpRequest is complete (fires after 
+        success/failure if they are present).
                         
-    You can further refine ``success`` and ``failure`` by 
-    adding additional callbacks for specific status codes.
+    You can further refine ``success`` and ``failure`` by adding 
+    additional callbacks for specific status codes.
     
     Example::
     
@@ -125,16 +129,18 @@ def link_to_remote(name, options=None, **html_options):
     ``confirm``
         Adds confirmation dialog.
     ``condition``
-        Perform remote request conditionally by this expression. Use this to
-        describe browser-side conditions when request should not be initiated.
+        Perform remote request conditionally by this expression. Use 
+        this to describe browser-side conditions when request should not 
+        be initiated.
     ``before``
         Called before request is initiated.
     ``after``
         Called immediately after request was initiated and before ``loading``.
     ``submit``
-        Specifies the DOM element ID that's used as the parent of the form
-        elements. By default this is the current form, but it could just as
-        well be the ID of a table row or any other DOM element.    
+        Specifies the DOM element ID that's used as the parent of the 
+        form elements. By default this is the current form, but it could 
+        just as well be the ID of a table row or any other DOM element.
+        
     """
     if options is None:
         options = {}
@@ -142,12 +148,14 @@ def link_to_remote(name, options=None, **html_options):
 
 def periodically_call_remote(**options):
     """
-    Periodically calls a remote function
+    Periodically calls a remote function.
     
     Periodically calls the specified ``url`` every ``frequency`` seconds
     (default is 10). Usually used to update a specified div ``update``
     with the results of the remote call. The options for specifying the
-    target with ``url`` and defining callbacks is the same as `link_to_remote <#link_to_remote>`_.    
+    target with ``url`` and defining callbacks is the same as 
+    `link_to_remote <#link_to_remote>`_.    
+    
     """
     frequency = options.get('frequency') or 10
     code = "new PeriodicalExecuter(function() {%s}, %s)" % (remote_function(**options), frequency)
@@ -155,25 +163,27 @@ def periodically_call_remote(**options):
 
 def form_remote_tag(**options):
     """
-    Create a form tag using a remote function to submit the request
+    Create a form tag using a remote function to submit the request.
     
     Returns a form tag that will submit using XMLHttpRequest in the 
     background instead of the regular reloading POST arrangement. Even 
-    though it's using JavaScript to serialize the form elements, the form
-    submission will work just like a regular submission as viewed by the
-    receiving side. The options for specifying the target with ``url``
-    and defining callbacks is the same as `link_to_remote <#link_to_remote>`_.
+    though it's using JavaScript to serialize the form elements, the 
+    form submission will work just like a regular submission as viewed 
+    by the receiving side. The options for specifying the target with 
+    ``url`` and defining callbacks is the same as `link_to_remote 
+    <#link_to_remote>`_.
     
-    A "fall-through" target for browsers that doesn't do JavaScript can be
-    specified with the ``action/method`` options on ``html``.
+    A "fall-through" target for browsers that doesn't do JavaScript can 
+    be specified with the ``action/method`` options on ``html``.
     
     Example::
 
         form_remote_tag(html=dict(action=url(
                                     controller="some", action="place")))
     
-    By default the fall-through action is the same as the one specified in 
-    the ``url`` (and the default method is ``POST``).
+    By default the fall-through action is the same as the one specified 
+    in the ``url`` (and the default method is ``POST``).
+    
     """
     options['form'] = True
     if 'html' not in options: options['html'] = {}
@@ -185,11 +195,12 @@ def form_remote_tag(**options):
 
 def submit_to_remote(name, value, **options):
     """
-    A submit button that submits via an XMLHttpRequest call
+    Return a submit button tag that submits via an XMLHttpRequest call.
     
-    Returns a button input tag that will submit form using XMLHttpRequest 
-    in the background instead of regular reloading POST arrangement. 
-    Keyword args are the same as in ``form_remote_tag``.    
+    This button will submit form using XMLHttpRequest in the background 
+    instead of regular reloading POST arrangement. Keyword args are the 
+    same as in ``form_remote_tag``.    
+    
     """
     options['with_'] = options.get('form') or 'Form.serialize(this.form)'
     
@@ -203,7 +214,7 @@ def submit_to_remote(name, value, **options):
 
 def update_element_function(element_id, **options):
     """
-    Returns a JavaScript function (or expression) that'll update a DOM 
+    Return a JavaScript function (or expression) that'll update a DOM 
     element.
     
     ``content``
@@ -211,8 +222,8 @@ def update_element_function(element_id, **options):
     ``action``
         Valid options are 'update' (assumed by default), 'empty', 'remove'
     ``position``
-        If the ``action`` is 'update', you can optionally specify one of the
-        following positions: 'before', 'top', 'bottom', 'after'.
+        If the ``action`` is 'update', you can optionally specify one of 
+        the following positions: 'before', 'top', 'bottom', 'after'.
     
     Example::
     
@@ -239,6 +250,7 @@ def update_element_function(element_id, **options):
                 content="<p>New Product: %s</p>" % c.product.name) %>
         <% update_element_function("status", binding='binding',
                 content="You've bought a new product!") %>
+                
     """
     content = escape_javascript(options.get('content', ''))
     opval = options.get('action', 'update')
@@ -262,17 +274,18 @@ def update_element_function(element_id, **options):
 
 def evaluate_remote_response():
     """
-    Returns a Javascript function that evals a request response
+    Return a Javascript function that evals a request response.
     
     Returns 'eval(request.responseText)' which is the JavaScript function
     that ``form_remote_tag`` can call in *complete* to evaluate a multiple
     update return document using ``update_element_function`` calls.    
+    
     """
     return "eval(request.responseText)"
 
 def remote_function(**options):
     """
-    Returns the JavaScript needed for a remote function.
+    Return the JavaScript needed for a remote function.
     
     Takes the same options that can be passed as ``options`` to
     `link_to_remote <#link_to_remote>`_.
@@ -284,6 +297,7 @@ def remote_function(**options):
             <option value="0">Hello</option>
             <option value="1">World</option>
         </select>    
+        
     """
     javascript_options = options_for_ajax(options)
     
@@ -317,8 +331,7 @@ def remote_function(**options):
 
 def observe_field(field_id, **options):
     """
-    Observes the field with the DOM ID specified by ``field_id`` and makes
-    an Ajax call when its contents have changed.
+    Observe specified DOM ID field. Make AJAX call when its contents change.
     
     Required keyword args are:
     
@@ -343,6 +356,7 @@ def observe_field(field_id, **options):
     
     Additionally, you may specify any of the options documented in
     `link_to_remote <#link_to_remote>`_.
+    
     """
     if options.get('frequency') > 0:
         class_ = 'Form.Element.Observer'
@@ -352,12 +366,15 @@ def observe_field(field_id, **options):
 
 def observe_form(form_id, **options):
     """
-    Like `observe_field <#observe_field>`_, but operates on an entire form
-    identified by the DOM ID ``form_id``.
+    Observe and callback for specified form.  See ``observe_field``.
     
-    Keyword args are the same as observe_field, except the default value of
-    the ``with_`` keyword evaluates to the serialized (request string) value
-    of the form.
+    Like `observe_field <#observe_field>`_, but operates on an entire 
+    form identified by the DOM ID ``form_id``.
+    
+    Keyword args are the same as observe_field, except the default value 
+    of the ``with_`` keyword evaluates to the serialized (request string) 
+    value of the form.
+    
     """
     if options.get('frequency'):
         class_ = 'Form.Observer'

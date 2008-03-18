@@ -2,10 +2,10 @@
 from webhelpers.htmlgen import html
 
 def pagelist(page):
-    """PHPbb style Pagination Links
+    """PHPbb style Pagination Links - return HTML to be included in page. 
     
-    This returns HTML source to be included into a page. The html is generated
-    with htmlgen
+    The html source is generated with htmlgen.
+    
     """
     paginator = page.paginator
 

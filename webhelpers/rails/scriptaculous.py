@@ -2,7 +2,7 @@
 Scriptaculous Helpers
 
 Provides a set of helpers for calling Scriptaculous JavaScript 
-functions, including those which create Ajax controls and visual effects.
+functions, including those which create AJAX controls and visual effects.
 
 To be able to use these helpers, you must include the Prototype 
 JavaScript framework and the Scriptaculous JavaScript library in your 
@@ -11,6 +11,7 @@ pages.
 The Scriptaculous helpers' behavior can be tweaked with various options.
 See the documentation at http://script.aculo.us for more information on
 using these helpers in your application.
+
 """
 # Last synced with Rails copy at Revision 6057 on Feb 9th, 2007.
 from prototype import *
@@ -26,15 +27,14 @@ def _elements_to_js(elements):
 
 def visual_effect(name, element_id=False, **js_options):
     """
-    Returns a JavaScript snippet to be used on the Ajax callbacks for
-    starting visual effects.
+    Return JavaScript for Ajax callbacks for starting visual effects.
     
     Example::
     
         <% link_to_remote("Reload",  
-                dict(url=url(action="reload"),
-                     update="posts",
-                     complete=visual_effect('highlight', "posts", duration=0.5))) %>
+            dict(url=url(action="reload"),
+                update="posts",
+                complete=visual_effect('highlight', "posts", duration=0.5))) %>
     
     If no element_id is given, it assumes "element" which should be a local
     variable in the generated JavaScript execution context. This can be 
@@ -45,12 +45,13 @@ def visual_effect(name, element_id=False, **js_options):
     This would fade the element that was dropped on the drop receiving 
     element.
     
-    For toggling visual effects, you can use ``toggle_appear``, ``toggle_slide``, and
-    ``toggle_blind`` which will alternate between appear/fade, slidedown/slideup, and
-    blinddown/blindup respectively.
+    For toggling visual effects, you can use ``toggle_appear``, 
+    ``toggle_slide``, and ``toggle_blind`` which will alternate between 
+    appear/fade, slidedown/slideup, and blinddown/blindup respectively.
     
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.
+    
     """
     element = (element_id and _elements_to_js(element_id)) or "element"
     if isinstance(js_options.get('queue'), dict):
@@ -67,7 +68,7 @@ def visual_effect(name, element_id=False, **js_options):
 
 def parallel_effects(*effects, **js_options):
     """
-    Wraps visual effects so they occur in parallel
+    Wrap visual effects so they occur in parallel.
     
     Example::
     
@@ -75,13 +76,14 @@ def parallel_effects(*effects, **js_options):
             visual_effect('highlight, 'dom_id'),
             visual_effect('fade', 'dom_id'),
         )
+        
     """
     str_effects = [e[:e.rindex(';')] for e in effects] # Remove trailing ';'
     return "new Effect.Parallel([%s], %s)" % (','.join(str_effects), options_for_javascript(js_options))
 
 def sortable_element(element_id, **options):
     """
-    Makes the element with the DOM ID specified by ``element_id`` sortable.
+    Make the element with the DOM ID specified by ``element_id`` sortable.
     
     Uses drag-and-drop and makes an Ajax call whenever the sort order has
     changed. By default, the action called gets the serialized sortable
@@ -104,6 +106,7 @@ def sortable_element(element_id, **options):
     
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.
+    
     """
     return javascript_tag(sortable_element_js(element_id, **options))
 
@@ -128,7 +131,7 @@ def sortable_element_js(element_id, **options):
 
 def draggable_element(element_id, **options):
     """
-    Makes the element with the DOM ID specified by ``element_id`` draggable.
+    Make the element with DOM ID specified by ``element_id`` draggable.
     
     Example::
 
@@ -136,6 +139,7 @@ def draggable_element(element_id, **options):
     
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.
+    
     """
     return javascript_tag(draggable_element_js(element_id, **options))
 
@@ -144,12 +148,12 @@ def draggable_element_js(element_id, **options):
 
 def drop_receiving_element(element_id, **options):
     """
-    Makes an element able to recieve dropped draggable elements
+    Make an element able to recieve dropped draggable elements.
     
-    Makes the element with the DOM ID specified by ``element_id`` receive
-    dropped draggable elements (created by draggable_element) and make an
-    AJAX call  By default, the action called gets the DOM ID of the element
-    as parameter.
+    Makes the element with the DOM ID specified by ``element_id`` 
+    receive dropped draggable elements (created by draggable_element) 
+    and make an AJAX call.  By default, the action called gets the DOM 
+    ID of the element as parameter.
     
     Example::
     
@@ -157,6 +161,7 @@ def drop_receiving_element(element_id, **options):
     
     You can change the behaviour with various options, see
     http://script.aculo.us for more documentation.    
+    
     """
     return javascript_tag(drop_receiving_element_js(element_id, **options))
 

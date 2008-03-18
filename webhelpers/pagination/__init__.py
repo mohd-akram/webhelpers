@@ -1,17 +1,18 @@
 """Pagination for Collections and ORMs
 
 The Pagination module aids in the process of paging large collections of
-objects. It can be used macro-style for automatic fetching of large collections
-using one of the ORM wrappers, or handle a large collection responding to
-standard Python list slicing operations. These methods can also be used
-individually and customized to do as much or little as desired.
-
-The Paginator itself maintains pagination logic associated with each page, 
-where begins, what the first/last item on the page is, etc.
-
-Helper functions hook-up the Paginator in more conveinent methods for the more
-macro-style approach to return the Paginator and the slice of the collection
+objects. It can be used macro-style for automatic fetching of large 
+collections using one of the ORM wrappers, or handle a large collection 
+responding to standard Python list slicing operations. These methods can 
+also be used individually and customized to do as much or little as 
 desired.
+
+The Paginator itself maintains pagination logic associated with each 
+page, where begins, what the first/last item on the page is, etc.
+
+Helper functions hook-up the Paginator in more conveinent methods for 
+the more macro-style approach to return the Paginator and the slice of 
+the collection desired.
 
 """
 import re
@@ -23,7 +24,7 @@ find_page = re.compile('page=(\d+)', re.I)
 
 def paginate(collection, page=None, per_page=10, item_count=None, 
              query_args=None, **options):
-    """Paginate a collection of data
+    """Paginate a collection of data.
     
     If the collection is a list, it will return the slice of the list along
     with the Paginator object. If the collection is given using an ORM, the
@@ -62,6 +63,7 @@ def paginate(collection, page=None, per_page=10, item_count=None,
     **WARNING:** Unless you pass in an item_count, a count will be performed 
     on the collection every time paginate is called. If using an ORM, it's 
     suggested that you count the items yourself and/or cache them.
+    
     """
     # If our page wasn't passed in, attempt to pull out either a page arg from
     # the routes route path, or try the environ GET.
@@ -101,17 +103,21 @@ def paginate(collection, page=None, per_page=10, item_count=None,
     
     
 class Paginator(object):
-    """Tracks paginated sets of data, and supplies common pagination operations
     
-    The Paginator tracks data associated with pagination of groups of data, as well
-    as supplying objects and methods that make dealing with paginated results easier.
+    """Tracks paginated data sets, and supplies common pagination operations.
     
-    A Paginator supports list operations, including item fetching, length, iteration,
-    and the 'in' operation. Each item in the Paginator is a Page object representing
-    data about that specific page in the set of paginated data. As with the standard
-    Python list, the Paginator list index starts at 0.
+    The Paginator tracks data associated with pagination of groups of data, 
+    as well as supplying objects and methods that make dealing with 
+    paginated results easier.
+    
+    A Paginator supports list operations, including item fetching, length, 
+    iteration, and the 'in' operation. Each item in the Paginator is a Page 
+    object representing data about that specific page in the set of 
+    paginated data. As with the standard Python list, the Paginator list 
+    index starts at 0.
     
     """
+    
     def __init__(self, item_count, items_per_page=10, current_page=0):
         """Initialize a Paginator with the item count specified."""
         self.item_count = item_count
@@ -121,11 +127,11 @@ class Paginator(object):
     
     def current():
         doc = """\
-Page object currently being displayed
+Page object currently being displayed.
 
-When assigning to the current page, it will set the page number for this page
-and create it if needed. If the page is a Page object and does not belong to
-this paginator, an AttributeError will be raised.
+When assigning to the current page, it will set the page number for this 
+page and create it if needed. If the page is a Page object and does not 
+belong to this paginator, an AttributeError will be raised.
 
 """
         def fget(self):
@@ -167,9 +173,11 @@ this paginator, an AttributeError will be raised.
         return False
 
 class Page(object):
+
     """Represents a single page from a paginated set."""
+    
     def __init__(self, paginator, number):
-        """Creates a new Page for the given ``paginator`` with the index ``number``."""
+        """Create new Page for given ``paginator`` with index ``number``."""
         self.paginator = paginator
         self.number = int(number)
     
@@ -243,15 +251,17 @@ class Page(object):
         return str(self.number)
 
 class Window(object):
+    
     """Represents ranges around a given page."""
+    
     def __init__(self, page, padding = 2):
-        """Creates a new Window object for the given ``page`` with the specified ``padding``."""
+        """Create new Window object for given ``page``, ``padding``."""
         self.paginator = page.paginator
         self.page = page
         self.padding = padding
     
     def padding():
-        doc = """Sets the window's padding (the number of pages on either side of the window page)."""
+        doc = """Window padding (the number of pages on either side of the window page)."""
         def fset(self, padding):
             self._padding = padding
             if padding < 0: self._padding = 0
@@ -267,7 +277,7 @@ class Window(object):
     padding = property(**padding())
     
     def pages():
-        doc = """Returns a list of Page objects in the current window."""
+        doc = """A list of Page objects in the current window."""
         def fget(self):
             return [self.paginator[page_number] for page_number in 
                 range(self.first.number, self.last.number+1)]

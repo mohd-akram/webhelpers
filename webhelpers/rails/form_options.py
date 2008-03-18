@@ -8,13 +8,16 @@ from webhelpers.util import html_escape
 
 def options_for_select(container, selected=None):
     """
-    Creates select options from a container (list, tuple, dict)
+    Create select options from a container (list, tuple, dict).
     
-    Accepts a container (list, tuple, dict) and returns a string of option tags. Given a container where the 
-    elements respond to first and last (such as a two-element array), the "lasts" serve as option values and
-    the "firsts" as option text. Dicts are turned into this form automatically, so the keys become "firsts" and values
-    become lasts. If ``selected`` is specified, the matching "last" or element will get the selected option-tag.
-    ``Selected`` may also be an array of values to be selected when using a multiple select.
+    Accepts a container (list, tuple, dict) and returns a string of 
+    option tags. Given a container where the elements respond to first 
+    and last (such as a two-element array), the "lasts" serve as option 
+    values and the "firsts" as option text. Dicts are turned into this 
+    form automatically, so the keys become "firsts" and values become 
+    lasts. If ``selected`` is specified, the matching "last" or element 
+    will get the selected option-tag. ``Selected`` may also be an array 
+    of values to be selected when using a multiple select.
     
     Examples (call, result)::
     
@@ -27,7 +30,9 @@ def options_for_select(container, selected=None):
         >>> options_for_select([ "VISA", "MasterCard", "Discover" ], ["VISA", "Discover"])
         '<option value="VISA" selected="selected">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option value="Discover" selected="selected">Discover</option>'
 
-    Note: Only the option tags are returned, you have to wrap this call in a regular HTML select tag.
+    Note: Only the option tags are returned.  You have to wrap this call 
+    in a regular HTML select tag.
+    
     """
     if hasattr(container, 'values'):
         container = container.items()
@@ -42,31 +47,37 @@ def options_for_select(container, selected=None):
             name, value = elem
             n = html_escape(name)
             v = html_escape(value)
-        else :
+        else:
             name = value = elem
             n = v = html_escape(elem)
         
         #TODO: run timeit for this against content_tag('option', n, value=v, selected=value in selected)
         if value in selected:
             options.append('<option value="%s" selected="selected">%s</option>' % (v, n))
-        else :
+        else:
             options.append('<option value="%s">%s</option>' % (v, n))
     return "\n".join(options)
 
 def options_for_select_from_objects(container, name_attr, value_attr=None, selected=None):
     """
-    Create select options from objects in a container
+    Create select options from objects in a container.
     
-    Returns a string of option tags that have been compiled by iterating over the ``container`` and assigning the
-    the result of a call to the ``value_attr`` as the option value and the ``name_attr`` as the option text.
-    If ``selected`` is specified, the element returning a match on ``value_attr`` will get the selected option tag.
+    Returns a string of option tags that have been compiled by iterating 
+    over the ``container`` and assigning the the result of a call to the 
+    ``value_attr`` as the option value and the ``name_attr`` as the 
+    option text.
+
+    If ``selected`` is specified, the element returning a match on 
+    ``value_attr`` will get the selected option tag.
     
-    NOTE: Only the option tags are returned, you have to wrap this call in a regular HTML select tag.
+    NOTE: Only the option tags are returned. You have to wrap this call 
+    in a regular HTML select tag.
+    
     """
     if value_attr:
         def make_elem(elem):
             return getattr(elem, name_attr), getattr(elem, value_attr)
-    else :
+    else:
         def make_elem(elem):
             return getattr(elem, name_attr)
     
@@ -74,13 +85,19 @@ def options_for_select_from_objects(container, name_attr, value_attr=None, selec
 
 def options_for_select_from_dicts(container, name_key, value_key=None, selected=None):
     """
-    Create select options from dicts in a container
+    Create select options from dicts in a container.
     
-    Returns a string of option tags that have been compiled by iterating over the ``container`` and assigning the
-    the result of a call to the ``value_key`` as the option value and the ``name_attr`` as the option text.
-    If ``selected`` is specified, the element returning a match on ``value_key`` will get the selected option tag.
+    Returns a string of option tags that have been compiled by iterating 
+    over the ``container`` and assigning the result of a call to the 
+    ``value_key`` as the option value and the ``name_attr`` as the 
+    option text.
+
+    If ``selected`` is specified, the element returning a match on 
+    ``value_key`` will get the selected option tag.
     
-    NOTE: Only the option tags are returned, you have to wrap this call in a regular HTML select tag.
+    NOTE: Only the option tags are returned. You have to wrap this call 
+    in a regular HTML select tag.
+    
     """
     if value_key:
         def make_elem(elem):

@@ -12,13 +12,15 @@ setup(
     version=version,
     description='Web Helpers',
     long_description="""
-Web Helpers is a library of helper functions intended to make writing templates in web
-applications easier. 
+Web Helpers is a library of helper functions intended to make writing 
+templates in web applications easier. 
 
-One of the sub-sections of Web Helpers contains a full port of the template helpers that
-are provided by Ruby on Rails with slight adaptations on occasion to accomodate for Python.
+One of the sub-sections of Web Helpers contains a full port of the 
+template helpers that are provided by Ruby on Rails with slight 
+adaptations on occasion to accomodate for Python.
 
-Some of these helpers only require `Routes <http://routes.groovie.org/>`_ to function.
+Some of these helpers only require `Routes <http://routes.groovie.org/>`_ 
+to function.
 
 * `Development svn <http://pylonshq.com/svn/WebHelpers/trunk#egg=WebHelpers-dev>`_
 

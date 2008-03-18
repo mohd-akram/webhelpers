@@ -1,7 +1,8 @@
 """
 Text Helpers
 
-Provides a set of methods for filtering, formatting and transforming strings.
+Provides methods for filtering, formatting and transforming strings.
+
 """
 # Last synced with Rails copy at Revision 6096 on Feb 8th, 2007.
 # Purposely left out sanitize and strip_tags, should be included at some point likely using
@@ -42,13 +43,14 @@ def iterdict(items):
 
 def cycle(*args, **kargs):
     """
-    Returns the next cycle of the given list
+    Return the next cycle of the given list.
     
-    Everytime ``cycle`` is called, the value returned will be the next item
-    in the list passed to it. This list is reset on every request, but can
-    also be reset by calling ``reset_cycle()``.
+    Everytime ``cycle`` is called, the value returned will be the next 
+    item in the list passed to it. This list is reset on every request, 
+    but can also be reset by calling ``reset_cycle()``.
     
-    You may specify the list as either arguments, or as a single list argument.
+    You may specify the list as either arguments, or as a single list 
+    argument.
     
     This can be used to alternate classes for table rows::
     
@@ -75,6 +77,7 @@ def cycle(*args, **kargs):
             </td>
         </tr>
         % #endfor
+        
     """
     if len(args) > 1:
         items = args
@@ -91,10 +94,11 @@ def cycle(*args, **kargs):
 
 def reset_cycle(name='default'):
     """
-    Resets a cycle
+    Reset a cycle.
     
-    Resets the cycle so that it starts from the first element in the array
-    the next time it is used.
+    Resets the cycle so that it starts from the first element in the 
+    array the next time it is used.
+    
     """
     try:
         del request_config().environ['railshelpers.cycles'][name]
@@ -130,6 +134,7 @@ def counter(name='default', start=1, step=1):
     You'll have to reset the inner cycle manually though.  See the
     documentation for ``webhelpers.text.cycle()`` for a similar
     example.
+    
     """
     counters = request_config().environ.setdefault('railshelpers.counters', {})
 
@@ -144,10 +149,11 @@ def counter(name='default', start=1, step=1):
     return counter.next()
 
 def reset_counter(name='default'):
-    """Resets a counter.
+    """Reset a counter.
 
     Resets the counter so that it starts from the ``start`` cardinal in
     the sequence next time it is used.
+    
     """
     try:
         del request_config().environ['railshelpers.counters'][name]
@@ -156,7 +162,7 @@ def reset_counter(name='default'):
 
 def truncate(text, length=30, truncate_string='...'):
     """
-    Truncates ``text`` with replacement characters
+    Truncate ``text`` with replacement characters.
     
     ``length``
         The maximum length of ``text`` before replacement
@@ -168,6 +174,7 @@ def truncate(text, length=30, truncate_string='...'):
 
         >>> truncate('Once upon a time in a world far far away', 14)
         'Once upon a...'
+        
     """
     if not text: return ''
     
@@ -180,22 +187,26 @@ def truncate(text, length=30, truncate_string='...'):
 def highlight(text, phrase, highlighter='<strong class="highlight">\\1</strong>',
               hilighter=None):
     """
-    Highlights the ``phrase`` where it is found in the ``text``
+    Highlight the ``phrase`` where it is found in the ``text``.
     
-    The highlighted phrase will be surrounded by the highlighter, by default::
+    The highlighted phrase will be surrounded by the highlighter, 
+    by default::
     
         <strong class="highlight">I'm a highlight phrase</strong>
     
     ``highlighter``
-        Defines the highlighting phrase. This argument should be a single-quoted string
-        with ``\\1`` where the phrase is supposed to be inserted.
+        Defines the highlighting phrase. This argument should be a 
+        single-quoted string with ``\\1`` where the phrase is supposed 
+        to be inserted.
         
-    Note: The ``phrase`` is sanitized to include only letters, digits, and spaces before use.
+    Note: The ``phrase`` is sanitized to include only letters, digits, 
+    and spaces before use.
 
     Example::
 
         >>> highlight('You searched for: Pylons', 'Pylons')
         'You searched for: <strong class="highlight">Pylons</strong>'
+        
     """
     if hilighter is not None:
         warnings.warn("The highlight function's hilight keyword argument is deprecated: "
@@ -209,8 +220,7 @@ def highlight(text, phrase, highlighter='<strong class="highlight">\\1</strong>'
 
 def excerpt(text, phrase, radius=100, excerpt_string="..."):
     """
-    Extracts an excerpt from the ``text``. Returns an empty string if the phrase
-    isn't found.
+    Extract an excerpt from the ``text``, or '' if the phrase isn't found.
 
     ``phrase``
         Phrase to excerpt from ``text``
@@ -223,6 +233,7 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
     
         >>> excerpt("hello my world", "my", 3)
         '...lo my wo...'
+        
     """
     if not text or not phrase:
         return text
@@ -240,10 +251,13 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
 
 def word_wrap(text, line_width=80):
     """
-    Wraps ``text`` into lines no longer than ``line_width`` width. This function
-    breaks on the first whitespace character that does not exceed ``line_width``.
+    Wrap ``text`` into lines of at most ``line_width`` width.  Deprecated.
 
-    Deprecated: Use python's builtin textwrap.fill instead.
+    This is deprecated: Use python's builtin textwrap.fill instead.
+    
+    This function breaks on the first whitespace character that does not 
+    exceed ``line_width``.
+
     """
     warnings.warn("The word_wrap function has been deprecated: Use python's builtin "
                   "textwrap.fill function instead.", DeprecationWarning, 2)
@@ -251,12 +265,13 @@ def word_wrap(text, line_width=80):
 
 def simple_format(text):
     """
-    Returns ``text`` transformed into HTML using very simple formatting rules
+    Return ``text`` transformed into HTML using simple formatting rules.
     
-    Two or more consecutive newlines(``\\n\\n``) are considered as a paragraph
-    and wrapped in ``<p>`` tags. One newline (``\\n``) is considered a
-    linebreak and a ``<br />`` tag is appended. This method does not remove the
-    newlines from the text.
+    Two or more consecutive newlines(``\\n\\n``) are considered as a 
+    paragraph and wrapped in ``<p>`` tags. One newline (``\\n``) is 
+    considered a linebreak and a ``<br />`` tag is appended. This method 
+    does not remove the newlines from the text.
+    
     """
     if text is None:
         text = ''
@@ -270,15 +285,17 @@ def simple_format(text):
 
 def auto_link(text, link="all", **href_options):
     """
-    Turns all urls and email addresses into clickable links.
+    Turn all urls and email addresses into clickable links.
     
     ``link``
-        Used to determine what to link. Options are "all", "email_addresses", or "urls"
+        Used to determine what to link. Options are "all", 
+        "email_addresses", or "urls"
     
     Example::
     
         >>> auto_link("Go to http://www.planetpython.com and say hello to guido@python.org")
         'Go to <a href="http://www.planetpython.com">http://www.planetpython.com</a> and say hello to <a href="mailto:guido@python.org">guido@python.org</a>'
+        
     """
     if not text:
         return ""
@@ -308,32 +325,35 @@ def auto_link_email_addresses(text):
 
 def strip_links(text):
     """
-    Strips link tags from ``text`` leaving just the link label.
+    Strip link tags from ``text`` leaving just the link label.
     
     Example::
     
         >>> strip_links('<a href="something">else</a>')
         'else'
+        
     """
     strip_re = re.compile(r'<a\b.*?>(.*?)<\/a>', re.I | re.M)
     return strip_re.sub(r'\1', text)
 
 def textilize(text, sanitize=False):
-    """Format the text with Textile formatting
+    """Format the text with Textile formatting.
     
-    This function uses the `PyTextile library <http://dealmeida.net/>`_ which is included with WebHelpers.
+    This function uses the `PyTextile library <http://dealmeida.net/>`_ 
+    which is included with WebHelpers.
     
-    Additionally, the output can be sanitized which will fix tags like <img />,
-    <br /> and <hr /> for proper XHTML output.
+    Additionally, the output can be sanitized which will fix tags like 
+    <img />,  <br /> and <hr /> for proper XHTML output.
     
     """
     texer = textile.Textiler(text)
     return texer.process(sanitize=sanitize)
 
 def markdown(text, **kwargs):
-    """Format the text with MarkDown formatting
+    """Format the text with MarkDown formatting.
     
-    This function uses the `Python MarkDown library <http://www.freewisdom.org/projects/python-markdown/>`_
+    This function uses the `Python MarkDown library 
+    <http://www.freewisdom.org/projects/python-markdown/>`_
     which is included with WebHelpers.
     
     """

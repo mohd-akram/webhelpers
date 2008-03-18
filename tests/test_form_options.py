@@ -15,9 +15,9 @@ class TestFormOptionsHelper(WebHelpersTestCase):
             options_for_select([ "Denmark", "<USA>", "Sweden" ], "<USA>"))
 
     def test_array_options_for_select_with_selection_array(self):
-      self.assertEqual(
-        "<option value=\"Denmark\">Denmark</option>\n<option value=\"&lt;USA&gt;\" selected=\"selected\">&lt;USA&gt;</option>\n<option value=\"Sweden\" selected=\"selected\">Sweden</option>",
-        options_for_select([ "Denmark", "<USA>", "Sweden" ], [ "<USA>", "Sweden" ]))
+        self.assertEqual(
+            "<option value=\"Denmark\">Denmark</option>\n<option value=\"&lt;USA&gt;\" selected=\"selected\">&lt;USA&gt;</option>\n<option value=\"Sweden\" selected=\"selected\">Sweden</option>",
+            options_for_select([ "Denmark", "<USA>", "Sweden" ], [ "<USA>", "Sweden" ]))
 
     def test_array_options_for_string_include_in_other_string_bug_fix(self):
         self.assertEqual(

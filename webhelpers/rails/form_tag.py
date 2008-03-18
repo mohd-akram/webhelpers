@@ -10,7 +10,7 @@ from webhelpers.util import html_escape
 
 def form(url, method="POST", multipart=False, **options):
     """
-    Starts a form tag that points the action to an url. 
+    Start a form tag that points the action to an url. 
     
     The url options should be given either as a string, or as a ``url()``
     function. The method for the form defaults to POST.
@@ -49,7 +49,7 @@ start_form = form
 
 def end_form():
     """
-    Outputs "</form>"
+    Output "</form>".
     
     Example::
 
@@ -60,16 +60,19 @@ def end_form():
 
 def select(name, option_tags='', **options):
     """
-    Creates a dropdown selection box
+    Create a dropdown selection box.
     
-    ``option_tags`` is a string containing the option tags for the select box::
-
-        >>> select("people", "<option>George</option>")
-        '<select id="people" name="people"><option>George</option></select>'
+    ``option_tags`` is a string containing the option tags.
     
     Options:
     
-    * ``multiple`` - If set to true the selection will allow multiple choices.
+    * ``multiple`` - If set to True the selection will allow multiple 
+        choices.
+    
+    Example::
+
+        >>> select("people", "<option>George</option>")
+        '<select id="people" name="people"><option>George</option></select>'
     
     """
     o = { 'name_': name, 'id': name }
@@ -78,17 +81,21 @@ def select(name, option_tags='', **options):
 
 def text_field(name, value=None, **options):
     """
-    Creates a standard text field.
+    Create a standard text field.
     
-    ``value`` is a string, the content of the text field
+    ``value`` is a string, the content of the text field.
     
     Options:
     
-    * ``disabled`` - If set to True, the user will not be able to use this input.
-    * ``size`` - The number of visible characters that will fit in the input.
-    * ``maxlength`` - The maximum number of characters that the browser will allow the user to enter.
+    * ``disabled`` - If set to True, the user will not be able to use 
+        this input.
+    * ``size`` - The number of visible characters that will fit in the 
+        input.
+    * ``maxlength`` - The maximum number of characters that the browser 
+        will allow the user to enter.
     
     Remaining keyword options will be standard HTML options for the tag.
+    
     """
     o = {'type': 'text', 'name_': name, 'id': name, 'value': value}
     o.update(options)
@@ -96,36 +103,40 @@ def text_field(name, value=None, **options):
 
 def hidden_field(name, value=None, **options):
     """
-    Creates a hidden field.
+    Create a hidden field.
     
-    Takes the same options as text_field
+    Takes the same options as text_field.
+    
     """
     return text_field(name, value, type="hidden", **options)
 
 def file_field(name, value=None, **options):
     """
-    Creates a file upload field.
+    Create a file upload field.
     
-    If you are using file uploads then you will also need to set the multipart option for the form.
+    If you are using file uploads then you will also need to set the 
+    multipart option for the form.
 
     Example::
 
         >>> file_field('myfile')
         '<input id="myfile" name="myfile" type="file" />'
+        
     """
     return text_field(name, value=value, type="file", **options)
 
 def password_field(name="password", value=None, **options):
     """
-    Creates a password field
+    Create a password field.
     
-    Takes the same options as text_field
+    Takes the same options as text_field.
+    
     """
     return text_field(name, value, type="password", **options)
 
 def text_area(name, content='', **options):
     """
-    Creates a text input area.
+    Create a text input area.
     
     Options:
     
@@ -135,6 +146,7 @@ def text_area(name, content='', **options):
     
         >>> text_area("body", '', size="25x10")
         '<textarea cols="25" id="body" name="body" rows="10"></textarea>'
+        
     """
     if 'size' in options:
         options["cols"], options["rows"] = options["size"].split("x")
@@ -144,9 +156,7 @@ def text_area(name, content='', **options):
     return content_tag("textarea", content, **o)
 
 def check_box(name, value="1", checked=False, **options):
-    """
-    Creates a check box.
-    """
+    """Create a check box."""
     o = {'type': 'checkbox', 'name_': name, 'id': name, 'value': value}
     o.update(options)
     if checked:
@@ -154,10 +164,11 @@ def check_box(name, value="1", checked=False, **options):
     return tag("input", **o)
 
 def radio_button(name, value, checked=False, **options):
-    """Creates a radio button.
+    """Create a radio button.
     
-    The id of the radio button will be set to the name + value with a _ in
-    between to ensure its uniqueness.
+    The id of the radio button will be set to the name + ' ' + value to 
+    ensure its uniqueness.
+    
     """
     pretty_tag_value = re.sub(r'\s', "_", '%s' % value)
     pretty_tag_value = re.sub(r'(?!-)\W', "", pretty_tag_value).lower()
@@ -168,13 +179,14 @@ def radio_button(name, value, checked=False, **options):
     return tag("input", **html_options)
 
 def submit(value="Save changes", name='commit', confirm=None, disable_with=None, **options):
-    """Creates a submit button with the text ``value`` as the caption.
+    """Create a submit button with the text ``value`` as the caption.
 
     Options:
 
     * ``confirm`` - A confirm message displayed when the button is clicked.
-    * ``disable_with`` - The value to be used to rename a disabled version of the submit
-      button.
+    * ``disable_with`` - The value to be used to rename a disabled version 
+      of the submit button.
+      
     """
     if confirm:
         onclick = options.get('onclick', '')

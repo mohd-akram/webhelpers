@@ -37,65 +37,73 @@ from types import *
 from UserDict import DictMixin
 
 class UnfinishedTag(object):
-    """Represents an unfinished or empty tag"""
+    
+    """Represents an unfinished or empty tag."""
+    
     def __init__(self, tag):
-        """Initialize with the tag name"""
+        """Initialize with the tag name."""
         self._tag = tag
 
     def __call__(self, *args, **kw):
-        """Create the tag with the arguments passed in"""
+        """Create the tag with the arguments passed in."""
         return Tag(self._tag, *args, **kw)
 
     def __str__(self):
-        """Return a literal representation"""
+        """Return a literal representation."""
         return literal('<%s />' % self._tag)
 
     def __html__(self):
-        """Returns the HTML escaped tag"""
+        """Return the HTML escaped tag."""
         return str(self)
 
 
 class UnfinishedComment(object):
-    """Represents an unfinished or empty comment"""
+    
+    """Represents an unfinished or empty comment."""
+    
     def __call__(self, *args):
-        """Create the HTML comment"""
+        """Create the HTML comment."""
         return literal('<!--%s-->' % ''.join(str(x) for x in args))
         
     def __html__(self):
-        """Returns the HTML escaped tag"""
+        """Return the HTML escaped tag."""
         raise UnfinishedTag
 
 
 class UnfinishedLiteral(object):
-    """Represents an unfinished literal value"""
+    
+    """Represent an unfinished literal value."""
+    
     def __call__(self, *args):
-        """Returns the literal HTML"""
+        """Return the literal HTML."""
         return literal(*args)
 
     def __html__(self):
-        """Returns the HTML escaped text"""
+        """Return the HTML escaped text."""
         raise UnfinishedTag
 
 
 class Base(object):
-    """Base HTML object"""
+    
+    """Base HTML object."""
+    
     comment = UnfinishedComment()
     literal = UnfinishedLiteral()
     
     def __getattr__(self, attr):
-        """Generate the tag for the given attribute name"""
+        """Generate the tag for the given attribute name."""
         if attr.startswith('_'):
             raise AttributeError
         result = self.__dict__[attr] = UnfinishedTag(attr.lower())
         return result
 
     def __call__(self, *args):
-        """Join raw HTML and HTML escape it"""
+        """Join raw HTML and HTML escape it."""
         return ''.join(quote(x) for x in args)
 
 
 def attrEncode(v):
-    """Parses out attributes that begin with '_'"""
+    """Parse out attributes that begin with '_'."""
     if v.endswith('_'):
         return v[:-1]
     else:
@@ -134,7 +142,8 @@ def Tag(tag, *args, **kw):
 
 
 class literal(unicode):
-    """Represents an HTML literal
+    
+    """Represents an HTML literal.
     
     This subclass of unicode has a ``.__html__()`` method that is 
     detected by the ``quote()`` function.
@@ -147,8 +156,9 @@ class literal(unicode):
     change the original literal.
     
     """
+    
     def __new__(cls, string='', encoding='utf-8', errors="strict"):
-        """Create the new literal string object"""
+        """Create the new literal string object."""
         if isinstance(string, unicode):
             obj = unicode.__new__(cls, string)
         else:
@@ -187,7 +197,7 @@ class literal(unicode):
         return self.__class__(unicode.join(self, (quote(i) for i in items)))
  
 def quote(val, force=False):
-    """Does HTML-quoting of a value
+    """Does HTML-quoting of a value.
     
     Objects with a ``.__html__()`` method will have that method called,
     and the return value will *not* be quoted.  Thus objects with that
@@ -210,6 +220,7 @@ def quote(val, force=False):
         return literal(escape(unicode(val), True))
 
 class QuotedItem(DictMixin):
+    
     """Wrapper/helper for literal(...) % obj
     
     This quotes the object during string substitution, and if the
@@ -217,6 +228,7 @@ class QuotedItem(DictMixin):
     dictionary.
     
     """
+    
     def __init__(self, obj, encoding, error_mode):
         self.obj = obj
         self.encoding = encoding

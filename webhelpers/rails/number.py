@@ -1,8 +1,9 @@
 """
 Number Helpers
 
-Provides methods for converting numbers into formatted strings. Functions are provided for
-phone numbers, currencies, percentages, precision, positional notation, and file size.
+Provides methods for converting numbers into formatted strings. 
+Functions are provided for phone numbers, currencies, percentages, 
+precision, positional notation, and file size.
 
 """
 # Last synced with Rails copy at Revision 6045 on Feb 7th, 2007.
@@ -11,16 +12,17 @@ import warnings
 
 def number_to_phone(number, area_code=False, delimiter="-", extension="", country_code=""):
     """
-    Formats a ``number`` into a US phone number string.
+    Format a ``number`` into a US phone number string.
 
     ``area_code``
-        When enabled, adds parentheses around the area code. Defaults to False
+        When enabled, adds parentheses around the area code. Defaults to 
+        False.
     ``delimiter``
-        The delimiter to use, defaults to "-"
+        The delimiter to use, defaults to "-".
     ``extension``
-        Specifies an extension to add to the end of the generated number
+        Specifies an extension to add to the end of the generated number.
     ``country_code``
-        Sets the country code for the phone number
+        Sets the country code for the phone number.
     
     Examples::
     
@@ -34,6 +36,7 @@ def number_to_phone(number, area_code=False, delimiter="-", extension="", countr
         '(123) 555-1234 x 555'
         >>> number_to_phone(1235551234, country_code=1)
         '1-123-555-1234'
+        
     """
     number = str(number).strip()
     if area_code:
@@ -50,16 +53,16 @@ def number_to_phone(number, area_code=False, delimiter="-", extension="", countr
 
 def number_to_currency(number, unit="$", precision=2, separator=".", delimiter=","):
     """
-    Formats a ``number`` into a currency string. 
+    Format a ``number`` into a currency string. 
     
     ``precision``
-        Indicates the level of precision. Defaults to 2
+        Indicates the level of precision. Defaults to 2.
     ``unit``
-        Sets the currency type, defaults to "$"
+        Sets the currency type. Defaults to "$".
     ``separator``
-        Used to set what the unit separation should be. Defaults to "."
+        Used to set what the unit separation should be. Defaults to ".".
     ``delimiter``
-        The delimiter character to use, defaults to ","
+        The delimiter character to use. Defaults to ",".
     
     Examples::
     
@@ -69,6 +72,7 @@ def number_to_currency(number, unit="$", precision=2, separator=".", delimiter="
         '$1,234,567,890.51'
         >>> number_to_currency(1234567890.50, unit="&pound;", separator=",", delimiter="")
         '&pound;1234567890,50'
+        
     """
     if precision < 1:
         separator = ""
@@ -80,7 +84,7 @@ def number_to_currency(number, unit="$", precision=2, separator=".", delimiter="
 
 def number_to_percentage(number, precision=3, separator="."):
     """
-    Formats a ``number`` as into a percentage string. 
+    Format a ``number`` as into a percentage string. 
     
     ``precision``
         The level of precision, defaults to 3
@@ -95,6 +99,7 @@ def number_to_percentage(number, precision=3, separator="."):
         '100%'
         >>> number_to_percentage(302.0574, precision=2)
         '302.06%'
+        
     """
     number = number_with_precision(number, precision)
     parts = number.split('.')
@@ -105,7 +110,7 @@ def number_to_percentage(number, precision=3, separator="."):
 
 def number_to_human_size(size, precision=1):
     """
-    Returns a formatted-for-humans file size.
+    Return a formatted-for-humans file size.
 
     ``precision``
         The level of precision, defaults to 1
@@ -126,6 +131,7 @@ def number_to_human_size(size, precision=1):
         '1.1 TB'
         >>> number_to_human_size(1234567, 2)
         '1.18 MB'
+        
     """
     if size == 1:
         return "1 Byte"
@@ -150,7 +156,7 @@ def human_size(*args, **kwargs):
 
 def number_with_delimiter(number, delimiter=",", separator="."):
     """
-    Formats a ``number`` with grouped thousands using ``delimiter``.
+    Format a ``number`` with grouped thousands using ``delimiter``.
     
     ``delimiter``
         The delimiter character to use, defaults to ","
@@ -165,6 +171,7 @@ def number_with_delimiter(number, delimiter=",", separator="."):
         '12,345,678.05'
         >>> number_with_delimiter(12345678, delimiter=".")
         '12.345.678'
+        
     """
     parts = str(number).split('.')
     parts[0] = re.sub(r'(\d)(?=(\d\d\d)+(?!\d))', r'\1%s' % delimiter, str(parts[0]))
@@ -172,7 +179,7 @@ def number_with_delimiter(number, delimiter=",", separator="."):
 
 def number_with_precision(number, precision=3):
     """
-    Formats a ``number`` with a level of ``precision``.
+    Format a ``number`` with a level of ``precision``.
     
     ``precision``
         The level of precision, defaults to 3
@@ -183,6 +190,7 @@ def number_with_precision(number, precision=3):
         '111.235'
         >>> number_with_precision(111.2346, 2)
         '111.23'
+        
     """
     formstr = '%01.' + str(precision) + 'f'
     return formstr % number

@@ -19,10 +19,11 @@ def get_url(url):
 
 def url(*args, **kargs):
     """
-    Lazily evaluates url_for() arguments
+    Lazily evaluates url_for() arguments.
     
-    Used instead of url_for() for functions so that the function will be evaluated
-    in a lazy manner rather than at initial function call.
+    Used instead of url_for() for functions so that the function will be 
+    evaluated in a lazy manner rather than at initial function call.
+    
     """
     args = args
     kargs = kargs
@@ -32,22 +33,26 @@ def url(*args, **kargs):
 
 def link_to(name, url='', **html_options):
     """
-    Creates a link tag of the given ``name`` using an URL created by the set of ``options``.
+    Create link tag with text ``name`` and a URL created by the set of ``options``.
     
     See the valid options in the documentation for Routes url_for.
     
-    The html_options has three special features. One for creating javascript confirm alerts where if you pass
-    ``confirm='Are you sure?'`` , the link will be guarded with a JS popup asking that question. If the user
-    accepts, the link is processed, otherwise not.
+    The html_options has three special features. One for creating 
+    javascript confirm alerts where if you pass ``confirm='Are you sure?'``, 
+    the link will be guarded with a JS popup asking that question. If 
+    the user accepts, the link is processed, otherwise not.
     
-    Another for creating a popup window, which is done by either passing ``popup`` with True or the options
-    of the window in Javascript form.
+    Another for creating a popup window, which is done by either passing 
+    ``popup`` with True or the options of the window in Javascript form.
     
-    And a third for making the link do a POST request (instead of the regular GET) through a dynamically added
-    form element that is instantly submitted. Note that if the user has turned off Javascript, the request will
-    fall back on the GET. So its your responsibility to determine what the action should be once it arrives at
-    the controller. The POST form is turned on by passing ``post`` as True. Note, it's not possible to use POST
-    requests and popup targets at the same time (an exception will be thrown).
+    And a third for making the link do a POST request (instead of the 
+    regular GET) through a dynamically added form element that is 
+    instantly submitted. Note that if the user has turned off Javascript, 
+    the request will fall back on the GET. So its your responsibility to 
+    determine what the action should be once it arrives at the controller. 
+    The POST form is turned on by passing ``post`` as True. Note, it's 
+    not possible to use POST requests and popup targets at the same time 
+    (an exception will be thrown).
     
     Examples::
     
@@ -55,6 +60,7 @@ def link_to(name, url='', **html_options):
         >> link_to("Help", url(action="help"), popup=True)
         >> link_to("Busy loop", url(action="busy"), popup=['new_window', 'height=300,width=600'])
         >> link_to("Destroy account", url(action="destroy"), confirm="Are you sure?", method='delete')
+        
     """
     if html_options:
         html_options = convert_options_to_javascript(**html_options)
@@ -69,15 +75,14 @@ def link_to(name, url='', **html_options):
 
 def button_to(name, url='', **html_options):
     """
-    Generates a form containing a sole button that submits to the
-    URL given by ``url``.  
+    Generate a form containing a sole button that submits to ``url``.  
     
-    Use this method instead of ``link_to`` for actions that do not have the safe HTTP GET semantics
-    implied by using a hypertext link.
+    Use this method instead of ``link_to`` for actions that do not have 
+    the safe HTTP GET semantics implied by using a hypertext link.
     
-    The parameters are the same as for ``link_to``.  Any ``html_options`` that you pass will be
-    applied to the inner ``input`` element.
-    In particular, pass
+    The parameters are the same as for ``link_to``.  Any ``html_options`` 
+    that you pass will be applied to the inner ``input`` element. In 
+    particular, pass
     
         disabled = True/False
     
@@ -86,13 +91,13 @@ def button_to(name, url='', **html_options):
     'button-to', to which you can attach CSS styles for display
     purposes.
     
-    The submit button itself will be displayed as an image if you provide both
-    ``type`` and ``src`` as followed:
+    The submit button itself will be displayed as an image if you 
+    provide both ``type`` and ``src`` as followed:
 
          type='image', src='icon_delete.gif'
 
-    The ``src`` path will be computed as the image_tag() computes it's ``source``
-    argument.
+    The ``src`` path will be computed as the image_tag() computes its 
+    ``source`` argument.
 
     Example 1::
     
@@ -124,9 +129,10 @@ def button_to(name, url='', **html_options):
     Forms are "block" content, which means that you should not try to
     insert them into your HTML where only inline content is expected.
     For example, you can legally insert a form inside of a ``div`` or
-    ``td`` element or in between ``p`` elements, but not in the middle of
-    a run of text, nor can you place a form within another form.
+    ``td`` element or in between ``p`` elements, but not in the middle 
+    of a run of text, nor can you place a form within another form.
     (Bottom line: Always validate your HTML before going public.)    
+    
     """
     if html_options:
         convert_boolean_attributes(html_options, ['disabled'])
@@ -165,18 +171,21 @@ def button_to(name, url='', **html_options):
 
 def link_to_unless_current(name, url, **html_options):
     """
-    Conditionally create a link tag of the given ``name`` using the ``url``
+    Conditionally create a link tag of the given ``name`` using the ``url``.
     
-    If the current request uri is the same as the link's only the name is returned. This is useful
-    for creating link bars where you don't want to link to the page currently being viewed.
+    If the current request uri is the same as the link's only the name is 
+    returned. This is useful for creating link bars where you don't want 
+    to link to the page currently being viewed.
+    
     """
     return link_to_unless(current_page(url), name, url, **html_options)
 
 def link_to_unless(condition, name, url, **html_options):
     """
-    Conditionally create a link tag of the given ``name`` using the ``url``
+    Conditionally create a link tag of the given ``name`` using the ``url``.
     
     If ``condition`` is True only the name is returned.
+    
     """
     if condition:
         return name
@@ -185,16 +194,15 @@ def link_to_unless(condition, name, url, **html_options):
 
 def link_to_if(condition, name, url, **html_options):
     """
-    Conditionally create a link tag of the given ``name`` using the ``url`` 
+    Conditionally create a link tag of the given ``name`` using the ``url``. 
     
     If ``condition`` is True only the name is returned.
+    
     """
     return link_to_unless(not condition, name, url, **html_options)
 
 def current_page(url):
-    """
-    Returns true if the current page uri is equivalent to ``url``
-    """
+    """Return true if the current page uri is equivalent to ``url``."""
     currl = current_url()
     if callable(url):
         return url() == currl
@@ -202,9 +210,7 @@ def current_page(url):
         return url == currl
 
 def current_url(*args, **kwargs):
-    """
-    Returns the current page's url.
-    """
+    """Return the current page's url."""
     config = request_config()
     environ = config.environ
     qs = environ.get('QUERY_STRING', '')
@@ -265,13 +271,14 @@ def method_javascript_function(method):
 def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, 
     body=None, replace_at=None, replace_dot=None, encode=None, **html_options):
     """
-    Creates a link tag for starting an email to the specified 
-    ``email_address``, which is also used as the name of the link unless
-    ``name`` is specified. Additional HTML options, such as class or id, can be
-    passed in the ``html_options`` hash.
+    Create a link tag for starting an email to the specified ``email_address``.
     
-    You can also make it difficult for spiders to harvest email address by 
-    obfuscating them.
+    This ``email_address`` is also used as the name of the link unless
+    ``name`` is specified. Additional HTML options, such as class or id, 
+    can be passed in the ``html_options`` hash.
+    
+    You can also make it difficult for spiders to harvest email address 
+    by obfuscating them.
     
     Examples::
     
@@ -281,17 +288,19 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         >>> mail_to("me@domain.com", "My email", encode = "hex")
         '<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%6d%65@%64%6f%6d%61%69%6e.%63%6f%6d">My email</a>'
     
-    You can also specify the cc address, bcc address, subject, and body parts
-    of the message header to create a complex e-mail using the corresponding
-    ``cc``, ``bcc``, ``subject``, and ``body`` keyword arguments. Each of these
-    options are URI escaped and then appended to the ``email_address`` before
-    being output. **Be aware that javascript keywords will not be escaped and
-    may break this feature when encoding with javascript.**
+    You can also specify the cc address, bcc address, subject, and body 
+    parts of the message header to create a complex e-mail using the 
+    corresponding ``cc``, ``bcc``, ``subject``, and ``body`` keyword 
+    arguments. Each of these options are URI escaped and then appended 
+    to the ``email_address`` before being output. **Be aware that 
+    javascript keywords will not be escaped and may break this feature 
+    when encoding with javascript.**
     
     Examples::
     
         >>> mail_to("me@domain.com", "My email", cc="ccaddress@domain.com", bcc="bccaddress@domain.com", subject="This is an example email", body= "This is the body of the message.")
         '<a href="mailto:me@domain.com?cc=ccaddress%40domain.com&amp;body=This%20is%20the%20body%20of%20the%20message.&amp;subject=This%20is%20an%20example%20email&amp;bcc=bccaddress%40domain.com">My email</a>'
+        
     """
     extras = {}
     for key, option in ('cc', cc), ('bcc', bcc), ('subject', subject), ('body', body):
@@ -334,12 +343,13 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         return tag
 
 def js_obfuscate(data):
-    """Obfuscates data in a Javascript tag
+    """Obfuscate data in a Javascript tag.
     
     Example::
         
         >>> js_obfuscate("<input type='hidden' name='check' value='valid' />")
         '<script type="text/javascript">\\n//<![CDATA[\\neval(unescape(\\'%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%69%6e%70%75%74%20%74%79%70%65%3d%27%68%69%64%64%65%6e%27%20%6e%61%6d%65%3d%27%63%68%65%63%6b%27%20%76%61%6c%75%65%3d%27%76%61%6c%69%64%27%20%2f%3e%27%29%3b\\'))\\n//]]>\\n</script>'
+        
     """
     tmp = "document.write('%s');" % data
     string = ''.join(['%%%x' % ord(x) for x in tmp])
