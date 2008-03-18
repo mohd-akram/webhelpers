@@ -47,7 +47,7 @@ class UnfinishedTag(object):
 
     def __call__(self, *args, **kw):
         """Create the tag with the arguments passed in."""
-        return Tag(self._tag, *args, **kw)
+        return make_tag(self._tag, *args, **kw)
 
     def __str__(self):
         """Return a literal representation."""
@@ -111,15 +111,13 @@ def attrEncode(v):
         return v
 
 
-def Tag(tag, *args, **kw):
+def make_tag(tag, *args, **kw):
     if kw.has_key("c"):
         assert not args, "The special 'c' keyword argument cannot be used "\
 "in conjunction with non-keyword arguments"
         args = kw.pop("c")
-    if type(args) not in (type(()), type([])):
-        args = (args,)
     htmlArgs = [' %s="%s"' % (attrEncode(attr), escape(value))
-                for attr, value in kw.items()
+                for attr, value in sorted(kw.iteritems())
                 if value is not None]
     if not args and emptyTags.has_key(tag):
         substr = '<%s%s />'
