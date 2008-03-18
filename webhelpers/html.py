@@ -32,6 +32,7 @@ keyword (particularly ``class``), you can append an underscore and
 it will be removed (like ``class_='whatever'``).
 
 """
+import re
 from cgi import escape as cgi_escape
 from urllib import quote as url_escape
 from UserDict import DictMixin
@@ -195,7 +196,20 @@ class literal(unicode):
  
     def join(self, items):
         return self.__class__(unicode.join(self, (escape(i) for i in items)))
- 
+
+
+def lit_sub(*args, **kw):
+    """Ensures that if the string re.sub operates on is a literal, it
+    will still be a literal returned"""
+    lit = hasattr(args[2], '__html__')
+    cls = args[2].__class__
+    result = re.sub(*args, **kw)
+    if lit:
+        return cls(result)
+    else:
+        return result
+
+
 def escape(val, force=False):
     """Does HTML-escaping of a value.
     
