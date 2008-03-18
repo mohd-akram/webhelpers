@@ -8,10 +8,10 @@ list, tuple, or single tag, and it will make up the contents (this is
 useful because keywords have to come after all non-keyword arguments,
 and it's unintuitive to give your content before your attributes).
 
-If the value of an attribute is Exclude, then no attribute will be
+If the value of an attribute is None, then no attribute will be
 inserted.  Think of it as "does not apply".  So::
 
-    >>> HTML.a(href="http://www.yahoo.com", name=HTML.Exclude, 
+    >>> HTML.a(href="http://www.yahoo.com", name=None, 
     ... c="Click Here")
     literal(u'<a href="http://www.yahoo.com">Click Here</a>')
 
@@ -36,72 +36,82 @@ from cgi import escape
 from types import *
 from UserDict import DictMixin
 
-class Exclude(object):
-    pass
-
 class UnfinishedTag(object):
-
+    """Represents an unfinished or empty tag"""
     def __init__(self, tag):
+        """Initialize with the tag name"""
         self._tag = tag
 
     def __call__(self, *args, **kw):
+        """Create the tag with the arguments passed in"""
         return Tag(self._tag, *args, **kw)
 
     def __str__(self):
+        """Return a literal representation"""
         return literal('<%s />' % self._tag)
 
     def __html__(self):
+        """Returns the HTML escaped tag"""
         return str(self)
 
 
 class UnfinishedComment(object):
-
+    """Represents an unfinished or empty comment"""
     def __call__(self, *args):
+        """Create the HTML comment"""
         return literal('<!--%s-->' % ''.join(str(x) for x in args))
         
     def __html__(self):
+        """Returns the HTML escaped tag"""
         raise UnfinishedTag
 
 
 class UnfinishedLiteral(object):
-
+    """Represents an unfinished literal value"""
     def __call__(self, *args):
+        """Returns the literal HTML"""
         return literal(*args)
 
     def __html__(self):
+        """Returns the HTML escaped text"""
         raise UnfinishedTag
 
+
 class Base(object):
-
-    Exclude = Exclude
-
+    """Base HTML object"""
     comment = UnfinishedComment()
     literal = UnfinishedLiteral()
-        
+    
     def __getattr__(self, attr):
+        """Generate the tag for the given attribute name"""
         if attr.startswith('_'):
             raise AttributeError
         result = self.__dict__[attr] = UnfinishedTag(attr.lower())
         return result
 
     def __call__(self, *args):
+        """Join raw HTML and HTML escape it"""
         return ''.join(quote(x) for x in args)
 
+
 def attrEncode(v):
+    """Parses out attributes that begin with '_'"""
     if v.endswith('_'):
         return v[:-1]
     else:
         return v
 
+
 def Tag(tag, *args, **kw):
     if kw.has_key("c"):
-        assert not args, "The special 'c' keyword argument cannot be used in conjunction with non-keyword arguments"
+        assert not args, "The special 'c' keyword argument cannot be used "\
+"in conjunction with non-keyword arguments"
         args = kw.pop("c")
     if type(args) not in (type(()), type([])):
         args = (args,)
     htmlArgs = [' %s="%s"' % (attrEncode(attr), quote(value))
                 for attr, value in kw.items()
-                if value is not Exclude]
+                if value is not None]
     if not args and emptyTags.has_key(tag):
         substr = '<%s%s />'
         if blockTags.has_key(tag):
@@ -126,17 +136,19 @@ def Tag(tag, *args, **kw):
 class literal(unicode):
     """Represents an HTML literal
     
-    This subclass of unicode has a ``.__html__()`` method that is detected by the
-    ``quote()`` function.
+    This subclass of unicode has a ``.__html__()`` method that is 
+    detected by the ``quote()`` function.
     
-    Also, if you add another string to this string, the other string will be quoted
-    and you will get back another literal object.  Also ``literal(...) % obj`` will
-    quote any value(s) from ``obj``.  If you do something like ``literal(...) + literal(...)``, 
-    neither string will be changed because ``quote(literal(...))`` doesn't change the
-    original literal.
+    Also, if you add another string to this string, the other string 
+    will be quoted and you will get back another literal object.  Also
+    ``literal(...) % obj`` will quote any value(s) from ``obj``.  If
+    you do something like ``literal(...) + literal(...)``, neither
+    string will be changed because ``quote(literal(...))`` doesn't
+    change the original literal.
     
     """
     def __new__(cls, string='', encoding='utf-8', errors="strict"):
+        """Create the new literal string object"""
         if isinstance(string, unicode):
             obj = unicode.__new__(cls, string)
         else:
@@ -179,11 +191,14 @@ def quote(val, force=False):
     
     Objects with a ``.__html__()`` method will have that method called,
     and the return value will *not* be quoted.  Thus objects with that
-    magic method can be used to represent HTML that should not be quoted.
+    magic method can be used to represent HTML that should not be
+    quoted.
     
     As a special case, ``quote(None)`` returns ''
     
-    If ``force`` is true, then it will always be quoted regardless of ``__html__()``
+    If ``force`` is true, then it will always be quoted regardless of
+    ``__html__()``.
+    
     """
     if val is None:
         return literal('')
@@ -197,8 +212,9 @@ def quote(val, force=False):
 class QuotedItem(DictMixin):
     """Wrapper/helper for literal(...) % obj
     
-    This quotes the object during string substitution, and if the object
-    is dictionary(-like) it will quote all the values in the dictionary
+    This quotes the object during string substitution, and if the
+    object is dictionary(-like) it will quote all the values in the
+    dictionary.
     
     """
     def __init__(self, obj, encoding, error_mode):
@@ -230,9 +246,11 @@ class QuotedItem(DictMixin):
     def __repr__(self):
         return quote(repr(self.obj))
 
+
 emptyTagString = """
 area base basefont br col frame hr img input isindex link meta param
 """
+
 emptyTags = {}
 for tag in emptyTagString.split():
     emptyTags[tag] = 1
@@ -242,20 +260,11 @@ applet blockquote body br dd div dl dt fieldset form frameset
 head hr html iframe map menu noframes noscript object ol optgroup
 p param script select table tbody tfoot thead tr ul var
 """
+
 blockTags = {}
 for tag in blockTagString.split():
     blockTags[tag] = 1
 
 HTML = Base()
 
-__all__ = ["html", "Exclude", "quote", "literal", "xhtml"]
-
-if __name__ == "__main__":
-    print html.html(
-        html.head(html.title("Page Title")),
-        html.body(
-        bgcolor="#000066",
-        text="#ffffff",
-        c=[html.h1("Page Title"),
-           html.p("Hello <world>!")],
-        ))
+__all__ = ["HTML", "quote", "literal"]
