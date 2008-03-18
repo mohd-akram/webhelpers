@@ -279,4 +279,4 @@ for tag in blockTagString.split():
 
 HTML = Base()
 
-__all__ = ["HTML", "quote", "literal"]
+__all__ = ["HTML", "escape", "literal", "url_escape"]
