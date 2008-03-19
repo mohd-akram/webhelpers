@@ -72,7 +72,7 @@ def link_to(name, url='', **html_options):
     else:
         url = html_escape(url)
     return "<a href=\"%s\"%s>%s</a>" % (url, tag_op, name or url)
-
+    
 def button_to(name, url='', **html_options):
     """
     Generate a form containing a sole button that submits to ``url``.  
@@ -134,6 +134,14 @@ def button_to(name, url='', **html_options):
     (Bottom line: Always validate your HTML before going public.)    
     
     """
+    button_html = _button_to(name, url, **html_options)
+    return '%s</form>' % (button_html)
+    
+def _button_to(name, url='', **html_options):
+    """    
+    Creates the button_to html but leaves out the </form> to allow the secure_button_to() 
+    (webhelpers.rails.secure_form_tag.secure_button_to) to use this function as well.
+    """
     if html_options:
         convert_boolean_attributes(html_options, ['disabled'])
     
@@ -167,7 +175,7 @@ def button_to(name, url='', **html_options):
     
     return """<form method="%s" action="%s" class="button-to"><div>""" % \
         (form_method, tags.escape_once(url)) + method_tag + \
-        tags.tag("input", **html_options) + "</div></form>"
+        tags.tag("input", **html_options) + "</div>"
 
 def link_to_unless_current(name, url, **html_options):
     """

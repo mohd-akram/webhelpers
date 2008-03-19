@@ -141,7 +141,6 @@ def make_tag(tag, *args, **kw):
 
 
 class literal(unicode):
-    
     """Represents an HTML literal.
     
     This subclass of unicode has a ``.__html__()`` method that is 
@@ -155,7 +154,6 @@ class literal(unicode):
     change the original literal.
     
     """
-    
     def __new__(cls, string='', encoding='utf-8', errors="strict"):
         """Create the new literal string object."""
         if isinstance(string, unicode):
@@ -191,9 +189,36 @@ class literal(unicode):
             return unicode.__mod__(self, tuple(_EscapedItem(item, self.encoding, self.error_mode) for item in obj))
         else:
             return unicode.__mod__(self, _EscapedItem(obj, self.encoding, self.error_mode))
- 
+        
     def join(self, items):
         return self.__class__(unicode.join(self, (escape(i) for i in items)))
+    
+    def split(self, *args, **kwargs):
+        return [literal(x) for x in unicode.split(self, *args, **kwargs)]
+
+    def rsplit(self, *args, **kwargs):
+        return [literal(x) for x in unicode.rsplit(self, *args, **kwargs)]
+    
+    def splitlines(self, *args, **kwargs):
+        return [literal(x) for x in unicode.splitlines(self, *args, **kwargs)]
+
+
+# Yes, this is rather sucky, but I really don't want to write all these
+# damn methods, so we write in all the appropriate literal results of these
+# functions on module load
+for k in dir(literal):
+    if k in ['__getslice__', '__getitem__', 'capitalize', 'center', 
+             'expandtabs', 'ljust', 'lower', 'lstrip', 'partition',
+             'replace', 'rjust', 'rpartition', 'rstrip', 'strip',
+             'swapcase', 'title', 'translate', 'upper', 'zfill']:
+        def wrapper(func):
+            def entangle(*args, **kwargs):
+                return literal(func(*args, **kwargs))
+            entangle.__name__ = func.__name__
+            entangle.__doc__ = func.__doc__
+            return entangle
+        fun = getattr(unicode, k)
+        setattr(literal, k, wrapper(fun))
 
 
 def lit_sub(*args, **kw):

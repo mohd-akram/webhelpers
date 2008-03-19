@@ -5,7 +5,7 @@ Provides methods for filtering, formatting and transforming strings.
 
 import re
 
-from html import HTML, literal, escape
+from webhelpers.html import HTML, literal, lit_sub, escape
 import webhelpers.textile as textile
 import webhelpers.markdown as _markdown
 
@@ -29,11 +29,9 @@ AUTO_LINK_RE = re.compile(r"""
                         )
                         ([\.,"'?!;:]|\s|<|$)       # trailing text
                            """, re.X)
-    
 
 def truncate(text, length=30, truncate_string='...'):
-    """
-    Truncate ``text`` with replacement characters.
+    """Truncate ``text`` with replacement characters.
     
     ``length``
         The maximum length of ``text`` before replacement
@@ -55,9 +53,9 @@ def truncate(text, length=30, truncate_string='...'):
     else:
         return text
 
-def highlight(text, phrase, highlighter='<strong class="highlight">\\1</strong>'):
-    """
-    Highlight the ``phrase`` where it is found in the ``text``.
+def highlight(text, phrase, 
+              highlighter='<strong class="highlight">\\1</strong>'):
+    """Highlight the ``phrase`` where it is found in the ``text``.
     
     The highlighted phrase will be surrounded by the highlighter, 
     by default::
@@ -81,11 +79,14 @@ def highlight(text, phrase, highlighter='<strong class="highlight">\\1</strong>'
     if not phrase or not text:
         return text
     highlight_re = re.compile('(%s)' % re.escape(phrase), re.I)
-    return highlight_re.sub(highlighter, text)
+    if hasattr(text, '__html__'):
+        return literal(highlight_re.sub(highlighter, text))
+    else:
+        return highlight_re.sub(highlighter, text)
 
 def excerpt(text, phrase, radius=100, excerpt_string="..."):
-    """
-    Extract an excerpt from the ``text``, or '' if the phrase isn't found.
+    """Extract an excerpt from the ``text``, or '' if the phrase isn't
+    found.
 
     ``phrase``
         Phrase to excerpt from ``text``
@@ -98,12 +99,13 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
     
         >>> excerpt("hello my world", "my", 3)
         '...lo my wo...'
-        
+
     """
     if not text or not phrase:
         return text
 
-    pat = re.compile('(.{0,%s}%s.{0,%s})' % (radius, re.escape(phrase), radius), re.I)
+    pat = re.compile('(.{0,%s}%s.{0,%s})' % (radius, re.escape(phrase), 
+                                             radius), re.I)
     match = pat.search(text)
     if not match:
         return ""
@@ -112,7 +114,10 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
         excerpt = excerpt_string + excerpt
     if match.end(1) < len(text):
         excerpt = excerpt + excerpt_string
-    return excerpt
+    if hasattr(text, '__html__'):
+        return literal(excertp)
+    else:
+        return excerpt
 
 def auto_link(text, link="all", **href_options):
     """
@@ -152,8 +157,8 @@ def _auto_link_urls(text, **href_options):
     return literal(re.sub(AUTO_LINK_RE, handle_match, text))
 
 def _auto_link_email_addresses(text):
-    return re.sub(r'([\w\.!#\$%\-+.]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+)',
-                  r'<a href="mailto:\1">\1</a>', text)
+    return lit_sub(r'([\w\.!#\$%\-+.]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+)',
+                   r'<a href="mailto:\1">\1</a>', text)
 
 def markdown(text, **kwargs):
     """Format the text with MarkDown formatting.

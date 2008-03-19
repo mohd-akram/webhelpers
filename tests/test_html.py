@@ -56,7 +56,7 @@ def test_lit_re():
     lit = literal('This is a <string>')
     unlit = 'This is also a <string>'
     
-    result = lit_sub(r'<str', '<b', lit)
+    result = lit_sub(r'<str', literal('<b'), lit)
     assert u'This is a <bing>' == escape(result)
     
     result = lit_sub(r'a <str', 'a <b> <b', unlit)
