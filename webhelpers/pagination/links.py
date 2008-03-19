@@ -1,4 +1,5 @@
-"""Pagination Link Generators"""
+"""Pagination Link Generators - Deprecated: Use paginate."""
+
 from webhelpers.htmlgen import html
 
 def pagelist(page):
