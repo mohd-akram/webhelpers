@@ -32,6 +32,7 @@ keyword (particularly ``class``), you can append an underscore and
 it will be removed (like ``class_='whatever'``).
 
 """
+import re
 from cgi import escape as cgi_escape
 from urllib import quote as url_escape
 from UserDict import DictMixin
@@ -46,7 +47,7 @@ class UnfinishedTag(object):
 
     def __call__(self, *args, **kw):
         """Create the tag with the arguments passed in."""
-        return Tag(self._tag, *args, **kw)
+        return make_tag(self._tag, *args, **kw)
 
     def __str__(self):
         """Return a literal representation."""
@@ -110,15 +111,13 @@ def attrEncode(v):
         return v
 
 
-def Tag(tag, *args, **kw):
+def make_tag(tag, *args, **kw):
     if kw.has_key("c"):
         assert not args, "The special 'c' keyword argument cannot be used "\
 "in conjunction with non-keyword arguments"
         args = kw.pop("c")
-    if type(args) not in (type(()), type([])):
-        args = (args,)
     htmlArgs = [' %s="%s"' % (attrEncode(attr), escape(value))
-                for attr, value in kw.items()
+                for attr, value in sorted(kw.iteritems())
                 if value is not None]
     if not args and emptyTags.has_key(tag):
         substr = '<%s%s />'
@@ -142,7 +141,6 @@ def Tag(tag, *args, **kw):
 
 
 class literal(unicode):
-    
     """Represents an HTML literal.
     
     This subclass of unicode has a ``.__html__()`` method that is 
@@ -156,7 +154,6 @@ class literal(unicode):
     change the original literal.
     
     """
-    
     def __new__(cls, string='', encoding='utf-8', errors="strict"):
         """Create the new literal string object."""
         if isinstance(string, unicode):
@@ -192,10 +189,48 @@ class literal(unicode):
             return unicode.__mod__(self, tuple(_EscapedItem(item, self.encoding, self.error_mode) for item in obj))
         else:
             return unicode.__mod__(self, _EscapedItem(obj, self.encoding, self.error_mode))
- 
+        
     def join(self, items):
         return self.__class__(unicode.join(self, (escape(i) for i in items)))
- 
+    
+    def split(self, *args, **kwargs):
+        return [literal(x) for x in unicode.split(self, *args, **kwargs)]
+
+    def rsplit(self, *args, **kwargs):
+        return [literal(x) for x in unicode.rsplit(self, *args, **kwargs)]
+    
+    def splitlines(self, *args, **kwargs):
+        return [literal(x) for x in unicode.splitlines(self, *args, **kwargs)]
+
+
+# Yes, this is rather sucky, but I really don't want to write all these
+# damn methods, so we write in all the appropriate literal results of these
+# functions on module load
+for k in dir(literal):
+    if k in ['__getslice__', '__getitem__', 'capitalize', 'center', 
+             'expandtabs', 'ljust', 'lower', 'lstrip', 'partition',
+             'replace', 'rjust', 'rpartition', 'rstrip', 'strip',
+             'swapcase', 'title', 'translate', 'upper', 'zfill']:
+        def wrapper(func):
+            def entangle(*args, **kwargs):
+                return literal(func(*args, **kwargs))
+            return entangle
+        fun = getattr(unicode, k)
+        setattr(literal, k, wrapper(fun))
+
+
+def lit_sub(*args, **kw):
+    """Ensures that if the string re.sub operates on is a literal, it
+    will still be a literal returned"""
+    lit = hasattr(args[2], '__html__')
+    cls = args[2].__class__
+    result = re.sub(*args, **kw)
+    if lit:
+        return cls(result)
+    else:
+        return result
+
+
 def escape(val, force=False):
     """Does HTML-escaping of a value.
     
