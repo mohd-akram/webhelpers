@@ -1,4 +1,4 @@
-"""Pagination for Collections and ORMs
+"""Pagination for Collections and ORMs - Deprecated: Use paginate module.
 
 The Pagination module aids in the process of paging large collections of
 objects. It can be used macro-style for automatic fetching of large 
@@ -24,7 +24,7 @@ find_page = re.compile('page=(\d+)', re.I)
 
 def paginate(collection, page=None, per_page=10, item_count=None, 
              query_args=None, **options):
-    """Paginate a collection of data.
+    """Paginate a collection of data.  Deprecated: Use paginate *package*.
     
     If the collection is a list, it will return the slice of the list along
     with the Paginator object. If the collection is given using an ORM, the
@@ -106,6 +106,8 @@ class Paginator(object):
     
     """Tracks paginated data sets, and supplies common pagination operations.
     
+    Deprecated - use paginate module.
+    
     The Paginator tracks data associated with pagination of groups of data, 
     as well as supplying objects and methods that make dealing with 
     paginated results easier.
@@ -174,7 +176,11 @@ belong to this paginator, an AttributeError will be raised.
 
 class Page(object):
 
-    """Represents a single page from a paginated set."""
+    """Represents a single page from a paginated set.
+    
+    Deprecated - use paginate module.
+    
+    """
     
     def __init__(self, paginator, number):
         """Create new Page for given ``paginator`` with index ``number``."""
@@ -252,7 +258,11 @@ class Page(object):
 
 class Window(object):
     
-    """Represents ranges around a given page."""
+    """Represents ranges around a given page.
+    
+    Deprecated - use paginate module.
+    
+    """
     
     def __init__(self, page, padding = 2):
         """Create new Window object for given ``page``, ``padding``."""
