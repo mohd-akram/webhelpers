@@ -3,7 +3,18 @@
 import urllib
 import re
 
-from webhelpers.html import HTML, literal, escape
+from webhelpers.html import HTML, escape
+from webhelpers.rails.javascript import escape_javascript
+
+def method_javascript_function(method):
+    submit_function = "var f = document.createElement('form'); f.style.display = 'none'; " + \
+        "this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;"
+    
+    if method.upper() != 'POST':
+        submit_function += "var m = document.createElement('input'); m.setAttribute('type', 'hidden'); "
+        submit_function += "m.setAttribute('name', '_method'); m.setAttribute('value', '%s'); f.appendChild(m);" % method
+    
+    return HTML.literal(submit_function + "f.submit();")
 
 def convert_options_to_javascript(confirm=None, popup=None, post=None, method=None, **html_options):
     if post and not method:
@@ -63,8 +74,8 @@ def link_to(name, url='', **html_options):
         html_options = convert_options_to_javascript(**html_options)
     if callable(url):
         url = url()
-    tag_op['href'] = url
-    return HTML.a(name or url, **tag_op)
+    html_options['href'] = url
+    return HTML.a(name or url, **html_options)
 
 def convert_boolean_attributes(html_options, bool_attrs):
     for attr in bool_attrs:
@@ -154,7 +165,7 @@ def button_to(name, url='', **html_options):
         ur = url()
         url, name = ur, name or escape(ur)
     else:
-        url, name = literal(url), name or url
+        url, name = url, name or url
     
     submit_type = html_options.get('type')
     img_source = html_options.get('src')
@@ -208,14 +219,14 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
     Examples::
     
         >>> mail_to("me@domain.com", "My email", cc="ccaddress@domain.com", bcc="bccaddress@domain.com", subject="This is an example email", body= "This is the body of the message.")
-        literal(u'<a href="mailto:me@domain.com?cc=ccaddress%40domain.com&amp;body=This%20is%20the%20body%20of%20the%20message.&amp;subject=This%20is%20an%20example%20email&amp;bcc=bccaddress%40domain.com">My email</a>')
+        literal(u'<a href="mailto:me@domain.com?cc=ccaddress%40domain.com&body=This%20is%20the%20body%20of%20the%20message.&subject=This%20is%20an%20example%20email&bcc=bccaddress%40domain.com">My email</a>')
         
     """
     extras = {}
     for key, option in ('cc', cc), ('bcc', bcc), ('subject', subject), ('body', body):
         if option:
             extras[key] = option
-    options_query = urllib.urlencode(extras).replace("+", "%20")
+    options_query = HTML.literal(urllib.urlencode(extras).replace("+", "%20"))
     protocol = 'mailto:'
 
     email_address_obfuscated = email_address
@@ -225,8 +236,8 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         email_address_obfuscated = email_address_obfuscated.replace('.', replace_dot)
 
     if encode == 'hex':
-        email_address_obfuscated = ''.join(['&#%d;' % ord(x) for x in email_address_obfuscated])
-        protocol = ''.join(['&#%d;' % ord(x) for x in protocol])
+        email_address_obfuscated = HTML.literal(''.join(['&#%d;' % ord(x) for x in email_address_obfuscated]))
+        protocol = HTML.literal(''.join(['&#%d;' % ord(x) for x in protocol]))
 
         word_re = re.compile('\w')
         encoded_parts = []
@@ -235,11 +246,11 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
                 encoded_parts.append('%%%x' % ord(x))
             else:
                 encoded_parts.append(x)
-        email_address = ''.join(encoded_parts)
+        email_address = HTML.literal(''.join(encoded_parts))
 
-    url = literal(protocol + email_address)
+    url = HTML.literal(protocol + email_address)
     if options_query:
-        url += literal('?' + options_query)
+        url += HTML.literal('?') + options_query
     html_options['href'] = url
 
     tag = HTML.a(name or email_address_obfuscated, **html_options)
@@ -247,7 +258,9 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
     if encode == 'javascript':
         tmp = "document.write('%s');" % tag
         string = ''.join(['%%%x' % ord(x) for x in tmp])
-        return HTML.script("\n//<![CDATA[\neval(unescape('%s'))\n//]]>" % string, type="text/javascript")
+        return HTML.script(
+            HTML.literal("\n//<![CDATA[\neval(unescape('%s'))\n//]]>\n" % string),
+                         type="text/javascript")
     else : 
         return tag
 

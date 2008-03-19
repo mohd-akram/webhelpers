@@ -10,15 +10,15 @@ class TestURLHelper(WebHelpersTestCase):
                button_to("Hello", "http://www.example.com"))
 
     def test_button_to_with_query(self):
-        self.assertEqual(u"<form action=\"http://www.example.com/q1=v1&q2=v2\" class=\"button-to\" method=\"POST\"><div><input type=\"submit\" value=\"Hello\" /></div></form>", 
+        self.assertEqual(u"<form action=\"http://www.example.com/q1=v1&amp;q2=v2\" class=\"button-to\" method=\"POST\"><div><input type=\"submit\" value=\"Hello\" /></div></form>", 
                button_to("Hello", "http://www.example.com/q1=v1&q2=v2"))
 
     def test_button_to_with_escaped_query(self):
-        self.assertEqual(u"<form action=\"http://www.example.com/q1=v1&q2=v2\" class=\"button-to\" method=\"POST\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
+        self.assertEqual(u"<form action=\"http://www.example.com/q1=v1&amp;q2=v2\" class=\"button-to\" method=\"POST\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
                          button_to("Hello", "http://www.example.com/q1=v1&q2=v2"))
     
     def test_button_to_with_query_and_no_name(self):
-        self.assertEqual(u"<form action=\"http://www.example.com?q1=v1&q2=v2\" class=\"button-to\" method=\"POST\"><div><input type=\"submit\" value=\"http://www.example.com?q1=v1&amp;q2=v2\" /></div></form>", 
+        self.assertEqual(u"<form action=\"http://www.example.com?q1=v1&amp;q2=v2\" class=\"button-to\" method=\"POST\"><div><input type=\"submit\" value=\"http://www.example.com?q1=v1&amp;q2=v2\" /></div></form>", 
                button_to(None, "http://www.example.com?q1=v1&q2=v2"))
     
     def test_button_to_with_javascript_confirm(self):
@@ -57,7 +57,7 @@ class TestURLHelper(WebHelpersTestCase):
                link_to("Hello", "http://www.example.com?q1=v1&q2=v2"))
     
     def test_link_tag_with_query_and_no_name(self):
-        self.assertEqual(u"<a href=\"http://www.example.com?q1=v1&amp;q2=v2\">http://www.example.com?q1=v1&amp;q2=v2</a>", 
+        self.assertEqual(u"<a href=\"http://www.example.com?q1=v1&amp;q2=v2\">http://www.example.com?q1=v1&amp;amp;q2=v2</a>", 
                link_to(None, "http://www.example.com?q1=v1&q2=v2"))
     
     def test_link_tag_with_custom_onclick(self):
@@ -120,7 +120,7 @@ class TestURLHelper(WebHelpersTestCase):
 
     def test_mail_to_with_img(self):
         self.assertEqual(u'<a href="mailto:feedback@example.com"><img src="/feedback.png" /></a>',
-                        mail_to('feedback@example.com', '<img src="/feedback.png" />'))
+                        mail_to('feedback@example.com', HTML.literal('<img src="/feedback.png" />')))
 
     def test_mail_to_with_hex(self):
         self.assertEqual(u"<a href=\"&#109;&#97;&#105;&#108;&#116;&#111;&#58;%6d%65@%64%6f%6d%61%69%6e.%63%6f%6d\">My email</a>",
