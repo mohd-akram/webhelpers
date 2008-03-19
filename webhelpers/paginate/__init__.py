@@ -1,40 +1,57 @@
 """
-Pagination module for lists and ORMs
+Paginate module for lists and ORMs.
 
-This module helps dividing large lists of items into pages. The user gets
-displayed one page at a time and can navigate to other pages. Imagine you are
-offering a company phonebook and let the user search the entries. If the search
-result contains 23 entries but you may want to display  no more than 10 entries
-at one. The first page contains entries 1-10, the second 11-20 and the third
-21-23. See the documentation of the "Page" class for more information. This
-module is especially useful for Pylons web framework applications.
+This module helps dividing large lists of items into pages. The user 
+is shown one page at a time and can navigate to other pages. Imagine you 
+are offering a company phonebook and let the user search the entries. If 
+the search result contains 23 entries but you may want to display no 
+more than 10 entries at once. The first page contains entries 1-10, the 
+second 11-20 and the third 21-23. See the documentation of the "Page" 
+class for more information. 
+
+This module is especially useful for Pylons web framework applications.
 
 Compatibility warning:
 
-This pagination module is an alternative to the pagination module that comes
-with the webhelpers module. It is in no way compatible so just replacing the
-import statements will break your code.
+This pagination module is an alternative to the deprecated pagination 
+module. It is in no way compatible so just replacing the import 
+statements will break your code.
+
+This version of paginate was originally based on the 0.3.3 version from
+http://workaround.org/cgi-bin/hg-paginate.
+
+Additional documentation is in webhelpers/docs/paginate.txt.  
 
 This software can be used under the terms of the MIT license:
 
 Copyright (c) 2007,2008 Christoph Haas <email@christoph-haas.de>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a 
+copy of this software and associated documentation files (the 
+"Software"), to deal in the Software without restriction, including 
+without limitation the rights to use, copy, modify, merge, publish, 
+distribute, sublicense, and/or sell copies of the Software, and to 
+permit persons to whom the Software is furnished to do so, subject to 
+the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included 
+in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. """
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+
+"""
+
+import logging
+import re
+# Use templating for the .pager() [available since Python 2.4]
+from string import Template
+import warnings
 
 # Import the webhelpers to create URLs
 import webhelpers
@@ -45,15 +62,6 @@ from webhelpers.rails.tags import tag as get_tag
 from webhelpers.rails.urls import link_to as get_link_to
 from routes import url_for
 
-import logging
-import re
-
-# Deprecation warnings
-import warnings
-
-# Use templating for the .pager() [available since Python 2.4]
-from string import Template
-
 __version__ = '0.3.3'
 __author__ = 'Christoph Haas <email@christoph-haas.de>'
 
@@ -62,7 +70,7 @@ log = logging.getLogger("paginate")
 # import SQLAlchemy if available
 try:
     import sqlalchemy
-except:
+except ImportError:
     sqlalchemy_available = False
 else:
     sqlalchemy_available = sqlalchemy.__version__
@@ -71,6 +79,7 @@ def get_wrapper(obj, sqlalchemy_session=None):
     """
     Auto-detect the kind of object and return a list/tuple
     to access items from the collection.
+    
     """
     # See if the collection is a sequence
     if isinstance(obj, (list, tuple)):
@@ -83,17 +92,19 @@ def get_wrapper(obj, sqlalchemy_session=None):
 
         # Is the collection an SQLAlchemy select object?
         if isinstance(obj, sqlalchemy.sql.expression.CompoundSelect) \
-            or isinstance(obj, sqlalchemy.sql.expression.Select):
-                return _SQLAlchemySelect(obj, sqlalchemy_session)
+        or isinstance(obj, sqlalchemy.sql.expression.Select):
+            return _SQLAlchemySelect(obj, sqlalchemy_session)
 
     raise TypeError("Sorry, your collection type is not supported by the paginate module. "
             "You can either provide a list, a tuple, an SQLAlchemy table or an "
             "SQLAlchemy query object.")
 
 class _SQLAlchemySelect(object):
+    
     """
-    Iterable that allows to get slices from an SQLAlchemy Select object
+    Iterable that allows to get slices from an SQLAlchemy Select object.
     """
+    
     def __init__(self, obj, sqlalchemy_session=None):
         if not isinstance(sqlalchemy_session, sqlalchemy.orm.scoping.ScopedSession):
             raise TypeError("If you want to page an SQLAlchemy 'Table' object then you "
@@ -115,9 +126,9 @@ class _SQLAlchemySelect(object):
         return self.sqlalchemy_session.execute(self.obj).rowcount
 
 class _SQLAlchemyQuery(object):
-    """
-    Iterable that allows to get slices from an SQLAlchemy Query object
-    """
+    
+    """Iterable that allows to get slices from an SQLAlchemy Query object."""
+    
     def __init__(self, obj):
         self.obj = obj
 
@@ -132,26 +143,27 @@ class _SQLAlchemyQuery(object):
 
 # Since the items on a page are mainly a list we subclass the "list" type
 class Page(list):
+    
     """
-    A list/iterator of items representing one page in a larger collection
+    A list/iterator of items representing one page in a larger collection.
 
-    An instance of the "Page" class is created from a collection of things. The
-    instance works as an iterator running from the first item to the last item
-    on the given page. The collection can be:
+    An instance of the "Page" class is created from a collection of things. 
+    The instance works as an iterator running from the first item to the 
+    last item on the given page. The collection can be:
 
     - a sequence
     - an SQLAlchemy query
     - an SQLAlchemy table
 
-    A "Page" instance maintains pagination logic associated with each page,
-    where it begins, what the first/last item on the page is, etc. The
-    pager() method creates a link list allowing the user to go to
+    A "Page" instance maintains pagination logic associated with each 
+    page, where it begins, what the first/last item on the page is, etc. 
+    The pager() method creates a link list allowing the user to go to
     other pages.
 
-    **WARNING:** Unless you pass in an item_count, a count will be performed
-    on the collection every time a Page instance is created. If using an ORM,
-    it's advised to pass in the number of items in the collection if that
-    number is known.
+    **WARNING:** Unless you pass in an item_count, a count will be 
+    performed on the collection every time a Page instance is created. 
+    If using an ORM, it's advised to pass in the number of items in the 
+    collection if that number is known.
 
     Instance attributes:
 
@@ -184,7 +196,9 @@ class Page(list):
 
     last_item
         Index of last item on the current page
+        
     """
+    
     def __init__(self, collection, current_page=1, items_per_page=20,
         item_count=None, sqlalchemy_session=None, *args, **kwargs):
         """
@@ -216,6 +230,7 @@ class Page(list):
             wouldn't be able to execute a SELECT query without it.
 
         Further parameters are used as link arguments in the pager().
+        
         """
         # 'page_nr' is deprecated. 'current_page' is clearer and used by Ruby-on-Rails, too
         if 'page_nr' in kwargs:
@@ -336,7 +351,7 @@ class Page(list):
         link_attr={'class':'pager_link'}, curpage_attr={'class':'pager_curpage'},
         dotdot_attr={'class':'pager_dotdot'}, **kwargs):
         """
-        Return a string containing links to other pages (e.g. "1 2 [3] 4 5 6 7 8")
+        Return string with links to other pages (e.g. "1 2 [3] 4 5 6 7").
 
         format:
             Format string that defines how the pager is rendered. The string
@@ -351,81 +366,87 @@ class Page(list):
             - $first_item: index of first item on the current page
             - $last_item: index of last item on the current page
             - $item_count: total number of items
-            - $link_first: link to first page (unless this is the first page)
-            - $link_last: link to last page (unless this is the last page)
-            - $link_previous: link to previous page (unless this is the first page)
-            - $link_next: link to next page (unless this is the last page)
+            - $link_first: link to first page (unless this is first page)
+            - $link_last: link to last page (unless this is last page)
+            - $link_previous: link to prev page (unless this is first page)
+            - $link_next: link to next page (unless this is last page)
 
-            To render a range of pages the token '~3~' can be used. The number
-            sets the radius of pages around the current page.
-            Example for a range with radius 3: '1 .. 5 6 7 [8] 9 10 11 .. 500'
+            To render a range of pages the token '~3~' can be used. The 
+            number sets the radius of pages around the current page.
+            Example for a range with radius 3: 
+               '1 .. 5 6 7 [8] 9 10 11 .. 500'
 
             Default: '~2~'
 
         symbol_first
-            String to be displayed as the text for the %(link_first)s link
-            above.
+            String to be displayed as the text for the %(link_first)s 
+            link above.
 
             Default: '&lt;&lt;' ('<<')
 
         symbol_last
-            String to be displayed as the text for the %(link_last)s link above.
+            String to be displayed as the text for the %(link_last)s 
+            link above.
 
             Default: '&gt;&gt;' ('>>')
 
         symbol_previous
-            String to be displayed as the text for the %(link_previous)s link
-            above.
+            String to be displayed as the text for the %(link_previous)s 
+            link above.
 
             Default: '&lt;' ('<')
 
         symbol_next
-            String to be displayed as the text for the %(link_next)s link above.
+            String to be displayed as the text for the %(link_next)s 
+            link above.
 
             Default: '&gt;' ('>')
 
         separator:
-            String that is used to seperate page links/numbers in the above
-            range of pages.
+            String that is used to seperate page links/numbers in the 
+            above range of pages.
 
             Default: ' '
 
         link_var:
-            The name of the parameter that will carry the number of the page the
-            user just clicked on. The parameter will be passed to a url_for()
-            call so if you stay with the default ':controller/:action/:id'
-            routing and set link_var='id' then the :id part of the URL will be
-            changed. If you set link_var='current_page' then url_for() will make
-            it an extra parameters like
-            ':controller/:action/:id?current_page=1'. You need the link_var in
-            your action to determine the page number the user wants to see. If
-            you do not specify anything else the default will be a parameter
-            called 'current_page'.
+            The name of the parameter that will carry the number of the 
+            page the user just clicked on. The parameter will be passed 
+            to a url_for() call so if you stay with the default 
+            ':controller/:action/:id' routing and set link_var='id' then 
+            the :id part of the URL will be changed. If you set 
+            link_var='current_page' then url_for() will make it an extra 
+            parameters like ':controller/:action/:id?current_page=1'. 
+            You need the link_var in your action to determine the page 
+            number the user wants to see. If you do not specify anything 
+            else the default will be a parameter called 'current_page'.
 
         partial_var:
-            The name of the parameter that is set to 1 if updates of the page
-            area through AJAX/AJAH are requested. If your application finds this
-            parameter in the URL set then it should not print the complete HTML
-            page but just the page area instead.
+            The name of the parameter that is set to 1 if updates of the 
+            page area through AJAX/AJAH are requested. If your 
+            application finds this parameter in the URL set then it 
+            should not print the complete HTML page but just the page 
+            area instead.
 
             Default: 'partial'
 
         show_if_single_page:
-            if True the navigator will be shown even if there is only one page
-            (default: False)
+            if True the navigator will be shown even if there is only 
+            one page
+            
+            Default: False
 
         link_attr (optional)
-            A dictionary of attributes that get added to A-HREF links pointing
-            to other pages. Can be used to define a CSS style or class to
-            customize the look of links.
+            A dictionary of attributes that get added to A-HREF links 
+            pointing to other pages. Can be used to define a CSS style 
+            or class to customize the look of links.
 
             Example: { 'style':'border: 1px solid green' }
 
             Default: { 'class':'pager_link' }
 
         curpage_attr (optional)
-            A dictionary of attributes that get added to the current page
-            number in the pager (which is obviously not a link).
+            A dictionary of attributes that get added to the current 
+            page number in the pager (which is obviously not a link).
             If this dictionary is not empty then the elements
             will be wrapped in a SPAN tag with the given attributes.
 
@@ -435,25 +456,26 @@ class Page(list):
 
         dotdot_attr (optional)
             A dictionary of attributes that get added to the '..' string
-            in the pager (which is obviously not a link).
-            If this dictionary is not empty then the elements
-            will be wrapped in a SPAN tag with the given attributes.
+            in the pager (which is obviously not a link). If this 
+            dictionary is not empty then the elements will be wrapped in 
+            a SPAN tag with the given attributes.
 
             Example: { 'style':'color: #808080' }
 
             Default: { 'class':'pager_dotdot' }
 
         ajax_id (optional)
-            If this parameter is given then the navigator will add Javascript to
-            the A-HREF links that will update only a portion of the web page
-            instead of reloading the copmlete page.
+            If this parameter is given then the navigator will add 
+            Javascript to the A-HREF links that will update only a 
+            portion of the web page instead of reloading the copmlete 
+            page.
 
-            This parameter contains the name of the HTML element (e.g. a <div
-            id="foobar">) that the paginator should replace with the new
-            content. The navigator will create AJAX links (e.g. using
-            webhelpers' link_to_remote() function) that replace the HTML
-            element's content with the new page of paginated items and a new
-            navigator.
+            This parameter contains the name of the HTML element (e.g. a 
+            <div id="foobar">) that the paginator should replace with 
+            the new content. The navigator will create AJAX links (e.g. 
+            using  webhelpers' link_to_remote() function) that replace 
+            the HTML element's content with the new page of paginated 
+            items and a new navigator.
 
         framework
             The name of the Javascript framework to use. By default
@@ -466,13 +488,14 @@ class Page(list):
             - extjs (www.extjs.com)
 
         Additional keyword arguments are used as arguments in the links.
-        Otherwise the link will be created with url_for() which points to
-        the page you are currently displaying.
+        Otherwise the link will be created with url_for() which points 
+        to the page you are currently displaying.
+        
         """
 
         def _pagerlink(pagenr, text):
             """
-            Create a URL that links to another page using url_for()
+            Create a URL that links to another page using url_for().
 
             Parameters:
                 
@@ -481,6 +504,7 @@ class Page(list):
 
             text
                 Text to be printed in the A-HREF tag
+                
             """
             # Let the url_for() from webhelpers create a new link and set
             # the variable called 'link_var'. Example:
@@ -536,7 +560,7 @@ class Page(list):
 
         def _range(regexp_match):
             """
-            Return range of linked pages (e.g. '1 2 [3] 4 5 6 7 8')
+            Return range of linked pages (e.g. '1 2 [3] 4 5 6 7 8').
 
             Arguments:
                 
@@ -545,7 +569,9 @@ class Page(list):
                 radius of linked pages around the current page in
                 regexp_match.group(1) as a string
 
-            This funtion is supposed to be called as a callable in re.sub
+            This funtion is supposed to be called as a callable in 
+            re.sub.
+            
             """
             radius = int(regexp_match.group(1))
 
@@ -560,7 +586,7 @@ class Page(list):
 
             # Create a link to the first page (unless we are on the first page
             # or there would be no need to insert '..' spacers)
-            if self.current_page != self.first_page and self.first_page<leftmost_page:
+            if self.current_page != self.first_page and self.first_page < leftmost_page:
                 nav_items.append( _pagerlink(self.first_page, self.first_page) )
 
             # Insert dots if there are pages between the first page
@@ -596,7 +622,7 @@ class Page(list):
 
             # Create a link to the very last page (unless we are on the last
             # page or there would be no need to insert '..' spacers)
-            if self.current_page != self.last_page and rightmost_page<self.last_page:
+            if self.current_page != self.last_page and rightmost_page < self.last_page:
                 nav_items.append( _pagerlink(self.last_page, self.last_page) )
 
             return separator.join(nav_items)

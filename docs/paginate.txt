@@ -264,7 +264,7 @@ You see that the pager() is called with these parameters:
 
 If the parameter *ajax_id* is used then an additional parameter called
 *partial=1* is automatically added to the Javascript load links. So in your web
-application you need to send the complete HTML page if *partial* is not set. Of
+application you need to send the complete HTML page if *partial* is not set. Or
 if *partial* is set then you need to send only the partial HTML fragment back
 that contains your paginated area. This helps to *degrade gracefully* if the
 user's browser does not support Javascript. The browser will then ignore the
