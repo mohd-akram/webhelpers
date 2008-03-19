@@ -3,8 +3,11 @@
 import urllib
 import re
 
-from webhelpers.html import HTML, escape
+from webhelpers.html import HTML, escape, literal
+
+# rails imports should be refactored once this stuff is pulled out of the rails dir
 from webhelpers.rails.javascript import escape_javascript
+from webhelpers.rails.asset_tag import compute_public_path
 
 def method_javascript_function(method):
     submit_function = "var f = document.createElement('form'); f.style.display = 'none'; " + \
@@ -151,8 +154,8 @@ def button_to(name, url='', **html_options):
     method_tag = ''
     method = html_options.pop('method', '')
     if method.upper() in ['PUT', 'DELETE']:
-        method_tag = HTML.input.hidden(
-            id='_method', name_='_method', value=method)
+        method_tag = HTML.input(
+            type='hidden', id='_method', name_='_method', value=method)
     
     form_method = (method.upper() == 'GET' and method) or 'POST'
     
@@ -219,14 +222,16 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
     Examples::
     
         >>> mail_to("me@domain.com", "My email", cc="ccaddress@domain.com", bcc="bccaddress@domain.com", subject="This is an example email", body= "This is the body of the message.")
-        literal(u'<a href="mailto:me@domain.com?cc=ccaddress%40domain.com&body=This%20is%20the%20body%20of%20the%20message.&subject=This%20is%20an%20example%20email&bcc=bccaddress%40domain.com">My email</a>')
+        literal(u'<a href="mailto:me@domain.com?cc=ccaddress%40domain.com&amp;body=This%20is%20the%20body%20of%20the%20message.&amp;subject=This%20is%20an%20example%20email&amp;bcc=bccaddress%40domain.com">My email</a>')
         
     """
     extras = {}
     for key, option in ('cc', cc), ('bcc', bcc), ('subject', subject), ('body', body):
         if option:
+            if not isinstance(option, literal):
+                option = escape(option)
             extras[key] = option
-    options_query = HTML.literal(urllib.urlencode(extras).replace("+", "%20"))
+    options_query = urllib.urlencode(extras).replace("+", "%20")
     protocol = 'mailto:'
 
     email_address_obfuscated = email_address
