@@ -45,9 +45,9 @@ class TestURLHelper(WebHelpersTestCase):
 
     def test_button_to_with_img(self):
         self.assertEqual(u'<form action="/content/edit/3" class="button-to" method="POST"><div><input alt="Edit" src="/images/icon_delete.gif" type="image" value="Edit" /></div></form>',
-                         button_to("Edit", url(action='edit', id=3), type='image', src='icon_delete.gif'))
+                         button_to("Edit", url_for(action='edit', id=3), type='image', src='icon_delete.gif'))
         self.assertEqual(u'<form action="/content/submit/3" class="button-to" method="POST"><div><input alt="Complete the form" src="/images/submit.png" type="image" value="Submit" /></div></form>',
-                         button_to("Submit", url(action='submit', id=3), type='image', src='submit', alt='Complete the form'))
+                         button_to("Submit", url_for(action='submit', id=3), type='image', src='submit', alt='Complete the form'))
 
     def test_link_tag_with_straight_url(self):
         self.assertEqual(u"<a href=\"http://www.example.com\">Hello</a>", link_to("Hello", "http://www.example.com"))
@@ -57,8 +57,8 @@ class TestURLHelper(WebHelpersTestCase):
                link_to("Hello", "http://www.example.com?q1=v1&q2=v2"))
     
     def test_link_tag_with_query_and_no_name(self):
-        self.assertEqual(u"<a href=\"http://www.example.com?q1=v1&amp;q2=v2\">http://www.example.com?q1=v1&amp;amp;q2=v2</a>", 
-               link_to(None, "http://www.example.com?q1=v1&q2=v2"))
+        self.assertEqual(u"<a href=\"http://www.example.com?q1=v1&amp;q2=v2\">http://www.example.com?q1=v1&amp;q2=v2</a>", 
+               link_to(None, HTML.literal("http://www.example.com?q1=v1&amp;q2=v2")))
     
     def test_link_tag_with_custom_onclick(self):
         self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"alert('yay!')\">Hello</a>", 
@@ -139,14 +139,6 @@ class TestURLHelper(WebHelpersTestCase):
                          mail_to("me@domain.com", None, encode = "hex", replace_at = "(at)", replace_dot = "(dot)"))
         self.assertEqual(u"<script type=\"text/javascript\">\n//<![CDATA[\neval(unescape('%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%65%66%3d%22%6d%61%69%6c%74%6f%3a%6d%65%40%64%6f%6d%61%69%6e%2e%63%6f%6d%22%3e%4d%79%20%65%6d%61%69%6c%3c%2f%61%3e%27%29%3b'))\n//]]>\n</script>",
                          mail_to("me@domain.com", "My email", encode = "javascript", replace_at = "(at)", replace_dot = "(dot)"))
-
-    def test_current_page(self):
-        self.assertEqual(True, (current_page('/test?test=webhelpers&framework=pylons')))
-        self.assertEqual(True, current_page(url('/test?test=webhelpers&framework=pylons')))
-
-    def test_current_url(self):
-        self.assertEquals(u'/test?test=webhelpers&framework=pylons', current_url())
-        self.assertEquals(True, isinstance(current_url(), str))
 
 if __name__ == '__main__':
     suite = [unittest.makeSuite(TestURLHelper)]
