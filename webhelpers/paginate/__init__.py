@@ -39,6 +39,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. """
 # Import the webhelpers to create URLs
 import webhelpers
 
+# FIXME - webhelpers.rails.* is DEPRECATED
+from webhelpers.rails.prototype import link_to_remote as get_link_to_remote
+from webhelpers.rails.tags import tag as get_tag
+from webhelpers.rails.urls import link_to as get_link_to
+from routes import url_for
+
 import logging
 import re
 
@@ -490,11 +496,11 @@ class Page(list):
             link_params.update(kwargs)
             link_params[link_var] = pagenr
             # Create the URL to load a certain page
-            link_url = webhelpers.url_for(**link_params)
+            link_url = url_for(**link_params)
             log.debug("link_url(**%r) => %r", link_params, link_url)
             # Create the URL to load the page area part of a certain page (AJAX updates)
             link_params[partial_var] = 1
-            partial_url = webhelpers.url_for(**link_params)
+            partial_url = url_for(**link_params)
             log.debug("partial_url(**%r) => %r", link_params, partial_url)
             if ajax_id:
                 # Return an AJAX link that will update the HTML element
@@ -503,20 +509,20 @@ class Page(list):
                 # 'partial_url' in the onclick URLs while using 'link_url'
                 # in the A-HREF URL.
                 if framework == 'scriptaculous':
-                    return webhelpers.link_to_remote(text, dict(update=ajax_id, url=partial_url),
+                    return get_link_to_remote(text, dict(update=ajax_id, url=partial_url),
                         href=link_url, **link_attr)
                 elif framework == 'jquery':
-                    return webhelpers.link_to(text, url=link_url,
+                    return get_link_to(text, url=link_url,
                         onclick="""$('#%s').load('%s'); return false""" % (ajax_id, partial_url),
                             **link_attr)
                 elif framework == 'yui':
                     js = """YAHOO.util.Connect.asyncRequest('GET','%s',{
                         success:function(o){YAHOO.util.Dom.get('%s').innerHTML=o.responseText;}
                         },null); return false;""" % (partial_url, ajax_id)
-                    return webhelpers.link_to(text, url=link_url, onclick=js, **link_attr)
+                    return get_link_to(text, url=link_url, onclick=js, **link_attr)
                 elif framework == 'extjs':
                     js = """Ext.get('%s').load({url:'%s'}); return false;""" % (ajax_id, partial_url)
-                    return webhelpers.link_to(text, url=link_url, onclick=js, **link_attr)
+                    return get_link_to(text, url=link_url, onclick=js, **link_attr)
                 else:
                     raise Exception, "Unsupported Javascript framework: %s" % framework
 
@@ -524,7 +530,7 @@ class Page(list):
                 # Return a normal a-href link that will call the same
                 # controller/action with the link_var set to the new
                 # page number.
-                return webhelpers.link_to(text, link_url, **link_attr)
+                return get_link_to(text, link_url, **link_attr)
 
         #------- end of def _pagerlink
 
@@ -563,7 +569,7 @@ class Page(list):
                 # Wrap in a SPAN tag if nolink_attr is set
                 text = '..'
                 if dotdot_attr:
-                    text = webhelpers.tag('span', open=True, **dotdot_attr) + text + '</span>'
+                    text = get_tag('span', open=True, **dotdot_attr) + text + '</span>'
                 nav_items.append(text)
 
             for thispage in xrange(leftmost_page, rightmost_page+1):
@@ -572,7 +578,7 @@ class Page(list):
                     text = '%s' % (thispage,)
                     # Wrap in a SPAN tag if nolink_attr is set
                     if curpage_attr:
-                        text = webhelpers.tag('span', open=True, **curpage_attr) + text + '</span>'
+                        text = get_tag('span', open=True, **curpage_attr) + text + '</span>'
                     nav_items.append(text)
                 # Otherwise create just a link to that page
                 else:
@@ -585,7 +591,7 @@ class Page(list):
                 text = '..'
                 # Wrap in a SPAN tag if nolink_attr is set
                 if dotdot_attr:
-                    text = webhelpers.tag('span', open=True, **dotdot_attr) + text + '</span>'
+                    text = get_tag('span', open=True, **dotdot_attr) + text + '</span>'
                 nav_items.append(text)
 
             # Create a link to the very last page (unless we are on the last
@@ -627,89 +633,4 @@ class Page(list):
         })
 
         return result
-
-
-# Unit tests (useing Nose 0.9.3)
-def testEmptyList():
-    """
-    Test: Tests whether an empty list is handled correctly.
-    """
-    from routes import Mapper
-
-    items = []
-    # Create routes mapper so that webhelper can create URLs
-    # using webhelpers.url_for()
-    map = Mapper()
-    map.connect(':controller')
-    page = Page(items, current_page=0)
-    assert page.current_page==0
-    assert page.first_item is None
-    assert page.last_item is None
-    assert page.first_page is None
-    assert page.last_page is None
-    assert page.previous_page is None
-    assert page.next_page is None
-    assert page.items_per_page==20
-    assert page.item_count==0
-    assert page.page_count==0
-    assert page.pager()==''
-    assert page.pager(show_if_single_page=True)==''
-
-def testOnePage():
-    """
-    Test: Tries to fit 10 items on a 10-item page
-    """
-    from routes import Mapper
-
-    items = range(10)
-    # Create routes mapper so that webhelper can create URLs
-    # using webhelpers.url_for()
-    map = Mapper()
-    map.connect(':controller')
-    page = Page(items, current_page=0, items_per_page=10)
-    assert page.current_page==1
-    assert page.first_item==0
-    assert page.last_item==9
-    assert page.first_page==1
-    assert page.last_page==1
-    assert page.previous_page is None
-    assert page.next_page is None
-    assert page.items_per_page==10
-    assert page.item_count==10
-    assert page.page_count==1
-    assert page.pager()==''
-    assert page.pager(show_if_single_page=True)=='<span class="pager_curpage">1</span>'
-
-def testManyPages():
-    """
-    Test: Tries to fit 100 items on 15-item pages
-    """
-    from routes import Mapper
-
-    items = range(100)
-    # Create routes mapper so that webhelper can create URLs
-    # using webhelpers.url_for()
-    map = Mapper()
-    map.connect(':controller')
-    page = Page(items, current_page=0, items_per_page=15)
-    assert page.current_page==1
-    assert page.first_item==0
-    assert page.last_item==14
-    assert page.first_page==1
-    assert page.last_page==7
-    assert page.previous_page is None
-    assert page.next_page==2
-    assert page.items_per_page==15
-    assert page.item_count==100
-    assert page.page_count==7
-    assert page.pager()=='<span class="pager_curpage">1</span> <a href="/content?page_nr=2" class="pager_link">2</a> <a href="/content?page_nr=3" class="pager_link">3</a> <span class="pager_dotdot">..</span> <a href="/content?page_nr=7" class="pager_link">7</a>'
-    assert page.pager(separator='_')=='<span class="pager_curpage">1</span>_<a href="/content?page_nr=2" class="pager_link">2</a>_<a href="/content?page_nr=3" class="pager_link">3</a>_<span class="pager_dotdot">..</span>_<a href="/content?page_nr=7" class="pager_link">7</a>'
-    assert page.pager(link_var='xy')=='<span class="pager_curpage">1</span> <a href="/content?xy=2" class="pager_link">2</a> <a href="/content?xy=3" class="pager_link">3</a> <span class="pager_dotdot">..</span> <a href="/content?xy=7" class="pager_link">7</a>'
-    assert page.pager(link_attr={'style':'s1'},curpage_attr={'style':'s2'},dotdot_attr={'style':'s3'})=='<span style="s2">1</span> <a href="/content?page_nr=2" style="s1">2</a> <a href="/content?page_nr=3" style="s1">3</a> <span style="s3">..</span> <a href="/content?page_nr=7" style="s1">7</a>'
-
-if __name__ == '__main__':
-    map = Mapper()
-    map.connect(':controller')
-
-# vim:tw=100:
 
