@@ -1,0 +1,369 @@
+***************************************
+paginate module documentation
+***************************************
+
+Purpose of a paginator
+======================
+
+When you display large amounts of data like a result from an SQL query then you
+cannot display all the rows at once. So you divide the data into smaller
+chunks. This is what a paginator does. It shows one page of data at a time.
+Imagine you are offering a company phonebook and let the user search the
+entries. If the search result contains 23 entries you may decide you display
+only 10 entries per page. The first page contains entries 1-10, the second
+11-20 and the third 21-23.
+
+This paginate module has mainly been written as a replacement for the
+*pagination* module that comes with *Webhelpers* - which is a direct port of
+the same functionality used in Ruby-on-Rails. That module is a bit cumbersome
+to use and the documentation was not very helpful either. So the author of this
+module decided to rewrite the module from scratch.
+
+
+Demos / Examples
+================
+
+You can browse through a number of interactive examples on the home page
+of this module: `paginate.workaround.org <http://paginate.workaround.org/>`_.
+
+
+Features
+========
+
+This module has some cool features to make things both easy for the developer
+who uses the module and the user who wants navigation to be easy:
+
+- just one class called *Page* you instantiate to get all the functionality
+- the Page object works like a list (actually it even subclasses 'list')
+  so you can iterate over it or access members of it directly
+- create a fully customizable pager for navigation easily that allows the user
+  to navigate through the pages. Example: "Page 5 of 20" or
+  "``<<  <  4  5  6  ..  7  [8]  9  >  >>``"
+- AJAX/AJAH functionality to output a new page without reloading the whole
+  HTML page (which allows very fast page switching)
+- less code to write for common cases
+- decent documentation :)
+- works with these types of data:
+
+  - lists / sets / sequences
+  - SQLAlchemy query instances
+  - SQLAlchemy select instances
+
+
+Terminology
+====================
+
+paginate
+  This module. It allows you to divide large sets into pages.
+
+Page
+  A chunk containing a maximal number of items. A *Page* is a list
+  of items on the current page.
+
+Pager
+  Piece of HTML code containing links to adjacent pages so the user
+  can navigate between pages.
+
+
+Shell example
+=============
+
+Example session in ipython::
+
+    >>> import paginate
+
+        (import the module)
+
+    >>> items = range(1000)
+
+        (create a collection of 1000 dummy entries)
+
+    >>> page = paginate.Page(items, items_per_page=10, current_page=3)
+
+        (get the 3rd page in the collection where each page has 10 items at max)
+
+    >>> page
+
+        (print information on the current page)
+
+        Page:
+        Collection type:  <type 'list'>
+        Current page:     3
+        First item:       20
+        Last item:        29
+        First page:       1
+        Last page:        100
+        Items per page:   10
+        Number of items:  1000
+        Number of pages:  100
+
+    >>> for item in page: print item
+
+        (iterate over the items of the current page)
+
+        20
+        21
+        22
+        23
+        24
+        25
+        26
+        27
+        28
+        29
+
+    >>> import routes; routes.Mapper().connect('foo')
+
+        (create a simple Routes mapper - not needed in Pylons context)
+
+    >>> page.pager('~2~')
+
+        (prints out a HTML pager looking like "1 2 3 4 5 .. 100")
+
+    >>> page.pager('Page $current_page of $last_page')
+
+        'Page 3 of 100'
+
+
+Documentation of parameters
+===========================
+
+All options are documented in detail in the source code itself. Run::
+
+    pydoc paginate
+
+
+Notes
+=====
+
+- You need to tell the paginator which page the user wants to see. So it is
+  important that you always need to pass the requested page number as the
+  current_page argument when creating a Page(). Otherwise you will always get
+  the first page.
+- Just *print* a Page object if you want to get information on the number
+  of items in the page, what the first and last page are etc.
+- If you know the number of items in your collection then you should pass
+  it as argument *item_count* to a new *Page* instance. Otherwise the paginator
+  will have to count your collection time and again thus wasting time.
+- Never run a "select all" query on a database and pass that to the
+  paginator. Just give it a query or a select object. The paginator's
+  ORM module is smart enough to just pull the rows from the database
+  that are needed to display the current page using LIMIT and OFFSET
+  in the SQL query. Otherwise you would load the whole result table
+  into memory which is wasteful and slow.
+
+
+Example in a Pylons controller
+==============================
+
+Basic example:
+--------------
+
+For a quick example of how the pagination works just create a new action in any
+Pylons controller::
+
+    class DemoController(BaseController):
+        def test(self):
+            page_nr = request.params.get('page_nr', 1)
+            items = range(1,1001)
+            c.page = paginate.Page(items, page_nr=page_nr)
+            return render('pagetest.mako')
+
+The templates/pagetest.mako template (Mako is used here) should look like
+this::
+    
+    <ul>
+    % for item in c.page:
+    <li>${ item }</li>
+    % endfor
+    </ul>
+    ${ c.page.navigator() }
+
+Run the Pylons application and point your browser to
+http://localhost:5000/test/paginator and you will be presented
+the first page of the 10.000 test items and a navigator below
+it that allows you to select adjacent pages. It should look like
+this::
+
+    * 1
+    * 2
+    * 3
+    * 4
+    * 5
+    * 6
+    * 7
+    * 8
+    * 9
+    * 10
+    * 11
+    * 12
+    * 13
+    * 14
+    * 15
+    * 16
+    * 17
+    * 18
+    * 19
+    * 20
+
+    [1] 2 3 4 .. 500 
+
+AJAX example:
+--------------
+
+The paginator also allows you to use AJAX - or rather AJAH (asynchronous
+Javascript and HTML) - to update only the part of your web page that
+contains the paging area. This usually speeds up switching between
+pages a lot. The paginate module supports these Javascript libraries:
+
+ - jQuery
+ - scriptaculous
+ - YUI (Yahoo user interface)
+ - ExtJS
+
+Create the main template containing a <DIV> with a certain ID. It will include
+the actual paged area from another template. And make sure that your template
+loads the Javascript library you need. (In the following example the
+``builtins=True`` parameter will load the scriptaculous library that is
+contained in the Pylons package.)
+
+templates/pagetest.mako::
+
+    <html>
+        <head>
+            ${ h.javascript_include_tag(builtins=True) }
+        </head>
+        <body>
+            <div id="pagearea">
+                <%include file="ajax.mako"/>
+            </div>
+        </body>
+    </html>
+
+Create another template that will just print out the paginated area only. This
+template contains just the part of the HTML page that is later replaced by the
+new page when the user loads another page by clicking on its number in the
+pager.
+
+templates/ajax.mako::
+
+    <ul>
+    % for item in c.page:
+    <li>${ item }</li>
+    % endfor
+    </ul>
+    ${ c.page.pager('~10~', ajax_id="pagearea", framework="scriptaculous") }
+
+You see that the pager() is called with these parameters:
+
+- *ajax_id* contains the ID of the HTML element that is updated by
+  AJAX calls
+- *framework* is one of 'scriptaculous', 'jquery', 'yui' or 'extjs' and will
+  use Javascript code to AJAX-load the requested page that works for each
+  Javascript library
+
+If the parameter *ajax_id* is used then an additional parameter called
+*partial=1* is automatically added to the Javascript load links. So in your web
+application you need to send the complete HTML page if *partial* is not set. Of
+if *partial* is set then you need to send only the partial HTML fragment back
+that contains your paginated area. This helps to *degrade gracefully* if the
+user's browser does not support Javascript. The browser will then ignore the
+Javascript code and just link to your web appliation without partial being set.
+
+The controller will then look like this:
+
+controllers/test.py::
+
+    class DemoController(BaseController):
+        def test(self):
+            items = range(1,1001)
+            page_nr = request.params.get('page_nr', 1)
+            c.page = paginate.Page(items, current_page=page_nr)
+            if 'partial' in request.params:
+                # Only return the page fragment
+                return render('/scriptaculous-include.mako')
+            else:
+                # Return the complete HTML page
+                return render('/scriptaculous.mako')
+
+
+Can I use this module standalone?
+=================================
+
+You should be able to use this module with any application. It was mainly
+written to support web appliations written in the Pylons_ web framework
+and may be most useful with it. With other or no frameworks you may need
+to add::
+
+    import routes
+    map = Mapper()
+    map.connect(':controller')
+
+so set up some basic mapping so the module knows how to create URL links.
+
+.. _Pylons: http://pylonshq.com/
+
+
+Logging
+=======
+
+This module uses a logger called *paginate* and sends debug messages to it
+when URL links are created. If you want to show these messages in a Pylons_
+application you can use this example logging configuration in your ini file::
+
+    [loggers]
+    keys = root, myapp, paginate
+
+    [logger_paginate]
+    level = DEBUG
+    handlers =
+    qualname = paginate
+
+
+Changelogs
+==========
+
+0.3.2 -> 0.3.3
+--------------
+
+- New properties of the Page class:
+
+  - self.previous_page points to page number of the previous page
+    (or None if this is already the first page)
+  - self.next_page points to page number of the next page
+    (or None if this is already the last page)
+
+- navigator() method removed (had been deprecated in 0.3.2)
+
+0.3.1 -> 0.3.2
+--------------
+
+- SQLAlchemy tables can not be paged through directly. Instead it
+  supports 'select' objects. So you can page through pages or any custom
+  select query. The sqlalchemy_engine parameter is also gone.
+  Instead for select objects the SQLAlchemy session is needed through
+  the parameter sqlalchemy_session.
+
+0.3.0 -> 0.3.1
+--------------
+
+- The navigator() still exists but is deprecated. Please see the
+  new pager() method. It can be used to do the same that you are
+  used to with the navigator(). Example: pager('~2~') gives you
+  a pager with radius 2.
+- With pager() the page numbers always start at 1 instead of 0 now.
+  This is more logical for humans. The start_with_one parameter is
+  consequently no longer available.
+- AJAX/Javascript support added for the YUI (Yahoo UI) Javascript library now
+  in addition to Scriptaculous and jQuery thanks to additions from James
+  Gardner.
+- A Page instance now has a property *original_collection* that
+  points to the collection it got passed when it was created.
+
+
+Feedback
+=====================
+
+If you have suggestions, spotted bugs, have feature requests or just want
+to tell that the paginator works please email me at email@christoph-haas.de
+
