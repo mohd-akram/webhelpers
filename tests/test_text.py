@@ -2,25 +2,31 @@
 from util import WebHelpersTestCase
 import unittest
 from string24 import Template
-from webhelpers.html import literal
-from webhelpers.text import *
+
+from webhelpers.rails.text import *
 
 class TestTextHelper(WebHelpersTestCase):
     
+    def test_simple_format(self):
+        self.assertEqual("<p></p>", simple_format(None))
+        self.assertEqual("<p>crazy\n<br /> cross\n<br /> platform linebreaks</p>", simple_format("crazy\r\n cross\r platform linebreaks"))
+        self.assertEqual("<p>A paragraph</p>\n\n<p>and another one!</p>", simple_format("A paragraph\n\nand another one!"))
+        self.assertEqual("<p>A paragraph\n<br /> With a newline</p>", simple_format("A paragraph\n With a newline"))
+
     def test_auto_link_parsing(self):
         urls = [
-            literal('http://www.pylonshq.com'),
-            literal('http://www.pylonshq.com:80'),
-            literal('http://www.pylonshq.com/~minam'),
-            literal('https://www.pylonshq.com/~minam'),
-            literal('http://www.pylonshq.com/~minam/url%20with%20spaces'),
-            literal('http://www.pylonshq.com/foo.cgi?something=here'),
-            literal('http://www.pylonshq.com/foo.cgi?something=here&and=here'),
-            literal('http://www.pylonshq.com/contact;new'),
-            literal('http://www.pylonshq.com/contact;new%20with%20spaces'),
-            literal('http://www.pylonshq.com/contact;new?with=query&string=params'),
-            literal('http://www.pylonshq.com/~minam/contact;new?with=query&string=params'),
-            literal('http://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_picture_%28animation%29/January_20%2C_2007')
+            'http://www.rubyonrails.com',
+            'http://www.rubyonrails.com:80',
+            'http://www.rubyonrails.com/~minam',
+            'https://www.rubyonrails.com/~minam',
+            'http://www.rubyonrails.com/~minam/url%20with%20spaces',
+            'http://www.rubyonrails.com/foo.cgi?something=here',
+            'http://www.rubyonrails.com/foo.cgi?something=here&and=here',
+            'http://www.rubyonrails.com/contact;new',
+            'http://www.rubyonrails.com/contact;new%20with%20spaces',
+            'http://www.rubyonrails.com/contact;new?with=query&string=params',
+            'http://www.rubyonrails.com/~minam/contact;new?with=query&string=params',
+            'http://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_picture_%28animation%29/January_20%2C_2007'
             ]
         for url in urls:
             self.assertEqual('<a href="%s">%s</a>' % (url, url),
@@ -28,16 +34,16 @@ class TestTextHelper(WebHelpersTestCase):
 
     def test_auto_linking(self):
         raw_values = {
-            'email_raw': literal('david@loudthinking.com'),
-            'link_raw': literal('http://www.pylonshq.com'),
-            'link2_raw': literal('www.pylonshq.com'),
-            'link3_raw': literal('http://manuals.we-love-the-moon.com/read/chapter.need_a-period/103#page281'),
-            'link4_raw': literal('http://foo.example.com/controller/action?parm=value&p2=v2#anchor123'),
-            'link5_raw': literal('http://foo.example.com:3000/controller/action'),
-            'link6_raw': literal('http://foo.example.com:3000/controller/action+pack'),
-            'link7_raw': literal('http://foo.example.com/controller/action?parm=value&p2=v2#anchor-123'),
-            'link8_raw': literal('http://foo.example.com:3000/controller/action.html'),
-            'link9_raw': literal('http://business.timesonline.co.uk/article/0,,9065-2473189,00.html')
+            'email_raw': 'david@loudthinking.com',
+            'link_raw': 'http://www.rubyonrails.com',
+            'link2_raw': 'www.rubyonrails.com',
+            'link3_raw': 'http://manuals.ruby-on-rails.com/read/chapter.need_a-period/103#page281',
+            'link4_raw': 'http://foo.example.com/controller/action?parm=value&p2=v2#anchor123',
+            'link5_raw': 'http://foo.example.com:3000/controller/action',
+            'link6_raw': 'http://foo.example.com:3000/controller/action+pack',
+            'link7_raw': 'http://foo.example.com/controller/action?parm=value&p2=v2#anchor-123',
+            'link8_raw': 'http://foo.example.com:3000/controller/action.html',
+            'link9_raw': 'http://business.timesonline.co.uk/article/0,,9065-2473189,00.html'
             }
 
         result_values_templates = {
@@ -58,46 +64,114 @@ class TestTextHelper(WebHelpersTestCase):
         for k, v in result_values_templates.iteritems():
             result_values[k] = Template(v).substitute(raw_values)
 
-        self.assertEqual(u"hello %(email_result)s" % result_values, auto_link("hello %(email_raw)s" % raw_values, 'email_addresses'))
-        self.assertEqual(u"Go to %(link_result)s" % result_values, auto_link("Go to %(link_raw)s" % raw_values, 'urls'))
-        self.assertEqual(u"Go to %(link_raw)s" % raw_values, auto_link("Go to %(link_raw)s" % raw_values, 'email_addresses'))
-        self.assertEqual(u"Go to %(link_result)s and say hello to %(email_result)s" % result_values, auto_link("Go to %(link_raw)s and say hello to %(email_raw)s" % raw_values))
-        self.assertEqual(u"<p>Link %(link_result)s</p>" % result_values, auto_link("<p>Link %(link_raw)s</p>" % raw_values))
-        self.assertEqual(u"<p>%(link_result)s Link</p>" % result_values, auto_link("<p>%(link_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"<p>Link %(link_result_with_options)s</p>" % result_values, auto_link("<p>Link %(link_raw)s</p>" % raw_values, 'all', target='_blank'))
-        self.assertEqual(u"Go to %(link_result)s." % result_values, auto_link("Go to %(link_raw)s." % raw_values))
-        self.assertEqual(u"<p>Go to %(link_result)s, then say hello to %(email_result)s.</p>" % result_values, auto_link("<p>Go to %(link_raw)s, then say hello to %(email_raw)s.</p>" % raw_values))
-        self.assertEqual(u"Go to %(link2_result)s" % result_values, auto_link("Go to %(link2_raw)s" % raw_values, 'urls'))
-        self.assertEqual(u"Go to %(link2_raw)s" % raw_values, auto_link("Go to %(link2_raw)s" % raw_values, 'email_addresses'))
-        self.assertEqual(u"<p>Link %(link2_result)s</p>" % result_values, auto_link("<p>Link %(link2_raw)s</p>" % raw_values))
-        self.assertEqual(u"<p>%(link2_result)s Link</p>" % result_values, auto_link("<p>%(link2_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"Go to %(link2_result)s." % result_values, auto_link("Go to %(link2_raw)s." % raw_values))
-        self.assertEqual(u"<p>Say hello to %(email_result)s, then go to %(link2_result)s.</p>" % result_values, auto_link("<p>Say hello to %(email_raw)s, then go to %(link2_raw)s.</p>" % raw_values))
-        self.assertEqual(u"Go to %(link3_result)s" % result_values, auto_link("Go to %(link3_raw)s" % raw_values, 'urls'))
-        self.assertEqual(u"Go to %(link3_raw)s" % raw_values, auto_link("Go to %(link3_raw)s" % raw_values, 'email_addresses'))
-        self.assertEqual(u"<p>Link %(link3_result)s</p>" % result_values, auto_link("<p>Link %(link3_raw)s</p>" % raw_values))
-        self.assertEqual(u"<p>%(link3_result)s Link</p>" % result_values, auto_link("<p>%(link3_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"Go to %(link3_result)s." % result_values, auto_link("Go to %(link3_raw)s." % raw_values))
-        self.assertEqual(u"<p>Go to %(link3_result)s. seriously, %(link3_result)s? i think I'll say hello to %(email_result)s. instead.</p>" % result_values, auto_link("<p>Go to %(link3_raw)s. seriously, %(link3_raw)s? i think I'll say hello to %(email_raw)s. instead.</p>" % raw_values))
-        self.assertEqual(u"<p>Link %(link4_result)s</p>" % result_values, auto_link("<p>Link %(link4_raw)s</p>" % raw_values))
-        self.assertEqual(u"<p>%(link4_result)s Link</p>" % result_values, auto_link("<p>%(link4_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"<p>%(link5_result)s Link</p>" % result_values, auto_link("<p>%(link5_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"<p>%(link6_result)s Link</p>" % result_values, auto_link("<p>%(link6_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"<p>%(link7_result)s Link</p>" % result_values, auto_link("<p>%(link7_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"Go to %(link8_result)s" % result_values, auto_link("Go to %(link8_raw)s" % raw_values, 'urls'))
-        self.assertEqual(u"Go to %(link8_raw)s" % raw_values, auto_link("Go to %(link8_raw)s" % raw_values, 'email_addresses'))
-        self.assertEqual(u"<p>Link %(link8_result)s</p>" % result_values, auto_link("<p>Link %(link8_raw)s</p>" % raw_values))
-        self.assertEqual(u"<p>%(link8_result)s Link</p>" % result_values, auto_link("<p>%(link8_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"Go to %(link8_result)s." % result_values, auto_link("Go to %(link8_raw)s." % raw_values))
-        self.assertEqual(u"<p>Go to %(link8_result)s. seriously, %(link8_result)s? i think I'll say hello to %(email_result)s. instead.</p>" % result_values, auto_link("<p>Go to %(link8_raw)s. seriously, %(link8_raw)s? i think I'll say hello to %(email_raw)s. instead.</p>" % raw_values))
-        self.assertEqual(u"Go to %(link9_result)s" % result_values, auto_link("Go to %(link9_raw)s" % raw_values, 'urls'))
-        self.assertEqual(u"Go to %(link9_raw)s" % raw_values, auto_link("Go to %(link9_raw)s" % raw_values, 'email_addresses'))
-        self.assertEqual(u"<p>Link %(link9_result)s</p>" % result_values, auto_link("<p>Link %(link9_raw)s</p>" % raw_values))
-        self.assertEqual(u"<p>%(link9_result)s Link</p>" % result_values, auto_link("<p>%(link9_raw)s Link</p>" % raw_values))
-        self.assertEqual(u"Go to %(link9_result)s." % result_values, auto_link("Go to %(link9_raw)s." % raw_values))
-        self.assertEqual(u"<p>Go to %(link9_result)s. seriously, %(link9_result)s? i think I'll say hello to %(email_result)s. instead.</p>" % result_values, auto_link("<p>Go to %(link9_raw)s. seriously, %(link9_raw)s? i think I'll say hello to %(email_raw)s. instead.</p>" % raw_values))
-        self.assertEqual(u"", auto_link(None))
-        self.assertEqual(u"", auto_link(""))
+        self.assertEqual("hello %(email_result)s" % result_values, auto_link("hello %(email_raw)s" % raw_values, 'email_addresses'))
+        self.assertEqual("Go to %(link_result)s" % result_values, auto_link("Go to %(link_raw)s" % raw_values, 'urls'))
+        self.assertEqual("Go to %(link_raw)s" % raw_values, auto_link("Go to %(link_raw)s" % raw_values, 'email_addresses'))
+        self.assertEqual("Go to %(link_result)s and say hello to %(email_result)s" % result_values, auto_link("Go to %(link_raw)s and say hello to %(email_raw)s" % raw_values))
+        self.assertEqual("<p>Link %(link_result)s</p>" % result_values, auto_link("<p>Link %(link_raw)s</p>" % raw_values))
+        self.assertEqual("<p>%(link_result)s Link</p>" % result_values, auto_link("<p>%(link_raw)s Link</p>" % raw_values))
+        self.assertEqual("<p>Link %(link_result_with_options)s</p>" % result_values, auto_link("<p>Link %(link_raw)s</p>" % raw_values, 'all', target='_blank'))
+        self.assertEqual("Go to %(link_result)s." % result_values, auto_link("Go to %(link_raw)s." % raw_values))
+        self.assertEqual("<p>Go to %(link_result)s, then say hello to %(email_result)s.</p>" % result_values, auto_link("<p>Go to %(link_raw)s, then say hello to %(email_raw)s.</p>" % raw_values))
+        self.assertEqual("Go to %(link2_result)s" % result_values, auto_link("Go to %(link2_raw)s" % raw_values, 'urls'))
+        self.assertEqual("Go to %(link2_raw)s" % raw_values, auto_link("Go to %(link2_raw)s" % raw_values, 'email_addresses'))
+        self.assertEqual("<p>Link %(link2_result)s</p>" % result_values, auto_link("<p>Link %(link2_raw)s</p>" % raw_values))
+        self.assertEqual("<p>%(link2_result)s Link</p>" % result_values, auto_link("<p>%(link2_raw)s Link</p>" % raw_values))
+        self.assertEqual("Go to %(link2_result)s." % result_values, auto_link("Go to %(link2_raw)s." % raw_values))
+        self.assertEqual("<p>Say hello to %(email_result)s, then go to %(link2_result)s.</p>" % result_values, auto_link("<p>Say hello to %(email_raw)s, then go to %(link2_raw)s.</p>" % raw_values))
+        self.assertEqual("Go to %(link3_result)s" % result_values, auto_link("Go to %(link3_raw)s" % raw_values, 'urls'))
+        self.assertEqual("Go to %(link3_raw)s" % raw_values, auto_link("Go to %(link3_raw)s" % raw_values, 'email_addresses'))
+        self.assertEqual("<p>Link %(link3_result)s</p>" % result_values, auto_link("<p>Link %(link3_raw)s</p>" % raw_values))
+        self.assertEqual("<p>%(link3_result)s Link</p>" % result_values, auto_link("<p>%(link3_raw)s Link</p>" % raw_values))
+        self.assertEqual("Go to %(link3_result)s." % result_values, auto_link("Go to %(link3_raw)s." % raw_values))
+        self.assertEqual("<p>Go to %(link3_result)s. seriously, %(link3_result)s? i think I'll say hello to %(email_result)s. instead.</p>" % result_values, auto_link("<p>Go to %(link3_raw)s. seriously, %(link3_raw)s? i think I'll say hello to %(email_raw)s. instead.</p>" % raw_values))
+        self.assertEqual("<p>Link %(link4_result)s</p>" % result_values, auto_link("<p>Link %(link4_raw)s</p>" % raw_values))
+        self.assertEqual("<p>%(link4_result)s Link</p>" % result_values, auto_link("<p>%(link4_raw)s Link</p>" % raw_values))
+        self.assertEqual("<p>%(link5_result)s Link</p>" % result_values, auto_link("<p>%(link5_raw)s Link</p>" % raw_values))
+        self.assertEqual("<p>%(link6_result)s Link</p>" % result_values, auto_link("<p>%(link6_raw)s Link</p>" % raw_values))
+        self.assertEqual("<p>%(link7_result)s Link</p>" % result_values, auto_link("<p>%(link7_raw)s Link</p>" % raw_values))
+        self.assertEqual("Go to %(link8_result)s" % result_values, auto_link("Go to %(link8_raw)s" % raw_values, 'urls'))
+        self.assertEqual("Go to %(link8_raw)s" % raw_values, auto_link("Go to %(link8_raw)s" % raw_values, 'email_addresses'))
+        self.assertEqual("<p>Link %(link8_result)s</p>" % result_values, auto_link("<p>Link %(link8_raw)s</p>" % raw_values))
+        self.assertEqual("<p>%(link8_result)s Link</p>" % result_values, auto_link("<p>%(link8_raw)s Link</p>" % raw_values))
+        self.assertEqual("Go to %(link8_result)s." % result_values, auto_link("Go to %(link8_raw)s." % raw_values))
+        self.assertEqual("<p>Go to %(link8_result)s. seriously, %(link8_result)s? i think I'll say hello to %(email_result)s. instead.</p>" % result_values, auto_link("<p>Go to %(link8_raw)s. seriously, %(link8_raw)s? i think I'll say hello to %(email_raw)s. instead.</p>" % raw_values))
+        self.assertEqual("Go to %(link9_result)s" % result_values, auto_link("Go to %(link9_raw)s" % raw_values, 'urls'))
+        self.assertEqual("Go to %(link9_raw)s" % raw_values, auto_link("Go to %(link9_raw)s" % raw_values, 'email_addresses'))
+        self.assertEqual("<p>Link %(link9_result)s</p>" % result_values, auto_link("<p>Link %(link9_raw)s</p>" % raw_values))
+        self.assertEqual("<p>%(link9_result)s Link</p>" % result_values, auto_link("<p>%(link9_raw)s Link</p>" % raw_values))
+        self.assertEqual("Go to %(link9_result)s." % result_values, auto_link("Go to %(link9_raw)s." % raw_values))
+        self.assertEqual("<p>Go to %(link9_result)s. seriously, %(link9_result)s? i think I'll say hello to %(email_result)s. instead.</p>" % result_values, auto_link("<p>Go to %(link9_raw)s. seriously, %(link9_raw)s? i think I'll say hello to %(email_raw)s. instead.</p>" % raw_values))
+        self.assertEqual("", auto_link(None))
+        self.assertEqual("", auto_link(""))
+
+    def test_cycle(self):
+        self.assertEqual("one", cycle("one", "2", "3"))
+        self.assertEqual("2", cycle("one", "2", "3"))
+        self.assertEqual("3", cycle("one", "2", "3"))
+        self.assertEqual("one", cycle("one", "2", "3"))
+        self.assertEqual("2", cycle("one", "2", "3"))
+        self.assertEqual("3", cycle("one", "2", "3"))
+
+        self.assertEqual("3", cycle("3", "2", "one", name='ordered'))
+        self.assertEqual("2", cycle("3", "2", "one", name='ordered'))
+        self.assertEqual("one", cycle("3", "2", "one", name='ordered'))
+        self.assertEqual("2", cycle("2", "3", "one", name='ordered'))
+        self.assertEqual("3", cycle("2", "3", "one", name='ordered'))
+        self.assertEqual("one", cycle("2", "3", "one", name='ordered'))
+
+    def test_named_cycles(self):
+        self.assertEqual(1, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("red", cycle("red", "blue", name="colors"))
+        self.assertEqual(2, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("blue", cycle("red", "blue", name="colors"))
+        self.assertEqual(3, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("red", cycle("red", "blue", name="colors"))
+  
+    def test_default_named_cycle(self):
+        self.assertEqual(1, cycle(1, 2, 3))
+        self.assertEqual(2, cycle(1, 2, 3, name="default"))
+        self.assertEqual(3, cycle(1, 2, 3))
+
+    def test_reset_cycle(self):
+        self.assertEqual(1, cycle(1, 2, 3))
+        self.assertEqual(2, cycle(1, 2, 3))
+        reset_cycle()
+        self.assertEqual(1, cycle(1, 2, 3))
+
+    def test_reset_unknown_cycle(self):
+        reset_cycle("colors")
+  
+    def test_recet_named_cycle(self):
+        self.assertEqual(1, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("red", cycle("red", "blue", name="colors"))
+        reset_cycle("numbers")
+        self.assertEqual(1, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("blue", cycle("red", "blue", name="colors"))
+        self.assertEqual(2, cycle(1, 2, 3, name="numbers"))
+        self.assertEqual("red", cycle("red", "blue", name="colors"))
+
+
+    def test_counters(self):
+        for i in range(1, 4):
+            self.assertEqual(i, counter())
+        reset_counter()
+        for i in range(3):
+            self.assertEqual(i, counter(start=0))
+        reset_counter()
+        for i in range(2, 5):
+            self.assertEqual(i, counter(start=2))
+        reset_counter()
+        for i in range(1, -2, -1):
+            self.assertEqual(i, counter(step=-1))
+
+    def test_named_counters(self):
+        for i in range(1, 4):
+            self.assertEqual(i, counter(name="a"))
+        for i in range(1, 4):
+            self.assertEqual(i, counter(name="b"))
+        for i in range(4, 7):
+            self.assertEqual(i, counter(name="a"))
 
     def test_excerpt(self):
         self.assertEqual("...lo my wo...",
