@@ -9,15 +9,15 @@ class TestAssetTagHelper(WebHelpersTestCase):
         self.assertEqual('<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />',
                          auto_discovery_link('http://feed.com/feed.xml'))
         self.assertEqual('<link href="http://feed.com/feed.xml" rel="alternate" title="ATOM" type="application/atom+xml" />',
-                         auto_discovery_link('http://feed.com/feed.xml', type='atom'))
+                         auto_discovery_link('http://feed.com/feed.xml', feed_type='atom'))
         self.assertEqual('<link href="app.rss" rel="alternate" title="atom feed" type="application/atom+xml" />',
-                         auto_discovery_link('app.rss', type='atom', title='atom feed'))
+                         auto_discovery_link('app.rss', feed_type='atom', title='atom feed'))
         self.assertEqual('<link href="app.rss" rel="alternate" title="My RSS" type="application/rss+xml" />',
                          auto_discovery_link('app.rss', title='My RSS'))
         self.assertEqual('<link href="/app.rss" rel="alternate" title="" type="text/html" />',
-                         auto_discovery_link('/app.rss', type='text/html'))
+                         auto_discovery_link('/app.rss', feed_type='text/html'))
         self.assertEqual('<link href="/app.html" rel="alternate" title="My RSS" type="text/html" />',
-                         auto_discovery_link('/app.html', title='My RSS', type='text/html'))
+                         auto_discovery_link('/app.html', title='My RSS', feed_type='text/html'))
         
     def test_image(self):
         self.assertEqual('<img alt="Xml" src="/images/xml.png" />',

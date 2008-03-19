@@ -6,9 +6,7 @@ assets, such as images, javascripts, stylesheets, and feeds.
 
 """
 import os
-import re
 import urlparse
-import warnings
 from html import HTML
 from routes import request_config
 
@@ -16,7 +14,7 @@ from routes import request_config
 javascript_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                'javascripts')
 
-def auto_discovery_link(source, type='rss', **kwargs):
+def auto_discovery_link(source, feed_type='rss', **kwargs):
     """
     Return a link tag allowing auto-detecting of RSS or ATOM feed.
     
@@ -29,7 +27,7 @@ def auto_discovery_link(source, type='rss', **kwargs):
         application), unless the URL is fully-fledged 
         (e.g. http://example.com).
 
-    ``type``
+    ``feed_type``
         The type of feed. Specifying 'rss' or 'atom' automatically 
         translates to a type of 'application/rss+xml' or 
         'application/atom+xml', respectively. Otherwise the type is used 
@@ -40,22 +38,22 @@ def auto_discovery_link(source, type='rss', **kwargs):
         >>> auto_discovery_link('http://feed.com/feed.xml')
         literal(u'<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />')
 
-        >>> auto_discovery_link('http://feed.com/feed.xml', type='atom')
+        >>> auto_discovery_link('http://feed.com/feed.xml', feed_type='atom')
         literal(u'<link href="http://feed.com/feed.xml" rel="alternate" title="ATOM" type="application/atom+xml" />')
 
-        >>> auto_discovery_link('app.rss', type='atom', title='atom feed')
+        >>> auto_discovery_link('app.rss', feed_type='atom', title='atom feed')
         literal(u'<link href="app.rss" rel="alternate" title="atom feed" type="application/atom+xml" />')
 
-        >>> auto_discovery_link('/app.html', type='text/html')
+        >>> auto_discovery_link('/app.html', feed_type='text/html')
         literal(u'<link href="/app.html" rel="alternate" title="" type="text/html" />')
         
     """
     title = ''
-    if type.lower() in ('rss', 'atom'):
-        title = type.upper()
-        type = 'application/%s+xml' % type.lower()
+    if feed_type.lower() in ('rss', 'atom'):
+        title = feed_type.upper()
+        feed_type = 'application/%s+xml' % feed_type.lower()
 
-    tag_args = dict(rel='alternate', type=type, title=title,
+    tag_args = dict(rel='alternate', type=feed_type, title=title,
                     href=compute_public_path(source))
     kwargs.pop('href', None)
     kwargs.pop('type', None)
@@ -137,7 +135,7 @@ def javascript_link(*sources, **options):
     tags = []
     for source in sources:
         content_options = dict(type='text/javascript',
-                               src=compute_public_path(source, 'javascripts', 'js'))
+                src=compute_public_path(source, 'javascripts', 'js'))
         content_options.update(options)
         tags.append(HTML.script('',  **content_options))
     return '\n'.join(tags)
@@ -164,7 +162,9 @@ def stylesheet_link(*sources, **options):
     tag_options.update(options)
     tag_options.pop('href', None)
 
-    tags = [HTML.link(**dict(href=compute_public_path(source, 'stylesheets', 'css'),
+    tags = [HTML.link(**dict(href=compute_public_path(source, 
+                                                      'stylesheets', 
+                                                      'css'),
                                **tag_options)) for source in sources]
     return '\n'.join(tags)
     
