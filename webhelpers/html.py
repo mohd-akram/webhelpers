@@ -214,6 +214,8 @@ for k in dir(literal):
         def wrapper(func):
             def entangle(*args, **kwargs):
                 return literal(func(*args, **kwargs))
+            entangle.__name__ = func.__name__
+            entangle.__doc__ = func.__doc__
             return entangle
         fun = getattr(unicode, k)
         setattr(literal, k, wrapper(fun))
