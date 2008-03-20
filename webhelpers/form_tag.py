@@ -3,7 +3,7 @@ Form Tag Helpers
 """
 
 import re
-from html import HTML, escape
+from html import HTML, url_escape, escape
 from urls import confirm_javascript_function
 
 def form(url, method="POST", multipart=False, **options):
@@ -153,7 +153,7 @@ def radiobutton(name, value, checked=False, **options):
     """
     pretty_tag_value = re.sub(r'\s', "_", '%s' % value)
     pretty_tag_value = re.sub(r'(?!-)\W', "", pretty_tag_value).lower()
-    html_options = {'type': 'radio', 'name': name, 'id': '%s_%s' % (name, pretty_tag_value), 'value': escape(value)}
+    html_options = {'type': 'radio', 'name': name, 'id': '%s_%s' % (name, pretty_tag_value), 'value': value}
     html_options.update(options)
     if checked:
         html_options["checked"] = "checked"
