@@ -2,7 +2,9 @@
 Form Tag Helpers
 """
 
-from html import HTML, escape, lit_sub
+import re
+from html import HTML, escape
+from urls import confirm_javascript_function
 
 def form(url, method="POST", multipart=False, **options):
     """
@@ -76,7 +78,7 @@ def hidden(name, value=None, **options):
     Takes the same options as text_field.
     
     """
-    options.update(dict(type="hidden", name=name, value=value))
+    options.update(dict(type="hidden", id=options.get('id', name), name=name, value=value))
     return HTML.input(**options)
 
 def file(name, value=None, **options):
@@ -126,7 +128,7 @@ def textarea(name, content='', **options):
     o.update(options)
     return HTML.textarea(content, **o)
 
-def checkbox(name, value="1", checked=False, **options):
+def checkbox(name, value="1", checked=False, disabled=False, readonly=False, **options):
     """
     Create a check box.
 
@@ -135,10 +137,11 @@ def checkbox(name, value="1", checked=False, **options):
         >>> checkbox("hi")
         literal(u'<input id="hi" name="hi" type="checkbox" value="1" />')
     """
-    o = {'type': 'checkbox', 'name_': name, 'id': name, 'value': value}
+    o = {'type': 'checkbox', 'name': name, 'id': name, 'value': value}
     o.update(options)
-    if checked:
-        o["checked"] = "checked"
+    for option in ("checked", "disabled", "readonly"):
+        if locals().get(option):
+            o[option] = option
     return HTML.input(**o)
 
 def radiobutton(name, value, checked=False, **options):
@@ -150,7 +153,7 @@ def radiobutton(name, value, checked=False, **options):
     """
     pretty_tag_value = re.sub(r'\s', "_", '%s' % value)
     pretty_tag_value = re.sub(r'(?!-)\W', "", pretty_tag_value).lower()
-    html_options = {'type': 'radio', 'name': name, 'id': '%s_%s' % (name, pretty_tag_value), 'value': value}
+    html_options = {'type': 'radio', 'name': name, 'id': '%s_%s' % (name, pretty_tag_value), 'value': escape(value)}
     html_options.update(options)
     if checked:
         html_options["checked"] = "checked"
@@ -178,5 +181,5 @@ def submit(value="Save changes", name='commit', confirm=None, disable_with=None,
     o.update(options)
     return HTML.input(**o)
 
-__all__ = ['form', 'end_form', 'select', 'text', 'hidden', 'file',
+__all__ = ['form', 'end_form', 'text', 'textarea', 'hidden', 'file',
            'password', 'text', 'checkbox', 'radiobutton', 'submit']
