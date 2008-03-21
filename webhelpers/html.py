@@ -116,28 +116,25 @@ def make_tag(tag, *args, **kw):
         assert not args, "The special 'c' keyword argument cannot be used "\
 "in conjunction with non-keyword arguments"
         args = kw.pop("c")
+    closed = kw.pop("_closed", True)
     htmlArgs = [' %s="%s"' % (attrEncode(attr), escape(value))
                 for attr, value in sorted(kw.iteritems())
                 if value is not None]
-    if not args and emptyTags.has_key(tag):
+    if not args and emptyTags.has_key(tag) and closed:
         substr = '<%s%s />'
         if blockTags.has_key(tag):
             return literal(substr % (tag, "".join(htmlArgs)))
         else:
             return literal(substr % (tag, "".join(htmlArgs)))
     else:
-        if blockTags.has_key(tag):
-            return literal("<%s%s>%s</%s>" % (
-                tag,
-                "".join(htmlArgs),
-                "".join([escape(x) for x in args]),
-                tag))
-        else:
-            return literal("<%s%s>%s</%s>" % (
-                tag,
-                "".join(htmlArgs),
-                "".join([escape(x) for x in args]),
-                tag))
+        close_tag = ""
+        if closed:
+            close_tag = "</%s>" %(tag)
+        return literal("<%s%s>%s%s" % (
+            tag,
+            "".join(htmlArgs),
+            "".join(escape(x) for x in args),
+            close_tag))
 
 
 class literal(unicode):
