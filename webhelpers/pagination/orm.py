@@ -1,4 +1,5 @@
-"""ORM Wrappers"""
+"""ORM Wrappers - Deprecated: Use paginate (not pagination)."""
+
 import inspect
 from webhelpers.util import Partial
 

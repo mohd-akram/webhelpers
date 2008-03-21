@@ -2,6 +2,7 @@ from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.urls import *
+from webhelpers.html import HTML
 from routes import *
 
 class TestURLHelper(WebHelpersTestCase):
