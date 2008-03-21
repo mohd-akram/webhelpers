@@ -1,12 +1,12 @@
-"""
-Form and Form Options Helpers
-"""
+"""Form and Form Options Helpers"""
 
-import html
+from webhelpers.html import HTML
+
+__all__ = ['options_for_select']
+
 
 def options_for_select(container, selected=None, function=None):
-    """
-    Create select options from a container (list, tuple, dict), or
+    """Create select options from a container (list, tuple, dict), or
     objects/dicts in a container.
     
     Accepts a container (list, tuple, dict) and returns a string of 
@@ -20,8 +20,8 @@ def options_for_select(container, selected=None, function=None):
     
     If the container has dicts or objects, it will use the ``function``
     which must be specified and applies this function to each object or
-    dictionary in the container.  This function should return a tuple of
-    the option text and value of the dict or object.
+    dictionary in the container.  This function should return a tuple
+    of the option text and value of the dict or object.
     
     Examples (call, result)::
     
@@ -76,10 +76,8 @@ def options_for_select(container, selected=None, function=None):
         
     for x in container:
         if (x[1] in selected):
-            options.append(str(html.HTML.option(x[0], value=x[1], selected="selected")))
+            options.append(str(HTML.option(x[0], value=x[1], selected="selected")))
         else:
-            options.append(str(html.HTML.option(x[0], value=x[1])))
+            options.append(str(HTML.option(x[0], value=x[1])))
             
     return "\n".join(options)
-    
-__all__ = ['options_for_select']
