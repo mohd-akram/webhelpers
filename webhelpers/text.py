@@ -30,7 +30,6 @@ AUTO_LINK_RE = re.compile(r"""
                         ([\.,"'?!;:]|\s|<|$)       # trailing text
                            """, re.X)
 
-
 def truncate(text, length=30, truncate_string='...'):
     """Truncate ``text`` with replacement characters.
     
@@ -100,7 +99,7 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
     
         >>> excerpt("hello my world", "my", 3)
         '...lo my wo...'
-    
+
     """
     if not text or not phrase:
         return text
