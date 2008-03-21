@@ -1,13 +1,11 @@
 """Url helpers"""
-
 import urllib
 import re
 
+from webhelpers.asset_tag import compute_public_path
 from webhelpers.html import HTML, escape, literal
 
-# rails imports should be refactored once this stuff is pulled out of the
-# rails dir
-from webhelpers.rails.asset_tag import compute_public_path
+__all__ = ['link_to', 'button_to', 'mail_to']
 
 
 def link_to(name, url='', **html_options):

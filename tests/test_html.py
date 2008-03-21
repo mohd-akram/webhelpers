@@ -61,3 +61,11 @@ def test_lit_re():
     
     result = lit_sub(r'a <str', 'a <b> <b', unlit)
     assert u'This is also a &lt;b&gt; &lt;bing&gt;' == escape(result)
+
+def test_unclosed_tag():
+    result = HTML.form(_closed=False)
+    print result
+    assert u'<form>' == result
+    
+    result = HTML.form(_closed=False, action="hello")
+    assert u'<form action="hello">' == result
