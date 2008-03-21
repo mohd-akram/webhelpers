@@ -1,28 +1,35 @@
-"""
-Asset Tag Helpers
+"""Asset Tag Helpers
 
-Provides functionality for linking an HTML page together with other 
+Provides functionality for linking an HTML page together with other
 assets, such as images, javascripts, stylesheets, and feeds.
 
 """
 import os
 import urlparse
-from html import HTML
-from routes import request_config
+
+try:
+    from routes import request_config
+except:
+    request_config = None
+
+from webhelpers.html import HTML
 
 # The absolute path of the WebHelpers javascripts directory
 javascript_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                'javascripts')
 
+__all__ = ['javascript_path', 'auto_discovery_link', 'image', 
+           'javascript_link', 'stylesheet_link']
+
+
 def auto_discovery_link(source, feed_type='rss', **kwargs):
-    """
-    Return a link tag allowing auto-detecting of RSS or ATOM feed.
+    """Return a link tag allowing auto-detecting of RSS or ATOM feed.
     
-    The auto-detection of feed for the current page is only for browsers
-    and news readers that support it.
+    The auto-detection of feed for the current page is only for
+    browsers and news readers that support it.
 
     ``source``
-        The URL of the feed. The URL is ultimately prepended with the 
+        The URL of the feed. The URL is ultimately prepended with the
         environment's ``SCRIPT_NAME`` (the root path of the web 
         application), unless the URL is fully-fledged 
         (e.g. http://example.com).
@@ -30,8 +37,8 @@ def auto_discovery_link(source, feed_type='rss', **kwargs):
     ``feed_type``
         The type of feed. Specifying 'rss' or 'atom' automatically 
         translates to a type of 'application/rss+xml' or 
-        'application/atom+xml', respectively. Otherwise the type is used 
-        as specified. Defaults to 'rss'.
+        'application/atom+xml', respectively. Otherwise the type is
+        used as specified. Defaults to 'rss'.
         
     Examples::
 
@@ -60,19 +67,20 @@ def auto_discovery_link(source, feed_type='rss', **kwargs):
     tag_args.update(kwargs)
     return HTML.link(**tag_args)
 
+
 def image(source, alt=None, height=None, width=None, **options):
-    """
-    Return an image tag for the specified ``source``.
+    """Return an image tag for the specified ``source``.
 
     ``source``
-        The source URL of the image. The URL is prepended with '/images/', 
-        unless its full path is specified. The URL is ultimately 
-        prepended with the environment's ``SCRIPT_NAME`` (the root path 
-        of the web application), unless the URL is fully-fledged (e.g. 
-        http://example.com).
+        The source URL of the image. The URL is prepended with 
+        '/images/', unless its full path is specified. The URL is
+        ultimately prepended with the environment's ``SCRIPT_NAME``
+        (the root path of the web application), unless the URL is 
+        fully-fledged (e.g. http://example.com).
     
     ``alt``
-        The img's alt tag. Defaults to the source's filename, title cased.
+        The img's alt tag. Defaults to the source's filename, title
+        cased.
 
     ``height``
         The height of the image, default is not included
@@ -111,9 +119,10 @@ def image(source, alt=None, height=None, width=None, **options):
         
     return HTML.img(**options)
 
+
 def javascript_link(*sources, **options):
-    """
-    Return script include tags for the specified javascript ``sources``.
+    """Return script include tags for the specified javascript
+    ``sources``.
     
     Specify the keyword argument ``defer=True`` to enable the script 
     defer attribute.
@@ -140,9 +149,9 @@ def javascript_link(*sources, **options):
         tags.append(HTML.script('',  **content_options))
     return '\n'.join(tags)
 
+
 def stylesheet_link(*sources, **options):
-    """
-    Return CSS link tags for the specified stylesheet ``sources``.
+    """Return CSS link tags for the specified stylesheet ``sources``.
 
     Each source's URL path is ultimately prepended with the 
     environment's ``SCRIPT_NAME`` (the root path of the web 
@@ -161,16 +170,15 @@ def stylesheet_link(*sources, **options):
     tag_options = dict(rel='Stylesheet', type='text/css', media='screen')
     tag_options.update(options)
     tag_options.pop('href', None)
-
-    tags = [HTML.link(**dict(href=compute_public_path(source, 
-                                                      'stylesheets', 
-                                                      'css'),
-                               **tag_options)) for source in sources]
-    return '\n'.join(tags)
     
+    tags = [HTML.link(
+        **dict(href=compute_public_path(source, 'stylesheets', 'css'), 
+               **tag_options)) for source in sources]
+    return '\n'.join(tags)
+
+
 def compute_public_path(source, root_path=None, ext=None):
-    """
-    Format the specified source for publishing.
+    """Format the specified source for publishing.
     
     Use the public directory, if applicable.
     
@@ -188,15 +196,20 @@ def compute_public_path(source, root_path=None, ext=None):
             source = '%s/%s/%s' % (get_script_name(), root_path, source)
     return source
 
+
 def get_script_name():
-    """
-    Determine the current web application's ``SCRIPT_NAME``.
+    """Determine the current web application's ``SCRIPT_NAME``.
+    
+    .. note::
+        This requires Routes to function, and will not pick up the
+        SCRIPT_NAME var without it in use.
+    
     """
     script_name = ''
-    config = request_config()
-    if hasattr(config, 'environ'):
-        script_name = config.environ.get('SCRIPT_NAME', '')
+    if request_config:
+        config = request_config()
+        if hasattr(config, 'environ'):
+            script_name = config.environ.get('SCRIPT_NAME', '')
+    else:
+        script_name = ''
     return script_name
-
-__all__ = ['javascript_path', 'auto_discovery_link',
-           'image', 'javascript_link', 'stylesheet_link']
