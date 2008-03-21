@@ -21,10 +21,6 @@ class TestURLHelper(WebHelpersTestCase):
         self.assertEqual(u"<form action=\"http://www.example.com?q1=v1&amp;q2=v2\" class=\"button-to\" method=\"POST\"><div><input type=\"submit\" value=\"http://www.example.com?q1=v1&amp;q2=v2\" /></div></form>", 
                button_to(None, "http://www.example.com?q1=v1&q2=v2"))
     
-    def test_button_to_with_javascript_confirm(self):
-        self.assertEqual(u"<form action=\"http://www.example.com\" class=\"button-to\" method=\"POST\"><div><input onclick=\"return confirm('Are you sure?');\" type=\"submit\" value=\"Hello\" /></div></form>",
-               button_to("Hello", "http://www.example.com", confirm="Are you sure?"))
-    
     def test_button_to_enabled_disabled(self):
         self.assertEqual(u"<form action=\"http://www.example.com\" class=\"button-to\" method=\"POST\"><div><input type=\"submit\" value=\"Hello\" /></div></form>",
                button_to("Hello", "http://www.example.com", disabled=False))
@@ -64,45 +60,6 @@ class TestURLHelper(WebHelpersTestCase):
         self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"alert('yay!')\">Hello</a>", 
                link_to("Hello", "http://www.example.com", onclick="alert('yay!')"))
     
-    def test_link_tag_with_javascript_confirm(self):
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"return confirm('Are you sure?');\">Hello</a>",
-               link_to("Hello", "http://www.example.com", confirm="Are you sure?"))
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"return confirm('You can\\'t possibly be sure, can you?');\">Hello</a>", 
-               link_to("Hello", "http://www.example.com", confirm="You can't possibly be sure, can you?"))
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"return confirm('You can\\'t possibly be sure,\\n can you?');\">Hello</a>", 
-               link_to("Hello", "http://www.example.com", confirm="You can't possibly be sure,\n can you?"))
-    
-    def test_link_tag_with_popup(self):
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"window.open(this.href);return false;\">Hello</a>",
-               link_to("Hello", "http://www.example.com", popup=True))
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"window.open(this.href);return false;\">Hello</a>", 
-               link_to("Hello", "http://www.example.com", popup='true'))
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"window.open(this.href,'window_name','width=300,height=300');return false;\">Hello</a>", 
-               link_to("Hello", "http://www.example.com", popup=['window_name', 'width=300,height=300']))
-    
-    def test_link_tag_with_popup_and_javascript_confirm(self):
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"if (confirm('Fo\\' sho\\'?')) { window.open(this.href); };return false;\">Hello</a>",
-               link_to("Hello", "http://www.example.com", popup=True, confirm="Fo' sho'?" ))
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"if (confirm('Are you serious?')) { window.open(this.href,'window_name','width=300,height=300'); };return false;\">Hello</a>",
-               link_to("Hello", "http://www.example.com", popup=['window_name', 'width=300,height=300'],
-                       confirm="Are you serious?"))
-    
-    def test_link_tag_using_post_javascript(self):
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;f.submit();return false;\">Hello</a>",
-               link_to("Hello", "http://www.example.com", post=True))
-    
-    def test_link_tag_using_delete_javascript(self):
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;var m = document.createElement('input'); m.setAttribute('type', 'hidden'); m.setAttribute('name', '_method'); m.setAttribute('value', 'DELETE'); f.appendChild(m);f.submit();return false;\">Destroy</a>",
-                link_to("Destroy", "http://www.example.com", method='DELETE'))
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;var m = document.createElement('input'); m.setAttribute('type', 'hidden'); m.setAttribute('name', '_method'); m.setAttribute('value', 'delete'); f.appendChild(m);f.submit();return false;\">Destroy</a>",
-                link_to("Destroy", "http://www.example.com", method='delete'))
-
-    def test_link_tag_using_post_javascript_and_confirm(self):
-        self.assertEqual(u"<a href=\"http://www.example.com\" onclick=\"if (confirm('Are you serious?')) { var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;f.submit(); };return false;\">Hello</a>",
-               link_to("Hello", "http://www.example.com", post=True, confirm="Are you serious?"))
-        self.assertRaises(ValueError, lambda: \
-                          link_to("Hello", "http://www.example.com", post=True, popup=True, confirm="Are you serious?"))
-
     def test_mail_to(self):
         self.assertEqual(u'<a href="mailto:justin@example.com">justin@example.com</a>', mail_to("justin@example.com"))
         self.assertEqual(u'<a href="mailto:justin@example.com">Justin Example</a>', mail_to("justin@example.com", "Justin Example"))

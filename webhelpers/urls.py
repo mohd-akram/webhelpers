@@ -5,98 +5,67 @@ import re
 
 from webhelpers.html import HTML, escape, literal
 
-# rails imports should be refactored once this stuff is pulled out of the rails dir
-from webhelpers.rails.javascript import escape_javascript
+# rails imports should be refactored once this stuff is pulled out of the
+# rails dir
 from webhelpers.rails.asset_tag import compute_public_path
 
-def method_javascript_function(method):
-    submit_function = "var f = document.createElement('form'); f.style.display = 'none'; " + \
-        "this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;"
-    
-    if method.upper() != 'POST':
-        submit_function += "var m = document.createElement('input'); m.setAttribute('type', 'hidden'); "
-        submit_function += "m.setAttribute('name', '_method'); m.setAttribute('value', '%s'); f.appendChild(m);" % method
-    
-    return HTML.literal(submit_function + "f.submit();")
-
-def convert_options_to_javascript(confirm=None, popup=None, post=None, method=None, **html_options):
-    if post and not method:
-        method = 'POST'
-    
-    if popup and method:
-        raise ValueError("You can't use popup and post in the same link")
-    elif confirm and popup:
-        oc = "if (%s) { %s };return false;" % (confirm_javascript_function(confirm), 
-                                               popup_javascript_function(popup))
-    elif confirm and method:
-        oc = "if (%s) { %s };return false;" % (confirm_javascript_function(confirm),
-                                               method_javascript_function(method))
-    elif confirm:
-        oc = "return %s;" % confirm_javascript_function(confirm)
-    elif method:
-        oc = "%sreturn false;" % method_javascript_function(method)
-    elif popup:
-        oc = popup_javascript_function(popup) + 'return false;'
-    else:
-        oc = html_options.get('onclick')
-    html_options['onclick'] = oc
-    return html_options
 
 def link_to(name, url='', **html_options):
     """
-    Create link tag with text ``name`` and a URL created by the set of ``options``.
+    Create link tag with text ``name`` and a URL created by the set of
+    ``options``.
     
     See the valid options in the documentation for Routes url_for.
+        
+    Optionally you can make the link do a POST request (instead of the
+    regular GET) through a dynamically added form element that is
+    instantly submitted. Note that if the user has turned off
+    Javascript, the request will fall back on the GET. So its your
+    responsibility to determine what the action should be once it
+    arrives at the controller.
     
-    The html_options has three special features. One for creating 
-    javascript confirm alerts where if you pass ``confirm='Are you sure?'``, 
-    the link will be guarded with a JS popup asking that question. If 
-    the user accepts, the link is processed, otherwise not.
-    
-    Another for creating a popup window, which is done by either passing 
-    ``popup`` with True or the options of the window in Javascript form.
-    
-    And a third for making the link do a POST request (instead of the 
-    regular GET) through a dynamically added form element that is 
-    instantly submitted. Note that if the user has turned off Javascript, 
-    the request will fall back on the GET. So its your responsibility to 
-    determine what the action should be once it arrives at the controller. 
-    The POST form is turned on by passing ``post`` as True. Note, it's 
-    not possible to use POST requests and popup targets at the same time 
-    (an exception will be thrown).
+    The POST form is turned on by passing ``post`` as True. Note, it's
+    not possible to use POST requests and popup targets at the same
+    time (an exception will be thrown).
     
     Examples::
     
-        >> link_to("Delete this page", url(action="destroy", id=4), confirm="Are you sure?")
-        >> link_to("Help", url(action="help"), popup=True)
-        >> link_to("Busy loop", url(action="busy"), popup=['new_window', 'height=300,width=600'])
-        >> link_to("Destroy account", url(action="destroy"), confirm="Are you sure?", method='delete')
+        >> link_to("Delete this page", url(action="destroy", id=4))
+        >> link_to("Destroy account", url(action="destroy"), 
+        .. method='delete')
         
     """
-    if html_options:
-        html_options = convert_options_to_javascript(**html_options)
     if callable(url):
         url = url()
     html_options['href'] = url
     return HTML.a(name or url, **html_options)
 
+
 def convert_boolean_attributes(html_options, bool_attrs):
+    """Utility function to convert boolean attributes into proper
+    HTML attribute
+    
+    For example, this will convert ``selected=True`` into
+    ``selected="selected"``.
+    
+    """
     for attr in bool_attrs:
         if html_options.has_key(attr) and html_options[attr]:
             html_options[attr] = attr
         elif html_options.has_key(attr):
             del html_options[attr]
 
+
 def button_to(name, url='', **html_options):
-    """
-    Generate a form containing a sole button that submits to ``url``.  
+    """Generate a form containing a sole button that submits to
+    ``url``. 
     
-    Use this method instead of ``link_to`` for actions that do not have 
+    Use this method instead of ``link_to`` for actions that do not have
     the safe HTTP GET semantics implied by using a hypertext link.
     
-    The parameters are the same as for ``link_to``.  Any ``html_options`` 
-    that you pass will be applied to the inner ``input`` element. In 
-    particular, pass
+    The parameters are the same as for ``link_to``.  Any 
+    ``html_options`` that you pass will be applied to the inner
+    ``input`` element. In particular, pass
     
         disabled = True/False
     
@@ -123,29 +92,35 @@ def button_to(name, url='', **html_options):
     
     Example 2::
     
-        >> button_to("Destroy", url(action='destroy', id=3), confirm="Are you sure?", method='DELETE')
-        <form method="POST" action="/feeds/destroy/3" class="button-to">
+        >> button_to("Destroy", url(action='destroy', id=3), 
+        .. method='DELETE')
+        <form method="POST" action="/feeds/destroy/3" 
+         class="button-to">
         <div>
             <input type="hidden" name="_method" value="DELETE" />
-            <input onclick="return confirm('Are you sure?');" value="Destroy" type="submit" />
+            <input value="Destroy" type="submit" />
         </div>
         </form>
 
     Example 3::
 
         # Button as an image.
-        >> button_to("Edit", url(action='edit', id=3), type='image', src='icon_delete.gif')
+        >> button_to("Edit", url(action='edit', id=3), type='image', 
+        .. src='icon_delete.gif')
         <form method="POST" action="/feeds/edit/3" class="button-to">
-        <div><input alt="Edit" src="/images/icon_delete.gif" type="image" value="Edit" /></div>
+        <div><input alt="Edit" src="/images/icon_delete.gif"
+         type="image" value="Edit" /></div>
         </form>
     
-    *NOTE*: This method generates HTML code that represents a form.
-    Forms are "block" content, which means that you should not try to
-    insert them into your HTML where only inline content is expected.
-    For example, you can legally insert a form inside of a ``div`` or
-    ``td`` element or in between ``p`` elements, but not in the middle 
-    of a run of text, nor can you place a form within another form.
-    (Bottom line: Always validate your HTML before going public.)    
+    .. note::
+        This method generates HTML code that represents a form. Forms
+        are "block" content, which means that you should not try to
+        insert them into your HTML where only inline content is
+        expected. For example, you can legally insert a form inside of
+        a ``div`` or ``td`` element or in between ``p`` elements, but
+        not in the middle of a run of text, nor can you place a form
+        within another form.
+        (Bottom line: Always validate your HTML before going public.)
     
     """
     if html_options:
@@ -159,16 +134,7 @@ def button_to(name, url='', **html_options):
     
     form_method = (method.upper() == 'GET' and method) or 'POST'
     
-    confirm = html_options.get('confirm')
-    if confirm:
-        del html_options['confirm']
-        html_options['onclick'] = "return %s;" % confirm_javascript_function(confirm)
-    
-    if callable(url):
-        ur = url()
-        url, name = ur, name or escape(ur)
-    else:
-        url, name = url, name or url
+    url, name = url, name or url
     
     submit_type = html_options.get('type')
     img_source = html_options.get('src')
@@ -182,25 +148,17 @@ def button_to(name, url='', **html_options):
     return HTML.form(method=form_method, action=url, class_="button-to",
                      c=[HTML.div(method_tag, HTML.input(**html_options))])
 
-def confirm_javascript_function(confirm):
-    return "confirm('%s')" % escape_javascript(confirm)
-
-def popup_javascript_function(popup):
-    if isinstance(popup, list):
-        return "window.open(this.href,'%s','%s');" % (popup[0], popup[-1])
-    else:
-        return "window.open(this.href);"
 
 def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, 
     body=None, replace_at=None, replace_dot=None, encode=None, **html_options):
-    """
-    Create a link tag for starting an email to the specified ``email_address``.
+    """Create a link tag for starting an email to the specified 
+    ``email_address``.
     
     This ``email_address`` is also used as the name of the link unless
-    ``name`` is specified. Additional HTML options, such as class or id, 
-    can be passed in the ``html_options`` hash.
+    ``name`` is specified. Additional HTML options, such as class or
+    id, can be passed in the ``html_options`` hash.
     
-    You can also make it difficult for spiders to harvest email address 
+    You can also make it difficult for spiders to harvest email address
     by obfuscating them.
     
     Examples::
@@ -211,10 +169,10 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         >>> mail_to("me@domain.com", "My email", encode = "hex")
         literal(u'<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%6d%65@%64%6f%6d%61%69%6e.%63%6f%6d">My email</a>')
     
-    You can also specify the cc address, bcc address, subject, and body 
+    You can also specify the cc address, bcc address, subject, and body
     parts of the message header to create a complex e-mail using the 
     corresponding ``cc``, ``bcc``, ``subject``, and ``body`` keyword 
-    arguments. Each of these options are URI escaped and then appended 
+    arguments. Each of these options are URI escaped and then appended
     to the ``email_address`` before being output. **Be aware that 
     javascript keywords will not be escaped and may break this feature 
     when encoding with javascript.**
@@ -226,7 +184,8 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         
     """
     extras = {}
-    for key, option in ('cc', cc), ('bcc', bcc), ('subject', subject), ('body', body):
+    for key, option in ('cc', cc), ('bcc', bcc), ('subject', subject), \
+                       ('body', body):
         if option:
             if not isinstance(option, literal):
                 option = escape(option)
@@ -236,12 +195,15 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
 
     email_address_obfuscated = email_address
     if replace_at:
-        email_address_obfuscated = email_address_obfuscated.replace('@', replace_at)
+        email_address_obfuscated = email_address_obfuscated.replace('@', 
+            replace_at)
     if replace_dot:
-        email_address_obfuscated = email_address_obfuscated.replace('.', replace_dot)
+        email_address_obfuscated = email_address_obfuscated.replace('.', 
+            replace_dot)
 
     if encode == 'hex':
-        email_address_obfuscated = HTML.literal(''.join(['&#%d;' % ord(x) for x in email_address_obfuscated]))
+        email_address_obfuscated = HTML.literal(''.join(
+            ['&#%d;' % ord(x) for x in email_address_obfuscated]))
         protocol = HTML.literal(''.join(['&#%d;' % ord(x) for x in protocol]))
 
         word_re = re.compile('\w')
@@ -266,6 +228,5 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         return HTML.script(
             HTML.literal("\n//<![CDATA[\neval(unescape('%s'))\n//]]>\n" % string),
                          type="text/javascript")
-    else : 
+    else:
         return tag
-
