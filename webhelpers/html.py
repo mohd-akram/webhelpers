@@ -186,9 +186,12 @@ class literal(unicode):
     
     def __mod__(self, obj):
         if isinstance(obj, tuple):
-            return unicode.__mod__(self, tuple([_EscapedItem(item, self.encoding, self.error_mode) for item in obj]))
+            escaped = [_EscapedItem(item, self.encoding,
+                                    self.error_mode) for item in obj]
+            return unicode.__mod__(self, tuple(escaped))
         else:
-            return unicode.__mod__(self, _EscapedItem(obj, self.encoding, self.error_mode))
+            return unicode.__mod__(self, _EscapedItem(obj, self.encoding,
+                                                      self.error_mode))
         
     def join(self, items):
         return self.__class__(unicode.join(self, ([escape(i) for i in items])))
