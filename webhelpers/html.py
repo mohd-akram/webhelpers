@@ -64,7 +64,7 @@ class UnfinishedComment(object):
     
     def __call__(self, *args):
         """Create the HTML comment."""
-        return literal('<!--%s-->' % ''.join(str(x) for x in args))
+        return literal('<!--%s-->' % ''.join([str(x) for x in args]))
         
     def __html__(self):
         """Return the HTML escaped tag."""
@@ -100,7 +100,7 @@ class Base(object):
 
     def __call__(self, *args):
         """Join raw HTML and HTML escape it."""
-        return ''.join(escape(x) for x in args)
+        return ''.join([escape(x) for x in args])
 
 
 def attrEncode(v):
@@ -130,13 +130,13 @@ def make_tag(tag, *args, **kw):
             return literal("<%s%s>%s</%s>" % (
                 tag,
                 "".join(htmlArgs),
-                "".join(escape(x) for x in args),
+                "".join([escape(x) for x in args]),
                 tag))
         else:
             return literal("<%s%s>%s</%s>" % (
                 tag,
                 "".join(htmlArgs),
-                "".join(escape(x) for x in args),
+                "".join([escape(x) for x in args]),
                 tag))
 
 
@@ -186,12 +186,12 @@ class literal(unicode):
     
     def __mod__(self, obj):
         if isinstance(obj, tuple):
-            return unicode.__mod__(self, tuple(_EscapedItem(item, self.encoding, self.error_mode) for item in obj))
+            return unicode.__mod__(self, tuple([_EscapedItem(item, self.encoding, self.error_mode) for item in obj]))
         else:
             return unicode.__mod__(self, _EscapedItem(obj, self.encoding, self.error_mode))
         
     def join(self, items):
-        return self.__class__(unicode.join(self, (escape(i) for i in items)))
+        return self.__class__(unicode.join(self, ([escape(i) for i in items])))
     
     def split(self, *args, **kwargs):
         return [literal(x) for x in unicode.split(self, *args, **kwargs)]
