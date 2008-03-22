@@ -133,7 +133,7 @@ def make_tag(tag, *args, **kw):
         return literal("<%s%s>%s%s" % (
             tag,
             "".join(htmlArgs),
-            "".join(escape(x) for x in args),
+            "".join([escape(x) for x in args]),
             close_tag))
 
 
