@@ -24,7 +24,11 @@ def wrap_helpers(localdict):
     def helper_wrapper(func):
         def wrapped_helper(*args, **kw):
             return literal(func(*args, **kw))
-        wrapped_helper.__name__ = func.__name__
+        try:
+            wrapped_helper.__name__ = func.__name__
+        except TypeError:
+            # < Python 2.4 
+            pass
         return wrapped_helper
     for name, func in localdict.iteritems():
         if not callable(func) or name == 'literal':
