@@ -49,9 +49,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import logging
 import re
-# Use templating for the .pager() [available since Python 2.4]
-from string import Template
 import warnings
+# Use templating for the .pager() [available since Python 2.4]
+try:
+    from string import Template
+except ImportError:
+    from webhelpers.string24 import Template
 
 # Import the webhelpers to create URLs
 import webhelpers
