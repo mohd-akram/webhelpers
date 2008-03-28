@@ -1,5 +1,4 @@
-"""
-Paginate module for lists and ORMs.
+"""Paginate module for lists and ORMs.
 
 This module helps dividing large lists of items into pages. The user 
 is shown one page at a time and can navigate to other pages. Imagine you 
@@ -43,10 +42,9 @@ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
 CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-
 import logging
 import re
 import warnings
@@ -58,6 +56,7 @@ except ImportError:
 
 # Import the webhelpers to create URLs
 import webhelpers
+import webhelpers.pagination.orm as orm
 from webhelpers.html import literal, HTML
 
 # FIXME - webhelpers.rails.* is DEPRECATED
@@ -344,6 +343,8 @@ class Page(list):
             'items_per_page':self.items_per_page,
             'item_count':self.item_count,
             'page_count':self.page_count,
+            'previous_page':self.previous_page,
+            'next_page':self.next_page
             })
 
     def pager(self, format='~2~', link_var='page_nr', partial_var='partial',
@@ -495,7 +496,6 @@ class Page(list):
         to the page you are currently displaying.
         
         """
-
         def _pagerlink(pagenr, text):
             """
             Create a URL that links to another page using url_for().
@@ -661,5 +661,5 @@ class Page(list):
                     _pagerlink(self.next_page, symbol_next) or ''
         })
 
-        return result
+        return literal(result)
 
