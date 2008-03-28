@@ -56,8 +56,8 @@ except ImportError:
 
 # Import the webhelpers to create URLs
 import webhelpers
-import webhelpers.pagination.orm as orm
 from webhelpers.html import literal, HTML
+from webhelpers.pagination.orm import get_wrapper
 
 # FIXME - webhelpers.rails.* is DEPRECATED
 from webhelpers.rails.prototype import link_to_remote as get_link_to_remote
@@ -69,85 +69,11 @@ __author__ = 'Christoph Haas <email@christoph-haas.de>'
 
 log = logging.getLogger(__name__)
 
-# import SQLAlchemy if available
-try:
-    import sqlalchemy
-except ImportError:
-    sqlalchemy_available = False
-else:
-    sqlalchemy_available = sqlalchemy.__version__
-
-def get_wrapper(obj, sqlalchemy_session=None):
-    """
-    Auto-detect the kind of object and return a list/tuple
-    to access items from the collection.
-    
-    """
-    # See if the collection is a sequence
-    if isinstance(obj, (list, tuple)):
-        return obj
-    # Is SQLAlchemy 0.4 available? (0.3 is not supported - sorry)
-    if sqlalchemy_available.startswith('0.4'):
-        # Is the collection a query?
-        if isinstance(obj, sqlalchemy.orm.query.Query):
-            return _SQLAlchemyQuery(obj)
-
-        # Is the collection an SQLAlchemy select object?
-        if isinstance(obj, sqlalchemy.sql.expression.CompoundSelect) \
-        or isinstance(obj, sqlalchemy.sql.expression.Select):
-            return _SQLAlchemySelect(obj, sqlalchemy_session)
-
-    raise TypeError("Sorry, your collection type is not supported by the paginate module. "
-            "You can either provide a list, a tuple, an SQLAlchemy table or an "
-            "SQLAlchemy query object.")
-
-class _SQLAlchemySelect(object):
-    
-    """
-    Iterable that allows to get slices from an SQLAlchemy Select object.
-    """
-    
-    def __init__(self, obj, sqlalchemy_session=None):
-        if not isinstance(sqlalchemy_session, sqlalchemy.orm.scoping.ScopedSession):
-            raise TypeError("If you want to page an SQLAlchemy 'Table' object then you "
-                    "have to provide a 'sqlalchemy_session' argument. See also: "
-                    "http://www.sqlalchemy.org/docs/04/session.html")
-
-        self.sqlalchemy_session = sqlalchemy_session
-        self.obj = obj
-
-    def __getitem__(self, range):
-        if not isinstance(range, slice):
-            raise Exception, "__getitem__ without slicing not supported"
-        offset = range.start
-        limit = range.stop - range.start
-        select = self.obj.offset(offset).limit(limit)
-        return self.sqlalchemy_session.execute(select).fetchall()
-
-    def __len__(self):
-        return self.sqlalchemy_session.execute(self.obj).rowcount
-
-class _SQLAlchemyQuery(object):
-    
-    """Iterable that allows to get slices from an SQLAlchemy Query object."""
-    
-    def __init__(self, obj):
-        self.obj = obj
-
-    def __getitem__(self, range):
-        if not isinstance(range, slice):
-            raise Exception, "__getitem__ without slicing not supported"
-        return self.obj[range]
-
-    def __len__(self):
-        return self.obj.count()
-
 
 # Since the items on a page are mainly a list we subclass the "list" type
 class Page(list):
-    
-    """
-    A list/iterator of items representing one page in a larger collection.
+    """A list/iterator of items representing one page in a larger
+    collection.
 
     An instance of the "Page" class is created from a collection of things. 
     The instance works as an iterator running from the first item to the 
@@ -200,11 +126,9 @@ class Page(list):
         Index of last item on the current page
         
     """
-    
     def __init__(self, collection, current_page=1, items_per_page=20,
         item_count=None, sqlalchemy_session=None, *args, **kwargs):
-        """
-        Create a "Page" instance.
+        """Create a "Page" instance.
 
         Parameters:
 
