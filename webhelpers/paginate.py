@@ -55,7 +55,6 @@ except ImportError:
     from webhelpers.string24 import Template
 
 # Import the webhelpers to create URLs
-import webhelpers
 from webhelpers.html import literal, HTML
 from webhelpers.pagination.orm import get_wrapper
 
