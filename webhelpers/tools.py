@@ -1,57 +1,45 @@
-"""Url helpers"""
-import urllib
+"""HTML helpers that are more than just simple tags."""
+
 import re
+import urllib
 
-from webhelpers.asset_tag import compute_public_path
-from webhelpers.html import HTML, escape, literal
+from webhelpers.html import HTML, literal, lit_sub, escape
+from webhelpers.tags import compute_public_path
+import webhelpers.textile as textile
+import webhelpers.markdown as _markdown
 
-__all__ = ['link_to', 'button_to', 'mail_to']
-
-
-def link_to(name, url='', **html_options):
-    """
-    Create link tag with text ``name`` and a URL created by the set of
-    ``options``.
-    
-    See the valid options in the documentation for Routes url_for.
-        
-    Optionally you can make the link do a POST request (instead of the
-    regular GET) through a dynamically added form element that is
-    instantly submitted. Note that if the user has turned off
-    Javascript, the request will fall back on the GET. So its your
-    responsibility to determine what the action should be once it
-    arrives at the controller.
-    
-    The POST form is turned on by passing ``post`` as True. Note, it's
-    not possible to use POST requests and popup targets at the same
-    time (an exception will be thrown).
-    
-    Examples::
-    
-        >> link_to("Delete this page", url(action="destroy", id=4))
-        >> link_to("Destroy account", url(action="destroy"), 
-        .. method='delete')
-        
-    """
-    if callable(url):
-        url = url()
-    html_options['href'] = url
-    return HTML.a(name or url, **html_options)
+__all__ = [
+    'button_to', 
+    'convert_boolean_attributes', 
+    'mail_to',
+    'highlight', 
+    'markdown', 
+    'strip_links',
+    'auto_link', 
+    'textilize',
+    ]
 
 
-def convert_boolean_attributes(html_options, bool_attrs):
-    """Utility function to convert boolean attributes into proper
-    HTML attribute
-    
-    For example, this will convert ``selected=True`` into
-    ``selected="selected"``.
-    
-    """
-    for attr in bool_attrs:
-        if html_options.has_key(attr) and html_options[attr]:
-            html_options[attr] = attr
-        elif html_options.has_key(attr):
-            del html_options[attr]
+AUTO_LINK_RE = re.compile(r"""
+                        (                          # leading text
+                          <\w+.*?>|                # leading HTML tag, or
+                          [^=!:'"/]|               # leading punctuation, or 
+                          ^                        # beginning of line
+                        )
+                        (
+                          (?:https?://)|           # protocol spec, or
+                          (?:www\.)                # www.*
+                        ) 
+                        (
+                          [-\w]+                   # subdomain or domain
+                          (?:\.[-\w]+)*            # remaining subdomains or domain
+                          (?::\d+)?                # port
+                          (?:/(?:(?:[~\w\+%-]|(?:[,.;:][^\s$]))+)?)* # path
+                          (?:\?[\w\+%&=.;-]+)?     # query string
+                          (?:\#[\w\-]*)?           # trailing anchor
+                        )
+                        ([\.,"'?!;:]|\s|<|$)       # trailing text
+                           """, re.X)
 
 
 def button_to(name, url='', **html_options):
@@ -147,6 +135,27 @@ def button_to(name, url='', **html_options):
                      c=[HTML.div(method_tag, HTML.input(**html_options))])
 
 
+def convert_boolean_attributes(html_options, bool_attrs):
+    """Convert boolean values into proper HTML attributes.
+
+    ``html_options`` is a dict of HTML attributes, which will be modified in
+    place.
+
+    ``bool_attrs`` is a list of attribute names.
+
+    For every element in ``bool_attrs``, I look for a corresponding key in
+    ``attrs``.  If its value is true, I change the value to match the key.
+    For example, I convert ``selected=True`` into ``selected="selected"``.  If
+    the value is false, I delete the key.
+    
+    """
+    for attr in bool_attrs:
+        if html_options.has_key(attr) and html_options[attr]:
+            html_options[attr] = attr
+        elif html_options.has_key(attr):
+            del html_options[attr]
+
+
 def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, 
     body=None, replace_at=None, replace_dot=None, encode=None, **html_options):
     """Create a link tag for starting an email to the specified 
@@ -228,3 +237,118 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
                          type="text/javascript")
     else:
         return tag
+
+
+def highlight(text, phrase, 
+              highlighter='<strong class="highlight">\\1</strong>'):
+    """Highlight the ``phrase`` where it is found in the ``text``.
+    
+    The highlighted phrase will be surrounded by the highlighter, 
+    by default::
+    
+        <strong class="highlight">I'm a highlight phrase</strong>
+    
+    ``highlighter``
+        Defines the highlighting phrase. This argument should be a 
+        single-quoted string with ``\\1`` where the phrase is supposed 
+        to be inserted.
+        
+    Note: The ``phrase`` is sanitized to include only letters, digits, 
+    and spaces before use.
+
+    Example::
+
+        >>> highlight('You searched for: Pylons', 'Pylons')
+        'You searched for: <strong class="highlight">Pylons</strong>'
+        
+    """
+    if not phrase or not text:
+        return text
+    highlight_re = re.compile('(%s)' % re.escape(phrase), re.I)
+    if hasattr(text, '__html__'):
+        return literal(highlight_re.sub(highlighter, text))
+    else:
+        return highlight_re.sub(highlighter, text)
+
+
+def auto_link(text, link="all", **href_options):
+    """
+    Turn all urls and email addresses into clickable links.
+    
+    ``link``
+        Used to determine what to link. Options are "all", 
+        "email_addresses", or "urls"
+    
+    Example::
+    
+        >>> auto_link("Go to http://www.planetpython.com and say hello to guido@python.org")
+        literal(u'Go to <a href="http://www.planetpython.com">http://www.planetpython.com</a> and say hello to <a href="mailto:guido@python.org">guido@python.org</a>')
+        
+    """
+    if not text:
+        return u""
+    if link == "all":
+        return _auto_link_urls(_auto_link_email_addresses(text), **href_options)
+    elif link == "email_addresses":
+        return _auto_link_email_addresses(text)
+    else:
+        return _auto_link_urls(text, **href_options)
+
+def _auto_link_urls(text, **href_options):
+    def handle_match(matchobj):
+        all = matchobj.group()
+        before, prefix, link, after = matchobj.group(1, 2, 3, 4)
+        if re.match(r'<a\s', before, re.I):
+            return all
+        text = literal(prefix + link)
+        if prefix == "www.":
+            prefix = "http://www."
+        a_options = dict(href_options)
+        a_options['href'] = literal(prefix + link)
+        return literal(before) + HTML.a(text, **a_options) + literal(after)
+    return literal(re.sub(AUTO_LINK_RE, handle_match, text))
+
+def _auto_link_email_addresses(text):
+    return lit_sub(r'([\w\.!#\$%\-+.]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+)',
+                   r'<a href="mailto:\1">\1</a>', text)
+
+def markdown(text, **kwargs):
+    """Format the text with MarkDown formatting.
+    
+    This function uses the `Python MarkDown library 
+    <http://www.freewisdom.org/projects/python-markdown/>`_
+    which is included with WebHelpers.
+    
+    """
+    return _markdown.markdown(text, **kwargs)
+
+def textilize(text, sanitize=False):
+    """Format the text with Textile formatting.
+    
+    This function uses the `PyTextile library <http://dealmeida.net/>`_ 
+    which is included with WebHelpers.
+    
+    Additionally, the output can be sanitized which will fix tags like 
+    <img />,  <br /> and <hr /> for proper XHTML output.
+    
+    """
+    texer = textile.Textiler(text)
+    return texer.process(sanitize=sanitize)
+
+def strip_links(text):
+    """
+    Strip link tags from ``text`` leaving just the link label.
+    
+    Example::
+    
+        >>> strip_links('<a href="something">else</a>')
+        'else'
+        
+    """
+    if isinstance(text, literal):
+        lit = literal
+    else:
+        lit = lambda x: x
+    strip_re = re.compile(r'<a\b.*?>(.*?)<\/a>', re.I | re.M)
+    return lit(strip_re.sub(r'\1', text))
+
