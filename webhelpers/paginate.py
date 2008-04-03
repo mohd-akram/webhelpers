@@ -397,7 +397,7 @@ class Page(list):
             The name of the parameter that is set to 1 if updates of the 
             page area through AJAX/AJAH are requested. If your 
             application finds this parameter in the URL set then it 
-            should not print the complete HTML page but just just the page
+            should not print the complete HTML page but just the page
             area instead.
 
             Default: 'partial'
