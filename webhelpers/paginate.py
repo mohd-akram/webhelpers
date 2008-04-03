@@ -45,29 +45,77 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-import logging
 import re
 import warnings
-# Use templating for the .pager() [available since Python 2.4]
+
+__version__ = '0.3.4'
+__date__ = '2008-04-04'
+__author__ = 'Christoph Haas <email@christoph-haas.de>'
+
+# Use templating for the .pager() [available since Python 2.4].
+# Otherwise the Template module is provided by the string24.py
+# for Python 2.3
 try:
     from string import Template
 except ImportError:
     from webhelpers.string24 import Template
 
+# import SQLAlchemy if available
+try:
+    import sqlalchemy
+except:
+    sqlalchemy_available = False
+else:
+    sqlalchemy_available = sqlalchemy.__version__
+
+def get_wrapper(obj, sqlalchemy_session=None):
+    """
+    Auto-detect the kind of object and return a list/tuple
+    to access items from the collection.
+    """
+    # See if the collection is a sequence
+    if isinstance(obj, (list, tuple)):
+        return obj
+    # Is SQLAlchemy 0.4 available? (0.3 is not supported - sorry)
+    if sqlalchemy_available.startswith('0.4'):
+        # Is the collection a query?
+        if isinstance(obj, sqlalchemy.orm.query.Query):
+            return _SQLAlchemyQuery(obj)
+
+        # Is the collection an SQLAlchemy select object?
+        if isinstance(obj, sqlalchemy.sql.expression.CompoundSelect) \
+            or isinstance(obj, sqlalchemy.sql.expression.Select):
+                return _SQLAlchemySelect(obj, sqlalchemy_session)
+
+    raise TypeError("Sorry, your collection type is not supported by the paginate module. "
+            "You can either provide a list, a tuple, an SQLAlchemy table or an "
+            "SQLAlchemy query object.")
+
+class _SQLAlchemySelect(object):
+    """
+    Iterable that allows to get slices from an SQLAlchemy Select object
+    """
+    def __init__(self, obj, sqlalchemy_session=None):
+        if not isinstance(sqlalchemy_session, sqlalchemy.orm.scoping.ScopedSession):
+            raise TypeError("If you want to page an SQLAlchemy 'Table' object then you "
+                    "have to provide a 'sqlalchemy_session' argument. See also: "
+                    "http://www.sqlalchemy.org/docs/04/session.html")
+
+        self.sqlalchemy_session = sqlalchemy_session
+        self.obj = obj
+
+    def __getitem__(self, range):
+        if not isinstance(range, slice):
+            raise Exception, "__getitem__ without slicing not supported"
+        offset = range.start
+        limit = range.stop - range.start
+        select = self.obj.offset(offset).limit(limit)
+        return self.sqlalchemy_session.execute(select).fetchall()
+
 # Import the webhelpers to create URLs
 from webhelpers.html import literal, HTML
-from webhelpers.pagination.orm import get_wrapper
 
-# FIXME - webhelpers.rails.* is DEPRECATED
-from webhelpers.rails.prototype import link_to_remote as get_link_to_remote
-from webhelpers.rails.urls import link_to as get_link_to
 from routes import url_for
-
-__version__ = '0.3.3'
-__author__ = 'Christoph Haas <email@christoph-haas.de>'
-
-log = logging.getLogger(__name__)
-
 
 # Since the items on a page are mainly a list we subclass the "list" type
 class Page(list):
@@ -155,7 +203,6 @@ class Page(list):
             wouldn't be able to execute a SELECT query without it.
 
         Further parameters are used as link arguments in the pager().
-        
         """
         # 'page_nr' is deprecated. 'current_page' is clearer and used by Ruby-on-Rails, too
         if 'page_nr' in kwargs:
@@ -263,16 +310,15 @@ class Page(list):
             'last_item':self.last_item,
             'first_page':self.first_page,
             'last_page':self.last_page,
+            'previous_page':self.previous_page,
+            'next_page':self.next_page,
             'items_per_page':self.items_per_page,
             'item_count':self.item_count,
             'page_count':self.page_count,
-            'previous_page':self.previous_page,
-            'next_page':self.next_page
             })
 
     def pager(self, format='~2~', link_var='page_nr', partial_var='partial',
-        show_if_single_page=False, separator=' ',
-        ajax_id=None, framework='scriptaculous',
+        show_if_single_page=False, separator=' ', onclick=None,
         symbol_first='&lt;&lt;', symbol_last='&gt;&gt;',
         symbol_previous='&lt;', symbol_next='&gt;',
         link_attr={'class':'pager_link'}, curpage_attr={'class':'pager_curpage'},
@@ -295,7 +341,7 @@ class Page(list):
             - $item_count: total number of items
             - $link_first: link to first page (unless this is first page)
             - $link_last: link to last page (unless this is last page)
-            - $link_previous: link to prev page (unless this is first page)
+            - $link_previous: link to previous page (unless this is first page)
             - $link_next: link to next page (unless this is last page)
 
             To render a range of pages the token '~3~' can be used. The 
@@ -351,7 +397,7 @@ class Page(list):
             The name of the parameter that is set to 1 if updates of the 
             page area through AJAX/AJAH are requested. If your 
             application finds this parameter in the URL set then it 
-            should not print the complete HTML page but just the page 
+            should not print the complete HTML page but just just the page
             area instead.
 
             Default: 'partial'
@@ -391,33 +437,35 @@ class Page(list):
 
             Default: { 'class':'pager_dotdot' }
 
-        ajax_id (optional)
-            If this parameter is given then the navigator will add 
-            Javascript to the A-HREF links that will update only a 
-            portion of the web page instead of reloading the copmlete 
-            page.
+        onclick (optional)
+            This paramter is a string containing optional Javascript
+            that will used as the 'onclick' action of each pager link.
+            Use '%s' in your string where the URL linking to the desired
+            page will be inserted. This can be used to enhance your pager
+            with AJAX actions loading another page into a DOM object.
+            Note that the URL to the destination page contains a partial_var
+            parameter so that you can distinguish between AJAX requests
+            (just refreshing the paginated area of your page) and normal
+            requests (loading the whole new page).
 
-            This parameter contains the name of the HTML element (e.g. a 
-            <div id="foobar">) that the paginator should replace with 
-            the new content. The navigator will create AJAX links (e.g. 
-            using  webhelpers' link_to_remote() function) that replace 
-            the HTML element's content with the new page of paginated 
-            items and a new navigator.
+            jQuery example:
+                "$('#my-page-area').load('%s'); return false;"
 
-        framework
-            The name of the Javascript framework to use. By default
-            the AJAX functions from script.aculo.us are used. Supported
-            Javascript frameworks:
+            Yahoo UI example:
+                "YAHOO.util.Connect.asyncRequest('GET','%s',{
+                    success:function(o){YAHOO.util.Dom.get('#my-page-area').innerHTML=o.responseText;}
+                    },null); return false;"
 
-            - scriptaculous (Default - script.aculo.us)
-            - jquery (www.jquery.com)
-            - yui (Yahoo UI library - developer.yahoo.com/yui/)
-            - extjs (www.extjs.com)
+            scriptaculous example:
+                "new Ajax.Updater('#my-page-area', '%s',
+                    {asynchronous:true, evalScripts:true}); return false;"
+
+            ExtJS example:
+                "Ext.get('#my-page-area').load({url:'%s'}); return false;"
 
         Additional keyword arguments are used as arguments in the links.
         Otherwise the link will be created with url_for() which points 
         to the page you are currently displaying.
-        
         """
         def _pagerlink(pagenr, text):
             """
@@ -430,7 +478,6 @@ class Page(list):
 
             text
                 Text to be printed in the A-HREF tag
-                
             """
             # Let the url_for() from webhelpers create a new link and set
             # the variable called 'link_var'. Example:
@@ -447,40 +494,15 @@ class Page(list):
             link_params[link_var] = pagenr
             # Create the URL to load a certain page
             link_url = url_for(**link_params)
-            log.debug("link_url(**%r) => %r", link_params, link_url)
             # Create the URL to load the page area part of a certain page (AJAX updates)
             link_params[partial_var] = 1
             partial_url = url_for(**link_params)
-            log.debug("partial_url(**%r) => %r", link_params, partial_url)
-            if ajax_id:
-                # Return an AJAX link that will update the HTML element
-                # named by ajax_id.
-                # Degrade gracefully if Javascript is not available by using
-                # 'partial_url' in the onclick URLs while using 'link_url'
-                # in the A-HREF URL.
-                if framework == 'scriptaculous':
-                    return get_link_to_remote(text, dict(update=ajax_id, url=partial_url),
-                        href=link_url, **link_attr)
-                elif framework == 'jquery':
-                    return get_link_to(text, url=link_url,
-                        onclick="""$('#%s').load('%s'); return false""" % (ajax_id, partial_url),
-                            **link_attr)
-                elif framework == 'yui':
-                    js = """YAHOO.util.Connect.asyncRequest('GET','%s',{
-                        success:function(o){YAHOO.util.Dom.get('%s').innerHTML=o.responseText;}
-                        },null); return false;""" % (partial_url, ajax_id)
-                    return get_link_to(text, url=link_url, onclick=js, **link_attr)
-                elif framework == 'extjs':
-                    js = """Ext.get('%s').load({url:'%s'}); return false;""" % (ajax_id, partial_url)
-                    return get_link_to(text, url=link_url, onclick=js, **link_attr)
-                else:
-                    raise Exception, "Unsupported Javascript framework: %s" % framework
 
-            else:
-                # Return a normal a-href link that will call the same
-                # controller/action with the link_var set to the new
-                # page number.
-                return get_link_to(text, link_url, **link_attr)
+            if onclick: # create link with onclick action for AJAX
+                onclick_action = onclick % (partial_url,)
+                return HTML.a(text, href=link_url, onclick=onclick_action, **link_attr)
+            else: # return static link
+                return HTML.a(text, href=link_url, **link_attr)
 
         #------- end of def _pagerlink
 
