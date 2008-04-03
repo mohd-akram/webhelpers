@@ -10,7 +10,7 @@ class TestFormTagHelper(WebHelpersTestCase):
     def test_check_box(self):
         self.assertEqual(
             checkbox("admin"),
-            u'<input id="admin" name="admin" type="checkbox" value="1" />',
+            u'<input name="admin" type="checkbox" value="1" />',
         )
 
     def test_form(self):
@@ -36,49 +36,49 @@ class TestFormTagHelper(WebHelpersTestCase):
     def test_hidden_field(self):
         self.assertEqual(
             hidden("id", 3),
-            u'<input id="id" name="id" type="hidden" value="3" />'
+            u'<input name="id" type="hidden" value="3" />'
         )
 
     def test_hidden_field_alt(self):
         self.assertEqual(
             hidden("id", '3'),
-            u'<input id="id" name="id" type="hidden" value="3" />'
+            u'<input name="id" type="hidden" value="3" />'
         )
 
     def test_password_field(self):
         self.assertEqual(
             password(), 
-            u'<input id="password" name="password" type="password" />'
+            u'<input name="password" type="password" />'
         )
 
     def test_radio_button(self):
         self.assertEqual(
-            radiobutton("people", "justin"),
+            radio("people", "justin"),
             u'<input id="people_justin" name="people" type="radio" value="justin" />'
         )
         
         self.assertEqual(
-            radiobutton("num_people", 5),
+            radio("num_people", 5),
             u'<input id="num_people_5" name="num_people" type="radio" value="5" />'
         )
 
         self.assertEqual(
-            radiobutton("num_people", 5),
+            radio("num_people", 5),
             u'<input id="num_people_5" name="num_people" type="radio" value="5" />'
         )
         
         self.assertEqual(
-            radiobutton("gender", "m") + radiobutton("gender", "f"),
+            radio("gender", "m") + radio("gender", "f"),
             u'<input id="gender_m" name="gender" type="radio" value="m" /><input id="gender_f" name="gender" type="radio" value="f" />'
         )
         
         self.assertEqual(
-            radiobutton("opinion", "-1") + radiobutton("opinion", "1"),
+            radio("opinion", "-1") + radio("opinion", "1"),
             u'<input id="opinion_-1" name="opinion" type="radio" value="-1" /><input id="opinion_1" name="opinion" type="radio" value="1" />'
         )
 
         self.assertEqual(
-            radiobutton("num_people", 5, checked=True),
+            radio("num_people", 5, checked=True),
             u'<input checked="checked" id="num_people_5" name="num_people" type="radio" value="5" />'
         )
 
@@ -91,54 +91,55 @@ class TestFormTagHelper(WebHelpersTestCase):
     def test_text_area(self):
         self.assertEqual(
             textarea("aa", ""),
-            u'<textarea id="aa" name="aa"></textarea>'
+            u'<textarea name="aa"></textarea>'
         )
         self.assertEqual(
             textarea("aa", None),
-            u'<textarea id="aa" name="aa"></textarea>'
+            u'<textarea name="aa"></textarea>'
         )
         self.assertEqual(
             textarea("aa", "Hello!"),
-            u'<textarea id="aa" name="aa">Hello!</textarea>'
+            u'<textarea name="aa">Hello!</textarea>'
         )
 
     def test_text_area_size_string(self):
         self.assertEqual(
-            textarea("body", "hello world", size = "20x40"),
-            u'<textarea cols="20" id="body" name="body" rows="40">hello world</textarea>'
+            textarea("body", "hello world", cols=20, rows=40),
+            u'<textarea cols="20" name="body" rows="40">hello world</textarea>'
         )
 
     def test_text_field(self):
         self.assertEqual(
             text("title", ""),
-            u'<input id="title" name="title" type="text" value="" />'
+            u'<input name="title" type="text" value="" />'
         )
         self.assertEqual(
             text("title", None),
-            u'<input id="title" name="title" type="text" />'
+            u'<input name="title" type="text" />'
         )
         self.assertEqual(
             text("title", "Hello!"),
-            u'<input id="title" name="title" type="text" value="Hello!" />'
+            u'<input name="title" type="text" value="Hello!" />'
         )
 
     def test_text_field_class_string(self):
         self.assertEqual(
             text( "title", "Hello!", class_= "admin"),
-            u'<input class="admin" id="title" name="title" type="text" value="Hello!" />'
+            u'<input class="admin" name="title" type="text" value="Hello!" />'
         )
 
     def test_boolean_options(self):
         self.assertEqual(     
             checkbox("admin", 1, True, disabled = True, readonly="yes"),
-            u'<input checked="checked" disabled="disabled" id="admin" name="admin" readonly="readonly" type="checkbox" value="1" />'
+            u'<input checked="checked" disabled="disabled" name="admin" readonly="readonly" type="checkbox" value="1" />'
         )
         self.assertEqual(
             checkbox("admin", 1, True, disabled = False, readonly = None),
-            u'<input checked="checked" id="admin" name="admin" type="checkbox" value="1" />'
+            u'<input checked="checked" name="admin" type="checkbox" value="1" />'
         )
 
     
+'''
 class TestFormHelper(WebHelpersTestCase):
     def test_array_options_for_select(self):
         self.assertEqual(
@@ -216,6 +217,7 @@ class TestFormHelper(WebHelpersTestCase):
         self.assertEqual('<option selected="selected" value="The Something">something</option>\n<option value="The Something Else">somethingelse</option>',
                          options_for_select([something, somethingelse], 'The Something', make_elem_both))
     
+
 class TestFormOptionsHelper(WebHelpersTestCase):
     def test_array_options_for_select(self):
         self.assertEqual(
@@ -283,10 +285,7 @@ class TestFormOptionsHelper(WebHelpersTestCase):
                          options_for_select_from_dicts([something, somethingelse], 'select_name', 'select_value'))
         self.assertEqual('<option value="The Something" selected="selected">something</option>\n<option value="The Something Else">somethingelse</option>',
                          options_for_select_from_dicts([something, somethingelse], 'select_name', 'select_value', 'The Something'))
-    
-from util import WebHelpersTestCase
-import unittest
-
+'''    
 
 class TestLinkHelper(WebHelpersTestCase):
     def test_link_tag_with_query(self):
