@@ -306,33 +306,10 @@ def link_to(label, url='', **html_options):
     
     If the label is ``None`` or empty, the URL will be used as the label.
 
-    This function does not modify the URL in any way.
+    This function does not modify the URL in any way.  The label will be
+    escaped if it contains HTML markup.  To prevent escaping, wrap the label
+    in a ``webhelpers.html.literal()`.
     """
-    """
-    *THE FOLLOWING IS NOT IMPLEMENTED.  THIS IS NOT THE DOCSTRING.*
-    
-    See the valid options in the documentation for Routes url_for.
-        
-    Optionally you can make the link do a POST request (instead of the
-    regular GET) through a dynamically added form element that is
-    instantly submitted. Note that if the user has turned off
-    Javascript, the request will fall back on the GET. So its your
-    responsibility to determine what the action should be once it
-    arrives at the controller.
-    
-    The POST form is turned on by passing ``post`` as True. Note, it's
-    not possible to use POST requests and popup targets at the same
-    time (an exception will be thrown).
-    
-    Examples::
-    
-        >> link_to("Delete this page", url(action="destroy", id=4))
-        >> link_to("Destroy account", url(action="destroy"), 
-        .. method='delete')
-        
-    """
-    if callable(url):
-        url = url()
     html_options['href'] = url
     return HTML.a(label or url, **html_options)
 
