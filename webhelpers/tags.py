@@ -23,10 +23,9 @@ __all__ = [
            "password", 
            "text", 
            "checkbox", 
-           "radiobutton", 
+           "radio", 
            "submit",
            "select", 
-           "options_for_select", 
            # hyperlinks
            "link_to",
            "link_to_if",
@@ -38,10 +37,12 @@ __all__ = [
            "javascript_link",
            "javascript_path",
            "stylesheet_link",
+           # Utility functions
+           "convert_boolean_attrs",
            ]
 
 
-def form(url, method="POST", multipart=False, **options):
+def form(url, method="POST", multipart=False, **attrs):
     """Start a form tag that points the action to an url.
     
     The url options should be given either as a string, or as a 
@@ -59,20 +60,15 @@ def form(url, method="POST", multipart=False, **options):
     
     """
     if multipart:
-        options["enctype"] = "multipart/form-data"
-    
+        attrs["enctype"] = "multipart/form-data"
     method_tag = literal("")
-
     if method.upper() in ['POST', 'GET']:
-        options['method'] = method
+        attrs['method'] = method
     else:
-        options['method'] = "POST"
-        method_tag = HTML.input(
-            type="hidden", id="_method", name_="_method", value=method)
-    
-    options["action"] = url
-    options["_closed"] = False
-    return HTML.form(method_tag, **options)
+        attrs['method'] = "POST"
+        method_tag = HTML.input(type="hidden", name="_method", value=method)
+    attrs["action"] = url
+    return HTML.form(method_tag, _closed=False, **attrs)
 
 
 def end_form():
@@ -87,7 +83,7 @@ def end_form():
     return literal("</form>")
 
 
-def text(name, value=None, **options):
+def text(name, value=None, **attrs):
     """Create a standard text field.
     
     ``value`` is a string, the content of the text field.
@@ -101,27 +97,22 @@ def text(name, value=None, **options):
     * ``maxlength`` - The maximum number of characters that the browser
         will allow the user to enter.
     
-    Remaining keyword options will be standard HTML options for the
-    tag.
+    The remaining keyword args will be standard HTML attributes for the tag.
     
     """
-    o = {'type': 'text', 'name_': name, 'id': name, 'value': value}
-    o.update(options)
-    return HTML.input(**o)
+    set_input_attrs(attrs, "text", name, value)
+    convert_boolean_attrs(attrs, ["disabled"])
+    return HTML.input(**attrs)
 
 
-def hidden(name, value=None, **options):
+def hidden(name, value=None, **attrs):
     """Create a hidden field.
-    
-    Takes the same options as text_field.
-    
     """
-    options.update(dict(type="hidden", id=options.get('id', name), name=name,
-                        value=value))
-    return HTML.input(**options)
+    set_input_attrs(attrs, "hidden", name, value)
+    return HTML.input(**attrs)
 
 
-def file(name, value=None, **options):
+def file(name, value=None, **attrs):
     """Create a file upload field.
     
     If you are using file uploads then you will also need to set the 
@@ -130,206 +121,169 @@ def file(name, value=None, **options):
     Example::
 
         >>> file('myfile')
-        literal(u'<input id="myfile" name="myfile" type="file" />')
+        literal(u'<input name="myfile" type="file" />')
     
     """
-    options.update(dict(type="file", id=options.get('id', name), name=name, 
-                        value=value))
-    return HTML.input(**options)
+    set_input_attrs(attrs, "file", name, value)
+    return HTML.input(**attrs)
 
 
-def password(name="password", value=None, **options):
+def password(name="password", value=None, **attrs):
     """Create a password field.
     
     Takes the same options as text_field.
     
     """
-    options.update(dict(type="password", id=options.get('id', name), 
-                        name=name, value=value))
-    return HTML.input(**options)
+    set_input_attrs(attrs, "password", name, value)
+    return HTML.input(**attrs)
 
 
-def textarea(name, content='', **options):
+def textarea(name, content='', **attrs):
     """Create a text input area.
-    
-    Options:
-    
-    * ``size`` - A string specifying the dimensions of the textarea.
     
     Example::
     
-        >>> textarea("body", '', size="25x10")
-        literal(u'<textarea cols="25" id="body" name="body" rows="10"></textarea>')
+        >>> textarea("body", '', cols=25, rows=10)
+        literal(u'<textarea cols="25" name="body" rows="10"></textarea>')
     
     """
-    if 'size' in options:
-        options["cols"], options["rows"] = options["size"].split("x")
-        del options['size']
-    o = {'name_': name, 'id': name}
-    o.update(options)
-    return HTML.textarea(content, **o)
+    attrs["name"] = name
+    return HTML.textarea(content, **attrs)
 
 
-def checkbox(name, value="1", checked=False, disabled=False, readonly=False,
-             **options):
+def checkbox(name, value="1", checked=False, **attrs):
     """Create a check box.
+
+    Options:
+
+    * ``checked`` - If true, the checkbox will be initially checked.
+      This may be specified as a positional argument.
+
+    * ``disabled`` - If true, checkbox will be grayed out.
+
+    * ``readonly`` - If true, the user will not be able to modify the checkbox.
 
     Example::
     
         >>> checkbox("hi")
-        literal(u'<input id="hi" name="hi" type="checkbox" value="1" />')
+        literal(u'<input name="hi" type="checkbox" value="1" />')
     
     """
-    o = {'type': 'checkbox', 'name': name, 'id': name, 'value': value}
-    o.update(options)
-    for option in ("checked", "disabled", "readonly"):
-        if locals().get(option):
-            o[option] = option
-    return HTML.input(**o)
+    set_input_attrs(attrs, "checkbox", name, value)
+    attrs["type"] = "checkbox"
+    attrs["name"] = name
+    attrs["value"] = value
+    if checked:
+        attrs["checked"] = "checked"
+    convert_boolean_attrs(attrs, ["disabled", "readonly"])
+    return HTML.input(**attrs)
 
 
-def radiobutton(name, value, checked=False, **options):
+def radio(name, value, checked=False, **attrs):
     """Create a radio button.
     
     The id of the radio button will be set to the name + ' ' + value to 
-    ensure its uniqueness.
+    ensure its uniqueness.  An ``id`` keyword arg overrides this.
     
     """
-    pretty_tag_value = re.sub(r'\s', "_", '%s' % value)
-    pretty_tag_value = re.sub(r'(?!-)\W', "", pretty_tag_value).lower()
-    html_options = {'type': 'radio', 'name': name, 
-                    'id': '%s_%s' % (name, pretty_tag_value), 'value': value}
-    html_options.update(options)
+    set_input_attrs(attrs, "radio", name, value)
     if checked:
-        html_options["checked"] = "checked"
-    return HTML.input(**html_options)
+        attrs["checked"] = "checked"
+    if not "id" in attrs:
+        pretty_tag_value = re.sub(r'\s', "_", '%s' % value)
+        pretty_tag_value = re.sub(r'(?!-)\W', "", pretty_tag_value).lower()
+        attrs["id"] = '%s_%s' % (name, pretty_tag_value)
+    return HTML.input(**attrs)
 
 
-def submit(value="Save changes", name='commit', **options):
+def submit(value="Save changes", name='commit', **attrs):
     """Create a submit button with the text ``value`` as the caption."""
-    o = {'type': 'submit', 'name': name, 'value': value }
-    o.update(options)
-    return HTML.input(**o)
+    set_input_attrs(attrs, "submit", name, value)
+    return HTML.input(**attrs)
 
 
-def options_for_select(container, selected=None, function=None):
-    """Create select options from a container (list, tuple, dict), or
-    objects/dicts in a container.  The result should be placed inside a
-    <select> tag pair.
-    
-    Accepts a container (list, tuple, dict) and returns a string of 
-    option tags. Given a container where the elements respond to first 
-    and last (such as a two-element array), the "lasts" serve as option 
-    values and the "firsts" as option text. Dicts are turned into this 
-    form automatically, so the keys become "firsts" and values become 
-    lasts. If ``selected`` is specified, the matching "last" or element 
-    will get the selected option-tag. ``Selected`` may also be an array 
-    of values to be selected when using a multiple select.
-    
-    If the container has dicts or objects, it will use the ``function``
-    which must be specified and applies this function to each object or
-    dictionary in the container.  This function should return a tuple
-    of the option text and value of the dict or object.
-    
+def select(name, selected_values, options, **attrs):
+    """Create a dropdown selection box.
+
+    * ``name`` -- the name of this control.
+
+    * ``selected_values`` -- a string or list of strings giving the
+      value(s) that should be preselected.
+
+    * ``options`` -- an iterable of ``(label, value)`` pairs.  The label
+      is what's shown to the user; the value is what's seen by the 
+      application if the user chooses this option.  Hint: you can use
+      ``sorted(options)`` to display the labels alphabetically.  You can
+      also pass an iterable of strings, in which case the labels and values
+      will be identical.
+
+    * ``multiselect`` -- if true, this control will allow multiple
+       selections.
+
+    Any other keyword args will become HTML attributes for the <select>.
+
     Examples (call, result)::
     
-        >>> options_for_select([["Dollar", "$"], ["Kroner", "DKK"]])
-        '<option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>'
-        >>> options_for_select([ "VISA", "MasterCard" ], "MasterCard")
-        '<option value="VISA">VISA</option>\\n<option selected="selected" value="MasterCard">MasterCard</option>'
-        >>> options_for_select(dict(Basic="$20", Plus="$40"), "$40")
-        '<option selected="selected" value="$40">Plus</option>\\n<option value="$20">Basic</option>'
-        >>> options_for_select([ "VISA", "MasterCard", "Discover" ], ["VISA", "Discover"])
-        '<option selected="selected" value="VISA">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option selected="selected" value="Discover">Discover</option>'
-        >>> def make_elem(x):
-        ...     return x.name, x.price
-        ...
-        >>> class myObj(object):
-        ...     name = ""
-        ...     price = ""
-        ...
-        >>> myObj1 = myObj()
-        >>> myObj1.name = "Basic"
-        >>> myObj1.price = "$20"
-        >>> myObj2 = myObj()
-        >>> myObj2.name = "Plus"
-        >>> myObj2.price = "$40"
-        >>> options_for_select([myObj1, myObj2], selected="$40", function=make_elem)
-        '<option value="$20">Basic</option>\\n<option selected="selected" value="$40">Plus</option>'
-        >>> def make_elem(x):
-        ...     return x["name"], x["price"]
-        >>> options_for_select([{"name":"Basic", "price":"$20"},{"name":"Plus","price":"$40"}], selected="$40", function=make_elem)
-        '<option value="$20">Basic</option>\\n<option selected="selected" value="$40">Plus</option>'
+        >>> select("currency", "$", [["Dollar", "$"], ["Kroner", "DKK"]])
+        literal(u'<select name="currency">\\n<option selected="selected" value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
+        >>> select("cc", "MasterCard", [ "VISA", "MasterCard" ], id="cc", class_="blue")
+        literal(u'<select class="blue" id="cc" name="cc">\\n<option value="VISA">VISA</option>\\n<option selected="selected" value="MasterCard">MasterCard</option>\\n</select>')
+        >>> select("cc", ["VISA", "Discover"], [ "VISA", "MasterCard", "Discover" ])
+        literal(u'<select name="cc">\\n<option selected="selected" value="VISA">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option selected="selected" value="Discover">Discover</option>\\n</select>')
         
-    Note: Only the option tags are returned.  You have to wrap this call 
-    in a regular HTML select tag.
-    
     """
-    options = []
-    if (not container):
-        return ''
-    
-    if (not isinstance(selected, (list, tuple))):
-        selected = (selected, )
-
-    if (hasattr(container, 'values')):
-        container = container.items()
-
-    elif (isinstance(container[0], (dict, object))):
-        if (function):
-            container = [function(x) for x in container]
-
-    if (not isinstance(container[0], (list, tuple))):
-        container = [(x, x) for x in container]
-        
-    for x in container:
-        if (x[1] in selected):
-            options.append(str(HTML.option(x[0], value=x[1], selected="selected")))
+    attrs["name"] = name
+    convert_boolean_attrs(attrs, ["multiple"])
+    if isinstance(selected_values, basestring):
+        selected_values = (selected_values,)
+    opts = []
+    for x in options:
+        if isinstance(x, basestring):
+            label = value = x
         else:
-            options.append(str(HTML.option(x[0], value=x[1])))
-            
-    return "\n".join(options)
-
-
-def select(*args, **kw):
-    # @@MO: Combine webhelpers.rails.form_tag.select with 
-    # options_for_select above.  If the container value is a string, use it
-    # as is; otherwise call options_for_select(container, selected, function).
-    # Use the HTML object to create all tags.
-    raise NotImplementedError()
+            label = x[0]
+            value = x[1]
+        if value in selected_values:
+            opt = HTML.option(label, value=value, selected="selected")
+        else:
+            opt = HTML.option(label, value=value)
+        opts.append(opt)
+    opts_html = "\n".join(opts)
+    opts_html = literal("\n%s\n" % opts_html)
+    return HTML.select(opts_html, **attrs)
 
 
 #### Hyperlink tags
 
-def link_to(label, url='', **html_options):
+def link_to(label, url='', **attrs):
     """Create a hyperlink with the given text pointing to the URL.
     
     If the label is ``None`` or empty, the URL will be used as the label.
 
     This function does not modify the URL in any way.  The label will be
     escaped if it contains HTML markup.  To prevent escaping, wrap the label
-    in a ``webhelpers.html.literal()`.
+    in a ``webhelpers.html.literal()``.
     """
-    html_options['href'] = url
-    return HTML.a(label or url, **html_options)
+    attrs['href'] = url
+    return HTML.a(label or url, **attrs)
 
 
-def link_to_if(condition, label, url='', **html_options):
+def link_to_if(condition, label, url='', **attrs):
     """Same as ``link_to`` but return just the label if the condition is false.
     
     This is useful in a menu when you don't want the current option to be a
     link.
     """
     if condition:
-        return link_to(label, url, **html_options)
+        return link_to(label, url, **attrs)
     else:
         return label
 
-def link_to_unless(condition, label, url='', **html_options):
+def link_to_unless(condition, label, url='', **attrs):
     """Same as ``link_to`` but return just the label if the condition is true.
     """
     if not condition:
-        return link_to(label, url, **html_options)
+        return link_to(label, url, **attrs)
     else:
         return label
 
@@ -337,7 +291,7 @@ def link_to_unless(condition, label, url='', **html_options):
 
 #### Non-form tags
 
-def image(source, alt=None, height=None, width=None, **options):
+def image(source, alt=None, height=None, width=None, **attrs):
     """Return an image tag for the specified ``source``.
 
     ``source``
@@ -375,18 +329,18 @@ def image(source, alt=None, height=None, width=None, **options):
         literal(u'<img alt="Icon" src="/icons/icon.gif" width="16" />')
         
     """
-    options['src'] = compute_public_path(source, 'images')
+    attrs['src'] = compute_public_path(source, 'images')
 
     if not alt:
         alt = os.path.splitext(os.path.basename(source))[0].title()
-    options['alt'] = alt
+    attrs['alt'] = alt
     
     if width is not None:
-        options['width'] = width
+        attrs['width'] = width
     if height is not None:
-        options['height'] = height
+        attrs['height'] = height
         
-    return HTML.img(**options)
+    return HTML.img(**attrs)
 
 #### Tags for the HTML head
 
@@ -394,7 +348,7 @@ def image(source, alt=None, height=None, width=None, **options):
 javascript_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                'javascripts')
 
-def javascript_link(*sources, **options):
+def javascript_link(*sources, **attrs):
     """Return script include tags for the specified javascript
     ``sources``.
     
@@ -412,19 +366,17 @@ def javascript_link(*sources, **options):
         <script src="/test/test.1.js" type="text/javascript"></script>
         
     """
-    if options.get('defer') == True:
-        options['defer'] = 'defer'
-
+    convert_boolean_attrs(attrs, ["defer"])
     tags = []
     for source in sources:
-        content_options = dict(type='text/javascript',
+        content_attrs = dict(type='text/javascript',
                 src=compute_public_path(source, 'javascripts', 'js'))
-        content_options.update(options)
-        tags.append(HTML.script('',  **content_options))
+        content_attrs.update(attrs)
+        tags.append(HTML.script('',  **content_attrs))
     return '\n'.join(tags)
 
 
-def stylesheet_link(*sources, **options):
+def stylesheet_link(*sources, **attrs):
     """Return CSS link tags for the specified stylesheet ``sources``.
 
     Each source's URL path is ultimately prepended with the 
@@ -441,17 +393,17 @@ def stylesheet_link(*sources, **options):
         u'<link href="/stylesheets/dir/file.css" media="all" rel="Stylesheet" type="text/css" />'
 
     """
-    tag_options = dict(rel='Stylesheet', type='text/css', media='screen')
-    tag_options.update(options)
-    tag_options.pop('href', None)
+    tag_attrs = dict(rel='Stylesheet', type='text/css', media='screen')
+    tag_attrs.update(attrs)
+    tag_attrs.pop('href', None)
     
     tags = [HTML.link(
         **dict(href=compute_public_path(source, 'stylesheets', 'css'), 
-               **tag_options)) for source in sources]
+               **tag_attrs)) for source in sources]
     return '\n'.join(tags)
 
 
-def auto_discovery_link(source, feed_type='rss', **kwargs):
+def auto_discovery_link(source, feed_type='rss', **attrs):
     """Return a link tag allowing auto-detecting of RSS or ATOM feed.
     
     The auto-detection of feed for the current page is only for
@@ -491,9 +443,9 @@ def auto_discovery_link(source, feed_type='rss', **kwargs):
 
     tag_args = dict(rel='alternate', type=feed_type, title=title,
                     href=compute_public_path(source))
-    kwargs.pop('href', None)
-    kwargs.pop('type', None)
-    tag_args.update(kwargs)
+    attrs.pop('href', None)
+    attrs.pop('type', None)
+    tag_args.update(attrs)
     return HTML.link(**tag_args)
 
 
@@ -518,6 +470,32 @@ def compute_public_path(source, root_path=None, ext=None):
         else:
             source = '%s/%s/%s' % (get_script_name(), root_path, source)
     return source
+
+
+def convert_boolean_attrs(attrs, bool_attrs):
+    """Convert boolean values into proper HTML attributes.
+
+    ``attrs`` is a dict of HTML attributes, which will be modified in
+    place.
+
+    ``bool_attrs`` is a list of attribute names.
+
+    For every element in ``bool_attrs``, I look for a corresponding key in
+    ``attrs``.  If its value is true, I change the value to match the key.
+    For example, I convert ``selected=True`` into ``selected="selected"``.  If
+    the value is false, I delete the key.
+    
+    """
+    for a in bool_attrs:
+        if attrs.has_key(a) and attrs[a]:
+            attrs[a] = a
+        elif attrs.has_key(a):
+            del attrs[a]
+
+def set_input_attrs(attrs, type, name, value):
+    attrs["type"] = type
+    attrs["name"] = name
+    attrs["value"] = value
 
 
 def get_script_name():
