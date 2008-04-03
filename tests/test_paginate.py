@@ -58,8 +58,8 @@ def test_many_pages():
     assert page.items_per_page == 15
     assert page.item_count == 100
     assert page.page_count == 7
-    assert page.pager() == '<span class="pager_curpage">1</span> <a href="/content?page_nr=2" class="pager_link">2</a> <a href="/content?page_nr=3" class="pager_link">3</a> <span class="pager_dotdot">..</span> <a href="/content?page_nr=7" class="pager_link">7</a>'
-    assert page.pager(separator='_') == '<span class="pager_curpage">1</span>_<a href="/content?page_nr=2" class="pager_link">2</a>_<a href="/content?page_nr=3" class="pager_link">3</a>_<span class="pager_dotdot">..</span>_<a href="/content?page_nr=7" class="pager_link">7</a>'
-    assert page.pager(link_var='xy') == '<span class="pager_curpage">1</span> <a href="/content?xy=2" class="pager_link">2</a> <a href="/content?xy=3" class="pager_link">3</a> <span class="pager_dotdot">..</span> <a href="/content?xy=7" class="pager_link">7</a>'
+    assert page.pager() == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page_nr=2">2</a> <a class="pager_link" href="/content?page_nr=3">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page_nr=7">7</a>'
+    assert page.pager(separator='_') == '<span class="pager_curpage">1</span>_<a class="pager_link" href="/content?page_nr=2">2</a>_<a class="pager_link" href="/content?page_nr=3">3</a>_<span class="pager_dotdot">..</span>_<a class="pager_link" href="/content?page_nr=7">7</a>'
+    assert page.pager(link_var='xy') == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?xy=2">2</a> <a class="pager_link" href="/content?xy=3">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?xy=7">7</a>'
     assert page.pager(link_attr={'style':'s1'}, curpage_attr={'style':'s2'}, dotdot_attr={'style':'s3'}) == '<span style="s2">1</span> <a href="/content?page_nr=2" style="s1">2</a> <a href="/content?page_nr=3" style="s1">3</a> <span style="s3">..</span> <a href="/content?page_nr=7" style="s1">7</a>'
-    
+
