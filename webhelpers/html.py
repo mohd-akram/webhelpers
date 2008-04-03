@@ -84,7 +84,7 @@ class UnfinishedLiteral(object):
         raise UnfinishedTag
 
 
-class Base(object):
+class HTMLBuilder(object):
     
     """Base HTML object."""
     
@@ -318,6 +318,6 @@ blockTags = {}
 for tag in blockTagString.split():
     blockTags[tag] = 1
 
-HTML = Base()
+HTML = HTMLBuilder()
 
 __all__ = ["HTML", "escape", "literal", "url_escape"]
