@@ -4,13 +4,12 @@ import re
 import urllib
 
 from webhelpers.html import HTML, literal, lit_sub, escape
-from webhelpers.tags import compute_public_path
+from webhelpers.tags import compute_public_path, convert_boolean_attrs
 import webhelpers.textile as textile
 import webhelpers.markdown as _markdown
 
 __all__ = [
     'button_to', 
-    'convert_boolean_attributes', 
     'mail_to',
     'highlight', 
     'markdown', 
@@ -110,7 +109,7 @@ def button_to(name, url='', **html_options):
     
     """
     if html_options:
-        convert_boolean_attributes(html_options, ['disabled'])
+        convert_boolean_attrs(html_options, ['disabled'])
     
     method_tag = ''
     method = html_options.pop('method', '')
@@ -133,27 +132,6 @@ def button_to(name, url='', **html_options):
     
     return HTML.form(method=form_method, action=url, class_="button-to",
                      c=[HTML.div(method_tag, HTML.input(**html_options))])
-
-
-def convert_boolean_attributes(html_options, bool_attrs):
-    """Convert boolean values into proper HTML attributes.
-
-    ``html_options`` is a dict of HTML attributes, which will be modified in
-    place.
-
-    ``bool_attrs`` is a list of attribute names.
-
-    For every element in ``bool_attrs``, I look for a corresponding key in
-    ``attrs``.  If its value is true, I change the value to match the key.
-    For example, I convert ``selected=True`` into ``selected="selected"``.  If
-    the value is false, I delete the key.
-    
-    """
-    for attr in bool_attrs:
-        if html_options.has_key(attr) and html_options[attr]:
-            html_options[attr] = attr
-        elif html_options.has_key(attr):
-            del html_options[attr]
 
 
 def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, 
