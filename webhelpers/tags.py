@@ -1,5 +1,6 @@
 """Helpers producing simple HTML tags"""
 
+import datetime
 import os
 import re
 import urllib
@@ -272,14 +273,39 @@ class ModelTags(object):
 
     undefined_values = set([None, ""])
 
-    def __init__(self, record, use_keys=False):
+    def __init__(self, record, use_keys=False, date_format="%m/%d/%Y"):
         self.record = record
         self.use_keys = use_keys
+        self.date_format = date_format
     
     def checkbox(self, name, **kw):
         value = kw.pop("value", "1")
         checked = bool(self._get_value(name))
         return checkbox(name, value, checked, **kw)
+
+    def date(self, name, **kw):
+        """Same as text but format a date value into a date string.
+
+        The value can be a `datetime.date`, `datetime.datetime`, `None`,
+        or `""`.  The former two are converted to a string using the
+        date format passed to the constructor.  The latter two are converted
+        to "".
+
+        If there's no database record, consult keyword arg `default`. It it's
+        the string "today", use todays's date. Otherwise it can be any of the
+        values allowed above.  If no default is specified, the text field is
+        initialized to "".
+
+        Hint: you may want to attach a Javascript calendar to the field.
+        """
+        value = self._get_value(name, kw)
+        if isinstance(value, datetime.date):
+            value = value.strftime(self.date_format)
+        elif value == "today":
+            value = datetime.date.today().strftime(self.date_format)
+        else:
+            value = ""
+        return text(name, value, **kw)
 
     def file(self, name, **kw):
         value = self._get_value(name, kw)
