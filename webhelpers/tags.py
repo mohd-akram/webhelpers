@@ -255,10 +255,26 @@ def select(name, selected_values, options, **attrs):
 
 
 class ModelTags(object):
+    """A nice way to build a form from a database record.
+    
+    ModelTags allows you to build a create/update form easily.  (This is the
+    C and U in CRUD.)  The constructor takes a database record, which can be
+    a SQLAlchemy mapped class, or any object with attributes or keys for the
+    field values.  Its methods shadow the the form field helpers, but it
+    automatically fills in the value attributes based on the current value in
+    the record.
+
+    You can also use the same form for to input a new record.  Pass `None` or
+    `""` instead of a record, and it will set all the current values to a
+    default value, which is either the `default` keyword arg to the method, or
+    `""` if not specified.
+    """
+
     undefined_values = set([None, ""])
 
-    def __init__(self, record):
+    def __init__(self, record, use_keys=False):
         self.record = record
+        self.use_keys = use_keys
     
     def checkbox(self, name, **kw):
         value = kw.pop("value", "1")
@@ -267,7 +283,7 @@ class ModelTags(object):
 
     def file(self, name, **kw):
         value = self._get_value(name, kw)
-        return file, name, value, **kw)
+        return file(name, value, **kw)
 
     def hidden(self, name, **kw):
         value = self._get_value(name, kw)
@@ -279,7 +295,7 @@ class ModelTags(object):
 
     def radio(self, name, checked_value, **kw):
         value = self._get_value(name, kw)
-        checked = value == checked_value
+        checked = (value == checked_value)
         return radio(name, value, checked, **kw)
 
     def select(self, name, options, **kw):
@@ -288,7 +304,7 @@ class ModelTags(object):
 
     def text(self, name, *args, **kw):
         value = self._get_value(name, kw)
-        return text, name, value, **kw)
+        return text(name, value, **kw)
 
     def textarea(self, name, *args, **kw):
         content = self._get_value(name, kw)
@@ -298,10 +314,12 @@ class ModelTags(object):
     def _get_value(self, name, kw):
         """Modifies `kw` in place!"""
         default = kw.pop("default", "")
-        if self.record not in self.undefined_values:
-            value = getattr(record, name)   # Raises AttributeError.
+        if self.record in self.undefined_values:
+            return default
+        elif self.use_keys:
+            return self.record[name]    # Raises KeyError.
         else:
-            value = default
+            return getattr(self.record, name)   # Raises AttributeError.
 
 
 #### Hyperlink tags
