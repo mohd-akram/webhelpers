@@ -26,6 +26,7 @@ __all__ = [
            "radio", 
            "submit",
            "select", 
+           "ModelTags",
            # hyperlinks
            "link_to",
            "link_to_if",
@@ -251,6 +252,56 @@ def select(name, selected_values, options, **attrs):
     opts_html = "\n".join(opts)
     opts_html = literal("\n%s\n" % opts_html)
     return HTML.select(opts_html, **attrs)
+
+
+class ModelTags(object):
+    undefined_values = set([None, ""])
+
+    def __init__(self, record):
+        self.record = record
+    
+    def checkbox(self, name, **kw):
+        value = kw.pop("value", "1")
+        checked = bool(self._get_value(name))
+        return checkbox(name, value, checked, **kw)
+
+    def file(self, name, **kw):
+        value = self._get_value(name, kw)
+        return file, name, value, **kw)
+
+    def hidden(self, name, **kw):
+        value = self._get_value(name, kw)
+        return hidden(name, value, **kw)
+
+    def password(self, name, **kw):
+        value = self._get_value(name, kw)
+        return password(name, value, kw)
+
+    def radio(self, name, checked_value, **kw):
+        value = self._get_value(name, kw)
+        checked = value == checked_value
+        return radio(name, value, checked, **kw)
+
+    def select(self, name, options, **kw):
+        selected_values = self._get_value(name, kw)
+        return select(name, selected_values, options, **kw)
+
+    def text(self, name, *args, **kw):
+        value = self._get_value(name, kw)
+        return text, name, value, **kw)
+
+    def textarea(self, name, *args, **kw):
+        content = self._get_value(name, kw)
+        return textarea(name, content, **kw)
+
+    # Private methods.
+    def _get_value(self, name, kw):
+        """Modifies `kw` in place!"""
+        default = kw.pop("default", "")
+        if self.record not in self.undefined_values:
+            value = getattr(record, name)   # Raises AttributeError.
+        else:
+            value = default
 
 
 #### Hyperlink tags
@@ -514,4 +565,5 @@ def get_script_name():
     else:
         script_name = ''
     return script_name
+
 
