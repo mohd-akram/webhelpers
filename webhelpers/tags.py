@@ -1,5 +1,6 @@
 """Helpers producing simple HTML tags"""
 
+import datetime
 import os
 import re
 import urllib
@@ -26,6 +27,7 @@ __all__ = [
            "radio", 
            "submit",
            "select", 
+           "ModelTags",
            # hyperlinks
            "link_to",
            "link_to_if",
@@ -251,6 +253,99 @@ def select(name, selected_values, options, **attrs):
     opts_html = "\n".join(opts)
     opts_html = literal("\n%s\n" % opts_html)
     return HTML.select(opts_html, **attrs)
+
+
+class ModelTags(object):
+    """A nice way to build a form from a database record.
+    
+    ModelTags allows you to build a create/update form easily.  (This is the
+    C and U in CRUD.)  The constructor takes a database record, which can be
+    a SQLAlchemy mapped class, or any object with attributes or keys for the
+    field values.  Its methods shadow the the form field helpers, but it
+    automatically fills in the value attributes based on the current value in
+    the record.
+
+    You can also use the same form for to input a new record.  Pass `None` or
+    `""` instead of a record, and it will set all the current values to a
+    default value, which is either the `default` keyword arg to the method, or
+    `""` if not specified.
+    """
+
+    undefined_values = set([None, ""])
+
+    def __init__(self, record, use_keys=False, date_format="%m/%d/%Y"):
+        self.record = record
+        self.use_keys = use_keys
+        self.date_format = date_format
+    
+    def checkbox(self, name, **kw):
+        value = kw.pop("value", "1")
+        checked = bool(self._get_value(name))
+        return checkbox(name, value, checked, **kw)
+
+    def date(self, name, **kw):
+        """Same as text but format a date value into a date string.
+
+        The value can be a `datetime.date`, `datetime.datetime`, `None`,
+        or `""`.  The former two are converted to a string using the
+        date format passed to the constructor.  The latter two are converted
+        to "".
+
+        If there's no database record, consult keyword arg `default`. It it's
+        the string "today", use todays's date. Otherwise it can be any of the
+        values allowed above.  If no default is specified, the text field is
+        initialized to "".
+
+        Hint: you may want to attach a Javascript calendar to the field.
+        """
+        value = self._get_value(name, kw)
+        if isinstance(value, datetime.date):
+            value = value.strftime(self.date_format)
+        elif value == "today":
+            value = datetime.date.today().strftime(self.date_format)
+        else:
+            value = ""
+        return text(name, value, **kw)
+
+    def file(self, name, **kw):
+        value = self._get_value(name, kw)
+        return file(name, value, **kw)
+
+    def hidden(self, name, **kw):
+        value = self._get_value(name, kw)
+        return hidden(name, value, **kw)
+
+    def password(self, name, **kw):
+        value = self._get_value(name, kw)
+        return password(name, value, kw)
+
+    def radio(self, name, checked_value, **kw):
+        value = self._get_value(name, kw)
+        checked = (value == checked_value)
+        return radio(name, value, checked, **kw)
+
+    def select(self, name, options, **kw):
+        selected_values = self._get_value(name, kw)
+        return select(name, selected_values, options, **kw)
+
+    def text(self, name, *args, **kw):
+        value = self._get_value(name, kw)
+        return text(name, value, **kw)
+
+    def textarea(self, name, *args, **kw):
+        content = self._get_value(name, kw)
+        return textarea(name, content, **kw)
+
+    # Private methods.
+    def _get_value(self, name, kw):
+        """Modifies `kw` in place!"""
+        default = kw.pop("default", "")
+        if self.record in self.undefined_values:
+            return default
+        elif self.use_keys:
+            return self.record[name]    # Raises KeyError.
+        else:
+            return getattr(self.record, name)   # Raises AttributeError.
 
 
 #### Hyperlink tags
@@ -514,4 +609,5 @@ def get_script_name():
     else:
         script_name = ''
     return script_name
+
 
