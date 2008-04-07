@@ -48,8 +48,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import re
 import warnings
 
-__version__ = '0.3.4'
-__date__ = '2008-04-04'
+__version__ = '0.3.5'
+__date__ = '2008-04-07'
 __author__ = 'Christoph Haas <email@christoph-haas.de>'
 
 # Use templating for the .pager() [available since Python 2.4].
@@ -88,8 +88,8 @@ def get_wrapper(obj, sqlalchemy_session=None):
                 return _SQLAlchemySelect(obj, sqlalchemy_session)
 
     raise TypeError("Sorry, your collection type is not supported by the paginate module. "
-            "You can either provide a list, a tuple, an SQLAlchemy table or an "
-            "SQLAlchemy query object.")
+            "You can either provide a list, a tuple, an SQLAlchemy 0.4 select object or an "
+            "SQLAlchemy 0.4 ORM-query object.")
 
 class _SQLAlchemySelect(object):
     """
@@ -97,7 +97,7 @@ class _SQLAlchemySelect(object):
     """
     def __init__(self, obj, sqlalchemy_session=None):
         if not isinstance(sqlalchemy_session, sqlalchemy.orm.scoping.ScopedSession):
-            raise TypeError("If you want to page an SQLAlchemy 'Table' object then you "
+            raise TypeError("If you want to page an SQLAlchemy 'select' object then you "
                     "have to provide a 'sqlalchemy_session' argument. See also: "
                     "http://www.sqlalchemy.org/docs/04/session.html")
 
@@ -111,6 +111,24 @@ class _SQLAlchemySelect(object):
         limit = range.stop - range.start
         select = self.obj.offset(offset).limit(limit)
         return self.sqlalchemy_session.execute(select).fetchall()
+
+    def __len__(self):
+        return self.sqlalchemy_session.execute(self.obj).rowcount
+
+class _SQLAlchemyQuery(object):
+    """
+    Iterable that allows to get slices from an SQLAlchemy Query object
+    """
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __getitem__(self, range):
+        if not isinstance(range, slice):
+            raise Exception, "__getitem__ without slicing not supported"
+        return self.obj[range]
+
+    def __len__(self):
+        return self.obj.count()
 
 # Import the webhelpers to create URLs
 from webhelpers.html import literal, HTML
@@ -127,8 +145,8 @@ class Page(list):
     last item on the given page. The collection can be:
 
     - a sequence
-    - an SQLAlchemy query
-    - an SQLAlchemy table
+    - an SQLAlchemy query - e.g.: Session.query(MyModel)
+    - an SQLAlchemy select - e.g.: sqlalchemy.select([my_table])
 
     A "Page" instance maintains pagination logic associated with each 
     page, where it begins, what the first/last item on the page is, etc. 
@@ -180,7 +198,7 @@ class Page(list):
         Parameters:
 
         collection
-            Sequence, SQLAlchemy table or SQLAlchemy query
+            Sequence, SQLAlchemy select object or SQLAlchemy ORM-query
             representing the collection of items to page through.
 
         current_page
@@ -197,10 +215,10 @@ class Page(list):
             is created. Giving this parameter will speed up things.
 
         sqlalchemy_session (optional)
-            If you want to use an SQLAlchemy (0.4) table as a collection
-            then you need to provide a Session. A 'Table'
-            object does not have a database connection attached so the paginator
-            wouldn't be able to execute a SELECT query without it.
+            If you want to use an SQLAlchemy (0.4) select object as a
+            collection then you need to provide an SQLAlchemy session object.
+            Select objects do not have a database connection attached so it
+            would not be able to execute the SELECT query.
 
         Further parameters are used as link arguments in the pager().
         """
