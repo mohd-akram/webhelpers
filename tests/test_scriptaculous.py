@@ -9,12 +9,24 @@ class TestScriptaculousHelper(WebHelpersTestCase):
         self.assertEqual("new Effect.Fade('fademe',{duration:4.0});", visual_effect('fade', "fademe", duration=4.0))
         self.assertEqual("new Effect.Shake(element,{});", visual_effect('shake'))
         self.assertEqual("new Effect.DropOut('dropme',{queue:'end'});", visual_effect('drop_out', 'dropme',queue='end'))
-        self.assertEqual("new Effect.DropOut('dropme',{queue:{scope:'test',limit:2,position:'end'}});",  
-            visual_effect('drop_out', 'dropme', queue=dict(position="end",scope="test", limit=2)))
-        self.assertEqual("new Effect.DropOut('dropme',{queue:{scope:'list',limit:2}});",
-            visual_effect('drop_out', 'dropme', queue=dict(scope='list',limit=2)))
-        self.assertEqual("new Effect.DropOut('dropme',{queue:{scope:'test',limit:2,position:'end'}});",  
-            visual_effect('drop_out', 'dropme', queue=dict(position='end',scope='test',limit=2)))
+
+        def compare(expected, result, begin, end, *tokens):
+            """Compare expected to result without assuming CPython dict ordering"""
+            self.assertEqual(len(expected), len(result))
+            self.assert_(result.startswith(expected[:expected.find(begin) + 1]))
+            self.assert_(result.endswith(end), result)
+            for token in tokens:
+                self.assert_(token in result)
+
+        compare("new Effect.DropOut('dropme',{queue:{scope:'test',limit:2,position:'end'}});",
+                visual_effect('drop_out', 'dropme', queue=dict(position="end",scope="test", limit=2)),
+                '{queue', "}});", "scope:'test'", "limit:2", "position:'end'")
+        compare("new Effect.DropOut('dropme',{queue:{scope:'list',limit:2}});",
+                visual_effect('drop_out', 'dropme', queue=dict(scope='list',limit=2)),
+                '{queue', "}});", "scope:'list'", "limit:2")
+        compare("new Effect.DropOut('dropme',{queue:{scope:'test',limit:2,position:'end'}});",
+                visual_effect('drop_out', 'dropme', queue=dict(position='end',scope='test',limit=2)),
+                '{queue', "}});", "scope:'test'", "limit:2", "position:'end'")
     
     def test_toggle_effects(self):
         self.assertEqual("Effect.toggle('posts','appear',{});", visual_effect("toggle_appear", "posts"))
