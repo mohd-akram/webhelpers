@@ -280,7 +280,7 @@ class ModelTags(object):
     
     def checkbox(self, name, **kw):
         value = kw.pop("value", "1")
-        checked = bool(self._get_value(name))
+        checked = bool(self._get_value(name, kw))
         return checkbox(name, value, checked, **kw)
 
     def date(self, name, **kw):
@@ -317,12 +317,12 @@ class ModelTags(object):
 
     def password(self, name, **kw):
         value = self._get_value(name, kw)
-        return password(name, value, kw)
+        return password(name, value, **kw)
 
     def radio(self, name, checked_value, **kw):
         value = self._get_value(name, kw)
         checked = (value == checked_value)
-        return radio(name, value, checked, **kw)
+        return radio(name, checked_value, checked, **kw)
 
     def select(self, name, options, **kw):
         selected_values = self._get_value(name, kw)
@@ -340,9 +340,11 @@ class ModelTags(object):
     def _get_value(self, name, kw):
         """Modifies `kw` in place!"""
         default = kw.pop("default", "")
-        if self.record in self.undefined_values:
-            return default
-        elif self.use_keys:
+        # This used to be self.record in self.undefined_values, but if the record is a dict, this fails because dicts aren't hashable.
+        for undefined_value in self.undefined_values:
+            if self.record == undefined_value:
+                return default
+        if self.use_keys:
             return self.record[name]    # Raises KeyError.
         else:
             return getattr(self.record, name)   # Raises AttributeError.
