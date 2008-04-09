@@ -273,12 +273,14 @@ class ModelTags(object):
 
     undefined_values = set([None, ""])
 
-    def __init__(self, record, use_keys=False, date_format="%m/%d/%Y"):
+    def __init__(self, record, use_keys=False, date_format="%m/%d/%Y", id_format=None):
         self.record = record
         self.use_keys = use_keys
         self.date_format = date_format
+        self.id_format = id_format
     
     def checkbox(self, name, **kw):
+        self._prepare_id(name, kw)
         value = kw.pop("value", "1")
         checked = bool(self._get_value(name, kw))
         return checkbox(name, value, checked, **kw)
@@ -298,6 +300,7 @@ class ModelTags(object):
 
         Hint: you may want to attach a Javascript calendar to the field.
         """
+        self._prepare_id(name, kw)
         value = self._get_value(name, kw)
         if isinstance(value, datetime.date):
             value = value.strftime(self.date_format)
@@ -308,31 +311,42 @@ class ModelTags(object):
         return text(name, value, **kw)
 
     def file(self, name, **kw):
+        self._prepare_id(name, kw)
         value = self._get_value(name, kw)
         return file(name, value, **kw)
 
     def hidden(self, name, **kw):
+        self._prepare_id(name, kw)
         value = self._get_value(name, kw)
         return hidden(name, value, **kw)
 
     def password(self, name, **kw):
+        self._prepare_id(name, kw)
         value = self._get_value(name, kw)
         return password(name, value, **kw)
 
     def radio(self, name, checked_value, **kw):
+        self._prepare_id(name, kw)
         value = self._get_value(name, kw)
+        if 'id' in kw:
+            pretty_tag_value = re.sub(r'\s', "_", '%s' % checked_value)
+            pretty_tag_value = re.sub(r'(?!-)\W', "", pretty_tag_value).lower()
+            kw["id"] = '%s_%s' % (kw['id'], pretty_tag_value)
         checked = (value == checked_value)
         return radio(name, checked_value, checked, **kw)
 
     def select(self, name, options, **kw):
+        self._prepare_id(name, kw)
         selected_values = self._get_value(name, kw)
         return select(name, selected_values, options, **kw)
 
     def text(self, name, *args, **kw):
+        self._prepare_id(name, kw)
         value = self._get_value(name, kw)
         return text(name, value, **kw)
 
     def textarea(self, name, *args, **kw):
+        self._prepare_id(name, kw)
         content = self._get_value(name, kw)
         return textarea(name, content, **kw)
 
@@ -349,7 +363,11 @@ class ModelTags(object):
         else:
             return getattr(self.record, name)   # Raises AttributeError.
 
-
+    def _prepare_id(self, name, kw):
+        """Modifies `kw` in place!"""
+        if self.id_format is not None and 'id' not in kw:
+            kw['id'] = self.id_format % name
+        
 #### Hyperlink tags
 
 def link_to(label, url='', **attrs):
