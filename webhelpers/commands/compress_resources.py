@@ -1,3 +1,8 @@
+"""A ``distutils`` command to compress Javascript/CSS files.
+
+DEPRECATED!! BUGGY!! Do not use in new projects.  The WebHelpers developers
+are investigating alternatives.
+"""
 from distutils.cmd import Command
 from distutils.errors import *
 from distutils import log

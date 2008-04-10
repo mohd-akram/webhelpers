@@ -1,6 +1,8 @@
 """
 htmlgen
 
+*DEPRECATED: use ``webhelpers.html`` instead.*
+
 Kind of like HTMLGen, only much simpler.  Like stan, only not.  The
 only important symbol that is exported is ``html``.
 
