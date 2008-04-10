@@ -337,8 +337,8 @@ class Page(list):
 
     def pager(self, format='~2~', link_var='page_nr', partial_var='partial',
         show_if_single_page=False, separator=' ', onclick=None,
-        symbol_first='&lt;&lt;', symbol_last='&gt;&gt;',
-        symbol_previous='&lt;', symbol_next='&gt;',
+        symbol_first='<<', symbol_last='>>',
+        symbol_previous='<', symbol_next='>',
         link_attr={'class':'pager_link'}, curpage_attr={'class':'pager_curpage'},
         dotdot_attr={'class':'pager_dotdot'}, **kwargs):
         """
@@ -373,25 +373,25 @@ class Page(list):
             String to be displayed as the text for the %(link_first)s 
             link above.
 
-            Default: '&lt;&lt;' ('<<')
+            Default: '<<'
 
         symbol_last
             String to be displayed as the text for the %(link_last)s 
             link above.
 
-            Default: '&gt;&gt;' ('>>')
+            Default: '>>'
 
         symbol_previous
             String to be displayed as the text for the %(link_previous)s 
             link above.
 
-            Default: '&lt;' ('<')
+            Default: '<'
 
         symbol_next
             String to be displayed as the text for the %(link_next)s 
             link above.
 
-            Default: '&gt;' ('>')
+            Default: '>'
 
         separator:
             String that is used to seperate page links/numbers in the 
