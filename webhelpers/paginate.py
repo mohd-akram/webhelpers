@@ -12,9 +12,11 @@ This module is especially useful for Pylons web framework applications.
 
 Compatibility warning:
 
-This pagination module is an alternative to the deprecated pagination 
-module. It is in no way compatible so just replacing the import 
-statements will break your code.
+* This module is the successor to the deprecated ``webhelpers.pagination``
+  module.  It is *NOT* API compatible.
+
+* Paginate depends on Routes (http://routes.groovie.org/), which is imported
+  in one of the ``Page`` methods.
 
 This version of paginate was originally based on the 0.3.3 version from
 http://workaround.org/cgi-bin/hg-paginate.
@@ -59,6 +61,9 @@ try:
     from string import Template
 except ImportError:
     from webhelpers.string24 import Template
+
+# Import the webhelpers to create URLs
+from webhelpers.html import literal, HTML
 
 # import SQLAlchemy if available
 try:
@@ -129,11 +134,6 @@ class _SQLAlchemyQuery(object):
 
     def __len__(self):
         return self.obj.count()
-
-# Import the webhelpers to create URLs
-from webhelpers.html import literal, HTML
-
-from routes import url_for
 
 # Since the items on a page are mainly a list we subclass the "list" type
 class Page(list):
@@ -497,6 +497,7 @@ class Page(list):
             text
                 Text to be printed in the A-HREF tag
             """
+            from routes import url_for
             # Let the url_for() from webhelpers create a new link and set
             # the variable called 'link_var'. Example:
             # You are in '/foo/bar' (controller='foo', action='bar')
