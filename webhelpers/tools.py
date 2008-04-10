@@ -385,6 +385,7 @@ class Flash(object):
     def __call__(self, message):
         from pylons import session
         session.setdefault(self.session_key, []).append(message)
+        session.save()
 
     def pop_messages(self):
         from pylons import session

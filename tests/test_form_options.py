@@ -32,13 +32,13 @@ class TestFormOptionsHelper(WebHelpersTestCase):
 
     def test_hash_options_for_select_with_dict(self):
         self.assertEqual(
-            "<option value=\"&lt;Kroner&gt;\">&lt;DKR&gt;</option>\n<option value=\"Dollar\">$</option>",
+            '<option value="Dollar">$</option>\n<option value="&lt;Kroner&gt;">&lt;DKR&gt;</option>',
             options_for_select({ "$": "Dollar", "<DKR>": "<Kroner>" }))
         self.assertEqual(
-            "<option value=\"&lt;Kroner&gt;\">&lt;DKR&gt;</option>\n<option value=\"Dollar\" selected=\"selected\">$</option>",
+            '<option value="Dollar" selected="selected">$</option>\n<option value="&lt;Kroner&gt;">&lt;DKR&gt;</option>',
             options_for_select({ "$": "Dollar", "<DKR>": "<Kroner>" }, "Dollar"))
         self.assertEqual(
-            "<option value=\"&lt;Kroner&gt;\" selected=\"selected\">&lt;DKR&gt;</option>\n<option value=\"Dollar\" selected=\"selected\">$</option>",
+            '<option value="Dollar" selected="selected">$</option>\n<option value="&lt;Kroner&gt;" selected="selected">&lt;DKR&gt;</option>',
             options_for_select({ "$": "Dollar", "<DKR>": "<Kroner>" }, [ "Dollar", "<Kroner>" ]))
 
     def test_options_for_select_from_objects(self):
