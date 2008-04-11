@@ -381,7 +381,9 @@ def link_to(label, url='', **attrs):
     in a ``webhelpers.html.literal()``.
     """
     attrs['href'] = url
-    return HTML.a(label or url, **attrs)
+    if label == '':
+        label = url
+    return HTML.a(label, **attrs)
 
 
 def link_to_if(condition, label, url='', **attrs):
