@@ -298,7 +298,7 @@ def markdown(text, **kwargs):
     which is included with WebHelpers.
     
     """
-    return _markdown.markdown(text, **kwargs)
+    return literal(_markdown.markdown(text, **kwargs))
 
 def textilize(text, sanitize=False):
     """Format the text with Textile formatting.
@@ -311,7 +311,7 @@ def textilize(text, sanitize=False):
     
     """
     texer = textile.Textiler(text)
-    return texer.process(sanitize=sanitize)
+    return literal(texer.process(sanitize=sanitize))
 
 def strip_links(text):
     """
