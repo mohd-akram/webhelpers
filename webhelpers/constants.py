@@ -1,3 +1,4 @@
+# -*- encoding: latin-1 -*-
 
 def uk_counties():
     """\
@@ -422,7 +423,7 @@ def timezones(common=False):
     else:
         return all_timezones()
 
-def timezones_by_country(country):
+def timezones_for_country(country):
     try:
         from pytz import country_timezones
     except ImportError:
