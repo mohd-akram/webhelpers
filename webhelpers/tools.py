@@ -165,16 +165,16 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
     Examples::
     
         >>> mail_to("me@domain.com", "My email", cc="ccaddress@domain.com", bcc="bccaddress@domain.com", subject="This is an example email", body= "This is the body of the message.")
-        literal(u'<a href="mailto:me@domain.com?cc=ccaddress%40domain.com&amp;body=This%20is%20the%20body%20of%20the%20message.&amp;subject=This%20is%20an%20example%20email&amp;bcc=bccaddress%40domain.com">My email</a>')
+        literal(u'<a href="mailto:me@domain.com?cc=ccaddress%40domain.com&amp;bcc=bccaddress%40domain.com&amp;subject=This%20is%20an%20example%20email&amp;body=This%20is%20the%20body%20of%20the%20message.">My email</a>')
         
     """
-    extras = {}
-    for key, option in ('cc', cc), ('bcc', bcc), ('subject', subject), \
-                       ('body', body):
+    extras = []
+    for item in ('cc', cc), ('bcc', bcc), ('subject', subject), ('body', body):
+        option = item[1]
         if option:
             if not isinstance(option, literal):
-                option = escape(option)
-            extras[key] = option
+                item = (item[0], escape(option))
+            extras.append(item)
     options_query = urllib.urlencode(extras).replace("+", "%20")
     protocol = 'mailto:'
 
