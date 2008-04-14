@@ -171,12 +171,14 @@ class literal(unicode):
         return self
         
     def __add__(self, other):
-        return self.__class__(unicode.__add__(self, escape(other)))
+        if hasattr(other, '__html__') or isinstance(other, basestring):
+            return self.__class__(unicode.__add__(self, escape(other)))
+        return NotImplemented
         
     def __radd__(self, other):
-        if not isinstance(other, basestring):
-            raise NotImplemented
-        return self.__class__(unicode.__add__(escape(other), self))
+        if hasattr(other, '__html__') or isinstance(other, basestring):
+            return self.__class__(unicode.__add__(escape(other), self))
+        return NotImplemented
     
     def __mul__(self, count):
         return self.__class__(unicode.__mul__(self, count))
