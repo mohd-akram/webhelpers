@@ -1,7 +1,7 @@
 """
 Provides include, which makes it easy to include other HTML into pages.
 
-Deprecated.  Uses deprecated webhelpers.rails and is too trivial to port.
+*DEPRECATED.*  Uses deprecated webhelpers.rails and is too trivial to port.
 
 ``Tired of regenerating HTML pages from templates? Want more from Web 
 caches? HInclude makes one thing very easy; including other bits of HTML 
