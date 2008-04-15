@@ -15,9 +15,6 @@ which is a Unicode subclass.  [XXX explain this further, and ``literal()``.]
 WebHelpers currently consists of the following
 modules and packages under the ``webhelpers.`` namespace:
 
-``commands``
-    Deprecated.  
-
 ``date``
     Date/time helpers.  These currently format strings based on dates.
 
@@ -38,15 +35,20 @@ modules and packages under the ``webhelpers.`` namespace:
     being double escaped.)
 
 ``paginate``
+    A tool for letting you view a large sequence a screenful at a time,
+    with previous/next links.
     
 
-``rails``
-
 ``string24``
+    The ``string`` module from Python 2.4.  Useful if you're running on
+    Python 2.3.
 
 ``tags``
+    Helpers producing simple HTML tags.
 
 ``text``
+    Helpers producing string output, suitable for both HTML and non-HTML
+    applications.
 
 ``textile``
     Another text to HTML converter.  Normally invoked via
@@ -54,10 +56,11 @@ modules and packages under the ``webhelpers.`` namespace:
     may have to wrap return values in ``literal()`` to prevent double
     escaping.)
 
-
 ``tools``
+    Helpers producing complex chunks of HTML.
 
 ``util``
+    Miscellaneous functions.
 
 The following modules/packages are deprecated and will be removed in a future
 version of WebHelpers:
