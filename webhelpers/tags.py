@@ -1,4 +1,11 @@
-"""Helpers producing simple HTML tags"""
+"""Helpers producing simple HTML tags
+
+Most helpers have an ``\*\*attrs`` argument to specify additional HTML
+attributes.  A trailing underscore in the name will be deleted; this is 
+especially important for attributes that match Python keywords; e.g.,
+``class_``.  Some helpers handle certain keywords specially; these are noted in
+the helpers' docstrings.
+"""
 
 import datetime
 import os
@@ -140,12 +147,12 @@ def password(name="password", value=None, **attrs):
     return HTML.input(**attrs)
 
 
-def textarea(name, content='', **attrs):
+def textarea(name, content="", **attrs):
     """Create a text input area.
     
     Example::
     
-        >>> textarea("body", '', cols=25, rows=10)
+        >>> textarea("body", "", cols=25, rows=10)
         literal(u'<textarea cols="25" name="body" rows="10"></textarea>')
     
     """
@@ -198,7 +205,7 @@ def radio(name, value, checked=False, **attrs):
     return HTML.input(**attrs)
 
 
-def submit(value="Save changes", name='commit', **attrs):
+def submit(value="Save changes", name="commit", **attrs):
     """Create a submit button with the text ``value`` as the caption."""
     set_input_attrs(attrs, "submit", name, value)
     return HTML.input(**attrs)
@@ -256,31 +263,67 @@ def select(name, selected_values, options, **attrs):
 
 
 class ModelTags(object):
-    """A nice way to build a form from a database record.
+    """A nice way to build a form for a database record.
     
     ModelTags allows you to build a create/update form easily.  (This is the
     C and U in CRUD.)  The constructor takes a database record, which can be
     a SQLAlchemy mapped class, or any object with attributes or keys for the
     field values.  Its methods shadow the the form field helpers, but it
-    automatically fills in the value attributes based on the current value in
-    the record.
+    automatically fills in the value attribute based on the current value in
+    the record.  (It also knows about the 'checked' and 'selected' attributes
+    for certain tags.)
 
-    You can also use the same form for to input a new record.  Pass `None` or
-    `""` instead of a record, and it will set all the current values to a
+    You can also use the same form for to input a new record.  Pass ``None`` or
+    ``""`` instead of a record, and it will set all the current values to a
     default value, which is either the `default` keyword arg to the method, or
     `""` if not specified.
+
+    (Hint: in Pylons you can put ``mt = ModelTags(c.record)`` in your template,
+    and then if the record doesn't exist you can either set ``c.record = None``
+    or not set it at all.  That's because nonexistent ``c`` attributes resolve
+    to `""` unless you've set ``config["pylons.strict_c"] = True``. However,
+    having a ``c`` attribute that's sometimes set and sometimes not is
+    arguably bad programming style.)
     """
 
     undefined_values = set([None, ""])
 
     def __init__(self, record, use_keys=False, date_format="%m/%d/%Y", 
         id_format=None):
+        """Create a ``ModelTags`` object.
+
+        ``record`` is the database record to lookup values in.  It may be
+        any object with attributes or keys, including a SQLAlchemy mapped
+        instance.  It may also be ``None`` or ``""`` to indicate that a new
+        record is being created.  (The class attribute ``undefined_values``
+        tells which values indicate a new record.)
+
+        If ``use_keys`` is true, values will be looked up by key.  If false
+        (default), values will be looked up by attribute.
+
+        ``date_format`` is a strftime-compatible string used by the ``.date``
+        method.  The default is American format (MM/DD/YYYY), which is
+        most often seen in text fields paired with popup calendars.
+        European format (DD/MM/YYYY) is "%d/%m/%Y".  ISO format (YYYY-MM-DD)
+        is "%Y-%m-%d".
+
+        ``id_format`` is a ``%``-operator format for the HTML 'id' attribute.
+        It should contain one "%s" where the tag's name should be embedded.
+        """
         self.record = record
         self.use_keys = use_keys
         self.date_format = date_format
         self.id_format = id_format
     
     def checkbox(self, name, **kw):
+        """Build a checkbox field.
+        
+        The box will be initially checked if the value of the corresponding
+        database field is true.
+
+        The submitted form value will be "1" if the box was checked, or ""
+        if not.
+        """
         self._update_id(name, kw)
         value = kw.pop("value", "1")
         checked = bool(self._get_value(name, kw))
@@ -299,7 +342,7 @@ class ModelTags(object):
         values allowed above.  If no default is specified, the text field is
         initialized to "".
 
-        Hint: you may want to attach a Javascript calendar to the field.
+        Hint: you may wish to attach a Javascript calendar to the field.
         """
         self._update_id(name, kw)
         value = self._get_value(name, kw)
@@ -312,21 +355,47 @@ class ModelTags(object):
         return text(name, value, **kw)
 
     def file(self, name, **kw):
+        """Build a file upload field."""
         self._update_id(name, kw)
         value = self._get_value(name, kw)
         return file(name, value, **kw)
 
     def hidden(self, name, **kw):
+        """Build a hidden HTML field."""
         self._update_id(name, kw)
         value = self._get_value(name, kw)
         return hidden(name, value, **kw)
 
     def password(self, name, **kw):
+        """Build a password field.
+        
+        This is the same as a text box but the value will not be shown on the
+        screen as the user types.
+        """
         self._update_id(name, kw)
         value = self._get_value(name, kw)
         return password(name, value, **kw)
 
     def radio(self, name, checked_value, **kw):
+        """Build a radio button.
+
+        The radio button will initially be selected if the database value 
+        equals ``checked_value``.  On form submission the value will be 
+        ``checked_value`` if the button was selected, or ``""`` otherwise.
+
+        The control's 'id' attribute will be modified as follows:
+
+        1. If not specified but an 'id_format' was given to the constructor,
+           generate an ID based on the format.
+        2. If an ID was passed in or was generated by step (1), append an
+           underscore and the checked value.  Before appending the checked
+           value, lowercase it, change any spaces to ``"_"``, and remove any
+           trailing hyphens not followed by a word character.  (XXX Is that the
+           meaning of the last regex?)
+        3. If no ID was passed or generated by step (1), the radio button 
+           will not have an 'id' attribute.
+
+        """
         self._update_id(name, kw)
         value = self._get_value(name, kw)
         if 'id' in kw:
@@ -337,25 +406,42 @@ class ModelTags(object):
         return radio(name, checked_value, checked, **kw)
 
     def select(self, name, options, **kw):
+        """Build a dropdown select box or list box.
+
+        See the ``select()`` function for the meaning of the arguments.
+        """
         self._update_id(name, kw)
         selected_values = self._get_value(name, kw)
         return select(name, selected_values, options, **kw)
 
-    def text(self, name, *args, **kw):
+    def text(self, name, **kw):
+        """Build a text box."""
         self._update_id(name, kw)
         value = self._get_value(name, kw)
         return text(name, value, **kw)
 
-    def textarea(self, name, *args, **kw):
+    def textarea(self, name, **kw):
+        """Build a rectangular text area."""
         self._update_id(name, kw)
         content = self._get_value(name, kw)
         return textarea(name, content, **kw)
 
     # Private methods.
     def _get_value(self, name, kw):
-        """Modifies `kw` in place!"""
+        """Get the current value of a field from the database record.
+
+        ``name``: The field to look up.
+
+        ``kw``: The keyword args passed to the original method.  This is
+        _not_ a "\*\*" argument!  It's a dict that will be modified in place!
+
+        ``kw["default"]`` will be popped from the dict in all cases for
+        possible use as a default value.  If the record doesn't exist, this
+        default is returned, or ``""`` if no default was passed.
+        """
         default = kw.pop("default", "")
-        # This used to be self.record in self.undefined_values, but if the record is a dict, this fails because dicts aren't hashable.
+        # This used to be ``self.record in self.undefined_values``, but this
+        # fails if the record is a dict because dicts aren't # hashable.
         for undefined_value in self.undefined_values:
             if self.record == undefined_value:
                 return default
@@ -365,7 +451,17 @@ class ModelTags(object):
             return getattr(self.record, name)   # Raises AttributeError.
 
     def _update_id(self, name, kw):
-        """Modifies `kw` in place!"""
+        """Apply the 'id' attribute algorithm.
+
+        ``name``: The name of the HTML field.
+
+        ``kw``: The keyword args passed to the original method.  This is
+        _not_ a "\*\*" argument!  It's a dict that will be modified in place!
+
+        If an ID format was specified but no 'id' keyword was passed, 
+        set the 'id' attribute to a value generated from the format and name.
+        Otherwise do nothing.
+        """
         if self.id_format is not None and 'id' not in kw:
             kw['id'] = self.id_format % name
         
@@ -390,7 +486,8 @@ def link_to_if(condition, label, url='', **attrs):
     """Same as ``link_to`` but return just the label if the condition is false.
     
     This is useful in a menu when you don't want the current option to be a
-    link.
+    link.  The condition will be something like:
+    ``actual_value != value_of_this_menu_item``.
     """
     if condition:
         return link_to(label, url, **attrs)
