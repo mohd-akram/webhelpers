@@ -413,6 +413,13 @@ ZIMBABWE 	ZW
     return _country_codes
 
 def timezones(common=False):
+    """Return timezones from the PyTZ package.
+
+    If ``common`` is true, return only the commonly-used timezones.  If
+    false (default), return all timezones.
+
+    Raises an error if PyTZ is not installed.
+    """
     try:
         from pytz import all_timezones
         from pytz import common_timezones
@@ -424,6 +431,10 @@ def timezones(common=False):
         return all_timezones()
 
 def timezones_for_country(country):
+    """Return the PyTZ timezones for the given country.
+
+    Raises an error if the PyTZ package is not installed.
+    """
     try:
         from pytz import country_timezones
     except ImportError:
