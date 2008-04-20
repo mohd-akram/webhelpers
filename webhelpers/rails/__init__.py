@@ -16,8 +16,6 @@ from webhelpers.rails.number import *
 __pudge_all__ = locals().keys()
 __pudge_all__.sort()
 
-from routes import url_for, redirect_to
-
 # Freaky as this may be, it wraps all the HTML tags in literal so they
 # continue to work right with systems that recognize literal
 def wrap_helpers(localdict):
@@ -35,3 +33,6 @@ def wrap_helpers(localdict):
             continue
         localdict[name] = helper_wrapper(func)
 wrap_helpers(locals())
+
+from routes import url_for, redirect_to
+
