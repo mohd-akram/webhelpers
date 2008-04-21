@@ -27,6 +27,7 @@ def wrap_helpers(localdict):
         except TypeError:
             # < Python 2.4 
             pass
+        wrapped_helper.__doc__ = func.__doc__
         return wrapped_helper
     for name, func in localdict.iteritems():
         if not callable(func) or name == 'literal':
