@@ -51,7 +51,5 @@ def deprecated(func, message):
     deprecated_method.__doc__ = "%s\n\n%s" % (message, func.__doc__)
     return deprecated_method
 
-url_for = deprecated(url_for, 'webhelpers.rails.url_for is deprecated, import '
-                     'url_for from routes instead')
 redirect_to = deprecated(redirect_to, 'webhelpers.rails.redirect_to is '
                          'deprecated, import redirect_to from routes instead')
