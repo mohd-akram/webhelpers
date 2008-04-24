@@ -1,4 +1,6 @@
 """Helper functions ported from Rails"""
+import warnings
+
 from webhelpers.html import literal
 from webhelpers.rails.asset_tag import *
 from webhelpers.rails.urls import *
@@ -37,3 +39,19 @@ wrap_helpers(locals())
 
 from routes import url_for, redirect_to
 
+def deprecated(func, message):
+    def deprecated_method(*args, **kargs):
+        warnings.warn(message, DeprecationWarning, 2)
+        return func(*args, **kargs)
+    try:
+        deprecated_method.__name__ = func.__name__
+    except TypeError:
+        # Python < 2.4
+        pass
+    deprecated_method.__doc__ = "%s\n\n%s" % (message, func.__doc__)
+    return deprecated_method
+
+url_for = deprecated(url_for, 'webhelpers.rails.url_for is deprecated, import '
+                     'url_for from routes instead')
+redirect_to = deprecated(redirect_to, 'webhelpers.rails.redirect_to is '
+                         'deprecated, import redirect_to from routes instead')
