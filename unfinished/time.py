@@ -1,3 +1,9 @@
+"""Deleting from WebHelpers/unfinished for the following reasons:
+
+* Not widely-used enough to be a webhelper.
+* James Gardner says there may be a third-party copyright claim in this code.
+"""
+
 import re, string
 
 class Time:
