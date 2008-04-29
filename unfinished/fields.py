@@ -1,40 +1,110 @@
-from webhelpers import options_for_select, start_form
+"""\
+Functions to help in the formatting of forms
+"""
+
+from webhelpers.tags import form as start_form, end_form
+from webhelpers.html import HTML, literal
+from webhelpers.rails import options_for_select
 
 def form_start(*k, **p):
-    form = ''
-    if k or p:
-        form = start_form(*k, **p)
-    return '<table class="%s">%s'%(
-        p.get('table_class', 'form'),
-        form,
-    )
+    """\
+    Start a form the way you would with ``start_form()`` but include the HTML
+    necessary for the use of the ``fields()`` helper. 
+    
+    >>> form_start('/action', method='post')
+    literal(u'<table><form action="/action" method="post">')
+    >>> form_start('/action', method='post', table_class='form')
+    literal(u'<table class="form"><form action="/action" method="post">')
+    """
+    if p.has_key('table_class'):
+         table_class = p.get('table_class', 'form')
+         del p['table_class']
+         return HTML.table(
+             _closed=False, 
+             class_=p.get('table_class', 'form'),
+             c=start_form(*k,**p)
+         )
+    else:
+         return HTML.table(_closed=False, c=start_form(*k,**p))
 
-def form_end():
-    return '</table>'
+def form_end(*k, **p):
+    """\
+    End a form started with ``form_start()``
+    >>> form_end()
+    literal(u'</form></table>')
+    """
+    return end_form(*k, **p)+literal("</table>")
 
-def field(label='', field='', required=False, field_desc='', label_desc='', sub_label='', help='', defect='', error=''):
+def field(
+    label='', 
+    field='', 
+    required=False, 
+    label_desc='', 
+    field_desc='',
+    sub_label='', 
+    help='',
+    error=''
+):
+    """\
+    Format a field with a label. 
 
+    ``label``
+        The label for the field
+
+    ``field``
+        The HTML representing the field, wrapped in ``literal()``
+
+    ``required``
+         Can be ``True`` or ``False`` depending on whether the label should be 
+         formatted as required or not. By default required fields have an
+         asterix.
+
+    ``label_desc``
+        Any text to appear underneath the label, level with ``field_desc`` 
+
+    ``field_desc``
+        Any text to appear underneath the field
+
+    ``sub_label``
+        Any text to appear immediately beneath the label but above the 
+        label_desc. This is useful if the field itself is very large and using
+        label_desc would result in the description of the label being a long 
+        way from the label itself.
+
+    ``help``
+        Any HTML or JavaScript to appear imediately to the right of the field 
+        which could be used to implement a help system on the form
+
+    ``error``
+        Any text to appear immediately before the HTML field, usually used for
+        an error message.
+
+    It should be noted that when used with FormEncode's ``htmlfill`` module, 
+    errors appear immediately before the HTML field in the position of the
+    ``error`` argument. No ``<form:error>`` tags are added automatically by
+    this helper because errors are placed there anyway and adding the tags
+    would lead to this helper generating invalid HTML.
+    """
     field = error+field
     if label:
-        label = label + ':'
+        label = label + literal(':')
     output = []
     if required:
-        required = '<span class="required">*</span> '
+        required = HTML.span(class_="required", c='*')
     else:
         required = ''
     desc = ''
     if sub_label:
         desc = '<br /><span class="small">%s</span>'%sub_label
-    if help and defect:
-        output.append('<tr class="field"><td valign="top" class="label">'+required+'<label>'+label+'</label>'+desc+'</td><td>'+field+'</td><td>'+help+'</td><td>'+defect+'</td></tr>')
-    elif help or defect:
-        html=help or defect 
-        output.append('<tr class="field"><td valign="top" class="label">'+required+'<label>'+label+'</label>'+desc+'</td><td>'+field+'</td><td colspan="2">'+html+'</td></tr>')
+    if help:
+        output.append(literal('<tr class="field"><td valign="top" class="label">')+required+HTML.label(c=label)+desc+literal('</td><td>')+field+literal('</td><td>')+help+literal('</td></tr>'))
     else:
-        output.append('<tr class="field"><td valign="top" class="label">'+required+'<label>'+label+'</label>'+desc+'</td><td colspan="3">'+field+'</td></tr>')
+        output.append(literal('<tr class="field"><td valign="top" class="label">')+required+HTML.label(c=label)+desc+literal('</td><td colspan="2">')+field+literal('</td></tr>'))
     if label_desc or field_desc:
-        output.append('<tr class="description"><td valign="top" class="label"><span class="small">'+label_desc+'</span></td><td valign="top" colspan="3"><span class="small">'+field_desc+'</span></td></tr>')
+        output.append(literal('<tr class="description"><td valign="top" class="label"><span class="small">')+label_desc+literal('</span></td><td valign="top" colspan="2"><span class="small">')+field_desc+literal('</span></td></tr>'))
     return ''.join(output)
+
+
 
 def options_with_caption(container, caption='Please select...', pos=0, value='', *k, **p):
     """\
@@ -177,4 +247,8 @@ def checkbox_group(name, options, values=None, align='horiz', cols=4):
     if not type(output) == unicode:
         raise Exception(type(output))
     return output[:-1]
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
