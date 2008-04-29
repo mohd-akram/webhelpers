@@ -104,3 +104,13 @@ For support/question/patches, please use the `Pylons mailing list
 functions. Currently `Pylons <http://pylons.groovie.org/>`_, `TurboGears
 <http://trac.turbogears.org/turbogears/wiki/RoutesIntegration>`_, and `Aquarium
 <http://aquarium.sourceforge.net/>`_ support Routes.
+
+Update 2008-04-29
+-----------------
+helpers.patch addresses some of the issues in helpers.py.
+
+test_mail.py is a test suite for webhelpers.mail.  It depends on an SMTP server
+being available, so we're unsure how to integrate it with the standard test
+suite.  
+
+wsgiapp_image.jpg is a file used by test_mail.py.
