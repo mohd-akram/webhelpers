@@ -10,18 +10,14 @@ class for more information.
 
 This module is especially useful for Pylons web framework applications.
 
-Compatibility warning:
+Note:
 
-* This module is the successor to the deprecated ``webhelpers.pagination``
+  This module is the successor to the deprecated ``webhelpers.pagination``
   module.  It is *NOT* API compatible.
 
-* Paginate depends on Routes (http://routes.groovie.org/), which is imported
-  in one of the ``Page`` methods.
-
-This version of paginate was originally based on the 0.3.3 version from
-http://workaround.org/cgi-bin/hg-paginate.
-
-Additional documentation is in webhelpers/docs/paginate.txt.  
+This version of paginate is based on the code from
+http://workaround.org/cgi-bin/hg-paginate that is known at the
+"Paginate" module on PyPi.
 
 This software can be used under the terms of the MIT license:
 
@@ -50,8 +46,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import re
 import warnings
 
-__version__ = '0.3.5'
-__date__ = '2008-04-07'
+__version__ = '0.3.6'
+__date__ = '2008-05-01'
 __author__ = 'Christoph Haas <email@christoph-haas.de>'
 
 # Use templating for the .pager() [available since Python 2.4].
@@ -82,7 +78,7 @@ def get_wrapper(obj, sqlalchemy_session=None):
     if isinstance(obj, (list, tuple)):
         return obj
     # Is SQLAlchemy 0.4 available? (0.3 is not supported - sorry)
-    if sqlalchemy_available.startswith('0.4'):
+    if float(sqlalchemy_available) >= 0.4:
         # Is the collection a query?
         if isinstance(obj, sqlalchemy.orm.query.Query):
             return _SQLAlchemyQuery(obj)
@@ -166,7 +162,7 @@ class Page(list):
     item_count
         Number of items in the collection
 
-    current_page
+    page
         Number of the current page
 
     items_per_page
@@ -185,13 +181,13 @@ class Page(list):
         Sequence/iterator of items on the current page
 
     first_item
-        Index of first item on the current page
+        Index of first item on the current page - starts with 1
 
     last_item
         Index of last item on the current page
         
     """
-    def __init__(self, collection, current_page=1, items_per_page=20,
+    def __init__(self, collection, page=1, items_per_page=20,
         item_count=None, sqlalchemy_session=None, *args, **kwargs):
         """Create a "Page" instance.
 
@@ -201,7 +197,7 @@ class Page(list):
             Sequence, SQLAlchemy select object or SQLAlchemy ORM-query
             representing the collection of items to page through.
 
-        current_page
+        page
             The requested page number - starts with 1. Default: 1.
 
         items_per_page
@@ -222,11 +218,17 @@ class Page(list):
 
         Further parameters are used as link arguments in the pager().
         """
-        # 'page_nr' is deprecated. 'current_page' is clearer and used by Ruby-on-Rails, too
+        # 'page_nr' is deprecated.
         if 'page_nr' in kwargs:
-            warnings.warn("'page_nr' is deprecated. Please use current_page instead.")
-            current_page = kwargs['page_nr']
+            warnings.warn("'page_nr' is deprecated. Please use 'page' instead.")
+            page = kwargs['page_nr']
             del kwargs['page_nr']
+
+        # 'current_page' is also deprecated.
+        if 'current_page' in kwargs:
+            warnings.warn("'current_page' is deprecated. Please use 'page' instead.")
+            page = kwargs['current_page']
+            del kwargs['current_page']
 
         # Safe the kwargs class-wide so they can be used in the pager() method
         self.kwargs = kwargs
@@ -242,12 +244,12 @@ class Page(list):
         else:
             self.collection = []
 
-        # The self.current_page is the number of the current page.
+        # The self.page is the number of the current page.
         # The first page has the number 1!
         try:
-            self.current_page = int(current_page) # make it int() if we get it as a string
+            self.page = int(page) # make it int() if we get it as a string
         except ValueError:
-            self.current_page = 1
+            self.page = 1
 
         self.items_per_page = items_per_page
 
@@ -265,31 +267,31 @@ class Page(list):
             self.last_page = self.first_page + self.page_count - 1
 
             # Make sure that the requested page number is the range of valid pages
-            if self.current_page > self.last_page:
-                self.current_page = self.last_page
-            elif self.current_page < self.first_page:
-                self.current_page = self.first_page
+            if self.page > self.last_page:
+                self.page = self.last_page
+            elif self.page < self.first_page:
+                self.page = self.first_page
 
             # Note: the number of items on this page can be less than
             #       items_per_page if the last page is not full
-            self.first_item = (self.current_page - 1) * items_per_page
-            self.last_item = min(self.first_item + items_per_page - 1, self.item_count - 1)
+            self.first_item = (self.page - 1) * items_per_page + 1
+            self.last_item = min(self.first_item + items_per_page - 1, self.item_count)
 
             # We subclassed "list" so we need to call its init() method
             # and fill the new list with the items to be displayed on the page.
-            # Using list() so that the collection is evaluated only once.
-            # Otherwise it would run the actual SQL query everytime .items
-            # would be accessed.
-            self.items = list(self.collection[self.first_item:self.last_item+1])
+            # We use list() so that the items on the current page are retrieved
+            # only once. Otherwise it would run the actual SQL query everytime
+            # .items would be accessed.
+            self.items = list(self.collection[self.first_item-1:self.last_item])
 
             # Links to previous and next page
-            if self.current_page > self.first_page:
-                self.previous_page = self.current_page-1
+            if self.page > self.first_page:
+                self.previous_page = self.page-1
             else:
                 self.previous_page = None
 
-            if self.current_page < self.last_page:
-                self.next_page = self.current_page+1
+            if self.page < self.last_page:
+                self.next_page = self.page+1
             else:
                 self.next_page = None
 
@@ -311,7 +313,7 @@ class Page(list):
     def __repr__(self):
         return ("Page:\n"
             "Collection type:  %(type)s\n"
-            "Current page:     %(current_page)s\n"
+            "(Current) page:   %(page)s\n"
             "First item:       %(first_item)s\n"
             "Last item:        %(last_item)s\n"
             "First page:       %(first_page)s\n"
@@ -323,7 +325,7 @@ class Page(list):
             "Number of pages:  %(page_count)s\n"
             % {
             'type':type(self.collection),
-            'current_page':self.current_page,
+            'page':self.page,
             'first_item':self.first_item,
             'last_item':self.last_item,
             'first_page':self.first_page,
@@ -335,7 +337,7 @@ class Page(list):
             'page_count':self.page_count,
             })
 
-    def pager(self, format='~2~', link_var='page_nr', partial_var='partial',
+    def pager(self, format='~2~', page_param='page', partial_param='partial',
         show_if_single_page=False, separator=' ', onclick=None,
         symbol_first='<<', symbol_last='>>',
         symbol_previous='<', symbol_next='>',
@@ -351,7 +353,7 @@ class Page(list):
 
             - $first_page: number of first reachable page
             - $last_page: number of last reachable page
-            - $current_page: number of currently selected page
+            - $page: number of currently selected page
             - $page_count: number of reachable pages
             - $items_per_page: maximal number of items per page
             - $first_item: index of first item on the current page
@@ -399,24 +401,31 @@ class Page(list):
 
             Default: ' '
 
-        link_var:
+        page_param:
             The name of the parameter that will carry the number of the 
             page the user just clicked on. The parameter will be passed 
             to a url_for() call so if you stay with the default 
-            ':controller/:action/:id' routing and set link_var='id' then 
+            ':controller/:action/:id' routing and set page_param='id' then 
             the :id part of the URL will be changed. If you set 
-            link_var='current_page' then url_for() will make it an extra 
-            parameters like ':controller/:action/:id?current_page=1'. 
-            You need the link_var in your action to determine the page 
+            page_param='page' then url_for() will make it an extra 
+            parameters like ':controller/:action/:id?page=1'. 
+            You need the page_param in your action to determine the page 
             number the user wants to see. If you do not specify anything 
-            else the default will be a parameter called 'current_page'.
+            else the default will be a parameter called 'page'.
 
-        partial_var:
-            The name of the parameter that is set to 1 if updates of the 
-            page area through AJAX/AJAH are requested. If your 
-            application finds this parameter in the URL set then it 
-            should not print the complete HTML page but just the page
-            area instead.
+        partial_param:
+            When using AJAX/AJAH to do partial updates of the page area the
+            application has to know whether a partial update (only the
+            area to be replaced) or a full update (reloading the whole
+            page) is required. So this parameter is the name of the URL
+            parameter that gets set to 1 if the 'onclick' parameter is
+            used. So if the user requests a new page through a Javascript
+            action (onclick) then this parameter gets set and the application
+            is supposed to return a partial content. And without
+            Javascript this parameter is not set. The application thus has
+            to check for the existance of this parameter to determine
+            whether only a partial or a full page needs to be returned.
+            See also the examples in this modules docstring.
 
             Default: 'partial'
 
@@ -456,14 +465,14 @@ class Page(list):
             Default: { 'class':'pager_dotdot' }
 
         onclick (optional)
-            This paramter is a string containing optional Javascript
+            This paramter is a string containing optional Javascript code
             that will used as the 'onclick' action of each pager link.
             Use '%s' in your string where the URL linking to the desired
             page will be inserted. This can be used to enhance your pager
             with AJAX actions loading another page into a DOM object.
-            Note that the URL to the destination page contains a partial_var
+            Note that the URL to the destination page contains a 'partial_param'
             parameter so that you can distinguish between AJAX requests
-            (just refreshing the paginated area of your page) and normal
+            (just refreshing the paginated area of your page) and full
             requests (loading the whole new page).
 
             jQuery example:
@@ -499,10 +508,10 @@ class Page(list):
             """
             from routes import url_for
             # Let the url_for() from webhelpers create a new link and set
-            # the variable called 'link_var'. Example:
+            # the variable called 'page_param'. Example:
             # You are in '/foo/bar' (controller='foo', action='bar')
             # and you want to add a parameter 'pagenr'. Then you
-            # call the navigator method with link_var='pagenr' and
+            # call the navigator method with page_param='pagenr' and
             # the url_for() call will create a link '/foo/bar?pagenr=...'
             # with the respective page number added.
             link_params = {}
@@ -510,11 +519,11 @@ class Page(list):
             link_params.update(self.kwargs)
             # Add keyword arguments from pager() to the link as parameters
             link_params.update(kwargs)
-            link_params[link_var] = pagenr
+            link_params[page_param] = pagenr
             # Create the URL to load a certain page
             link_url = url_for(**link_params)
             # Create the URL to load the page area part of a certain page (AJAX updates)
-            link_params[partial_var] = 1
+            link_params[partial_param] = 1
             partial_url = url_for(**link_params)
 
             if onclick: # create link with onclick action for AJAX
@@ -546,14 +555,14 @@ class Page(list):
             # e.g. '1 .. 5 6 [7] 8 9 .. 12'
             # -> leftmost_page  = 5
             # -> rightmost_page = 9
-            leftmost_page = max(self.first_page, (self.current_page-radius))
-            rightmost_page = min(self.last_page, (self.current_page+radius))
+            leftmost_page = max(self.first_page, (self.page-radius))
+            rightmost_page = min(self.last_page, (self.page+radius))
 
             nav_items = []
 
             # Create a link to the first page (unless we are on the first page
             # or there would be no need to insert '..' spacers)
-            if self.current_page != self.first_page and self.first_page < leftmost_page:
+            if self.page != self.first_page and self.first_page < leftmost_page:
                 nav_items.append( _pagerlink(self.first_page, self.first_page) )
 
             # Insert dots if there are pages between the first page
@@ -567,7 +576,7 @@ class Page(list):
 
             for thispage in xrange(leftmost_page, rightmost_page+1):
                 # Hilight the current page number and do not use a link
-                if thispage == self.current_page:
+                if thispage == self.page:
                     text = '%s' % (thispage,)
                     # Wrap in a SPAN tag if nolink_attr is set
                     if curpage_attr:
@@ -589,7 +598,7 @@ class Page(list):
 
             # Create a link to the very last page (unless we are on the last
             # page or there would be no need to insert '..' spacers)
-            if self.current_page != self.last_page and rightmost_page < self.last_page:
+            if self.page != self.last_page and rightmost_page < self.last_page:
                 nav_items.append( _pagerlink(self.last_page, self.last_page) )
 
             return separator.join(nav_items)
@@ -609,15 +618,15 @@ class Page(list):
         result = Template(result).safe_substitute({
             'first_page': self.first_page,
             'last_page': self.last_page,
-            'current_page': self.current_page,
+            'page': self.page,
             'page_count': self.page_count,
             'items_per_page': self.items_per_page,
             'first_item': self.first_item,
             'last_item': self.last_item,
             'item_count': self.item_count,
-            'link_first': self.current_page>self.first_page and \
+            'link_first': self.page>self.first_page and \
                     _pagerlink(self.first_page, symbol_first) or '',
-            'link_last': self.current_page<self.last_page and \
+            'link_last': self.page<self.last_page and \
                     _pagerlink(self.last_page, symbol_last) or '',
             'link_previous': self.previous_page and \
                     _pagerlink(self.previous_page, symbol_previous) or '',
