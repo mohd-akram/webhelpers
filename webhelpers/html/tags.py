@@ -606,7 +606,7 @@ def javascript_link(*sources, **attrs):
                 src=compute_public_path(source, 'javascripts', 'js'))
         content_attrs.update(attrs)
         tags.append(HTML.script('',  **content_attrs))
-    return '\n'.join(tags)
+    return literal('\n').join(tags)
 
 
 def stylesheet_link(*sources, **attrs):
@@ -620,10 +620,10 @@ def stylesheet_link(*sources, **attrs):
     Examples::
 
         >>> stylesheet_link('style.css')
-        u'<link href="/stylesheets/style.css" media="screen" rel="Stylesheet" type="text/css" />'
+        literal(u'<link href="/stylesheets/style.css" media="screen" rel="Stylesheet" type="text/css" />')
 
         >>> stylesheet_link('/stylesheets/dir/file.css', media='all')
-        u'<link href="/stylesheets/dir/file.css" media="all" rel="Stylesheet" type="text/css" />'
+        literal(u'<link href="/stylesheets/dir/file.css" media="all" rel="Stylesheet" type="text/css" />')
 
     """
     tag_attrs = dict(rel='Stylesheet', type='text/css', media='screen')
@@ -633,7 +633,7 @@ def stylesheet_link(*sources, **attrs):
     tags = [HTML.link(
         **dict(href=compute_public_path(source, 'stylesheets', 'css'), 
                **tag_attrs)) for source in sources]
-    return '\n'.join(tags)
+    return literal('\n').join(tags)
 
 
 def auto_discovery_link(source, feed_type='rss', **attrs):
