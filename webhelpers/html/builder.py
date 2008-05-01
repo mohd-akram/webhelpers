@@ -1,4 +1,4 @@
-"""HTML/XHTML Tag generator
+"""HTML/XHTML tag builder
 
 You create tags with attribute access.  I.e., the "A" anchor tag is
 html.a.  The attributes of the HTML tag are done with keyword
@@ -228,8 +228,9 @@ for k in dir(literal):
 
 
 def lit_sub(*args, **kw):
-    """Ensures that if the string re.sub operates on is a literal, it
-    will still be a literal returned"""
+    """Literal-safe version of re.sub.  If the string to be operated on is
+    a literal, return a literal result.
+    """
     lit = hasattr(args[2], '__html__')
     cls = args[2].__class__
     result = re.sub(*args, **kw)
@@ -322,4 +323,4 @@ for tag in blockTagString.split():
 
 HTML = HTMLBuilder()
 
-__all__ = ["HTML", "escape", "literal", "url_escape"]
+__all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
