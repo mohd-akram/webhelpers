@@ -71,7 +71,7 @@ parameters that customize the Page's behavior.
 Can I use AJAX / AJAH?
 ------------------------
 
-Yes. See *partial_param* and *onclick* in *Pager.pager()*.
+Yes. See *partial_param* and *onclick* in *Page.pager()*.
 
 Notes
 -------
