@@ -18,6 +18,9 @@ from webhelpers.rails.number import *
 __pudge_all__ = locals().keys()
 __pudge_all__.sort()
 
+# Disable doc tests; they fail when the helper is literalized.
+__test__ = False
+
 # Freaky as this may be, it wraps all the HTML tags in literal so they
 # continue to work right with systems that recognize literal
 def wrap_helpers(localdict):
