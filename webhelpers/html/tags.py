@@ -234,8 +234,8 @@ def select(name, selected_values, options, **attrs):
 
     * ``name`` -- the name of this control.
 
-    * ``selected_values`` -- a string or list of strings giving the
-      value(s) that should be preselected.
+    * ``selected_values`` -- a string or list of strings or integers giving
+      the value(s) that should be preselected.
 
     * ``options`` -- an iterable of ``(label, value)`` pairs.  The label
       is what's shown to the user; the value is what's seen by the 
@@ -261,15 +261,21 @@ def select(name, selected_values, options, **attrs):
     """
     attrs["name"] = name
     convert_boolean_attrs(attrs, ["multiple"])
-    if isinstance(selected_values, basestring):
+    # Accept None as selected_values meaning that no option is selected
+    if selected_values is None:
+        selected_values = ('',)
+    # Turn a single string or integer into a list
+    elif isinstance(selected_values, (basestring, int)):
         selected_values = (selected_values,)
     opts = []
-    for x in options:
-        if isinstance(x, basestring):
-            label = value = x
+    # Cast integer values to strings
+    selected_values = map(str, selected_values)
+    for option in options:
+        if isinstance(option, basestring):
+            label = value = option
         else:
-            label = x[0]
-            value = x[1]
+            label = option[0]
+            value = option[1]
         if value in selected_values:
             opt = HTML.option(label, value=value, selected="selected")
         else:
