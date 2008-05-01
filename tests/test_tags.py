@@ -3,8 +3,8 @@ from util import WebHelpersTestCase
 import unittest
 
 from webhelpers.html import HTML
-from webhelpers.tags import *
-from webhelpers.tags import compute_public_path
+from webhelpers.html.tags import *
+from webhelpers.html.tags import compute_public_path
 
 class TestFormTagHelper(WebHelpersTestCase):
     def test_check_box(self):
