@@ -6,7 +6,7 @@ from string24 import Template
 from routes import url_for
 
 from webhelpers.html import HTML, literal
-from webhelpers.tools import *
+from webhelpers.html.tools import *
 
 class TestToolsHelper(WebHelpersTestCase):
     
@@ -131,24 +131,6 @@ class TestToolsHelper(WebHelpersTestCase):
         self.assertEqual("on my mind\nall day long",
                          strip_links("<a href='almost'>on my mind</a>\n<A href='almost'>all day long</A>"))
 
-    def test_textilize(self):
-        self.assertEqual('<h1>This is a test of textile</h1>\n\n<p>Paragraph</p>\n\n<p>Another paragraph</p>\n\n<ul>\n<li>Bullets</li>\n</ul>',
-                         textilize("h1. This is a test of textile\n\nParagraph\n\nAnother paragraph\n\n* Bullets"))
-
-    def test_markdown(self):
-        markdown_text = """
-Introduction
-------------
-
-Markdown is a text-to-HTML conversion tool for web writers.
-
-Acknowledgements <a id="acknowledgements" />
-----------------
-
-[Michel Fortin][] has ported to Markdown to PHP.
-        """
-        self.assertEqual('\n\n<h2>Introduction</h2>\n<p>Markdown is a text-to-HTML conversion tool for web writers.\n</p>\n\n<h2>Acknowledgements <a id="acknowledgements" /></h2>\n<p>[Michel Fortin][] has ported to Markdown to PHP.\n</p>\n\n\n',
-                         markdown(markdown_text))
 
 
 class TestURLHelper(WebHelpersTestCase):
