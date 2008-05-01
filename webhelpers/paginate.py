@@ -1,4 +1,9 @@
-"""Paginate module for lists and ORMs.
+"""
+paginate: a module to help split up lists or results from ORM queries
+=======================================================================
+
+What is pagination?
+---------------------
 
 This module helps dividing large lists of items into pages. The user 
 is shown one page at a time and can navigate to other pages. Imagine you 
@@ -8,47 +13,112 @@ more than 10 entries at once. The first page contains entries 1-10, the
 second 11-20 and the third 21-23. See the documentation of the "Page" 
 class for more information. 
 
-This module is especially useful for Pylons web framework applications.
+How do I use it?
+------------------
 
-Note:
+One page of items is represented by the *Page* object. A *Page* gets
+initalized with two parameters at least:
 
-  This module is the successor to the deprecated ``webhelpers.pagination``
-  module.  It is *NOT* API compatible.
+- the collection of items to pick a range from
+- the page number that is required (default is 1 - the first page)
+
+A simple example (ipython session)::
+
+    # Set up the routes context (only if you are not using a Pylons application)
+    >>> from routes import Mapper; mapper=Mapper(); mapper.connect(':controller')
+
+    # Create a sample collection of 1000 items
+    >>> my_collection = range(1000)
+
+    # Create a Page object for the 3rd page (20 items per page is the default)
+    >>> my_page = Page(my_collection, page=3)
+
+    # The page object can be printed directly to get its details
+    >>> my_page
+    Page:
+    Collection type:  <type 'list'>
+    (Current) page:   3
+    First item:       41
+    Last item:        60
+    First page:       1
+    Last page:        50
+    Previous page:    2
+    Next page:        4
+    Items per page:   20
+    Number of items:  1000
+    Number of pages:  50
+
+    # Print a list of items on the current page
+    >>> my_page.items
+    [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
+
+    # The *Page* object can be used as an iterator:
+    >>> for my_item in my_page: print my_item,
+    40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59
+
+    # On a web page you will want to use a "pager" that creates links that
+    # the user can click on to load other pages in the set.
+    >>> my_page.pager()
+    1 2 [3] 4 5 .. 50       (this is actually HTML)
+
+    # The pager can be customized:
+    >>> my_page.pager('$link_previous ~3~ $link_next (Page $page of $page_count)')
+    1 2 [3] 4 5 6 .. 50 > (Page 3 of 50)
+
+Please see the documentation on *Page* and *Page.pager()*. There are many
+parameters that customize the Page's behavior.
+
+Can I use AJAX / AJAH?
+------------------------
+
+Yes. See *partial_param* and *onclick* in *Pager.pager()*.
+
+Notes
+-------
+
+Page numbers and item numbers start at 1. This concept has been used
+because users expect that the first page has number 1 and the first item
+on a page also has number 1. So if you want to use the page's items by
+their index number please note that you have to substract 1.
+
+This module is the successor to the deprecated ``webhelpers.pagination``
+module.  It is *NOT* API compatible.
 
 This version of paginate is based on the code from
 http://workaround.org/cgi-bin/hg-paginate that is known at the
 "Paginate" module on PyPi.
-
-This software can be used under the terms of the MIT license:
-
-Copyright (c) 2007,2008 Christoph Haas <email@christoph-haas.de>
-
-Permission is hereby granted, free of charge, to any person obtaining a 
-copy of this software and associated documentation files (the 
-"Software"), to deal in the Software without restriction, including 
-without limitation the rights to use, copy, modify, merge, publish, 
-distribute, sublicense, and/or sell copies of the Software, and to 
-permit persons to whom the Software is furnished to do so, subject to 
-the following conditions:
-
-The above copyright notice and this permission notice shall be included 
-in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 """
-import re
-import warnings
 
 __version__ = '0.3.6'
 __date__ = '2008-05-01'
 __author__ = 'Christoph Haas <email@christoph-haas.de>'
+__copyright__ = 'Copyright (c) 2007,2008 Christoph Haas <email@christoph-haas.de>'
+
+# License:
+# 
+# This software can be used under the terms of the MIT license:
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a 
+# copy of this software and associated documentation files (the 
+# "Software"), to deal in the Software without restriction, including 
+# without limitation the rights to use, copy, modify, merge, publish, 
+# distribute, sublicense, and/or sell copies of the Software, and to 
+# permit persons to whom the Software is furnished to do so, subject to 
+# the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included 
+# in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+import re
+import warnings
 
 # Use templating for the .pager() [available since Python 2.4].
 # Otherwise the Template module is provided by the string24.py
@@ -216,7 +286,7 @@ class Page(list):
             Select objects do not have a database connection attached so it
             would not be able to execute the SELECT query.
 
-        Further parameters are used as link arguments in the pager().
+        Further keyword arguments are used as link arguments in the pager().
         """
         # 'page_nr' is deprecated.
         if 'page_nr' in kwargs:
@@ -366,8 +436,9 @@ class Page(list):
 
             To render a range of pages the token '~3~' can be used. The 
             number sets the radius of pages around the current page.
-            Example for a range with radius 3: 
-               '1 .. 5 6 7 [8] 9 10 11 .. 500'
+            Example for a range with radius 3:
+
+            '1 .. 5 6 7 [8] 9 10 11 .. 500'
 
             Default: '~2~'
 
