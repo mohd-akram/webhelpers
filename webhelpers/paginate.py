@@ -148,7 +148,7 @@ def get_wrapper(obj, sqlalchemy_session=None):
     if isinstance(obj, (list, tuple)):
         return obj
     # Is SQLAlchemy 0.4 available? (0.3 is not supported - sorry)
-    if float(sqlalchemy_available) >= 0.4:
+    if sqlalchemy_available.startswith('0.4'):
         # Is the collection a query?
         if isinstance(obj, sqlalchemy.orm.query.Query):
             return _SQLAlchemyQuery(obj)
