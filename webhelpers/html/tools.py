@@ -5,17 +5,13 @@ import urllib
 
 from webhelpers.html import HTML, literal, lit_sub, escape
 from webhelpers.html.tags import compute_public_path, convert_boolean_attrs
-import webhelpers.textile as textile
-import webhelpers.markdown as _markdown
 
 __all__ = [
     'button_to', 
     'mail_to',
     'highlight', 
-    'markdown', 
     'strip_links',
     'auto_link', 
-    'textilize',
     ]
 
 
@@ -290,29 +286,6 @@ def _auto_link_email_addresses(text):
     return lit_sub(r'([\w\.!#\$%\-+.]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+)',
                    r'<a href="mailto:\1">\1</a>', text)
 
-def markdown(text, **kwargs):
-    """Format the text with MarkDown formatting.
-    
-    This function uses the `Python MarkDown library 
-    <http://www.freewisdom.org/projects/python-markdown/>`_
-    which is included with WebHelpers.
-    
-    """
-    return literal(_markdown.markdown(text, **kwargs))
-
-def textilize(text, sanitize=False):
-    """Format the text with Textile formatting.
-    
-    This function uses the `PyTextile library <http://dealmeida.net/>`_ 
-    which is included with WebHelpers.
-    
-    Additionally, the output can be sanitized which will fix tags like 
-    <img />,  <br /> and <hr /> for proper XHTML output.
-    
-    """
-    texer = textile.Textiler(text)
-    return literal(texer.process(sanitize=sanitize))
-
 def strip_links(text):
     """
     Strip link tags from ``text`` leaving just the link label.
@@ -329,66 +302,3 @@ def strip_links(text):
         lit = lambda x: x
     strip_re = re.compile(r'<a\b.*?>(.*?)<\/a>', re.I | re.M)
     return lit(strip_re.sub(r'\1', text))
-
-
-class Flash(object):
-    """Accumulate a list of messages to show at the next page request.
-
-    This class is useful when you want to redirect to another page and also
-    show a status message on that page, such as "Changes saved" or 
-    "No previous search found; returning to home page".
-
-    THIS IMPLEMENTATION DEPENDS ON PYLONS.  However, it can easily be adapted
-    for another web framework.
-
-    Normally you instantiate a Flash object in myapp/lib/helpers.py:
-
-        from webhelpers.tools import Flash as _Flash
-        flash = _Flash()
-
-    The helpers module is then imported into your controllers and
-    templates as `h`.  Whenever you want to set a message, do this::
-
-        h.flash("Record deleted.")
-
-    You can set additional messages too::
-
-        h.flash("Hope you didn't need it.")
-
-    Now make a place in your site template for the messages.  In Mako you
-    might do::
-
-        <% messages = h.flash.pop_messages() %>
-        % if messages:
-        <ul id="flash-messages">
-        % for message in messages:
-            <li>${message}</li>
-        % endfor
-        </ul>
-        % endif
-
-    You can style this to look however you want::
-
-        ul#flash-messages {
-            color: red;
-            background-color: #FFFFCC;
-            font-size: larger;
-            font-style: italic;
-            margin-left: 40px;
-            padding: 4px;
-            list-style: none;
-            }
-    """
-    def __init__(self, session_key="flash"):
-        self.session_key = session_key
-
-    def __call__(self, message):
-        from pylons import session
-        session.setdefault(self.session_key, []).append(message)
-        session.save()
-
-    def pop_messages(self):
-        from pylons import session
-        messages = session.pop(self.session_key, [])
-        session.save()
-        return messages
