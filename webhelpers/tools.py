@@ -4,7 +4,7 @@ import re
 import urllib
 
 from webhelpers.html import HTML, literal, lit_sub, escape
-from webhelpers.tags import compute_public_path, convert_boolean_attrs
+from webhelpers.html.tags import compute_public_path, convert_boolean_attrs
 import webhelpers.textile as textile
 import webhelpers.markdown as _markdown
 
