@@ -47,6 +47,7 @@ A simple example (ipython session)::
     Items per page:   20
     Number of items:  1000
     Number of pages:  50
+    <BLANKLINE>
 
     # Print a list of items on the current page
     >>> my_page.items
@@ -58,11 +59,12 @@ A simple example (ipython session)::
 
     # On a web page you will want to use a "pager" that creates links that
     # the user can click on to load other pages in the set.
-    >>> my_page.pager()
+    # [The ">>" prompt is to hide untestable examples from doctest.]
+    >> my_page.pager()
     1 2 [3] 4 5 .. 50       (this is actually HTML)
 
     # The pager can be customized:
-    >>> my_page.pager('$link_previous ~3~ $link_next (Page $page of $page_count)')
+    >> my_page.pager('$link_previous ~3~ $link_next (Page $page of $page_count)')
     1 2 [3] 4 5 6 .. 50 > (Page 3 of 50)
 
 Please see the documentation on *Page* and *Page.pager()*. There are many
