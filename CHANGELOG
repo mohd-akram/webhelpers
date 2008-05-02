@@ -1,10 +1,20 @@
 WebHelpers ChangeLog
 
 0.6 (**tip**)
-* Wrap all rails helpers in a literal for use with template systems that honor
-  the literal.
-* Added html.py to generate HTML tags in a sane manner, along with literal
-  type.
+* Add webhelpers.html.builder to generate HTML tags with smart escaping,
+  along with a literal type to mark preformatted strings.
+* Deprecate webhelpers.rails, including its Javascript libraries (Prototype
+  and Scriptaculous).  Wrap all rails helpers in a literal.
+* Many new modules:
+  constants - countries, states, and provinces.
+  containers - high-level collections, including flash messages.
+  date - date/time (rails replacement).
+  html.converters - text-to-HTML (rails replacement).
+  html.tags - HTML tags (rails replacement).
+  html.tools - larger HTML chunks (rails replacement).
+  mail - sending email.
+  paginate - successor to deprecated pagination module.
+  text - non-HTML text formatting (rails replacement).
 * Removed dependency on simplejson and normalized quotes. Patch by Elisha 
   Cook.
 
