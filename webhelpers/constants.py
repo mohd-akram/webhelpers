@@ -80,7 +80,7 @@ def uk_counties():
 _country_codes = None
 def country_codes():
     """\
-    Returns a dictionary of all country names and their repsective codes specified by the ISO in the format::
+    Returns a dictionary of all country names and their respective codes specified by the ISO in the format::
     
         {
             ...
@@ -411,6 +411,121 @@ ZIMBABWE 	ZW
             e.append(p)
     _country_codes = e
     return _country_codes
+
+def us_states():
+    """USA states.
+
+    Return a list of (abbreviation, name) for all US states, sorted by name.
+    Includes the District of Columbia.
+
+    From http://www.usps.com/ncsc/lookups/abbreviations.html
+    Updated 2008-05-01
+    """
+    return [
+        ("AL", "Alabama"),
+        ("AK", "Alaska"),
+        ("AZ", "Arizona"),
+        ("AR", "Arkansas"),
+        ("CA", "California"),
+        ("CO", "Colorado"),
+        ("CT", "Connecticut"),
+        ("DE", "Delaware"),
+        ("DC", "District of Columbia"),
+        ("FL", "Florida"),
+        ("GA", "Georgia"),
+        ("HI", "Hawaii"),
+        ("ID", "Idaho"),
+        ("IL", "Illinois"),
+        ("IN", "Indiana"),
+        ("IA", "Iowa"),
+        ("KS", "Kansas"),
+        ("KY", "Kentucky"),
+        ("LA", "Louisiana"),
+        ("ME", "Maine"),
+        ("MD", "Maryland"),
+        ("MA", "Massachussetts"),
+        ("MI", "Michigan"),
+        ("MN", "Minnesota"),
+        ("MS", "Mississippi"),
+        ("MO", "Missouri"),
+        ("MT", "Montana"),
+        ("NE", "Nebraska"),
+        ("NV", "Nevada"),
+        ("NH", "New Hampshire"),
+        ("NJ", "New Jersey"),
+        ("NM", "New Mexico"),
+        ("NY", "New York"),
+        ("NC", "North Carolina"),
+        ("ND", "North Dakota"),
+        ("OH", "Ohio"),
+        ("OK", "Oklahoma"),
+        ("OR", "Oregon"),
+        ("PA", "Pennsylvania"),
+        ("RI", "Rhode Island"),
+        ("SC", "South Carolina"),
+        ("SD", "South Dakota"),
+        ("TN", "Tennessee"),
+        ("TX", "Texas"),
+        ("UT", "Utah"),
+        ("VT", "Vermont"),
+        ("VA", "Virginia"),
+        ("WV", "West Virginia"),
+        ("WA", "Washington"),
+        ("WI", "Wisconsin"),
+        ("WY", "Wyoming"),
+        ]
+
+def us_territories():
+    """USA postal abbreviations for territories, protectorates, and military.
+
+    From http://www.usps.com/ncsc/lookups/abbreviations.html
+    Updated 2008-05-01
+    """
+    return [
+        ("AS", "American Samoa"),
+        ("AA", "Armed Forces Americas"),
+        ("AE", "Armed Forces Europe/Canada/Middle East/Africa"),
+        ("AP", "Armed Forces Pacific"),
+        ("FM", "Federated States of Micronesia"),
+        ("GU", "Guam"),
+        ("MH", "Marshall Islands"),
+        ("MP", "Northern Mariana Islands"),
+        ("PW", "Palau"),
+        ("PR", "Puerto Rico"),
+        ("VI", "Virgin Islands"),
+        ]
+    
+
+def canada_provinces():
+    """Canadian provinces and abbreviations.
+
+    Return a list of (abbreviation, name) for all Canadian
+    provinces and territories, sorted by name.
+
+    Transcribed from Wikipedia on 2008-05-01.
+    http://en.wikipedia.org/wiki/Canadian_subnational_postal_abbreviations
+
+    See also
+    http://en.wikipedia.org/wiki/Provinces_and_territories_of_Canada
+    """
+    provinces = [
+        ("Alberta", "AB"),
+        ("British Columbia", "BC"),
+        ("Manitoba", "MB"),
+        ("New Brunswick", "NB"),
+        ("Newfoundland and Labrador", "NL"),
+        ("Nova Scotia", "NS"),
+        ("Northwest Territories", "NT"),
+        ("Nunavut", "NU"),
+        ("Ontario", "ON"),
+        ("Prince Edward Island", "PE"),
+        ("Quebec", "QC"),
+        ("Saskatchewan", "SK"),
+        ("Yukon", "YT"),
+        ]
+    provinces.sort()
+    return [(x[2], x[1]) for x in provinces]
+    
 
 def timezones(common=False):
     """Return timezones from the PyTZ package.
