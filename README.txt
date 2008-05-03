@@ -6,14 +6,12 @@ showing results a pageful at a time, etc.  It may be used with any web
 framework or template engine.  
 
 The biggest difference between WebHelpers 0.6 and previous versions is the new
-HTML tag generator (``webhelpers.html``) which does smart HTML escaping.
-``webhelpers.rails`` has been deprecated and most of its functions have been
-reimplemented in new modules. All HTML helpers return a ``literal`` object,
-which is a Unicode subclass.  [XXX explain this further, and ``literal()``.]
+HTML tag generator with smart escaping, and the new helpers written to replace
+the deprecated ``webhelpers.rails``.  A brief summary of the module layout is
+below; see the docstrings in the source for documentation.
 
-
-WebHelpers currently consists of the following
-modules and packages under the ``webhelpers.`` namespace:
+``constants``
+    Country codes, states and provinces.
 
 ``date``
     Date/time helpers.  These currently format strings based on dates.
@@ -23,22 +21,32 @@ modules and packages under the ``webhelpers.`` namespace:
     Ported from Django.
 
 ``html``
-    A library for generating HTML tags, written by Ian Bicking.  Unlike
-    ElementTree it can produce HTML fragments and has a pythonic API. Unlike
-    lxml it's pure Python and has no dependencies.  It also does smart HTML
-    escaping, described below.  
+    A package of HTML-related helpers.
+
+    ``html.builder``
+        A library for generating HTML tags with smart escaping.  All
+        public symbols are imported into ``webhelpers.html``.
+
+    ``converters``
+        Text-to-HTML converters.
+
+    ``tags``
+        High-level HTML tags, including form tags, hyperlinks, and 
+        Javascript/CSS links.  The ``ModelTags`` class builds input
+        tags from database records (for any kind of database).
+
+    ``tools``
+        Helpers producing chunks of HTML.
 
 ``markdown``
     A text to HTML converter.  Normally invoked via
     ``webhelpers.tools.markdown()``.  (If you use this library directly, you
-    may have to wrap return values in ``literal()`` to prevent them from
-    being double escaped.)
+    may have to wrap the results in ``literal()`` to prevent double escaping.)
 
 ``paginate``
     A tool for letting you view a large sequence a screenful at a time,
     with previous/next links.
     
-
 ``string24``
     The ``string`` module from Python 2.4.  Useful if you're running on
     Python 2.3.
@@ -53,8 +61,7 @@ modules and packages under the ``webhelpers.`` namespace:
 ``textile``
     Another text to HTML converter.  Normally invoked via
     ``webhelpers.tools.textilize()``.  (If you use this library directly, you
-    may have to wrap return values in ``literal()`` to prevent double
-    escaping.)
+    may have to wrap the results in ``literal()`` to prevent double escaping.)
 
 ``tools``
     Helpers producing complex chunks of HTML.
@@ -99,18 +106,36 @@ web development paradigms.
 For support/question/patches, please use the `Pylons mailing list
 <http://groups.google.com/group/pylons-discuss>`_.
 
-*Requirements:* Some WebHelper functions require `Routes
-<http://routes.groovie.org/>`_ to be active in the framework for a variety of
-functions. Currently `Pylons <http://pylons.groovie.org/>`_, `TurboGears
-<http://trac.turbogears.org/turbogears/wiki/RoutesIntegration>`_, and `Aquarium
-<http://aquarium.sourceforge.net/>`_ support Routes.
+Requirements
+------------
 
-Update 2008-04-29
------------------
-helpers.patch addresses some of the issues in helpers.py.
+WebHelpers does not have any install dependencies, but some functions depend
+on third-party libraries.
 
-test_mail.py is a test suite for webhelpers.mail.  It depends on an SMTP server
-being available, so we're unsure how to integrate it with the standard test
-suite.  
+Routes_
 
-wsgiapp_image.jpg is a file used by test_mail.py.
+    Version >= 1.7 but < 2.0 must be installed and running in the current
+    web framework for:
+
+    - webhelpers.html.tags (required only for ``javascript_link()``,
+      ``stylesheet_link()``, or ``auto_discovery_link()`` functions).
+    - webhelpers.paginate
+    - webhelpers.pagination
+    - webhelpers.rails
+    - the regression tests in the source distribution
+
+    Currently Pylons_, TurboGears_, and Aquarium_ support Routes.
+    (WebHelpers is not 
+
+    A future version of WebHelpers will be compatible with Routes 2, which is
+    still in development.
+
+Pylons_
+
+    The ``Flash`` class in ``webhelpers.session`` imports ``pylons.session``.
+    The class can easily be reimplemented in another web framework.
+
+.. _Routes:  http://routes.groovie.org/
+.. _Pylons:  http://pylonshq.com/
+.. _TurboGears:  http://turbogears.org/
+.. _Aquarium:  http://aquarium.sourceforge.net/
