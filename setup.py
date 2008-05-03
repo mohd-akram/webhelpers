@@ -32,7 +32,6 @@ to function.
     zip_safe=False,
     include_package_data=True,
     install_requires=[
-        "Routes>=1.7",
         ],
     classifiers=["Development Status :: 4 - Beta",
                  "Intended Audience :: Developers",
