@@ -269,13 +269,13 @@ def select(name, selected_values, options, **attrs):
         selected_values = (selected_values,)
     opts = []
     # Cast integer values to strings
-    selected_values = map(str, selected_values)
+    selected_values = map(unicode, selected_values)
     for option in options:
         if isinstance(option, basestring):
             label = value = option
         else:
-            label = option[0]
-            value = option[1]
+            label = unicode(option[0])
+            value = unicode(option[1])
         if value in selected_values:
             opt = HTML.option(label, value=value, selected="selected")
         else:
