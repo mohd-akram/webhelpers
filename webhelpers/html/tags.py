@@ -273,6 +273,8 @@ def select(name, selected_values, options, **attrs):
     for option in options:
         if isinstance(option, basestring):
             label = value = option
+        elif isinstance(option, int):
+            label = value = unicode(option)
         else:
             label = unicode(option[0])
             value = unicode(option[1])
