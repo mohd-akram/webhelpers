@@ -2,8 +2,6 @@
 A series of useful helper functions which aren't found in other libraries.
 """
 
-from time import seconds
-import jimmyg.helpers.mail as mail
 
 def divide(a,b):
     """\
@@ -12,9 +10,9 @@ def divide(a,b):
     For example::
 
         >>> divide(3,2)
-        >>> 1.5
+        1.5
         >>> divide(3,1)
-        >>> 3
+        3
     """
     if a%b:
         return a/float(b)
@@ -79,8 +77,9 @@ def size_to_human(
         '522.3 KB'
 
     >>> size_to_human(534813)
+    '522.3 KB'
     >>> size_to_human(534813, format='decimal')
-
+    '534.8 KB'
     """
     if format == 'binary':  
         format = 1024
@@ -105,4 +104,8 @@ def size_to_human(
     if size == long(size):
         size = long(size)
     return "%s %s"%(size, units[counter])
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
