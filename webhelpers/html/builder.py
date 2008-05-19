@@ -70,7 +70,8 @@ class UnfinishedComment(object):
         
     def __html__(self):
         """Return the HTML escaped tag."""
-        raise UnfinishedTag
+        raise NotImplementedError(
+            "You must call html.comment with some text")
 
 
 class UnfinishedLiteral(object):
@@ -83,7 +84,8 @@ class UnfinishedLiteral(object):
 
     def __html__(self):
         """Return the HTML escaped text."""
-        raise UnfinishedTag
+        raise NotImplementedError(
+            "You must call html.literal with some text")
 
 
 class HTMLBuilder(object):
