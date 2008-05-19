@@ -36,6 +36,10 @@ import re
 from cgi import escape as cgi_escape
 from urllib import quote as url_escape
 from UserDict import DictMixin
+try:
+    set
+except NameError:
+    from sets import Set as set
 
 __all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
 
@@ -124,12 +128,9 @@ def make_tag(tag, *args, **kw):
     htmlArgs = [' %s="%s"' % (attrEncode(attr), escape(value))
                 for attr, value in sorted(kw.iteritems())
                 if value is not None]
-    if not args and emptyTags.has_key(tag) and closed:
+    if not args and tag in empty_tags and closed:
         substr = '<%s%s />'
-        if blockTags.has_key(tag):
-            return literal(substr % (tag, "".join(htmlArgs)))
-        else:
-            return literal(substr % (tag, "".join(htmlArgs)))
+        return literal(substr % (tag, "".join(htmlArgs)))
     else:
         close_tag = ""
         if closed:
@@ -307,22 +308,6 @@ class _EscapedItem(DictMixin):
         return escape(repr(self.obj))
 
 
-emptyTagString = """
-area base basefont br col frame hr img input isindex link meta param
-"""
-
-emptyTags = {}
-for tag in emptyTagString.split():
-    emptyTags[tag] = 1
-
-blockTagString = """
-applet blockquote body br dd div dl dt fieldset form frameset
-head hr html iframe map menu noframes noscript object ol optgroup
-p param script select table tbody tfoot thead tr ul var
-"""
-
-blockTags = {}
-for tag in blockTagString.split():
-    blockTags[tag] = 1
+empty_tags = set("area base basefont br col frame hr img input isindex link meta param".split())
 
 HTML = HTMLBuilder()
