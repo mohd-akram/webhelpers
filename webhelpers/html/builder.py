@@ -37,6 +37,8 @@ from cgi import escape as cgi_escape
 from urllib import quote as url_escape
 from UserDict import DictMixin
 
+__all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
+
 class UnfinishedTag(object):
     
     """Represents an unfinished or empty tag."""
@@ -322,5 +324,3 @@ for tag in blockTagString.split():
     blockTags[tag] = 1
 
 HTML = HTMLBuilder()
-
-__all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
