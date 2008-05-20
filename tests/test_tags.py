@@ -322,7 +322,7 @@ class TestAssetTagHelper(WebHelpersTestCase):
                          image('/images/xml.png', alt="Xml"))
         self.assertEqual('<img alt="" src="/images/xml.png" />',
                          image('/images/xml.png', ""))
-        self.assertEqual('<img src="/images/xml.png" />',
+        self.assertEqual('<img alt="" src="/images/xml.png" />',
                          image('/images/xml.png', None))
         self.assertEqual('<img alt="rss syndication" src="/images/rss.png" />',
                          image('/images/rss.png', 'rss syndication'))
