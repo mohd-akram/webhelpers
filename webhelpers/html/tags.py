@@ -561,16 +561,16 @@ def image(url, alt, width=None, height=None, **attrs):
         literal(u'<img alt="Icon" height="16" src="/icons/icon.gif" width="16" />')
 
         >>> image("/icons/icon.gif", None, width=16)
-        literal(u'<img src="/icons/icon.gif" width="16" />')
+        literal(u'<img alt="" src="/icons/icon.gif" width="16" />')
         
     """
-    if alt is not None:
-        attrs['alt'] = alt
+    if not alt:
+        alt = ""
     if width is not None:
         attrs['width'] = width
     if height is not None:
         attrs['height'] = height
-    return HTML.img(src=url, **attrs)
+    return HTML.img(src=url, alt=alt, **attrs)
 
 #### Tags for the HTML head
 
