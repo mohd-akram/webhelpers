@@ -170,9 +170,9 @@ class TestURLHelper(WebHelpersTestCase):
 
     def test_button_to_with_img(self):
         self.assertEqual(u'<form action="/content/edit/3" class="button-to" method="POST"><div><input alt="Edit" src="/images/icon_delete.gif" type="image" value="Edit" /></div></form>',
-                         button_to("Edit", url_for(action='edit', id=3), type='image', src='icon_delete.gif'))
-        self.assertEqual(u'<form action="/content/submit/3" class="button-to" method="POST"><div><input alt="Complete the form" src="/images/submit.png" type="image" value="Submit" /></div></form>',
-                         button_to("Submit", url_for(action='submit', id=3), type='image', src='submit', alt='Complete the form'))
+                         button_to("Edit", url_for(action='edit', id=3), type='image', src='/images/icon_delete.gif'))
+        self.assertEqual(u'<form action="/content/submit/3" class="button-to" method="POST"><div><input alt="Complete the form" src="submit.png" type="image" value="Submit" /></div></form>',
+                         button_to("Submit", url_for(action='submit', id=3), type='image', src='submit.png', alt='Complete the form'))
 
     def test_mail_to(self):
         self.assertEqual(u'<a href="mailto:justin@example.com">justin@example.com</a>', mail_to("justin@example.com"))
