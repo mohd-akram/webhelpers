@@ -10,12 +10,16 @@ def test_literal():
     lit = literal(u'This string <>')
     other = literal(u'<other>')
     assert u'This string <><other>' == lit + other
+    assert type(lit + other) is literal
     
     assert u'&quot;<other>' == '"' + other
     assert u'<other>&quot;' == other + '"'
     
     mod = literal('<%s>ello')
     assert u'<&lt;H&gt;>ello' == mod % '<H>'
+    assert type(mod % '<H>') is literal
+    assert HTML('<a>') == '&lt;a&gt;'
+    assert type(HTML('<a>')) is literal
 
 def test_literal_dict():
     lit = literal(u'This string <>')

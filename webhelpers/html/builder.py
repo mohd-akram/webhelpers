@@ -108,7 +108,7 @@ class HTMLBuilder(object):
 
     def __call__(self, *args):
         """Join raw HTML and HTML escape it."""
-        return ''.join([escape(x) for x in args])
+        return literal(''.join([escape(x) for x in args]))
 
 
 def attrEncode(v):
@@ -192,10 +192,10 @@ class literal(unicode):
         if isinstance(obj, tuple):
             escaped = [_EscapedItem(item, self.encoding,
                                     self.error_mode) for item in obj]
-            return unicode.__mod__(self, tuple(escaped))
+            return self.__class__(unicode.__mod__(self, tuple(escaped)))
         else:
-            return unicode.__mod__(self, _EscapedItem(obj, self.encoding,
-                                                      self.error_mode))
+            return self.__class__(unicode.__mod__(self, _EscapedItem(obj, self.encoding,
+                                                                     self.error_mode)))
         
     def join(self, items):
         return self.__class__(unicode.join(self, ([escape(i) for i in items])))
