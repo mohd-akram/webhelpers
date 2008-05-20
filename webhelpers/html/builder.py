@@ -111,7 +111,7 @@ class HTMLBuilder(object):
         return literal(''.join([escape(x) for x in args]))
 
 
-def attrEncode(v):
+def _attr_decode(v):
     """Parse out attributes that begin with '_'."""
     if v.endswith('_'):
         return v[:-1]
@@ -125,7 +125,7 @@ def make_tag(tag, *args, **kw):
 "in conjunction with non-keyword arguments"
         args = kw.pop("c")
     closed = kw.pop("_closed", True)
-    htmlArgs = [' %s="%s"' % (attrEncode(attr), escape(value))
+    htmlArgs = [' %s="%s"' % (_attr_decode(attr), escape(value))
                 for attr, value in sorted(kw.iteritems())
                 if value is not None]
     if not args and tag in empty_tags and closed:
