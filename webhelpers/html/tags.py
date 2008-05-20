@@ -13,11 +13,6 @@ import re
 import urllib
 import urlparse
 
-try:
-    from routes import request_config
-except ImportError:
-    request_config = None
-
 from webhelpers.html import escape, HTML, literal, url_escape
 
 __all__ = [
@@ -44,7 +39,6 @@ __all__ = [
            # Head tags
            "auto_discovery_link",
            "javascript_link",
-           "javascript_path",
            "stylesheet_link",
            # Utility functions
            "convert_boolean_attrs",
@@ -269,13 +263,15 @@ def select(name, selected_values, options, **attrs):
         selected_values = (selected_values,)
     opts = []
     # Cast integer values to strings
-    selected_values = map(str, selected_values)
+    selected_values = map(unicode, selected_values)
     for option in options:
         if isinstance(option, basestring):
             label = value = option
+        elif isinstance(option, int):
+            label = value = unicode(option)
         else:
-            label = option[0]
-            value = option[1]
+            label = unicode(option[0])
+            value = unicode(option[1])
         if value in selected_values:
             opt = HTML.option(label, value=value, selected="selected")
         else:
@@ -530,67 +526,60 @@ def link_to_unless(condition, label, url='', **attrs):
 
 #### Non-form tags
 
-def image(source, alt=None, height=None, width=None, **attrs):
+def image(url, alt, width=None, height=None, **attrs):
     """Return an image tag for the specified ``source``.
 
-    ``source``
-        The source URL of the image. The URL is prepended with 
-        '/images/', unless its full path is specified. The URL is
-        ultimately prepended with the environment's ``SCRIPT_NAME``
-        (the root path of the web application), unless the URL is 
-        fully-fledged (e.g. http://example.com).
+    ``url``
+        The URL of the image.  (This must be the exact URL desired.  A
+        previous version of this helper added magic prefixes; this is
+        no longer the case.)
     
     ``alt``
-        The img's alt tag. Defaults to the source's filename, title
-        cased.
+        The img's alt tag. Non-graphical browsers and screen readers will
+        output this instead of the image.  If the image is pure decoration
+        and uninteresting to non-graphical users, pass "".  To omit the
+        alt tag completely, pass None.
+
+    ``width``
+        The width of the image, default is not included
 
     ``height``
         The height of the image, default is not included
         
-    ``width``
-        The width of the image, default is not included
-        
     Examples::
 
-        >>> image('xml.png')
-        literal(u'<img alt="Xml" src="/images/xml.png" />')
-
-        >>> image('rss.png', 'rss syndication')
+        >>> image('/images/rss.png', 'rss syndication')
         literal(u'<img alt="rss syndication" src="/images/rss.png" />')
 
-        >>> image("icon.png", height=16, width=10, alt="Edit Entry")
+        >>> image('/images/xml.png', "")
+        literal(u'<img alt="" src="/images/xml.png" />')
+
+        >>> image("/images/icon.png", height=16, width=10, alt="Edit Entry")
         literal(u'<img alt="Edit Entry" height="16" src="/images/icon.png" width="10" />')
 
-        >>> image("/icons/icon.gif", width=16, height=16)
+        >>> image("/icons/icon.gif", alt="Icon", width=16, height=16)
         literal(u'<img alt="Icon" height="16" src="/icons/icon.gif" width="16" />')
 
-        >>> image("/icons/icon.gif", width=16)
-        literal(u'<img alt="Icon" src="/icons/icon.gif" width="16" />')
+        >>> image("/icons/icon.gif", None, width=16)
+        literal(u'<img alt="" src="/icons/icon.gif" width="16" />')
         
     """
-    attrs['src'] = compute_public_path(source, 'images')
-
     if not alt:
-        alt = os.path.splitext(os.path.basename(source))[0].title()
-    attrs['alt'] = alt
-    
+        alt = ""
     if width is not None:
         attrs['width'] = width
     if height is not None:
         attrs['height'] = height
-        
-    return HTML.img(**attrs)
+    return HTML.img(src=url, alt=alt, **attrs)
 
 #### Tags for the HTML head
 
-# The absolute path of the WebHelpers javascripts directory
-javascript_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                               'javascripts')
-
-def javascript_link(*sources, **attrs):
-    """Return script include tags for the specified javascript
-    ``sources``.
+def javascript_link(*urls, **attrs):
+    """Return script include tags for the specified javascript URLs.
     
+    ``urls`` should be the exact URLs desired.  A previous version of this
+    helper added magic prefixes; this is no longer the case.
+
     Specify the keyword argument ``defer=True`` to enable the script 
     defer attribute.
 
@@ -607,52 +596,49 @@ def javascript_link(*sources, **attrs):
     """
     convert_boolean_attrs(attrs, ["defer"])
     tags = []
-    for source in sources:
-        content_attrs = dict(type='text/javascript',
-                src=compute_public_path(source, 'javascripts', 'js'))
-        content_attrs.update(attrs)
-        tags.append(HTML.script('',  **content_attrs))
-    return literal('\n').join(tags)
+    for url in urls:
+        tag = HTML.script("", type="text/javascript", src=url, **attrs)
+        tags.append(tag)
+    return literal("\n").join(tags)
 
 
-def stylesheet_link(*sources, **attrs):
-    """Return CSS link tags for the specified stylesheet ``sources``.
+def stylesheet_link(*urls, **attrs):
+    """Return CSS link tags for the specified stylesheet URLs.
 
-    Each source's URL path is ultimately prepended with the 
-    environment's ``SCRIPT_NAME`` (the root path of the web 
-    application), unless the URL path is a full-fledged URL 
-    (e.g., http://example.com).
-    
+    ``urls`` should be the exact URLs desired.  A previous version of this
+    helper added magic prefixes; this is no longer the case.
+
     Examples::
 
-        >>> stylesheet_link('style.css')
-        literal(u'<link href="/stylesheets/style.css" media="screen" rel="Stylesheet" type="text/css" />')
+        >>> stylesheet_link('/stylesheets/style.css')
+        literal(u'<link href="/stylesheets/style.css" media="screen" rel="stylesheet" type="text/css" />')
 
         >>> stylesheet_link('/stylesheets/dir/file.css', media='all')
-        literal(u'<link href="/stylesheets/dir/file.css" media="all" rel="Stylesheet" type="text/css" />')
+        literal(u'<link href="/stylesheets/dir/file.css" media="all" rel="stylesheet" type="text/css" />')
 
     """
-    tag_attrs = dict(rel='Stylesheet', type='text/css', media='screen')
-    tag_attrs.update(attrs)
-    tag_attrs.pop('href', None)
-    
-    tags = [HTML.link(
-        **dict(href=compute_public_path(source, 'stylesheets', 'css'), 
-               **tag_attrs)) for source in sources]
+    if "href" in attrs:
+        raise TypeError("keyword arg 'href' not allowed")
+    attrs.setdefault("rel", "stylesheet")
+    attrs.setdefault("type", "text/css")
+    attrs.setdefault("media", "screen")
+    tags = []
+    for url in urls:
+        tag = HTML.link(href=url, **attrs)
+        tags.append(tag)
     return literal('\n').join(tags)
 
 
-def auto_discovery_link(source, feed_type='rss', **attrs):
+def auto_discovery_link(url, feed_type="rss", **attrs):
     """Return a link tag allowing auto-detecting of RSS or ATOM feed.
     
     The auto-detection of feed for the current page is only for
     browsers and news readers that support it.
 
-    ``source``
-        The URL of the feed. The URL is ultimately prepended with the
-        environment's ``SCRIPT_NAME`` (the root path of the web 
-        application), unless the URL is fully-fledged 
-        (e.g. http://example.com).
+    ``url``
+        The URL of the feed.  (This should be the exact URLs desired.  A
+        previous version of this helper added magic prefixes; this is no longer
+        the case.)
 
     ``feed_type``
         The type of feed. Specifying 'rss' or 'atom' automatically 
@@ -675,41 +661,20 @@ def auto_discovery_link(source, feed_type='rss', **attrs):
         literal(u'<link href="/app.html" rel="alternate" title="" type="text/html" />')
         
     """
-    title = ''
+    if "href" in attrs:
+        raise TypeError("keyword arg 'href' is not allowed")
+    if "type" in attrs:
+        raise TypeError("keyword arg 'type' is not allowed")
+    title = ""
     if feed_type.lower() in ('rss', 'atom'):
         title = feed_type.upper()
         feed_type = 'application/%s+xml' % feed_type.lower()
-
-    tag_args = dict(rel='alternate', type=feed_type, title=title,
-                    href=compute_public_path(source))
-    attrs.pop('href', None)
-    attrs.pop('type', None)
-    tag_args.update(attrs)
-    return HTML.link(**tag_args)
+    attrs.setdefault("title", title)
+    return HTML.link(rel="alternate", type=feed_type, href=url, **attrs)
 
 
 
 ########## INTERNAL FUNCTIONS ##########
-
-def compute_public_path(source, root_path=None, ext=None):
-    """Format the specified source for publishing.
-    
-    Use the public directory, if applicable.
-    
-    """
-    if ext and not os.path.splitext(os.path.basename(source))[1]:
-        source = '%s.%s' % (source, ext)
-
-    # Avoid munging fully-fledged URLs, including 'mailto:'
-    parsed = urlparse.urlparse(source)
-    if not (parsed[0] and (parsed[1] or parsed[2])):
-        # Prefix apps deployed under any SCRIPT_NAME path
-        if not root_path or source.startswith('/'):
-            source = '%s%s' % (get_script_name(), source)
-        else:
-            source = '%s/%s/%s' % (get_script_name(), root_path, source)
-    return source
-
 
 def convert_boolean_attrs(attrs, bool_attrs):
     """Convert boolean values into proper HTML attributes.
@@ -735,23 +700,3 @@ def set_input_attrs(attrs, type, name, value):
     attrs["type"] = type
     attrs["name"] = name
     attrs["value"] = value
-
-
-def get_script_name():
-    """Determine the current web application's ``SCRIPT_NAME``.
-    
-    .. note::
-        This requires Routes to function, and will not pick up the
-        SCRIPT_NAME var without it in use.
-    
-    """
-    script_name = ''
-    if request_config:
-        config = request_config()
-        if hasattr(config, 'environ'):
-            script_name = config.environ.get('SCRIPT_NAME', '')
-    else:
-        script_name = ''
-    return script_name
-
-

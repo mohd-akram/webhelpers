@@ -4,7 +4,7 @@ import re
 import urllib
 
 from webhelpers.html import HTML, literal, lit_sub, escape
-from webhelpers.html.tags import compute_public_path, convert_boolean_attrs
+from webhelpers.html.tags import convert_boolean_attrs
 
 __all__ = [
     'button_to', 
@@ -60,8 +60,8 @@ def button_to(name, url='', **html_options):
 
          type='image', src='icon_delete.gif'
 
-    The ``src`` path will be computed as the image_tag() computes its 
-    ``source`` argument.
+    The ``src`` path should be the exact URL desired.  A previous version of
+    this helper added magical prefixes but this is no longer the case.
 
     Example 1::
     
@@ -120,11 +120,11 @@ def button_to(name, url='', **html_options):
     submit_type = html_options.get('type')
     img_source = html_options.get('src')
     if submit_type == 'image' and img_source:
-        html_options.update(dict(type=submit_type, value=name,
-                                 alt=html_options.get('alt', name)))
-        html_options['src'] = compute_public_path(img_source, 'images', 'png')
+        html_options["value"] = name
+        html_options.setdefault("alt", name)
     else:
-        html_options.update(dict(type='submit', value=name))
+        html_options["type"] = "submit"
+        html_options["value"] = name
     
     return HTML.form(method=form_method, action=url, class_="button-to",
                      c=[HTML.div(method_tag, HTML.input(**html_options))])

@@ -18,6 +18,13 @@ WebHelpers ChangeLog
 * Removed dependency on simplejson and normalized quotes. Patch by Elisha 
   Cook.
 
+COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
+- image(), javascript_link(), stylesheet_link(), and auto_discovery_link()
+  in webhelpers.html.tags do not add prefixes or suffixes to the URL args
+  anymore; they output the exact URL given. Same for button_to() in
+  webhelpers.html.tools.
+- webhelpers.html.tags.javascript_path was deleted.
+
 0.3.4 (03/18/08)
 * Fixed missing javascripts dir.
 
