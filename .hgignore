@@ -5,3 +5,4 @@ syntax:glob
 *.pyc
 WebHelpers.egg-info
 build
+dist
