@@ -12,20 +12,19 @@ def form_start(*k, **p):
     necessary for the use of the ``fields()`` helper. 
     
     >>> form_start('/action', method='post')
-    literal(u'<table><form action="/action" method="post">')
+    literal(u'<form action="/action" method="post"><table>')
     >>> form_start('/action', method='post', table_class='form')
-    literal(u'<table class="form"><form action="/action" method="post">')
+    literal(u'<form action="/action" method="post"><table class="form">')
     """
     if p.has_key('table_class'):
          table_class = p.get('table_class', 'form')
          del p['table_class']
-         return HTML.table(
+         return start_form(*k,**p)+ HTML.table(
              _closed=False, 
              class_=p.get('table_class', 'form'),
-             c=start_form(*k,**p)
          )
     else:
-         return HTML.table(_closed=False, c=start_form(*k,**p))
+         return start_form(*k,**p)+literal('<table>')
 
 def form_end(*k, **p):
     """\
@@ -33,7 +32,7 @@ def form_end(*k, **p):
     >>> form_end()
     literal(u'</form></table>')
     """
-    return end_form(*k, **p)+literal("</table>")
+    return literal("</table>")+end_form(*k, **p)
 
 def field(
     label='', 
@@ -142,50 +141,50 @@ def value_from_option_id(options, id):
                 return id
     raise Exception("Option %s not found or invalid option format"%id)
     
-def radio_group(name, options, value=None, align='horiz', cols=4):
-    """Radio Group Field."""
-    output=''
-    if len(options)>0:
-        if align <> 'table':
-            for option in options:
-                checked=''
-                if not isinstance(option, list) and not isinstance(option, tuple):
-                    k = option
-                    v = option
-                else:
-                    k, v = option
-                if unicode(v) == unicode(value):
-                    checked=" checked"
-                break_ = ''
-                if align == 'vert':
-                    break_='<br />'
-                output+='<input type="radio" name="%s" value="%s"%s /> %s%s\n'%(name, v, checked, k, break_)
-        else:
-            output += '<table border="0" width="100%" cellpadding="0" cellspacing="0">\n    <tr>\n'
-            counter = -1
-            for option in options:
-                counter += 1
-                if ((counter % cols) == 0) and (counter <> 0):
-                    output += '    </tr>\n    <tr>\n'
-                output += '      <td>'
-                checked=''
-                align=''
-                if not isinstance(option, list) and not isinstance(option, tuple):
-                    k = option
-                    v = option
-                else:
-                    k=option[0]
-                    v=option[1]
-                if unicode(v)==unicode(value):
-                    checked=" checked"
-                output += '<input type="radio" name="%s" value="%s"%s /> %s%s'%(name, v, checked, k,align)
-                output += '</td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n'
-            counter += 1
-            while (counter % cols):
-                counter += 1
-                output += '      <td></td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n'
-            output += '    </tr>\n</table>'
-    return output
+#def radio_group(name, options, value=None, align='horiz', cols=4):
+#    """Radio Group Field."""
+#    output=''
+#    if len(options)>0:
+#        if align <> 'table':
+#            for option in options:
+#                checked=''
+#                if not isinstance(option, list) and not isinstance(option, tuple):
+#                    k = option
+#                    v = option
+#                else:
+#                    k, v = option
+#                if unicode(v) == unicode(value):
+#                    checked=" checked"
+#                break_ = ''
+#                if align == 'vert':
+#                    break_='<br />'
+#                output+='<input type="radio" name="%s" value="%s"%s /> %s%s\n'%(name, v, checked, k, break_)
+#        else:
+#            output += '<table border="0" width="100%" cellpadding="0" cellspacing="0">\n    <tr>\n'
+#            counter = -1
+#            for option in options:
+#                counter += 1
+#                if ((counter % cols) == 0) and (counter <> 0):
+#                    output += '    </tr>\n    <tr>\n'
+#                output += '      <td>'
+#                checked=''
+#                align=''
+#                if not isinstance(option, list) and not isinstance(option, tuple):
+#                    k = option
+#                    v = option
+#                else:
+#                    k=option[0]
+#                    v=option[1]
+#                if unicode(v)==unicode(value):
+#                    checked=" checked"
+#                output += '<input type="radio" name="%s" value="%s"%s /> %s%s'%(name, v, checked, k,align)
+#                output += '</td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n'
+#            counter += 1
+#            while (counter % cols):
+#                counter += 1
+#                output += '      <td></td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n'
+#            output += '    </tr>\n</table>'
+#    return output
 
 def _format_values(values):
     if not isinstance(values, list) and not isinstance(values, tuple):
@@ -196,8 +195,16 @@ def _format_values(values):
             values_.append(unicode(value))
         return values_
 
+def radio_group(name, options, values=None, align='horiz', cols=4):
+    return group(name, options, values, align, cols, 'radio')
+
 def checkbox_group(name, options, values=None, align='horiz', cols=4):
+    return group(name, options, values, align, cols, 'checkbox')
+
+def group(name, options, values=None, align='horiz', cols=4, group_type='checkbox'):
     """Check Box Group Field."""
+    if not group_type in ['checkbox','radio']:
+        raise Exception('Invalid group type %s'%group_type)
     values = _format_values(values)
     output = u''
     item_counter = 0
@@ -210,24 +217,24 @@ def checkbox_group(name, options, values=None, align='horiz', cols=4):
                 else:
                     k=option[0]
                     v=option[1]
-                checked=u''
+                checked=literal(u'')
                 if unicode(v) in values:
-                    checked=" checked"
+                    checked=literal(" checked")
                 break_ = u''
                 if align == 'vert':
-                    break_=u'<br />'
-                output+='<input type="checkbox" name="%s" value="%s"%s /> %s%s\n'%(name, v, checked, k, break_)
+                    break_=literal(u'<br />')
+                output+=literal('<input type="')+literal(group_type)+literal('" name="')+name+literal('" value="')+literal(unicode(v))+literal('" ')+checked+literal(' />')+unicode(k)+break_+literal('\n')
                 item_counter += 1
         else:
-            output += u'<table border="0" width="100%" cellpadding="0" cellspacing="0">\n    <tr>\n'
+            output += literal(u'<table border="0" width="100%" cellpadding="0" cellspacing="0">\n    <tr>\n')
             counter = -1
             for option in options:
                 counter += 1
                 if ((counter % cols) == 0) and (counter <> 0):
-                    output += u'    </tr>\n    <tr>\n'
-                output += '      <td>'
-                checked=u''
-                align=u''
+                    output += literal(u'    </tr>\n    <tr>\n')
+                output += literal('      <td>')
+                checked=literal(u'')
+                align=literal(u'')
                 if not isinstance(option, list) and not isinstance(option, tuple):
                     k = option
                     v = option
@@ -235,16 +242,17 @@ def checkbox_group(name, options, values=None, align='horiz', cols=4):
                     k=option[0]
                     v=option[1]
                 if unicode(v) in values:
-                    checked=" checked"
-                output += u'<input type="checkbox" name="%s" value="%s"%s />%s%s'%(name, v, checked, k, align)
+                    checked=literal(" checked")
+                output+=literal('<input type="checkbox" name="')+name+literal('" value="')+literal(unicode(v))+literal('" ')+checked+literal(' />')+unicode(k)
+                #output += u'<input type="checkbox" name="%s" value="%s"%s />%s%s'%(name, v, checked, k, align)
                 item_counter += 1
-                output += u'</td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n'
+                output += literal(u'</td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n')
             counter += 1
             while (counter % cols):
                 counter += 1
-                output += u'      <td></td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n'
-            output += u'    </tr>\n</table>\n'
-    if not type(output) == unicode:
+                output += literal(u'      <td></td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n')
+            output += literal(u'    </tr>\n</table>\n')
+    if not type(output) in [unicode, literal]:
         raise Exception(type(output))
     return output[:-1]
 

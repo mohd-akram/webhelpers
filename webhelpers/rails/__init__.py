@@ -35,7 +35,7 @@ def wrap_helpers(localdict):
         wrapped_helper.__doc__ = func.__doc__
         return wrapped_helper
     for name, func in localdict.iteritems():
-        if not callable(func) or name == 'literal':
+        if not callable(func) or name in ['literal', 'current_url']:
             continue
         localdict[name] = helper_wrapper(func)
 wrap_helpers(locals())

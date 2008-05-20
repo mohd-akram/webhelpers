@@ -37,6 +37,8 @@ from cgi import escape as cgi_escape
 from urllib import quote as url_escape
 from UserDict import DictMixin
 
+__all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
+
 class UnfinishedTag(object):
     
     """Represents an unfinished or empty tag."""
@@ -68,7 +70,8 @@ class UnfinishedComment(object):
         
     def __html__(self):
         """Return the HTML escaped tag."""
-        raise UnfinishedTag
+        raise NotImplementedError(
+            "You must call html.comment with some text")
 
 
 class UnfinishedLiteral(object):
@@ -81,7 +84,8 @@ class UnfinishedLiteral(object):
 
     def __html__(self):
         """Return the HTML escaped text."""
-        raise UnfinishedTag
+        raise NotImplementedError(
+            "You must call html.literal with some text")
 
 
 class HTMLBuilder(object):
@@ -322,5 +326,3 @@ for tag in blockTagString.split():
     blockTags[tag] = 1
 
 HTML = HTMLBuilder()
-
-__all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
