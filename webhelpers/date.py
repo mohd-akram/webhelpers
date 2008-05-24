@@ -193,7 +193,7 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second",
     return ", ".join(return_strings[:-1]) + " and " + return_strings[-1]
 
 
-def time_ago_in_words(from_time, grandularity="second", round=False):
+def time_ago_in_words(from_time, granularity="second", round=False):
     """
     Return approximate-time-distance string for ``from_time`` till now.
 
@@ -202,5 +202,5 @@ def time_ago_in_words(from_time, grandularity="second", round=False):
     
     """
     return distance_of_time_in_words(from_time, datetime.now(), 
-        grandularity, round)
+        granularity, round)
 
