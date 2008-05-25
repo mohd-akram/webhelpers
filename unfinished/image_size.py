@@ -1,5 +1,6 @@
-"""Calculate the size of an image.
+"""Image helpers
 
+The following module extracts the width and height from an image file with
 No C code or external dependencies.
 
 This version is too complicated and GPL, but serves as an algorithm 
@@ -12,21 +13,10 @@ a web browser do with it?  Should either return None or raise an exception.
 I've never seen an image without valid dimensions in it, so raising an
 exception may be fine.
 
-A dict dimensions cache is also useful.
+WebHelpers/unfinished/multimedia.py contains an alternative
+``get_dimensions()`` function that depends on the Python Imaging Library.
 """
 
-To resize an image to a certain width and keep the height proportional:
-
-def choose_height(new_width, width, height):
-    """Return the height corresponding to 'new_width' that's proportional
-    to the original size.
-
-    This is useful when resizing an image to a certain width.
-
-    This function is by Mike Orr.
-    """
-    proportion = float(height) / float(width)
-    return int(new_width * proportion)
 #!/usr/bin/env python
 # (c) Copyright 2001-2005 Hewlett-Packard Development Company, L.P.
 #
