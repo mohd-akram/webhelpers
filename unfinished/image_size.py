@@ -11,8 +11,22 @@ Also, I hesitate to return -1 for an unknown dimension because what would
 a web browser do with it?  Should either return None or raise an exception.
 I've never seen an image without valid dimensions in it, so raising an
 exception may be fine.
+
+A dict dimensions cache is also useful.
 """
 
+To resize an image to a certain width and keep the height proportional:
+
+def choose_height(new_width, width, height):
+    """Return the height corresponding to 'new_width' that's proportional
+    to the original size.
+
+    This is useful when resizing an image to a certain width.
+
+    This function is by Mike Orr.
+    """
+    proportion = float(height) / float(width)
+    return int(new_width * proportion)
 #!/usr/bin/env python
 # (c) Copyright 2001-2005 Hewlett-Packard Development Company, L.P.
 #

@@ -322,6 +322,46 @@ def del_quiet(dic, *keys):
         except KeyError:
             pass
 
+def dict_of_dicts(dicts, key):
+    """Correlate several dicts under one superdict.
+
+    E.g., If you have several dicts each with a 'name' key, this will
+    create a superdict containing each dict keyed by name.
+    """
+    ret = {}
+    i = 0
+    for d in dicts:
+        try:
+            my_key = d[key]
+        except KeyError:
+            msg = "'dicts' element %d contains no key '%s'"
+            tup = i, key 
+            raise KeyError(msg % tup)
+        ret[my_key] = d
+        i += 1
+    return ret
+
+
+def dict_of_objects(objects, attr):
+    """Correlate several dict under one dict.
+
+    E.g., If you have several objects each with a 'name' attribute, this will
+    create a dict containing each object keyed by name.
+    """
+    ret = {}
+    i = 0
+    for obj in objects:
+        try:
+            my_key = getattr(obj, attr)
+        except AttrError:
+            msg = "'%s' object at 'objects[%d]' contains no attribute '%s'"
+            tup = type(obj).__name__, i, attr 
+            raise AttributeError(msg % tup)
+        ret[my_key] = obj
+        i += 1
+    return ret
+
+
 def distribute(lis, columns, horizontal=False, fill=None):
     """Distribute a list into a N-column table (list of lists).
 
