@@ -13,6 +13,9 @@ below; see the docstrings in the source for documentation.
 ``constants``
     Country codes, states and provinces.
 
+``containers``
+    High-level container objects and dict/list helpers.
+
 ``date``
     Date/time helpers.  These currently format strings based on dates.
 
@@ -42,6 +45,12 @@ below; see the docstrings in the source for documentation.
     A text to HTML converter.  Normally invoked via
     ``webhelpers.tools.markdown()``.  (If you use this library directly, you
     may have to wrap the results in ``literal()`` to prevent double escaping.)
+
+``misc``
+    Miscellaneous helpers that are neither text, numeric, container, or date.
+
+``number``
+    Numeric helpers and number formatters.
 
 ``paginate``
     A tool for letting you view a large sequence a screenful at a time,

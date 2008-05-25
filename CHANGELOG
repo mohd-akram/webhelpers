@@ -13,6 +13,8 @@ WebHelpers ChangeLog
   html.tags - HTML tags (rails replacement).
   html.tools - larger HTML chunks (rails replacement).
   mail - sending email.
+  misc -  helpers that are neither text, numeric, container, nor date.
+  number - numeric helpers and number formatters.
   paginate - successor to deprecated pagination module.
   text - non-HTML text formatting (rails replacement).
 * Removed dependency on simplejson and normalized quotes. Patch by Elisha 
