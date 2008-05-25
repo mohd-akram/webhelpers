@@ -4,17 +4,23 @@ Helpers for filtering, formatting, and transforming strings.
 """
 
 import re
+import textwrap
 
 __all__ = ["truncate", "excerpt"]
 
-def truncate(text, length=30, truncate_string='...'):
+def truncate(text, length=30, indicator='...', whole_word=False):
     """Truncate ``text`` with replacement characters.
     
     ``length``
         The maximum length of ``text`` before replacement
-    ``truncate_string``
+    ``indicator``
         If ``text`` exceeds the ``length``, this string will replace
         the end of the string
+    ``whole_word``
+        If true, shorten the string further to avoid breaking a word in the
+        middle.  A word is defined as any string not containing whitespace.
+        If the entire text before the break is a single word, it will have to
+        be broken.
 
     Example::
 
@@ -22,13 +28,26 @@ def truncate(text, length=30, truncate_string='...'):
         'Once upon a...'
         
     """
-    if not text: return ''
-    
-    new_len = length-len(truncate_string)
-    if len(text) > length:
-        return text[:new_len] + truncate_string
-    else:
+    if not text: 
+        return ""
+    if len(text) <= length:
         return text
+    short_length = length - len(indicator)
+    if not whole_word:
+        return text[:short_length] + indicator
+    # Go back to end of previous word.
+    i = short_length
+    while i >= 0 and not text[i].isspace():
+        i -= 1
+    while i >= 0 and text[i].isspace():
+        i -= 1
+    if i < short_length:
+        i += 1   # Set to one after the last char we want to keep.
+    if i <= 0:
+        # Entire text before break is one word, or we miscalculated.
+        return text[:short_length] + indicator
+    return text[:i+1] + indicator
+
 
 def excerpt(text, phrase, radius=100, excerpt_string="..."):
     """Extract an excerpt from the ``text``, or '' if the phrase isn't
@@ -64,4 +83,90 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
         return literal(excertp)
     else:
         return excerpt
+
+
+def plural(n, singular, plural, with_number=True):
+    """Return the singular or plural form of a word, according to the number.
+
+    Usage:
+    >>> plural(2, "ox", "oxen")
+    '2 oxen'
+    >>> plural(2, "ox", "oxen", False)
+    'oxen'
+    """
+    if n == 1:
+        form = singular
+    else:
+        form = plural
+    if with_number:
+        return "%s %s" % (n, form)
+    else:
+        return form
+
+def chop_at(s, sub, inclusive=False):
+    """Truncate string ``s`` at the first occurence of ``sub``.
+
+    If ``inclusive`` is true, truncate just after ``sub`` rather than at it.
+    """
+    pos = s.find(sub)
+    if pos == -1:
+        return s
+    if inclusive:
+        return s[:pos+len(sub)]
+    return s[:pos]
+
+def lchop(s, sub):
+    """Chop ``sub`` off the front of ``s`` if present."""
+    if s.startswith(sub):
+        s = s[len(sub):]
+    return s
+    
+def rchop(s, sub):
+    """Chop ``sub`` off the end of ``s`` if present."""
+    if s.endswith(sub):
+        s = s[:-len(sub)]
+    return s
+
+def strip_leading_whitespace(s):
+    """Strip the leading whitespace in all lines in ``s``.
+    
+    This deletes *all* leading whitespace.  ``textwrap.dedent`` deletes only
+    the whitespace common to all lines.
+    """
+    ret = [x.lstrip() for x in s.splitlines(True)]
+    return "".join(ret)
+
+def wrap_paragraphs(text, width=72):
+    """Wrap all paragraphs in a text string to the specified width.
+
+    ``width`` may also be a ``textwrap.TextWrapper`` instance, in which case it
+    will be used to do the wrapping.  This provides a way to set other options
+    besides the width, and is more efficient when wrapping many texts.
+    """
+    if isinstance(width, textwrap.TextWrapper):
+        wrapper = width
+    else:
+        wrapper = textwrap.TextWrapper(width=width)
+    result = []
+    lines = text.splitlines(True)
+    lines_len = len(lines)
+    start = 0
+    end = None
+    while start < lines_len:
+        # Leave short lines as-is.
+        if len(lines[start]) <= width:
+            result.append(lines[start])
+            start += 1
+            continue
+        # Found a long line, peek forward to end of paragraph.
+        end = start + 1
+        while end < lines_len and not lines[end].isspace():
+            end += 1
+        # 'end' is one higher than last long lone.
+        paragraph = ''.join(lines[start:end])
+        paragraph = wrapper.fill(paragraph) + "\n"
+        result.append(paragraph)
+        start = end
+        end = None
+    return "".join(result)
 
