@@ -59,3 +59,14 @@ def convert_or_none(value, type_):
     except Exception:
         return None
 
+class DeclarativeException(Exception):
+    """A simpler way to define an exception with a fixed message.
+
+    Example:
+    class MyException(DeclarativeException):
+        message="can't frob the bar when foo is enabled"
+    """
+    message=""
+
+    def __init__(self, message=None):
+        Exception.__init__(self, message or self.message)
