@@ -1,4 +1,7 @@
-"""Utility functions used by various web helpers"""
+"""Utility functions used by various web helpers
+
+This module is such a mess that no new helpers should be added to it.
+"""
 import cgi
 import copy
 import sys
