@@ -2,6 +2,8 @@
 from util import WebHelpersTestCase
 import unittest
 
+from nose.tools import eq_
+
 from webhelpers.text import *
 
 class TestTextHelper(WebHelpersTestCase):
@@ -32,9 +34,11 @@ class TestTextHelper(WebHelpersTestCase):
     def test_truncate(self):
         self.assertEqual("Hello World!", truncate("Hello World!", 12))
         self.assertEqual("Hello Wor...", truncate("Hello World!!", 12))
+        self.assertEqual("Hello...", truncate("Hello World!!", 12, whole_word=True))
 
+    def test_strip_leading_whitespace(self):
+        s = "    def fn(x):\n        return x\n"
+        control = "def fn(x):\nreturn x\n"
+        eq_(control, strip_leading_whitespace(s))
 
-if __name__ == '__main__':
-    suite = [unittest.makeSuite(TestTextHelper)]
-    for testsuite in suite:
-        unittest.TextTestRunner(verbosity=1).run(testsuite)
+    # @@MO wrap_paragraphs untested.
