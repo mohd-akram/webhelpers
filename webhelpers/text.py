@@ -6,7 +6,16 @@ Helpers for filtering, formatting, and transforming strings.
 import re
 import textwrap
 
-__all__ = ["truncate", "excerpt"]
+__all__ = [
+    "truncate", 
+    "excerpt",
+    "plural",
+    "chop_at",
+    "lchop",
+    "rchop",
+    "strip_leading_whitespace",
+    "wrap_paragraphs",
+    ]
 
 def truncate(text, length=30, indicator='...', whole_word=False):
     """Truncate ``text`` with replacement characters.
@@ -41,8 +50,8 @@ def truncate(text, length=30, indicator='...', whole_word=False):
         i -= 1
     while i >= 0 and text[i].isspace():
         i -= 1
-    if i < short_length:
-        i += 1   # Set to one after the last char we want to keep.
+    #if i < short_length:
+    #    i += 1   # Set to one after the last char we want to keep.
     if i <= 0:
         # Entire text before break is one word, or we miscalculated.
         return text[:short_length] + indicator
@@ -107,6 +116,11 @@ def chop_at(s, sub, inclusive=False):
     """Truncate string ``s`` at the first occurence of ``sub``.
 
     If ``inclusive`` is true, truncate just after ``sub`` rather than at it.
+
+    >>> chop_at("plutocratic brats", "rat")
+    'plutoc'
+    >>> chop_at("plutocratic brats", "rat", True)
+    'plutocrat'
     """
     pos = s.find(sub)
     if pos == -1:
@@ -116,13 +130,21 @@ def chop_at(s, sub, inclusive=False):
     return s[:pos]
 
 def lchop(s, sub):
-    """Chop ``sub`` off the front of ``s`` if present."""
+    """Chop ``sub`` off the front of ``s`` if present.
+    
+    >>> lchop("##This is a comment.##", "##")
+    'This is a comment.##'
+    """
     if s.startswith(sub):
         s = s[len(sub):]
     return s
     
 def rchop(s, sub):
-    """Chop ``sub`` off the end of ``s`` if present."""
+    """Chop ``sub`` off the end of ``s`` if present.
+    
+    >>> rchop("##This is a comment.##", "##")
+    '##This is a comment.'
+    """
     if s.endswith(sub):
         s = s[:-len(sub)]
     return s
