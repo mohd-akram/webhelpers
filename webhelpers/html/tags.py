@@ -131,7 +131,7 @@ def file(name, value=None, **attrs):
     return HTML.input(**attrs)
 
 
-def password(name="password", value=None, **attrs):
+def password(name, value=None, **attrs):
     """Create a password field.
     
     Takes the same options as text_field.
