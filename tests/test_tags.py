@@ -84,7 +84,7 @@ class TestFormTagHelper(WebHelpersTestCase):
     def test_submit(self):
         self.assertEqual(
             u'<input name="commit" type="submit" value="Save changes" />',
-            submit("commit")
+            submit("commit", "Save changes")
         )
 
     def test_text_area(self):
