@@ -131,7 +131,7 @@ def file(name, value=None, **attrs):
     return HTML.input(**attrs)
 
 
-def password(name="password", value=None, **attrs):
+def password(name, value=None, **attrs):
     """Create a password field.
     
     Takes the same options as text_field.
@@ -217,7 +217,7 @@ def radio(name, value, checked=False, **attrs):
     return HTML.input(**attrs)
 
 
-def submit(value="Save changes", name="commit", **attrs):
+def submit(name, value, **attrs):
     """Create a submit button with the text ``value`` as the caption."""
     set_input_attrs(attrs, "submit", name, value)
     return HTML.input(**attrs)
