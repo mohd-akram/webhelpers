@@ -217,7 +217,7 @@ def radio(name, value, checked=False, **attrs):
     return HTML.input(**attrs)
 
 
-def submit(value="Save changes", name="commit", **attrs):
+def submit(name, value="Save changes", **attrs):
     """Create a submit button with the text ``value`` as the caption."""
     set_input_attrs(attrs, "submit", name, value)
     return HTML.input(**attrs)

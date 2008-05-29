@@ -46,7 +46,7 @@ class TestFormTagHelper(WebHelpersTestCase):
 
     def test_password_field(self):
         self.assertEqual(
-            password(), 
+            password("password"), 
             u'<input name="password" type="password" />'
         )
 
@@ -84,7 +84,7 @@ class TestFormTagHelper(WebHelpersTestCase):
     def test_submit(self):
         self.assertEqual(
             u'<input name="commit" type="submit" value="Save changes" />',
-            submit()
+            submit("commit")
         )
 
     def test_text_area(self):
