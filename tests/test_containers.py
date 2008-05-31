@@ -5,14 +5,15 @@ import tempfile
 
 from nose.tools import assert_equal, assert_raises
 
+from webhelpers.containers import DumbObject
 from webhelpers.containers import defaultdict as webhelpers_containers_defaultdict
 
-# Tests from Python 2.5 test_defaultdict.py, as this is just a 2.4 backport
+# Tests from Python 2.5 test_defaultdict_defaultdict.py, as this is just a 2.4 backport
 # anyway
 def foobar():
     return list
 
-def test_basic():
+def test_defaultdict_basic():
     d1 = webhelpers_containers_defaultdict()
     assert_equal(d1.default_factory, None)
     d1.default_factory = list
@@ -48,27 +49,27 @@ def test_basic():
         message = "d2[15] didn't raise KeyError"
         raise AssertionError(message)
 
-def test_missing():
+def test_defaultdict_missing():
     d1 = webhelpers_containers_defaultdict()
     assert_raises(KeyError, d1.__missing__, 42)
     d1.default_factory = list
     assert_equal(d1.__missing__(42), [])
 
-def test_repr():
+def test_defaultdict_repr():
     d1 = webhelpers_containers_defaultdict()
     assert_equal(d1.default_factory, None)
     assert_equal(repr(d1), "defaultdict(None, {})")
     d1[11] = 41
     assert_equal(repr(d1), "defaultdict(None, {11: 41})")
 
-def test_repr_2():
+def test_defaultdict_repr_2():
     def foo(): return 43
     d3 = webhelpers_containers_defaultdict(foo)
     assert d3.default_factory is foo
     d3[13]
     assert_equal(repr(d3), "defaultdict(%s, {13: 43})" % repr(foo))
 
-def test_print():
+def test_defaultdict_print():
     d1 = webhelpers_containers_defaultdict()
     def foo(): return 42
     d2 = webhelpers_containers_defaultdict(foo, {1: 2})
@@ -89,7 +90,7 @@ def test_print():
     finally:
         os.remove(tfn)
 
-def test_copy():
+def test_defaultdict_copy():
     d1 = webhelpers_containers_defaultdict()
     d2 = d1.copy()
     assert_equal(type(d2), webhelpers_containers_defaultdict)
@@ -108,7 +109,7 @@ def test_copy():
     d4[12]
     assert_equal(d4, {42: [], 12: []})
 
-def test_shallow_copy():
+def test_defaultdict_shallow_copy():
     d1 = webhelpers_containers_defaultdict(foobar, {1: 1})
     d2 = copy.copy(d1)
     assert_equal(d2.default_factory, foobar)
@@ -118,7 +119,7 @@ def test_shallow_copy():
     assert_equal(d2.default_factory, list)
     assert_equal(d2, d1)
 
-def test_deep_copy():
+def test_defaultdict_deep_copy():
     d1 = webhelpers_containers_defaultdict(foobar, {1: [1]})
     d2 = copy.deepcopy(d1)
     assert_equal(d2.default_factory, foobar)
@@ -128,3 +129,4 @@ def test_deep_copy():
     d2 = copy.deepcopy(d1)
     assert_equal(d2.default_factory, list)
     assert_equal(d2, d1)
+
