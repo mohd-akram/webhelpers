@@ -50,3 +50,17 @@ def test_with_no_extention_and_no_accept():
     environ['PATH_INFO'] = '/test'
     m = MIMETypes(environ)
     assert m.mimetype('html') == 'text/html'
+
+def test_with_text_star_accept():
+    environ = test_environ()
+    environ['PATH_INFO'] = '/test.iscool'
+    environ['HTTP_ACCEPT'] = 'text/*'
+    m = MIMETypes(environ)
+    assert m.mimetype('text/html') == 'text/html'
+
+def test_with_star_star_accept():
+    environ = test_environ()
+    environ['PATH_INFO'] = '/test.iscool'
+    environ['HTTP_ACCEPT'] = '*/*'
+    m = MIMETypes(environ)
+    assert m.mimetype('application/xml') == 'application/xml'
