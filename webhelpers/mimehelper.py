@@ -100,7 +100,7 @@ class MIMETypes(object):
         if has_extension == False:
             if possible_from_accept_header is None:
                 return self._set_responce_conetent_type(content_type)
-            elif mimetype in possible_from_accept_header:
+            elif content_type in possible_from_accept_header:
                 return self._set_responce_conetent_type(content_type)
             else:
                 return False
