@@ -80,13 +80,13 @@ def uk_counties():
 _country_codes = None
 def country_codes():
     """\
-    Returns a dictionary of all country names and their respective codes specified by the ISO in the format::
+    Return a list of all country names and their respective codes specified by the ISO in the format::
     
-        {
+        [
             ...
-            ['United Kingodom, 'GB'],
+            ['GB', 'United Kingodom],
             ...
-        }
+        ]
 
     See here for more information:
     http://www.iso.org/iso/english_country_names_and_code_elements
@@ -469,8 +469,8 @@ def us_states():
         ("UT", "Utah"),
         ("VT", "Vermont"),
         ("VA", "Virginia"),
-        ("WV", "West Virginia"),
         ("WA", "Washington"),
+        ("WV", "West Virginia"),
         ("WI", "Wisconsin"),
         ("WY", "Wyoming"),
         ]
