@@ -1,3 +1,6 @@
+'''
+TEMPORARILY DISABLE TESTS BECAUSE THEY DEPEND ON WEBOB.
+
 from webhelpers.mimehelper import MIMETypes
 from util import test_environ
 
@@ -64,3 +67,4 @@ def test_with_star_star_accept():
     environ['HTTP_ACCEPT'] = '*/*'
     m = MIMETypes(environ)
     assert m.mimetype('application/xml') == 'application/xml'
+'''

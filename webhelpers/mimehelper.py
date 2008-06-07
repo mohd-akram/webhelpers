@@ -1,6 +1,8 @@
-"""MIMEType helpers"""
+"""MIMEType helpers
+
+These helpers depend on the WebOb package.
+"""
 import mimetypes
-import webob
 
 class MIMETypes(object):
     """MIMETypes registration mapping
@@ -83,6 +85,8 @@ class MIMETypes(object):
                     abort(404)
         
         """
+
+        import webob
 
         if content_type in MIMETypes.aliases:
             content_type = MIMETypes.aliases[content_type]
