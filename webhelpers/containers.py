@@ -193,18 +193,25 @@ def unique(it):
             seen.add(elm)
     return ret
 
-def only_some_keys(dic, *keys):
+def only_some_keys(dic, keys):
     """Return a copy of the dict with only the specified keys present.  
     
     ``dic`` may be any mapping; the return value is always a Python dict.
+
+    >> only_some_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"])
+    >>> sorted(only_some_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"]).items())
+    [('A', 1), ('C', 3)]
     """
     ret = {}
     for key in keys:
         ret[key] = dic[key]   # Raises KeyError.
     return ret
 
-def except_keys(dic, *keys):
+def except_keys(dic, keys):
     """Return a copy of the dict without the specified keys.
+
+    >>> except_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"])
+    {'B': 2}
     """
     ret = dic.copy()
     for key in keys:
@@ -214,9 +221,17 @@ def except_keys(dic, *keys):
             pass
     return ret
 
-def extract_keys(dic, *keys):
-    """Return two copies of the dict.  The first has only the keys
-       specified.  The second has all the *other* keys from the original dict.
+def extract_keys(dic, keys):
+    """Return two copies of the dict.  The first has only the keys specified.
+    The second has all the *other* keys from the original dict.
+
+    >> extract_keys({"From": "F", "To": "T", "Received", R"}, ["To", "From"]) 
+    ({"From": "F", "To": "T"}, {"Recived": "R"})
+    >>> regular, extra = extract_keys({"From": "F", "To": "T", "Received": "R"}, ["To", "From"]) 
+    >>> sorted(regular.keys())
+    ['From', 'To']
+    >>> sorted(extra.keys())
+    ['Received']
     """
     for k in keys:
         if k not in dic:
@@ -260,10 +275,15 @@ def ordered_items(dic, key_order, other_keys=True, default=NotGiven):
         for key, value in d.iteritems():
             yield key, value
 
-def del_quiet(dic, *keys):
+def del_quiet(dic, keys):
     """Delete several keys from a dict, ignoring those that don't exist.
     
     This modifies the dict in place.
+
+    >>> d ={"A": 1, "B": 2, "C": 3}
+    >>> del_quiet(d, ["A", "C"])
+    >>> d
+    {'B': 2}
     """
     for key in keys:
         try:
@@ -276,6 +296,14 @@ def dict_of_dicts(dicts, key):
 
     E.g., If you have several dicts each with a 'name' key, this will
     create a superdict containing each dict keyed by name.
+
+    >>> d1 = {"name": "Fred", "age": 41}
+    >>> d2 = {"name": "Barney", "age": 31}
+    >>> flintstones = dict_of_dicts([d1, d2], "name")
+    >>> sorted(flintstones.keys())
+    ['Barney', 'Fred']
+    >>> flintstones["Fred"]["age"]
+    41
     """
     ret = {}
     i = 0
@@ -296,6 +324,17 @@ def dict_of_objects(objects, attr):
 
     E.g., If you have several objects each with a 'name' attribute, this will
     create a dict containing each object keyed by name.
+
+    >>> class Flintstone(DumbObject):
+    ...    pass
+    ...
+    >>> fred = Flintstone(name="Fred", age=41)
+    >>> barney = Flintstone(name="Barney", age=31)
+    >>> flintstones = dict_of_objects([fred, barney], "name")
+    >>> sorted(flintstones.keys())
+    ['Barney', 'Fred']
+    >>> flintstones["Barney"].age
+    31
     """
     ret = {}
     i = 0
@@ -311,51 +350,94 @@ def dict_of_objects(objects, attr):
     return ret
 
 
-def distribute(lis, columns, horizontal=False, fill=None):
+def distribute(lis, columns, direction, fill=None):
     """Distribute a list into a N-column table (list of lists).
 
-    Each list in the return value represents one row of the table.
-    table[0] is the first row.
-    table[0][1] is the first column in the first row.
-    
-    If ``horizontal`` is true, the elements are distributed horizontally,
-    filling each row before going on to the next.  Use this if you're building
-    an HTML table.  If the data runs out before the last row is completed,
-    the remaining cells are filled with the ``fill`` value to ensure all rows
-    are equal length.
-    
-    If false (default), the elements are distributed vertically, filling all
-    table[N][0] elements before going to table[N][1].  The column length is
-    calculated to ensure the smallest number of extra cells in the last
-    column.  Extra cells are filled with the ``fill`` value.  This structure
-    is useful to produce a list of words that can be output left to right but
-    is alphabetical vertically like a dictionary or file listing.  It's also
-    useful for HTML tables when an entire "column" will be placed in a single
-    <td>, perhaps with a <br> or <li> between elements.
+    ``lis`` is a list of values to distribute.
+
+    ``columns`` is an int greater than 1, specifying the number of columns in
+    the table.
+
+    ``direction`` is a string beginning with "H" (horizontal) or "V"
+    (vertical), case insensitive.  This affects how values are distributed in
+    the table, as described below.
+
+    ``fill`` is a value that will be placed in any remaining cells if the data
+    runs out before the last row or column is completed.  This must be an 
+    immutable value such as ``None`` , ``""``, 0, "&nbsp;", etc.  If you
+    use a mutable value like ``[]`` and later change any cell containing the
+    fill value, all other cells containing the fill value will also be changed.
+
+    The return value is a list of lists, where each sublist represents a row in
+    the table.
+    ``table[0]`` is the first row.
+    ``table[0][0]`` is the first column in the first row.
+    ``table[0][1]`` is the second column in the first row.
+
+    This can be displayed in an HTML table via the following Mako template:
+
+    <table>
+    % for row in table:
+      <tr>
+    % for cell in row:
+        <td>${cell}</td>
+    % endfor   cell
+      </tr>
+    % endfor   row
+    </table>
+
+    In a horizontal table, each row is filled before going on to the next row.
+    This is the same as dividing the list into chunks.
+
+    >>> distribute([1, 2, 3, 4, 5, 6, 7, 8], 3, "H")
+    [[1, 2, 3], [4, 5, 6], [7, 8, None]]
+
+    In a vertical table, the first element of each sublist is filled before
+    going on to the second element.  This is useful for displaying an
+    alphabetical list in columns, or when the entire column will be placed in
+    a single <td> with a <br /> between each element.
+
+    >>> food = ["apple", "banana", "carrot", "daikon", "egg", "fish", "gelato", "honey"]
+    >>> table = distribute(food, 3, "V", "")
+    >>> table
+    [['apple', 'daikon', 'gelato'], ['banana', 'egg', 'honey'], ['carrot', 'fish', '']]
+    >>> for row in table:
+    ...    for item in row:
+    ...         print "%-9s" % item,
+    ...    print "."   # To show where the line ends.
+    ...
+    apple     daikon    gelato    .
+    banana    egg       honey     .
+    carrot    fish                .
+
+    Alternatives to this function include a NumPy matrix of objects.
     """
     if columns < 1:
         raise ValueError("arg 'columns' must be >= 1")
-    if horizontal:
-        ret = []
+    dir = direction[0].upper()
+    if dir == "H":   # Horizontal table (row-wise)
+        table = []
         for i in range(0, len(lis), columns):
             row = lis[i:i+columns]
             row_len = len(row)
             if row_len < columns:
                 extra = [fill] * (columns - row_len)
                 row.extend(extra)
-            ret.append(row)
-        return ret
-    lis_len = len(lis)
-    column_len, remainder = divmod(lis_len, columns)
-    if remainder:
-        column_len += 1
-    ret = [None] * columns
-    for i in range(columns):
-        start = i * column_len
-        end = min(start + column_len, lis_len)
-        #print "i=%d, start=%d, end=%d, element=%r" % (i, start, end, lis[start:end])
-        ret[i] = lis[start:end]
-    return ret
+            table.append(row)
+        return table
+    elif dir == "V":  # Vertical table (column-wise)
+        total = len(lis)
+        rows, remainder = divmod(total, columns)
+        if remainder:
+            rows += 1
+        table = [[fill] * columns for x in range(rows)]
+        for i, elm in enumerate(lis):
+            col, row = divmod(i, columns)
+            #print "i=%d, row=%d, col=%d, element=%r" % (i, row, col, elm)
+            table[row][col] = elm
+        return table
+    else:
+        raise ValueError("arg ``direction`` must start with 'H' or 'V'")
 
 
 if __name__ == "__main__":
