@@ -52,10 +52,11 @@ def median(r):
     The median here is somewhat close to the majority of incomes, while the
     mean is far from anybody's income.
 
-        20 000,
+        [20 000,
         40 000,
         60 000,
-        9 999 999] 
+        9 999 999]
+    
     The median would be around 50 000, which is close to what the majority of
     respondents make.  The average would be in the millions, which is far from
     what any of the respondents make.
