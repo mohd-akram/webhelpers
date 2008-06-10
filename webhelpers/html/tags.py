@@ -270,7 +270,10 @@ def select(name, selected_values, options, **attrs):
         elif isinstance(option, int):
             label = value = unicode(option)
         else:
-            label = unicode(option[0])
+            if isinstance(option[0], literal):
+                label = option[0]
+            else:
+                label = unicode(option[0])
             value = unicode(option[1])
         if value in selected_values:
             opt = HTML.option(label, value=value, selected="selected")
