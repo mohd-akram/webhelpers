@@ -91,25 +91,27 @@ def standard_deviation(r):
     The following examples are taken from Wikipedia.
     http://en.wikipedia.org/wiki/Standard_deviation
 
-    >>> standard_deviation([0, 0, 14, 14])
-    8.0829037686547611
-    >>> standard_deviation([0, 6, 8, 14])
-    5.7735026918962582
-    >>> standard_deviation([6, 6, 8, 8])
-    1.1547005383792515
+        >>> standard_deviation([0, 0, 14, 14])
+        8.0829037686547611
+        >>> standard_deviation([0, 6, 8, 14])
+        5.7735026918962582
+        >>> standard_deviation([6, 6, 8, 8])
+        1.1547005383792515
 
     (Wikipedia reports 7, 5, and 1 respectively. Some of the difference is
     due to rounding, but the rest may be a bug?)
+    
+    .. code-block:: pycon
+    
+        # Fictitious average monthly temperatures in Southern California.
+        #                       Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+        >>> standard_deviation([70, 70, 70, 75, 80, 85, 90, 95, 90, 80, 75, 70]) 
+        9.0033663737851999
 
-    # Fictitious average monthly temperatures in Southern California.
-    #                       Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
-    >>> standard_deviation([70, 70, 70, 75, 80, 85, 90, 95, 90, 80, 75, 70]) 
-    9.0033663737851999
-
-    # Fictitious average mothly temperatures in Montana.
-    #                       Jan  Feb  Mar Apr May Jun Jul  Aug Sep Oct Nov Dec
-    >>> standard_deviation([-32, -10, 20, 30, 60, 90, 100, 80, 60, 30, 10, -32])
-    45.137836040557403
+        # Fictitious average mothly temperatures in Montana.
+        #                       Jan  Feb  Mar Apr May Jun Jul  Aug Sep Oct Nov Dec
+        >>> standard_deviation([-32, -10, 20, 30, 60, 90, 100, 80, 60, 30, 10, -32])
+        45.137836040557403
 
     Most natural and random phenomena follow the normal distribution (aka the
     bell curve), which says that most values are close to average but a few are
@@ -139,20 +141,20 @@ class SimpleStats(object):
     """Calculate a few simple stats on data.
     
     This class calculates the minimum, maximum, and count of all the values
-    given to it.  The values are not saved in the object.  Usage:
+    given to it.  The values are not saved in the object.  Usage::
 
-    >>> stats = SimpleStats()
-    >>> stats(2)               # Add one data value.
-    >>> stats.extend([6, 4])   # Add several data values at once.  
+        >>> stats = SimpleStats()
+        >>> stats(2)               # Add one data value.
+        >>> stats.extend([6, 4])   # Add several data values at once.  
 
-    The statistics are available as instance attributes:
+    The statistics are available as instance attributes::
 
-    >>> stats.count
-    3
-    >>> stats.min
-    2
-    >>> stats.max
-    6
+        >>> stats.count
+        3
+        >>> stats.min
+        2
+        >>> stats.max
+        6
 
     Non-numeric data is also allowed:
 
@@ -238,13 +240,13 @@ class Stats(SimpleStats):
     >>> stats.standard_deviation
     2.8867513459481287
 
-    All data is stored in a list and a set for later use:
+    All data is stored in a list and a set for later use::
 
-    >>> stats.list
-    [5, 10, 10]
+        >>> stats.list
+        [5, 10, 10]
 
-    >>  stats.set
-    set([5, 10])
+        >>  stats.set
+        set([5, 10])
 
     (The double prompt ">>" is used to hide the example from doctest.)
 
