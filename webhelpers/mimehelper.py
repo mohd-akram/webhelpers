@@ -60,13 +60,14 @@ class MIMETypes(object):
         first, as shown in the example below.
         
         Example::
+        
             # some code likely in environment.py
-            
             MIMETypes.init()
             MIMETypes.alias('html', 'text/html')
             MIMETypes.alias('xml', 'application/xml')
             MIMETypes.alias('csv', 'text/csv')
             
+            # code in a controller
             def somaction(self):
                 # prepare a bunch of data
                 # ......
@@ -85,7 +86,6 @@ class MIMETypes(object):
                     abort(404)
         
         """
-
         import webob
 
         if content_type in MIMETypes.aliases:
