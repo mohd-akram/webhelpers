@@ -19,7 +19,7 @@ class Flash(object):
     THIS IMPLEMENTATION DEPENDS ON PYLONS.  However, it can easily be adapted
     for another web framework.
 
-    Normally you instantiate a Flash object in myapp/lib/helpers.py:
+    Normally you instantiate a Flash object in myapp/lib/helpers.py::
 
         from webhelpers.tools import Flash as _Flash
         flash = _Flash()
@@ -34,8 +34,10 @@ class Flash(object):
         h.flash("Hope you didn't need it.")
 
     Now make a place in your site template for the messages.  In Mako you
-    might do::
-
+    might do:
+    
+    .. code-block:: mako
+    
         <% messages = h.flash.pop_messages() %>
         % if messages:
         <ul id="flash-messages">
@@ -45,7 +47,9 @@ class Flash(object):
         </ul>
         % endif
 
-    You can style this to look however you want::
+    You can style this to look however you want:
+
+    .. code-block:: css
 
         ul#flash-messages {
             color: red;
