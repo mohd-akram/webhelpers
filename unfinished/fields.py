@@ -2,7 +2,7 @@
 Functions to help in the formatting of forms
 """
 
-from webhelpers.tags import form as start_form, end_form
+from webhelpers.html.tags import form as start_form, end_form
 from webhelpers.html import HTML, literal
 from webhelpers.rails import options_for_select
 
