@@ -78,8 +78,8 @@ def median(r):
     return mean([low, high])
 
 def standard_deviation(r):
-    """Standard deviation, from the Python Cookbook
-    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/442412
+    """Standard deviation, `from the Python Cookbook
+    <http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/442412>`_
 
     Standard deviation shows the variability within a sequence of numbers.
     A small standard deviation shows the numbers are close to the same.  A
