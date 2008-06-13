@@ -34,7 +34,8 @@ to function.
     install_requires=[
         ],
     tests_require=[ 
-      'nose', 
+      'nose',
+      'routes'
       ], 
     test_suite='nose.collector',
     classifiers=["Development Status :: 4 - Beta",
