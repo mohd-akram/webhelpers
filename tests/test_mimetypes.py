@@ -1,3 +1,5 @@
+import mimetypes
+
 from nose.plugins.skip import SkipTest
 from nose.tools import eq_
 
@@ -12,6 +14,7 @@ def _check_webob_dependency():
 
 def setup():
     MIMETypes.init()
+    mimetypes.add_type('application/xml', '.xml', True)
 
 def test_register_alias():
     MIMETypes.add_alias('html', 'text/html')
