@@ -327,7 +327,7 @@ class Page(list):
 
         # Unless the user tells us how many items the collections has
         # we calculate that ourselves.
-        if item_count:
+        if item_count is not None:
             self.item_count = item_count
         else:
             self.item_count = len(self.collection)
