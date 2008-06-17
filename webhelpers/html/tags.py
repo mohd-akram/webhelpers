@@ -231,12 +231,19 @@ def select(name, selected_values, options, **attrs):
     * ``selected_values`` -- a string or list of strings or integers giving
       the value(s) that should be preselected.
 
-    * ``options`` -- an iterable of ``(label, value)`` pairs.  The label
+    * ``options`` -- an iterable of ``(value, label)`` pairs.  The label
       is what's shown to the user; the value is what's seen by the 
-      application if the user chooses this option.  Hint: you can use
-      ``sorted(options)`` to display the labels alphabetically.  You can
-      also pass an iterable of strings, in which case the labels and values
-      will be identical.
+      application if the user chooses this option.  You can also pass an
+      iterable of strings, in which case the labels and values will be
+      identical.  
+
+      CAUTION: the label used to be first in the pair in the old rails helper
+      ``options_for_select`` had the label first in the pair, and in earlier
+      development versions of this helper.  The order was changed because
+      most real-life lists have the value first, including ``dict.items()``.
+
+      HINT: You can sort options alphabetically by label via:
+      ``sorted(my_options, key=lambda x: x[1])``
 
     * ``multiselect`` -- if true, this control will allow multiple
        selections.
@@ -245,7 +252,7 @@ def select(name, selected_values, options, **attrs):
 
     Examples (call, result)::
     
-        >>> select("currency", "$", [["Dollar", "$"], ["Kroner", "DKK"]])
+        >>> select("currency", "$", [["$", "Dollar"], ["DKK", "Kroner"]])
         literal(u'<select name="currency">\\n<option selected="selected" value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
         >>> select("cc", "MasterCard", [ "VISA", "MasterCard" ], id="cc", class_="blue")
         literal(u'<select class="blue" id="cc" name="cc">\\n<option value="VISA">VISA</option>\\n<option selected="selected" value="MasterCard">MasterCard</option>\\n</select>')
@@ -266,15 +273,14 @@ def select(name, selected_values, options, **attrs):
     selected_values = map(unicode, selected_values)
     for option in options:
         if isinstance(option, basestring):
-            label = value = option
-        elif isinstance(option, int):
-            label = value = unicode(option)
+            value = label = option
+        elif isinstance(option, (int, long)):
+            value = label = unicode(option)
         else:
-            if isinstance(option[0], literal):
-                label = option[0]
-            else:
-                label = unicode(option[0])
-            value = unicode(option[1])
+            value, label = option[:2]
+            value = unicode(value)
+            if not isinstance(label, literal):
+                label = unicode(label)
         if value in selected_values:
             opt = HTML.option(label, value=value, selected="selected")
         else:

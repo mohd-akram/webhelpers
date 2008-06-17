@@ -64,7 +64,7 @@ class TestModelTagsHelperWithObject(WebHelpersTestCase):
         )
     def test_select(self):
         self.assertEqual(
-            self.m.select("lang", [("English", "en"), ("German", "de"), ("Japanese", "jp")]),
+            self.m.select("lang", [("en", "English"), ("de", "German"), ("jp", "Japanese")]),
             u'<select name="lang">\n<option selected="selected" value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
         )
 
@@ -122,7 +122,7 @@ class TestModelTagsHelperWithDict(TestModelTagsHelperWithObject):
         )
     def test_select(self):
         self.assertEqual(
-            self.m.select("lang", [("English", "en"), ("German", "de"), ("Japanese", "jp")]),
+            self.m.select("lang", [("en", "English"), ("de", "German"), ("jp", "Japanese")]),
             u'<select name="lang">\n<option selected="selected" value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
         )
 
@@ -180,7 +180,7 @@ class TestModelTagsHelperWithIdGeneration(TestModelTagsHelperWithObject):
         )
     def test_select(self):
         self.assertEqual(
-            self.m.select("lang", [("English", "en"), ("German", "de"), ("Japanese", "jp")]),
+            self.m.select("lang", [("en", "English"), ("de", "German"), ("jp", "Japanese")]),
             u'<select id="person:lang" name="lang">\n<option selected="selected" value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
         )
 
@@ -238,7 +238,7 @@ class TestModelTagsHelperWithoutObject(WebHelpersTestCase):
         )
     def test_select(self):
         self.assertEqual(
-            self.m.select("lang", [("English", "en"), ("German", "de"), ("Japanese", "jp")]),
+            self.m.select("lang", [("en", "English"), ("de", "German"), ("jp", "Japanese")]),
             u'<select name="lang">\n<option value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
         )        
 if __name__ == '__main__':
