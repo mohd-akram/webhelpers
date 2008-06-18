@@ -539,11 +539,11 @@ def timezones(common=False):
         from pytz import all_timezones
         from pytz import common_timezones
     except ImportError:
-        raise Exception("The optional PyTZ package is not installed, please install it first")
+        raise ImportError("The optional PyTZ package is not installed, please install it first")
     if common:
-        return common_timezones()
+        return common_timezones
     else:
-        return all_timezones()
+        return all_timezones
 
 def timezones_for_country(country):
     """Return the PyTZ timezones for the given country.
@@ -553,6 +553,6 @@ def timezones_for_country(country):
     try:
         from pytz import country_timezones
     except ImportError:
-        raise Exception("The optional PyTZ package is not installed, please install it first")
+        raise ImportError("The optional PyTZ package is not installed, please install it first")
     return country_timezones(country)
      
