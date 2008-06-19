@@ -31,6 +31,29 @@ If you cannot define an attribute because it conflicts with a Python
 keyword (particularly ``class``), you can append an underscore and
 it will be removed (like ``class_='whatever'``).
 
+About XHTML and HTML
+--------------------
+
+This builder always produces tags that are valid as *both* HTML and
+XHTML.  "Empty" tags (like ``<br>``, ``<input>`` etc) are written like ``<br />``,
+with a space and a trailing ``/``.
+
+*Only* empty tags get this treatment.  The library will never, for example,
+product ``<script src="..." />``, which is invalid HTML.
+
+The `W3C HTML validator <http://validator.w3.org/>`_ validates these
+constructs as valid HTML Strict.  It does produce warnings, but those
+warnings warn about the ambiguity if this same XML-style self-closing
+tags are used for HTML elements that can take content (``<script>``,
+``<textarea>``, etc).  This library never produces markup like that.
+
+Rather than add options to generate different kinds of behavior, we
+felt it was better to create markup that could be used in different
+contexts without any real problems and without the overhead of passing
+options around or maintaining different contexts, where you'd have to
+keep track of whether markup is being rendered in an HTML or XHTML
+context.
+
 """
 import re
 from cgi import escape as cgi_escape
@@ -111,7 +134,7 @@ class HTMLBuilder(object):
         return literal(''.join([escape(x) for x in args]))
 
 
-def attrEncode(v):
+def _attr_decode(v):
     """Parse out attributes that begin with '_'."""
     if v.endswith('_'):
         return v[:-1]
@@ -125,7 +148,7 @@ def make_tag(tag, *args, **kw):
 "in conjunction with non-keyword arguments"
         args = kw.pop("c")
     closed = kw.pop("_closed", True)
-    htmlArgs = [' %s="%s"' % (attrEncode(attr), escape(value))
+    htmlArgs = [' %s="%s"' % (_attr_decode(attr), escape(value))
                 for attr, value in sorted(kw.iteritems())
                 if value is not None]
     if not args and tag in empty_tags and closed:
