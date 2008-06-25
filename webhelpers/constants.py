@@ -1,4 +1,10 @@
 # -*- encoding: latin-1 -*-
+# Latin-1 encoding needed for countries list.
+"""Geographical and other constants often used in web forms.
+
+The timezone functions have been removed.  Install the PyTZ package if you
+need them.
+"""
 
 def uk_counties():
     """\
@@ -525,34 +531,3 @@ def canada_provinces():
         ]
     provinces.sort()
     return [(x[2], x[1]) for x in provinces]
-    
-
-def timezones(common=False):
-    """Return timezones from the PyTZ package.
-
-    If ``common`` is true, return only the commonly-used timezones.  If
-    false (default), return all timezones.
-
-    Raises an error if PyTZ is not installed.
-    """
-    try:
-        from pytz import all_timezones
-        from pytz import common_timezones
-    except ImportError:
-        raise ImportError("The optional PyTZ package is not installed, please install it first")
-    if common:
-        return common_timezones
-    else:
-        return all_timezones
-
-def timezones_for_country(country):
-    """Return the PyTZ timezones for the given country.
-
-    Raises an error if the PyTZ package is not installed.
-    """
-    try:
-        from pytz import country_timezones
-    except ImportError:
-        raise ImportError("The optional PyTZ package is not installed, please install it first")
-    return country_timezones(country)
-     
