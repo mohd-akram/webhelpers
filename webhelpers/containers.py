@@ -291,7 +291,7 @@ def del_quiet(dic, keys):
         except KeyError:
             pass
 
-def correllate_dicts(dicts, key):
+def correlate_dicts(dicts, key):
     """Correlate several dicts under one superdict.
 
     E.g., If you have several dicts each with a 'name' key, this can
@@ -299,11 +299,15 @@ def correllate_dicts(dicts, key):
 
     >>> d1 = {"name": "Fred", "age": 41}
     >>> d2 = {"name": "Barney", "age": 31}
-    >>> flintstones = correllate_dicts([d1, d2], "name")
+    >>> flintstones = correlate_dicts([d1, d2], "name")
     >>> sorted(flintstones.keys())
     ['Barney', 'Fred']
     >>> flintstones["Fred"]["age"]
     41
+
+    If you're having trouble spelling this method correctly, remember:
+    "relate" has one 'l'.  The 'r' is doubled because it occurs after a prefix.
+    Thus "correlate".
     """
     ret = {}
     i = 0
@@ -336,6 +340,10 @@ def correlate_objects(objects, attr):
     ['Barney', 'Fred']
     >>> flintstones["Barney"].age
     31
+
+    If you're having trouble spelling this method correctly, remember:
+    "relate" has one 'l'.  The 'r' is doubled because it occurs after a prefix.
+    Thus "correlate".
     """
     ret = {}
     i = 0
