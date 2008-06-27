@@ -291,15 +291,15 @@ def del_quiet(dic, keys):
         except KeyError:
             pass
 
-def dict_of_dicts(dicts, key):
+def correllate_dicts(dicts, key):
     """Correlate several dicts under one superdict.
 
-    E.g., If you have several dicts each with a 'name' key, this will
-    create a superdict containing each dict keyed by name.
+    E.g., If you have several dicts each with a 'name' key, this can
+    put them in a container dict keyed by name.
 
     >>> d1 = {"name": "Fred", "age": 41}
     >>> d2 = {"name": "Barney", "age": 31}
-    >>> flintstones = dict_of_dicts([d1, d2], "name")
+    >>> flintstones = correllate_dicts([d1, d2], "name")
     >>> sorted(flintstones.keys())
     ['Barney', 'Fred']
     >>> flintstones["Fred"]["age"]
@@ -319,10 +319,11 @@ def dict_of_dicts(dicts, key):
     return ret
 
 
-def dict_of_objects(objects, attr):
-    """Correlate several dict under one dict.
 
-    E.g., If you have several objects each with a 'name' attribute, this will
+def correlate_objects(objects, attr):
+    """Correlate several objects under one dict.
+
+    E.g., If you have several objects each with a 'name' attribute, this can
     create a dict containing each object keyed by name.
 
     >>> class Flintstone(DumbObject):
@@ -330,7 +331,7 @@ def dict_of_objects(objects, attr):
     ...
     >>> fred = Flintstone(name="Fred", age=41)
     >>> barney = Flintstone(name="Barney", age=31)
-    >>> flintstones = dict_of_objects([fred, barney], "name")
+    >>> flintstones = correlate_objects([fred, barney], "name")
     >>> sorted(flintstones.keys())
     ['Barney', 'Fred']
     >>> flintstones["Barney"].age
@@ -341,7 +342,7 @@ def dict_of_objects(objects, attr):
     for obj in objects:
         try:
             my_key = getattr(obj, attr)
-        except AttrError:
+        except AttributeError:
             msg = "'%s' object at 'objects[%d]' contains no attribute '%s'"
             tup = type(obj).__name__, i, attr 
             raise AttributeError(msg % tup)
