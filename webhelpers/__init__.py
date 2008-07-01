@@ -43,3 +43,4 @@ helpers should add the following to myapp/lib/helpers.py::
     from routes import url_for, redirect_to
 
 A few helpers have external dependencies as noted in their module docstrings.
+"""
