@@ -137,6 +137,24 @@ class Counter(object):
         data.sort()
         return data
 
+    @classmethod
+    def correlate(class_, iterable):
+        """Build a Counter from an iterable in one step.
+
+        This is the same as adding each item individually.
+
+        >>> counter = Counter.correlate(["A", "B", "A"])
+        >>> counter.result["A"]
+        2
+        >>> counter.result["B"]
+        1
+        """
+        counter = class_()
+        for elm in iterable:
+            counter(elm)
+        return counter
+
+
 class Accumulator(object):
     """Accumulate a dict of all values for each key.
 
