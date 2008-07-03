@@ -531,9 +531,60 @@ def link_to_unless(condition, label, url='', **attrs):
     else:
         return label
 
+#### Table tags
+def th_sortable(current_order, column_order, label, url,
+    class_if_sort_column="sort", class_if_not_sort_column=None, 
+    link_attrs=None, name="th", **attrs):
+    """<th> for a "click-to-sort-by" column.
+
+    Convenience function for a sortable column.  If this is the current sort
+    column, just display the label and set the cell's class to
+    ``class_if_sort_column``.
+    
+    ``current_order`` is the table's current sort order.  ``column_order`` is
+    the value pertaining to this column.  In other words, if the two are equal,
+    the table is currently sorted by this column.
+
+    If this is the sort column, display the label and set the <th>'s class to
+    ``class_if_sort_column``.
+
+    If this is not the sort column, display an <a> hyperlink based on
+    ``label``, ``url``, and ``link_attrs`` (a dict), and set the <th>'s class
+    to ``class_if_not_sort_column``.  
+    
+    ``url`` is the literal href= value for the link.  Pylons users would
+    typically pass something like ``url=h.url_for("mypage", sort="date")``.
+
+    ``**attrs`` are additional attributes for the <th> tag.
+
+    If you prefer a <td> tag instead of <th>, pass ``name="td"``.
+
+    To change the sort order via client-side Javascript, pass ``url=None`` and
+    the appropriate Javascript attributes in ``link_attrs``.
+
+    Examples:
+
+    >>> sort = "name"
+    >>> th_sortable(sort, "name", "Name", "?sort=name")
+    literal(u'<th class="sort">Name</th>')
+    >>> th_sortable(sort, "date", "Date", "?sort=date")
+    literal(u'<th><a href="?sort=date">Date</a></th>')
+    >>> th_sortable(sort, "date", "Date", None, link_attrs={"onclick": "myfunc()"})
+    literal(u'<th><a onclick="myfunc()">Date</a></th>')
+    """
+    from webhelpers.html import HTML
+    if current_order == column_order:
+        content = label
+        class_ = class_if_sort_column
+    else:
+        link_attrs = link_attrs or {}
+        content = HTML.a(label, href=url, **link_attrs)
+        class_ = class_if_not_sort_column
+    return HTML.th(content, class_=class_, **attrs)
 
 
-#### Non-form tags
+
+#### Other non-form tags
 
 def image(url, alt, width=None, height=None, **attrs):
     """Return an image tag for the specified ``source``.
@@ -709,3 +760,8 @@ def set_input_attrs(attrs, type, name, value):
     attrs["type"] = type
     attrs["name"] = name
     attrs["value"] = value
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
