@@ -182,6 +182,20 @@ class Accumulator(object):
     def __call__(self, key, value):
         self.result[key].append(value)
 
+    @classmethod
+    def correlate(class_, iterable, key):
+        """Correlate several items into an Accumulator in one step.
+
+        ``key`` is a function to calculate the key for each item, akin to
+        ``list.sort(key=)``.
+
+        This is the same as adding each item individually.
+        """
+        accumulator = class_()
+        for v in iterable:
+            k = key(v)
+            accumulator(k, v)
+        return accumulator
 
 class UniqueAccumulator(object):
     """Accumulate a dict of unique values for each key.
