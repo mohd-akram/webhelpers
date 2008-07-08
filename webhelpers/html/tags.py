@@ -34,7 +34,9 @@ __all__ = [
            "link_to",
            "link_to_if",
            "link_to_unless",
-           # Other tags
+           # Table tags
+           "th_sortable",
+           # Other non-form tags
            "image",
            # Head tags
            "auto_discovery_link",
