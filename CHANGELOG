@@ -1,6 +1,6 @@
 WebHelpers ChangeLog
 
-0.6 (**tip**)
+0.6 (07/08/2008)
 * Add webhelpers.html.builder to generate HTML tags with smart escaping,
   along with a literal type to mark preformatted strings.
 * Deprecate webhelpers.rails, including its Javascript libraries (Prototype
