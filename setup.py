@@ -25,8 +25,8 @@ to function.
 * `Development svn <http://pylonshq.com/svn/WebHelpers/trunk#egg=WebHelpers-dev>`_
 
 """,
-    author='Ben Bangert, Phil Jenvey',
-    author_email='ben@groovie.org, pjenvey@groovie.org',
+    author='Mike Orr, Ben Bangert, Phil Jenvey',
+    author_email='sluggoster@gmail.com, ben@groovie.org, pjenvey@groovie.org',
     url='http://pylonshq.com/WebHelpers/',
     packages=find_packages(exclude=['ez_setup']),
     zip_safe=False,
