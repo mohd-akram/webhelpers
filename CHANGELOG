@@ -1,5 +1,10 @@
 WebHelpers ChangeLog
 
+0.6.1 (**tip**)
+* Include a faster version of cgi.escape for use by the literal object.
+* Fixed bug in SimplerXMLGenerator that the FeedGenerator uses, so that
+  it doesn't use a {} arg.
+
 0.6 (07/08/2008)
 * Add webhelpers.html.builder to generate HTML tags with smart escaping,
   along with a literal type to mark preformatted strings.
