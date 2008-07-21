@@ -137,7 +137,7 @@ class Counter(object):
         data.sort()
         return data
 
-    @classmethod
+    #@classmethod
     def correlate(class_, iterable):
         """Build a Counter from an iterable in one step.
 
@@ -153,6 +153,7 @@ class Counter(object):
         for elm in iterable:
             counter(elm)
         return counter
+    correlate = classmethod(correlate)
 
 
 class Accumulator(object):
@@ -182,7 +183,7 @@ class Accumulator(object):
     def __call__(self, key, value):
         self.result[key].append(value)
 
-    @classmethod
+    #@classmethod
     def correlate(class_, iterable, key):
         """Correlate several items into an Accumulator in one step.
 
@@ -196,6 +197,7 @@ class Accumulator(object):
             k = key(v)
             accumulator(k, v)
         return accumulator
+    correlate = classmethod(correlate)
 
 class UniqueAccumulator(object):
     """Accumulate a dict of unique values for each key.
