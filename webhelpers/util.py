@@ -9,6 +9,23 @@ import urllib
 from UserDict import DictMixin
 from xml.sax.saxutils import XMLGenerator
 
+def cgi_escape(s, quote=False):
+    """Replace special characters '&', '<' and '>' by SGML entities.
+
+    This is a slightly more efficient version of the cgi.escape by
+    using 'in' membership to test if the replace is needed.
+
+    """
+    if '&' in s:
+        s = s.replace("&", "&amp;") # Must be done first!
+    if '<' in s:
+        s = s.replace("<", "&lt;")
+    if '>' in s:
+        s = s.replace(">", "&gt;")
+    if quote:
+        s = s.replace('"', "&quot;")
+    return s
+
 def html_escape(s):
     """HTML-escape a string or object.
     
@@ -27,7 +44,7 @@ def html_escape(s):
             s = unicode(s)
         else:
             s = str(s)
-    s = cgi.escape(s, True)
+    s = cgi_escape(s, True)
     if isinstance(s, unicode):
         s = s.encode('ascii', 'xmlcharrefreplace')
     return s
@@ -71,8 +88,10 @@ class Partial(object):
         return self.fn(*(self.args + args), **d)
 
 class SimplerXMLGenerator(XMLGenerator):
-    def addQuickElement(self, name, contents=None, attrs={}):
+    def addQuickElement(self, name, contents=None, attrs=None):
         """Add an element with no children."""
+        if attrs is None:
+            attrs = {}
         self.startElement(name, attrs)
         if contents is not None:
             self.characters(contents)
