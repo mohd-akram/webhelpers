@@ -56,13 +56,14 @@ context.
 
 """
 import re
-from cgi import escape as cgi_escape
 from urllib import quote as url_escape
 from UserDict import DictMixin
 try:
     set
 except NameError:
     from sets import Set as set
+
+from webhelpers.util import cgi_escape
 
 __all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
 
