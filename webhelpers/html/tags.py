@@ -588,6 +588,51 @@ def th_sortable(current_order, column_order, label, url,
 
 #### Other non-form tags
 
+def ul(items, li_attrs=None, **attrs):
+    R"""Return an unordered list with each item wrapped in <li>.
+
+    ``items``
+        list of strings.
+
+    ``li_attrs``
+        dict of attributes for the <li> tags.
+
+    Examples:
+
+    >>> ul(["foo", "bar"])
+    literal(u'<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>')
+    >>> ul(["A", "B"], li_attrs={"class_": "myli"}, class_="mylist") 
+    literal(u'<ul class="mylist">\n<li class="myli">A</li>\n<li class="myli">B</li>\n</ul>')
+    """
+    li_attrs = li_attrs or {}
+    return _list("ul", items, attrs, li_attrs)
+
+def ol(items, li_attrs=None, **attrs):
+    R"""Return an ordered list with each item wrapped in <li>.
+
+    ``items``
+        list of strings.
+
+    ``li_attrs``
+        dict of attributes for the <li> tags.
+
+    Examples:
+
+    >>> ol(["foo", "bar"])
+    literal(u'<ol>\n<li>foo</li>\n<li>bar</li>\n</ol>')
+    >>> ol(["A", "B"], li_attrs={"class_": "myli"}, class_="mylist") 
+    literal(u'<ol class="mylist">\n<li class="myli">A</li>\n<li class="myli">B</li>\n</ol>')
+    """
+    li_attrs = li_attrs or {}
+    return _list("ol", items, attrs, li_attrs)
+
+def _list(tag, items, attrs, li_attrs):
+    content = [HTML.li(x, **li_attrs) for x in items]
+    content = [""] + content + [""]
+    content = literal("\n").join(content)
+    return getattr(HTML, tag)(content, **attrs)
+    
+
 def image(url, alt, width=None, height=None, **attrs):
     """Return an image tag for the specified ``source``.
 
