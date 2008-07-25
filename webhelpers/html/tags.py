@@ -37,6 +37,8 @@ __all__ = [
            # Table tags
            "th_sortable",
            # Other non-form tags
+           "ol",
+           "ul",
            "image",
            # Head tags
            "auto_discovery_link",
@@ -588,11 +590,14 @@ def th_sortable(current_order, column_order, label, url,
 
 #### Other non-form tags
 
-def ul(items, li_attrs=None, **attrs):
+def ul(items, default=literal(""), li_attrs=None, **attrs):
     R"""Return an unordered list with each item wrapped in <li>.
 
     ``items``
         list of strings.
+
+    ``default``
+        value returned if there are no items in the list.
 
     ``li_attrs``
         dict of attributes for the <li> tags.
@@ -603,15 +608,20 @@ def ul(items, li_attrs=None, **attrs):
     literal(u'<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>')
     >>> ul(["A", "B"], li_attrs={"class_": "myli"}, class_="mylist") 
     literal(u'<ul class="mylist">\n<li class="myli">A</li>\n<li class="myli">B</li>\n</ul>')
+    >>> ul([])
+    literal(u'')
     """
     li_attrs = li_attrs or {}
-    return _list("ul", items, attrs, li_attrs)
+    return _list("ul", items, default, attrs, li_attrs)
 
-def ol(items, li_attrs=None, **attrs):
+def ol(items, default=literal(""), li_attrs=None, **attrs):
     R"""Return an ordered list with each item wrapped in <li>.
 
     ``items``
         list of strings.
+
+    ``default``
+        value returned if there are no items in the list.
 
     ``li_attrs``
         dict of attributes for the <li> tags.
@@ -622,12 +632,16 @@ def ol(items, li_attrs=None, **attrs):
     literal(u'<ol>\n<li>foo</li>\n<li>bar</li>\n</ol>')
     >>> ol(["A", "B"], li_attrs={"class_": "myli"}, class_="mylist") 
     literal(u'<ol class="mylist">\n<li class="myli">A</li>\n<li class="myli">B</li>\n</ol>')
+    >>> ol([])
+    literal(u'')
     """
     li_attrs = li_attrs or {}
-    return _list("ol", items, attrs, li_attrs)
+    return _list("ol", items, default, attrs, li_attrs)
 
-def _list(tag, items, attrs, li_attrs):
+def _list(tag, items, default, attrs, li_attrs):
     content = [HTML.li(x, **li_attrs) for x in items]
+    if not content:
+        return default
     content = [""] + content + [""]
     content = literal("\n").join(content)
     return getattr(HTML, tag)(content, **attrs)
