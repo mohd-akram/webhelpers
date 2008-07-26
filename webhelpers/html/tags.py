@@ -49,30 +49,43 @@ __all__ = [
            ]
 
 
-def form(url, method="POST", multipart=False, **attrs):
-    """Start a form tag that points the action to an url.
-    
-    The url options should be given either as a string, or as a 
-    ``url()`` function. The method for the form defaults to POST.
+def form(url, method="post", multipart=False, **attrs):
+    """An open tag for a form that will submit to ``url``.
+
+    You must close the form yourself by calling ``end_form()`` or outputting
+    </form>.
     
     Options:
 
     ``multipart``
         If set to True, the enctype is set to "multipart/form-data".
+        You must set it to true when uploading files, or the browser will
+        submit the filename rather than the file.
+
     ``method``
         The method to use when submitting the form, usually either 
         "GET" or "POST". If "PUT", "DELETE", or another verb is used, a
         hidden input with name _method is added to simulate the verb
         over POST.
     
+    Examples:
+
+    >>> form("/submit")
+    literal(u'<form action="/submit" method="post">')
+    >>> form("/submit", method="get")
+    literal(u'<form action="/submit" method="get">')
+    >>> form("/submit", method="put")
+    literal(u'<form action="/submit" method="post"><input type="hidden" name="_method" value="put">')
+    >>> form("/submit", "put", multipart=True) 
+    literal(u'<form action="/submit" enctype="multipart/form-data" method="post">')
     """
     if multipart:
         attrs["enctype"] = "multipart/form-data"
     method_tag = literal("")
-    if method.upper() in ['POST', 'GET']:
+    if method.lower() in ['post', 'get']:
         attrs['method'] = method
     else:
-        attrs['method'] = "POST"
+        attrs['method'] = "post"
         method_tag = HTML.input(type="hidden", name="_method", value=method)
     attrs["action"] = url
     return HTML.form(method_tag, _closed=False, **attrs)
@@ -85,7 +98,6 @@ def end_form():
 
         >>> end_form()
         literal(u'</form>')
-    
     """
     return literal("</form>")
 
