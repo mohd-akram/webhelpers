@@ -13,6 +13,7 @@ __all__ = [
     "chop_at",
     "lchop",
     "rchop",
+    "series",
     "strip_leading_whitespace",
     "wrap_paragraphs",
     ]
