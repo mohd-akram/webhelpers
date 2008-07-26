@@ -15,7 +15,7 @@ class TestFormTagHelper(WebHelpersTestCase):
     def test_form(self):
         self.assertEqual(
             form(url="http://www.example.com"),
-            u'<form action="http://www.example.com" method="POST">'
+            u'<form action="http://www.example.com" method="post">'
         )
         self.assertEqual(
             form(url="http://www.example.com", method='GET'),
@@ -23,13 +23,13 @@ class TestFormTagHelper(WebHelpersTestCase):
         )
         self.assertEqual(
             form('/test/edit/1'),
-            u'<form action="/test/edit/1" method="POST">'
+            u'<form action="/test/edit/1" method="post">'
         )
 
     def test_form_multipart(self):
         self.assertEqual(
             form(url='http://www.example.com', multipart=True),
-            u'<form action="http://www.example.com" enctype="multipart/form-data" method="POST">'
+            u'<form action="http://www.example.com" enctype="multipart/form-data" method="post">'
         )
         
     def test_hidden_field(self):

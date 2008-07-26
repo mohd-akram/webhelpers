@@ -75,8 +75,8 @@ def form(url, method="post", multipart=False, **attrs):
     >>> form("/submit", method="get")
     literal(u'<form action="/submit" method="get">')
     >>> form("/submit", method="put")
-    literal(u'<form action="/submit" method="post"><input type="hidden" name="_method" value="put">')
-    >>> form("/submit", "put", multipart=True) 
+    literal(u'<form action="/submit" method="post"><input name="_method" type="hidden" value="put" />')
+    >>> form("/submit", "post", multipart=True) 
     literal(u'<form action="/submit" enctype="multipart/form-data" method="post">')
     """
     if multipart:
@@ -622,11 +622,13 @@ def ul(items, default=None, li_attrs=None, **attrs):
     >>> ul(["A", "B"], li_attrs={"class_": "myli"}, class_="mylist") 
     literal(u'<ul class="mylist">\n<li class="myli">A</li>\n<li class="myli">B</li>\n</ul>')
     >>> ul([])
-    literal(u'')
-    >>> ul([], default=literal("<span class='no-data'>No data</span>"))
-    literal(u'<span class='no-data'>No data</span>')
+    literal(u'<ul></ul>')
+    >>> ul([], default="")
+    ''
+    >>> ul([], default=literal('<span class="no-data">No data</span>'))
+    literal(u'<span class="no-data">No data</span>')
     >>> ul(["A"], default="NOTHING")
-    literal(u'<ul>\n<li class="myli">A</li>\n</ul>')
+    literal(u'<ul>\n<li>A</li>\n</ul>')
     """
     li_attrs = li_attrs or {}
     return _list("ul", items, default, attrs, li_attrs)
