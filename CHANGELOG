@@ -5,6 +5,7 @@ WebHelpers ChangeLog
 * Fixed bug in SimplerXMLGenerator that the FeedGenerator uses, so that
   it doesn't use a {} arg.
 * New helpers:
+  - nl2br() and format_paragraphs() in webhelpers.html.converters.
   - ul() and ol() in webhelpers.html.tags.
   - series() in webhelpers.text.
 * Change default form method to "post" (rather than "POST") to conform to XHTML.
