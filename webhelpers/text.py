@@ -192,3 +192,33 @@ def wrap_paragraphs(text, width=72):
         end = None
     return "".join(result)
 
+def series(items, conjunction="and", strict_commas=True):
+    """Format a series for use in English text.
+
+    Examples:
+
+    >>> series(["A", "B", "C"])
+    'A, B, and C'
+    >>> series(["A", "B", "C"], "or")
+    'A, B, or C'
+    >>> series(["A", "B", "C"], strict_commas=False)
+    'A, B and C'
+    >>> series(["A", "B"])
+    'A and B'
+    >>> series(["A"])
+    'A'
+    >>> series([])
+    ''
+    """
+    items = list(items)
+    length = len(items)
+    if length == 0:
+        return ""
+    if length == 1:
+        return items[0]
+    if length == 2:
+        strict_commas = False
+    nonlast = ", ".join(items[:-1])
+    last = items[-1]
+    comma = strict_commas and "," or ""
+    return "%s%s %s %s" % (nonlast, comma, conjunction, last)
