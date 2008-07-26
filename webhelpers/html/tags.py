@@ -590,14 +590,15 @@ def th_sortable(current_order, column_order, label, url,
 
 #### Other non-form tags
 
-def ul(items, default=literal(""), li_attrs=None, **attrs):
+def ul(items, default=None, li_attrs=None, **attrs):
     R"""Return an unordered list with each item wrapped in <li>.
 
     ``items``
         list of strings.
 
     ``default``
-        value returned if there are no items in the list.
+        value returned _instead of the <ul>_ if there are no items in the list.
+        If ``None``, return an empty <ul>.
 
     ``li_attrs``
         dict of attributes for the <li> tags.
@@ -610,6 +611,10 @@ def ul(items, default=literal(""), li_attrs=None, **attrs):
     literal(u'<ul class="mylist">\n<li class="myli">A</li>\n<li class="myli">B</li>\n</ul>')
     >>> ul([])
     literal(u'')
+    >>> ul([], default=literal("<span class='no-data'>No data</span>"))
+    literal(u'<span class='no-data'>No data</span>')
+    >>> ul(["A"], default="NOTHING")
+    literal(u'<ul>\n<li class="myli">A</li>\n</ul>')
     """
     li_attrs = li_attrs or {}
     return _list("ul", items, default, attrs, li_attrs)
@@ -621,7 +626,8 @@ def ol(items, default=literal(""), li_attrs=None, **attrs):
         list of strings.
 
     ``default``
-        value returned if there are no items in the list.
+        value returned _instead of the <ol>_ if there are no items in the list.
+        If ``None``, return an empty <ol>.
 
     ``li_attrs``
         dict of attributes for the <li> tags.
@@ -640,9 +646,10 @@ def ol(items, default=literal(""), li_attrs=None, **attrs):
 
 def _list(tag, items, default, attrs, li_attrs):
     content = [HTML.li(x, **li_attrs) for x in items]
-    if not content:
+    if content:
+        content = [""] + content + [""]
+    elif default is not None:
         return default
-    content = [""] + content + [""]
     content = literal("\n").join(content)
     return getattr(HTML, tag)(content, **attrs)
     
