@@ -1,4 +1,8 @@
-"""HTML helpers that are more than just simple tags."""
+"""HTML helpers that are more than just simple tags.
+
+There are no helpers to prettify HTML or canonicalize whitespace because
+BeautifulSoup and HTMLTidy handle this well.
+"""
 
 import re
 import urllib
