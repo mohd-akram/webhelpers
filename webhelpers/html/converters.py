@@ -47,7 +47,7 @@ def nl2br(text):
     if text is None:
         return literal("")
     text = _universal_newline_rx.sub("\n", text)
-    text = text.replace("\n", br)
+    text = HTML(text).replace("\n", br)
     return text
 
 def format_paragraphs(text, preserve_lines=False):
