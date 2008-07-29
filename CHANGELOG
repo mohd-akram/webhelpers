@@ -9,6 +9,8 @@ WebHelpers ChangeLog
   - ul() and ol() in webhelpers.html.tags.
   - series() in webhelpers.text.
 * Change default form method to "post" (rather than "POST") to conform to XHTML.
+* Add DeprecationWarning for webhelpers.rails package and
+  webhelpers.rails.url_for().
 
 0.6 (07/08/2008)
 * Add webhelpers.html.builder to generate HTML tags with smart escaping,
