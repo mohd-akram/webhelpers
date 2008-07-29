@@ -72,9 +72,6 @@ below; see the docstrings in the source for documentation.
     ``webhelpers.tools.textilize()``.  (If you use this library directly, you
     may have to wrap the results in ``literal()`` to prevent double escaping.)
 
-``tools``
-    Helpers producing complex chunks of HTML.
-
 ``util``
     Miscellaneous functions.
 
