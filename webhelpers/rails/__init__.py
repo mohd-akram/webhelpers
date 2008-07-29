@@ -1,6 +1,16 @@
 """Helper functions ported from Rails"""
 import warnings
 
+warnings.warn("""\
+The webhelpers.rails package is deprecated.
+- Please begin migrating to the new helpers in webhelpers.html,
+  webhelpers.text, webhelpers.number, etc.  
+- Import url_for() directly from routes, and redirect_to() from
+  pylons.controllers.util (if using Pylons) or from routes.
+- All Javascript support has been deprecated.  You can write link_to_remote()
+  yourself or use one of the third-party Javascript libraries.""",
+    DeprecationWarning)
+
 from routes import url_for, redirect_to
 from webhelpers.rails.asset_tag import *
 from webhelpers.rails.urls import *
@@ -31,5 +41,10 @@ def deprecated(func, message):
     deprecated_method.__doc__ = "%s\n\n%s" % (message, func.__doc__)
     return deprecated_method
 
-redirect_to = deprecated(redirect_to, 'webhelpers.rails.redirect_to is '
-                         'deprecated, import redirect_to from routes instead')
+redirect_to = deprecated(redirect_to, """\
+webhelpers.rails.redirect_to is deprecated; import redirect_to from routes \
+instead""")
+
+url_for = deprecated(url_for, """\
+webhelpers.rails.url_for is deprecated; import url_for from \
+pylons.controllers.util (if using Pylons) or from routes""")
