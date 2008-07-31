@@ -1,35 +1,94 @@
 """HTML/XHTML tag builder
 
-You create tags with attribute access.  I.e., the "A" anchor tag is
-html.a.  The attributes of the HTML tag are done with keyword
-arguments.  The contents of the tag are the non-keyword arguments
-(concatenated).  You can also use the special "c" keyword, passing a
-list, tuple, or single tag, and it will make up the contents (this is
-useful because keywords have to come after all non-keyword arguments,
-and it's unintuitive to give your content before your attributes).
+HTML Builder provides an ``HTML`` object that creates (X)HTML tags in a
+Pythonic way,  a ``literal`` class used to mark strings containing intentional
+HTML markup, and a smart ``escape()`` function that preserves literals but
+escapes other strings that may accidentally contain markup characters ("<",
+">", "&") or malicious Javascript tags.  Escaped strings are returned as
+literals to prevent them from being double-escaped later.
 
-If the value of an attribute is None, then no attribute will be
-inserted.  Think of it as "does not apply".  So::
+``literal`` is a subclass of ``unicode``, so it works with all string methods
+and expressions.  The only thing special about it is the ``.__html__`` method,
+which returns the string itself.  ``escape()`` follows a simple protocol: if
+the object has an ``.__html__`` method, it calls that rather than ``.__str__``
+to get the HTML representation.  Third-party libraries that do not want to
+import ``literal`` (and this create a dependency on WebHelpers) can put an
+``.__html__`` method in their own classes returning the desired HTML
+representation.
 
-    >>> HTML.a(href="http://www.yahoo.com", name=None, 
+When used in a mixed expression containing both literals and ordinary strings,
+``literal`` tries hard to escape the strings and return a literal.  However,
+this depends on which value has "control" of the expression.  ``literal`` seems
+to be able to take control with all combinations of the ``+`` operator, but
+with ``%`` and ``join`` it must be on the left side of the expression.  So
+these all work::
+
+    "A" + literal("B")
+    literal(", ").join(["A", literal("B")])
+    literal("%s %s") % (16, literal("kg"))
+
+But these return an ordinary string which is prone to double-escaping later:
+
+    "\n".join([literal('<span class="foo">Foo!</span>'), literal('Bar!')])
+    "%s %s" % (literal("16"), literal("&lt;em&gt;kg&lt;/em&gt;"))
+
+Third-party libraries that don't want to import ``literal`` and thus avoid a
+dependency on WebHelpers can add an ``.__html__`` method to any class, which
+can return the same as ``.__str__`` or something else.  ``escape()`` trusts the
+HTML method and does not escape the return value.  So only strings that lack
+an ``.__html__`` method will be escaped.
+
+The ``HTML`` object has the following methods for tag building:
+
+``HTML(*strings)``
+    Escape the string args, concatenate them, and return a literal.  This is
+    the same as ``escape(s)`` but accepts multiple strings.  Multiple args are
+    useful when mixing child tags with text, such as::
+
+        html = HTML("The king is a >>", HTML.strong("fink"), "<<!")
+
+``HTML.literal(*strings)``
+    Same as ``literal`` but concatenates multiple arguments.
+
+``HTML.comment(*strings)``
+    Escape and concatenate the strings, and wrap the result in an HTML 
+    comment.
+
+``HTML.tag(tag, *content, **attrs)``
+    Create an HTML tag ``tag`` with the keyword args converted to attributes.
+    The other positional args become the content for the tag, and are escaped
+    and concatenated.  If an attribute name conflicts with a Python keyword
+    (notably "class"), append an underscore.  If an attribute value is
+    ``None``, the attribute is not inserted.  Two special keyword args are
+    recognized:
+    
+    ``c``
+        Specifies the content.  This cannot be combined with content in
+        positional args.  The purpose of this argument is to position the
+        content at the end of the argument list to match the native HTML
+        syntax more closely.  Its use is entirely optional.  The value can
+        be a string, a tuple, or a tag.
+
+    ``_close``
+        If present and false, do not close the tag.  Otherwise the tag will be
+        closed with a closing tag or an XHTML-style trailing slash as described
+        below.
+
+    Example:
+
+    >>> HTML.tag("a", href="http://www.yahoo.com", name=None, 
     ... c="Click Here")
     literal(u'<a href="http://www.yahoo.com">Click Here</a>')
 
-If the value is None, then the empty string is used.  Otherwise str()
-is called on the value.
 
-``HTML`` can also be called, and it will concatenate the quoted string
-representations of its arguments.
+``HTML.__getattr__``
+    Same as ``HTML.tag`` but using attribute access.  Example:
 
-``HTML.comment`` will generate an HTML comment, like
-``HTML.comment('comment text', 'and some more text')`` -- note that
-it cannot take keyword arguments (because they wouldn't mean anything).
+    >>> HTML.a("Foo", href="http://example.com/", class_="important")
+    literal(u'<a class="important" href="http://example.com/">Foo</a>')
 
-``HTML.literal`` will allow you to give HTML source without any quoting.
-
-If you cannot define an attribute because it conflicts with a Python
-keyword (particularly ``class``), you can append an underscore and
-it will be removed (like ``class_='whatever'``).
+The protocol is simple: if an object has an ``.__html__`` method, ``escape()``
+calls it rather than ``.__str__()`` to obtain a string representation.
 
 About XHTML and HTML
 --------------------
@@ -53,6 +112,9 @@ contexts without any real problems and without the overhead of passing
 options around or maintaining different contexts, where you'd have to
 keep track of whether markup is being rendered in an HTML or XHTML
 context.
+
+If you _really_ want tags without training slashes (e.g., ``<br>`)`, you can
+"abuse" ``_close=False`` to produce them.
 
 """
 import re
@@ -133,6 +195,9 @@ class HTMLBuilder(object):
     def __call__(self, *args):
         """Join raw HTML and HTML escape it."""
         return literal(''.join([escape(x) for x in args]))
+
+    def tag(self, tag, *args, **kw):
+        return make_tag(tag, *args, **kw)
 
 
 def _attr_decode(v):

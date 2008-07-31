@@ -8,6 +8,7 @@ WebHelpers ChangeLog
   - nl2br() and format_paragraphs() in webhelpers.html.converters.
   - ul() and ol() in webhelpers.html.tags.
   - series() in webhelpers.text.
+* HTML.tag() is a synonym for make_tag(), both in webhelpers.html.builder.
 * Change default form method to "post" (rather than "POST") to conform to XHTML.
 * Add DeprecationWarning for webhelpers.rails package and
   webhelpers.rails.url_for().
