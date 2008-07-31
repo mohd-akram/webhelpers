@@ -19,7 +19,7 @@ One of the sub-sections of Web Helpers contains a full port of the
 template helpers that are provided by Ruby on Rails with slight 
 adaptations on occasion to accomodate for Python.
 
-Some of these helpers only require `Routes <http://routes.groovie.org/>`_ 
+A few of these helpers require `Routes <http://routes.groovie.org/>`_ 
 to function.
 
 * `Development svn <http://pylonshq.com/svn/WebHelpers/trunk#egg=WebHelpers-dev>`_
