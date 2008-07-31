@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
-0.6.1 (**tip**)
+0.6.2 (tip)
+
+0.6.1 (7/31/2008)
 * Include a faster version of cgi.escape for use by the literal object.
 * Fixed bug in SimplerXMLGenerator that the FeedGenerator uses, so that
   it doesn't use a {} arg.
