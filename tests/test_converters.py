@@ -51,4 +51,4 @@ def test_format_paragraphs6():
     eq_(u"<p>A paragraph\n With a newline</p>", format_paragraphs("A paragraph\n With a newline"))
 
 def test_format_paragraphs7():
-    eq_(u"<p></p>", format_paragraphs(None))
+    eq_(u"", format_paragraphs(None))

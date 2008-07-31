@@ -62,7 +62,7 @@ def format_paragraphs(text, preserve_lines=False):
         If true, add <br />  before each single line break
     """
     if text is None:
-        text = literal("")
+        return literal("")
     text = _universal_newline_rx.sub("\n", text)
     paragraphs = _paragraph_rx.split(text)
     for i, para in enumerate(paragraphs):
