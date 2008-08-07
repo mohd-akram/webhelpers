@@ -15,6 +15,13 @@ the more macro-style approach to return the Paginator and the slice of
 the collection desired.
 
 """
+
+import warnings
+
+warnings.warn("""\
+The webhelpers.pagination package is deprecated.  Please migrate to
+webhelpers.paginate.""",
+    DeprecationWarning)
 import re
 
 from routes import request_config
