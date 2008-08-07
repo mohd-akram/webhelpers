@@ -12,8 +12,8 @@ WebHelpers ChangeLog
   - series() in webhelpers.text.
 * HTML.tag() is a synonym for make_tag(), both in webhelpers.html.builder.
 * Change default form method to "post" (rather than "POST") to conform to XHTML.
-* Add DeprecationWarning for webhelpers.rails package and
-  webhelpers.rails.url_for().
+* Add DeprecationWarning for webhelpers.rails package,
+  webhelpers.rails.url_for(), and webhelpers.pagination.
 
 0.6 (07/08/2008)
 * Add webhelpers.html.builder to generate HTML tags with smart escaping,
