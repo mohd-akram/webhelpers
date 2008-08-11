@@ -9,7 +9,7 @@ The webhelpers.rails package is deprecated.
   pylons.controllers.util (if using Pylons) or from routes.
 - All Javascript support has been deprecated.  You can write link_to_remote()
   yourself or use one of the third-party Javascript libraries.""",
-    DeprecationWarning)
+    DeprecationWarning, 2)
 
 from routes import url_for, redirect_to
 from webhelpers.rails.asset_tag import *
