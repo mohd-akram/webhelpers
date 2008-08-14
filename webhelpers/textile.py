@@ -1268,7 +1268,7 @@ class Textiler:
         translated into HTML(HyperText Markup Language) entities
         automatically.
 
-        Text in a "pre" block is _not processed_ with any inline rule.
+        Text in a "pre" block is __not processed__ with any inline rule.
 
         Here's a simple example:
 
@@ -1737,10 +1737,10 @@ class Textiler:
 
         You can also mix ordered and unordered lists:
 
-        pre. * To write well you need:
-        *# to read every day
-        *# to write every day
-        *# and X
+        pre. `*` To write well you need:
+        `*`# to read every day
+        `*`# to write every day
+        `*`# and X
 
         You'll get this:
 
