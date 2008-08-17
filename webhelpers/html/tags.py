@@ -247,21 +247,21 @@ def select(name, selected_values, options, **attrs):
     * ``selected_values`` -- a string or list of strings or integers giving
       the value(s) that should be preselected.
 
-    * ``options`` -- an iterable of ``(value, label)`` pairs.  The label
-      is what's shown to the user; the value is what's seen by the 
-      application if the user chooses this option.  You can also pass an
-      iterable of strings, in which case the labels and values will be
-      identical.  
+    * ``options`` -- an iterable of ``(value, label)`` pairs.  The value is 
+      what's returned to the application if this option is chosen; the label
+      is what's shown in the form.  You can also pass an iterable of strings,
+      in which case the labels will be identical to the values.
 
-      CAUTION: the label used to be first in the pair in the old rails helper
-      ``options_for_select`` had the label first in the pair, and in earlier
-      development versions of this helper.  The order was changed because
-      most real-life lists have the value first, including ``dict.items()``.
+      CAUTION: this is the opposite order of the old rails helper 
+      ``options_for_select``.  The order was changed because
+      most real-life lists have the value first, including dicts of the form
+      ``{value: label}``.  For those dicts you can simply pass ``D.items()``
+      as this argument.
 
       HINT: You can sort options alphabetically by label via:
       ``sorted(my_options, key=lambda x: x[1])``
 
-    * ``multiselect`` -- if true, this control will allow multiple
+    * ``multiple`` -- if true, this control will allow multiple
        selections.
 
     Any other keyword args will become HTML attributes for the <select>.
