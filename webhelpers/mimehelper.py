@@ -63,9 +63,9 @@ class MIMETypes(object):
         
             # some code likely in environment.py
             MIMETypes.init()
-            MIMETypes.alias('html', 'text/html')
-            MIMETypes.alias('xml', 'application/xml')
-            MIMETypes.alias('csv', 'text/csv')
+            MIMETypes.add_alias('html', 'text/html')
+            MIMETypes.add_alias('xml', 'application/xml')
+            MIMETypes.add_alias('csv', 'text/csv')
             
             # code in a controller
             def somaction(self):
