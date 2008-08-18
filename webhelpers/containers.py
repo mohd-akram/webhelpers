@@ -14,6 +14,7 @@ except ImportError:   # Python < 2.5
 
         From the Python Cookbook.  Written by Jason Kirtland.
         http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/523034
+
         """
         def __init__(self, default_factory=None, *a, **kw):
             if (default_factory is not None and
@@ -53,14 +54,17 @@ class NotGiven(object):
     """A default value for function args.
 
     Use this when you need to distinguish between ``None`` and no value.
+    
+    Example::
+    
+        >>> def foo(arg=NotGiven):
+        ...     print arg is NotGiven
+        ...
+        >>> foo()
+        True
+        >>> foo(None)
+        False
 
-    >>> def foo(arg=NotGiven):
-    ...     print arg is NotGiven
-    ...
-    >>> foo()
-    True
-    >>> foo(None)
-    False
     """
     pass
 
@@ -68,15 +72,17 @@ class NotGiven(object):
 class DumbObject(object):
     """A container for arbitrary attributes.
 
-    Usage:
-    >>> do = DumbObject(a=1, b=2)
-    >>> do.b
-    2
+    Usage::
+    
+        >>> do = DumbObject(a=1, b=2)
+        >>> do.b
+        2
     
     Alternatives to this class include ``collections.namedtuple`` in Python
     2.6, and ``formencode.declarative.Declarative`` in Ian Bicking's FormEncode
     package.  Both alternatives offer more featues, but ``DumbObject``
     shines in its simplicity and lack of dependencies.
+
     """
     def __init__(self, **kw):
         self.__dict__.update(kw)
@@ -419,41 +425,48 @@ def distribute(lis, columns, direction, fill=None):
 
     This can be displayed in an HTML table via the following Mako template:
 
-    <table>
-    % for row in table:
-      <tr>
-    % for cell in row:
-        <td>${cell}</td>
-    % endfor   cell
-      </tr>
-    % endfor   row
-    </table>
+    .. code-block:: html+mako
+
+        <table>
+        % for row in table:
+          <tr>
+        % for cell in row:
+            <td>${cell}</td>
+        % endfor   cell
+          </tr>
+        % endfor   row
+        </table>
 
     In a horizontal table, each row is filled before going on to the next row.
     This is the same as dividing the list into chunks.
 
-    >>> distribute([1, 2, 3, 4, 5, 6, 7, 8], 3, "H")
-    [[1, 2, 3], [4, 5, 6], [7, 8, None]]
+    .. code-block:: pycon
+    
+        >>> distribute([1, 2, 3, 4, 5, 6, 7, 8], 3, "H")
+        [[1, 2, 3], [4, 5, 6], [7, 8, None]]
 
     In a vertical table, the first element of each sublist is filled before
     going on to the second element.  This is useful for displaying an
     alphabetical list in columns, or when the entire column will be placed in
     a single <td> with a <br /> between each element.
 
-    >>> food = ["apple", "banana", "carrot", "daikon", "egg", "fish", "gelato", "honey"]
-    >>> table = distribute(food, 3, "V", "")
-    >>> table
-    [['apple', 'daikon', 'gelato'], ['banana', 'egg', 'honey'], ['carrot', 'fish', '']]
-    >>> for row in table:
-    ...    for item in row:
-    ...         print "%-9s" % item,
-    ...    print "."   # To show where the line ends.
-    ...
-    apple     daikon    gelato    .
-    banana    egg       honey     .
-    carrot    fish                .
+    .. code-block:: pycon
+
+        >>> food = ["apple", "banana", "carrot", "daikon", "egg", "fish", "gelato", "honey"]
+        >>> table = distribute(food, 3, "V", "")
+        >>> table
+        [['apple', 'daikon', 'gelato'], ['banana', 'egg', 'honey'], ['carrot', 'fish', '']]
+        >>> for row in table:
+        ...    for item in row:
+        ...         print "%-9s" % item,
+        ...    print "."   # To show where the line ends.
+        ...
+        apple     daikon    gelato    .
+        banana    egg       honey     .
+        carrot    fish                .
 
     Alternatives to this function include a NumPy matrix of objects.
+
     """
     if columns < 1:
         raise ValueError("arg 'columns' must be >= 1")
