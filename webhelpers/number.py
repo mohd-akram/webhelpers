@@ -91,10 +91,10 @@ def standard_deviation(r):
     The following examples are taken from Wikipedia.
     http://en.wikipedia.org/wiki/Standard_deviation
 
-        >>> standard_deviation([0, 0, 14, 14])
-        8.0829037686547611
-        >>> standard_deviation([0, 6, 8, 14])
-        5.7735026918962582
+        >>> standard_deviation([0, 0, 14, 14]) # doctest: +ELLIPSIS
+        8.082903768654761...
+        >>> standard_deviation([0, 6, 8, 14]) # doctest: +ELLIPSIS
+        5.773502691896258...
         >>> standard_deviation([6, 6, 8, 8])
         1.1547005383792515
 
@@ -105,13 +105,13 @@ def standard_deviation(r):
     
         # Fictitious average monthly temperatures in Southern California.
         #                       Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
-        >>> standard_deviation([70, 70, 70, 75, 80, 85, 90, 95, 90, 80, 75, 70]) 
-        9.0033663737851999
+        >>> standard_deviation([70, 70, 70, 75, 80, 85, 90, 95, 90, 80, 75, 70]) # doctest: +ELLIPSIS
+        9.003366373785...
 
         # Fictitious average mothly temperatures in Montana.
         #                       Jan  Feb  Mar Apr May Jun Jul  Aug Sep Oct Nov Dec
-        >>> standard_deviation([-32, -10, 20, 30, 60, 90, 100, 80, 60, 30, 10, -32])
-        45.137836040557403
+        >>> standard_deviation([-32, -10, 20, 30, 60, 90, 100, 80, 60, 30, 10, -32]) # doctest: +ELLIPSIS
+        45.1378360405574...
 
     Most natural and random phenomena follow the normal distribution (aka the
     bell curve), which says that most values are close to average but a few are
@@ -233,8 +233,8 @@ class Stats(SimpleStats):
     >>> stats.count
     3
     >>> stats.finish()
-    >>> stats.mean
-    8.3333333333333339
+    >>> stats.mean # doctest: +ELLIPSIS
+    8.33333333333333...
     >>> stats.median
     10
     >>> stats.standard_deviation
