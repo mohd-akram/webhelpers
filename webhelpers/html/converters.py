@@ -3,7 +3,7 @@
 """
 import re
 
-from webhelpers.html import HTML, literal
+from webhelpers.html import HTML, literal, lit_sub
 import webhelpers.textile as textile
 import webhelpers.markdown as _markdown
 
@@ -46,7 +46,7 @@ def nl2br(text):
     """
     if text is None:
         return literal("")
-    text = _universal_newline_rx.sub("\n", text)
+    text = lit_sub(_universal_newline_rx, "\n", text)
     text = HTML(text).replace("\n", br)
     return text
 
@@ -63,7 +63,7 @@ def format_paragraphs(text, preserve_lines=False):
     """
     if text is None:
         return literal("")
-    text = _universal_newline_rx.sub("\n", text)
+    text = lit_sub(_universal_newline_rx, "\n", text)
     paragraphs = _paragraph_rx.split(text)
     for i, para in enumerate(paragraphs):
         if preserve_lines:
