@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 0.6.2 (tip)
+* nl2br() and format-paragraphs were not literal-safe.
 
 0.6.1 (7/31/2008)
 * Include a faster version of cgi.escape for use by the literal object.
