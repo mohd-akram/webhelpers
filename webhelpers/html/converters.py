@@ -63,7 +63,7 @@ def format_paragraphs(text, preserve_lines=False):
     """
     if text is None:
         return literal("")
-    text = _universal_newline_rx.sub("\n", text)
+    text = lit_sub(_universal_newline_rx, "\n", text)
     paragraphs = _paragraph_rx.split(text)
     for i, para in enumerate(paragraphs):
         if preserve_lines:
