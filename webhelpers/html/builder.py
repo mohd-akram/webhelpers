@@ -69,7 +69,7 @@ The ``HTML`` object has the following methods for tag building:
         syntax more closely.  Its use is entirely optional.  The value can
         be a string, a tuple, or a tag.
 
-    ``_close``
+    ``_closed``
         If present and false, do not close the tag.  Otherwise the tag will be
         closed with a closing tag or an XHTML-style trailing slash as described
         below.
@@ -114,7 +114,7 @@ keep track of whether markup is being rendered in an HTML or XHTML
 context.
 
 If you _really_ want tags without training slashes (e.g., ``<br>`)`, you can
-"abuse" ``_close=False`` to produce them.
+"abuse" ``_closed=False`` to produce them.
 
 """
 import re
