@@ -1,5 +1,77 @@
 """Helpers for configuration files."""
 
+### Can be webhelpers.config or webhelpers.configuration module.
+def ConfigError(Exception):
+    def __init__(self, key, reason, help=None):
+        message = "config variable '%s' %s" % (key, message)
+        if help:
+            message += " (%s)" % help
+        Exception.__init__(self, message)
+
+
+def ConfigLint(object):
+    """Check a configuration dict for errors and set default values."""
+
+    def __init__(self, config):
+        self.config = config
+
+    def convert_int(self, key):
+        """Convert a config variable to integer.  The variable must exist."""
+        try:
+            self.config[key] = int(self.config[key])
+        except ValueError:
+            raise ConfigError(key, "must be an integer: %r" % self.config[key])
+
+    def convert_bool(self, key):
+        """Convert a config variable to boolean.  The variable must exist."""
+        value = self.config[key].strip().lower()
+        if value in ["true", "yes", "on", "y", "t", "1"]:
+            self.config[key] = True
+        elif value in ["false", "no", "off", "n", "f", "0"]:
+            self.config[key] = False
+        else:
+            raise ConfigError(key, "is not true/false: %r" % value)
+
+    def default(self, key, default):
+        self.config.setdefault(key, default)
+
+    def default_int(self, key, default):
+        if key in self.config:
+            self.convert_int(key)
+        else:
+            self.config[key] = default
+
+    def default_bool(self, key, default):
+        if key in self.config:
+            self.convert_bool(key)
+        else:
+            self.config[key] = default
+
+    def require(self, key):
+        if key not in self.config:
+            raise ConfigError(key, "is required")
+
+    def require_int(self, key):
+        self.require(key)
+        self.convert_int(key)
+
+    def require_bool(self, key):
+        self.require_key(key)
+        self.convert_bool(key)
+
+    def require_directory(self, key, create_if_missing=False):
+        """Require a directory to exist, optionally creating it if it doesn't.
+        """
+        self.require(key)
+        dir = self.config[key]
+        if not os.path.exists(dir) and create_if_missing:
+            os.makedirs(dir)
+        if not os.path.isdir(dir):
+            raise ConfigError(key, "is not a directory")
+
+
+
+#### OLDER IMPLEMENTATION ####
 class ConfigurationError(Exception):
     pass
 
@@ -96,3 +168,4 @@ def require_dir(config, key, create_if_missing=False):
                "(from config option '%s')")
         tup = dir, key
         raise OSError(msg % tup)
+
