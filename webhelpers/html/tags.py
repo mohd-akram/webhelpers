@@ -309,6 +309,21 @@ def select(name, selected_values, options, **attrs):
     opts_html = literal("\n%s\n" % opts_html)
     return HTML.select(opts_html, **attrs)
 
+def values_for_options(options):
+    """Given an ``options`` argument for ``select``, return the values.
+
+       >>> values_for_options(["A", 1, ("b", "B")])
+       ['A', u'1', 'b']
+    """
+    values = []
+    for value in options:
+        if not isinstance(value, (basestring, int, long)):
+            value = value[0]   # Get rid of the label.
+        if not isinstance(value, basestring):
+            value = unicode(value)
+        values.append(value)
+    return values
+
 
 class ModelTags(object):
     """A nice way to build a form for a database record.
