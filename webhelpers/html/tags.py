@@ -17,33 +17,18 @@ from webhelpers.html import escape, HTML, literal, url_escape
 
 __all__ = [
            # Form tags
-           "form", 
-           "end_form", 
-           "text", 
-           "textarea", 
-           "hidden", 
-           "file",
-           "password", 
-           "text", 
-           "checkbox", 
-           "radio", 
-           "submit",
-           "select", 
+           "form", "end_form", 
+           "text", "textarea", "hidden", "file", "password", 
+           "checkbox", "radio", "select", "submit",
            "ModelTags",
            # hyperlinks
-           "link_to",
-           "link_to_if",
-           "link_to_unless",
+           "link_to", "link_to_if", "link_to_unless",
            # Table tags
            "th_sortable",
            # Other non-form tags
-           "ol",
-           "ul",
-           "image",
+           "ol", "ul", "image",
            # Head tags
-           "auto_discovery_link",
-           "javascript_link",
-           "stylesheet_link",
+           "stylesheet_link", "javascript_link", "auto_discovery_link",
            # Utility functions
            "convert_boolean_attrs",
            ]
@@ -261,8 +246,14 @@ def select(name, selected_values, options, **attrs):
       HINT: You can sort options alphabetically by label via:
       ``sorted(my_options, key=lambda x: x[1])``
 
+    The following options may only be keyword arguments:
+
     * ``multiple`` -- if true, this control will allow multiple
        selections.
+
+    * ``prompt`` -- if specified, an extra option will be prepended to the 
+      list: ("", ``prompt``).  This is intended for those "Please choose ..."
+      pseudo-options.  Its value is "", equivalent to not making a selection.
 
     Any other keyword args will become HTML attributes for the <select>.
 
@@ -274,6 +265,8 @@ def select(name, selected_values, options, **attrs):
         literal(u'<select class="blue" id="cc" name="cc">\\n<option value="VISA">VISA</option>\\n<option selected="selected" value="MasterCard">MasterCard</option>\\n</select>')
         >>> select("cc", ["VISA", "Discover"], [ "VISA", "MasterCard", "Discover" ])
         literal(u'<select name="cc">\\n<option selected="selected" value="VISA">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option selected="selected" value="Discover">Discover</option>\\n</select>')
+        >>> select("currency", None, [["$", "Dollar"], ["DKK", "Kroner"]], prompt="Please choose ...")
+        literal(u'<select name="currency">\\n<option selected="selected" value="">Please choose ...</option>\\n<option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
         
     """
     attrs["name"] = name
@@ -284,9 +277,15 @@ def select(name, selected_values, options, **attrs):
     # Turn a single string or integer into a list
     elif isinstance(selected_values, (basestring, int)):
         selected_values = (selected_values,)
-    opts = []
     # Cast integer values to strings
     selected_values = map(unicode, selected_values)
+    # Canonicalize the options and prepend the prompt
+    options_canon = []
+    prompt = attrs.pop("prompt", None)
+    if prompt:
+        if not isinstance(prompt, literal):
+            prompt = unicode(prompt)
+        options_canon.append(("", prompt))
     for option in options:
         if isinstance(option, basestring):
             value = label = option
@@ -297,11 +296,15 @@ def select(name, selected_values, options, **attrs):
             value = unicode(value)
             if not isinstance(label, literal):
                 label = unicode(label)
-        if value in selected_values:
-            opt = HTML.option(label, value=value, selected="selected")
-        else:
-            opt = HTML.option(label, value=value)
-        opts.append(opt)
+        options_canon.append((value, label))
+    # Make the list of HTML options.
+    opts = []
+    for value, label in options_canon:
+       if value in selected_values:
+           opt = HTML.option(label, value=value, selected="selected")
+       else:
+           opt = HTML.option(label, value=value)
+       opts.append(opt)
     opts_html = "\n".join(opts)
     opts_html = literal("\n%s\n" % opts_html)
     return HTML.select(opts_html, **attrs)
