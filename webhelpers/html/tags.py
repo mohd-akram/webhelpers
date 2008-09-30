@@ -299,67 +299,6 @@ def select(name, selected_values, options, **attrs):
         "\n",
         **attrs)
 
-def radio_group(name, options, values=None, align='horiz', cols=4):
-    return group(name, options, values, align, cols, 'radio')
-
-def checkbox_group(name, options, values=None, align='horiz', cols=4):
-    return group(name, options, values, align, cols, 'checkbox')
-
-def group(name, options, values=None, align='horiz', cols=4, group_type='checkbox'):
-    raise NotImplementedError()
-    if not group_type in ['checkbox','radio']:
-        raise ValueError('invalid group type %s' % group_type)
-    values = _format_values(values)
-    output = u''
-    item_counter = 0
-    if len(options) > 0:
-        if align <> 'table':
-            for option in options:
-                if not isinstance(option, list) and not isinstance(option, tuple):
-                    k = option
-                    v = option
-                else:
-                    k=option[0]
-                    v=option[1]
-                checked=literal(u'')
-                if unicode(v) in values:
-                    checked=literal(" checked")
-                break_ = u''
-                if align == 'vert':
-                    break_=literal(u'<br />')
-                output+=literal('<input type="')+literal(group_type)+literal('" name="')+name+literal('" value="')+literal(unicode(v))+literal('" ')+checked+literal(' />')+unicode(k)+break_+literal('\n')
-                item_counter += 1
-        else:
-            output += literal(u'<table border="0" width="100%" cellpadding="0" cellspacing="0">\n    <tr>\n')
-            counter = -1
-            for option in options:
-                counter += 1
-                if ((counter % cols) == 0) and (counter <> 0):
-                    output += literal(u'    </tr>\n    <tr>\n')
-                output += literal('      <td>')
-                checked=literal(u'')
-                align=literal(u'')
-                if not isinstance(option, list) and not isinstance(option, tuple):
-                    k = option
-                    v = option
-                else:
-                    k=option[0]
-                    v=option[1]
-                if unicode(v) in values:
-                    checked=literal(" checked")
-                output+=literal('<input type="checkbox" name="')+name+literal('" value="')+literal(unicode(v))+literal('" ')+checked+literal(' />')+unicode(k)
-                #output += u'<input type="checkbox" name="%s" value="%s"%s />%s%s'%(name, v, checked, k, align)
-                item_counter += 1
-                output += literal(u'</td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n')
-            counter += 1
-            while (counter % cols):
-                counter += 1
-                output += literal(u'      <td></td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n')
-            output += literal(u'    </tr>\n</table>\n')
-    if not type(output) in [unicode, literal]:
-        raise Exception(type(output))
-    return output[:-1]
-
 
 class ModelTags(object):
     """A nice way to build a form for a database record.
