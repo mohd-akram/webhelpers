@@ -19,7 +19,8 @@ __all__ = [
            # Form tags
            "form", "end_form", 
            "text", "textarea", "hidden", "file", "password", 
-           "checkbox", "radio", "select", "submit",
+           "checkbox", "radio", "submit",
+           "select", "Options", "Option",
            "ModelTags",
            # hyperlinks
            "link_to", "link_to_if", "link_to_unless",
@@ -232,16 +233,15 @@ def select(name, selected_values, options, **attrs):
     * ``selected_values`` -- a string or list of strings or integers giving
       the value(s) that should be preselected.
 
-    * ``options`` -- an iterable of ``(value, label)`` pairs.  The value is 
-      what's returned to the application if this option is chosen; the label
-      is what's shown in the form.  You can also pass an iterable of strings,
-      in which case the labels will be identical to the values.
+    * ``options`` -- an ``Options`` object or iterable of ``(value, label)``
+      pairs.  The label will be shown on the form; the option will be returned
+      to the application if that option is chosen.  If you pass a string or int
+      instead of a 2-tuple, it will be used for both the value and the label.
 
-      CAUTION: this is the opposite order of the old rails helper 
-      ``options_for_select``.  The order was changed because
-      most real-life lists have the value first, including dicts of the form
-      ``{value: label}``.  For those dicts you can simply pass ``D.items()``
-      as this argument.
+      CAUTION: the old rails helper ``options_for_select`` had the label first.
+      The order was reversed because most real-life collections have the value
+      first, including dicts of the form ``{value: label}``.  For those dicts
+      you can simply pass ``D.items()`` as this argument.
 
       HINT: You can sort options alphabetically by label via:
       ``sorted(my_options, key=lambda x: x[1])``
@@ -279,50 +279,85 @@ def select(name, selected_values, options, **attrs):
         selected_values = (selected_values,)
     # Cast integer values to strings
     selected_values = map(unicode, selected_values)
-    # Canonicalize the options and prepend the prompt
-    options_canon = []
+    # Prepend the prompt
     prompt = attrs.pop("prompt", None)
     if prompt:
-        if not isinstance(prompt, literal):
-            prompt = unicode(prompt)
-        options_canon.append(("", prompt))
-    for option in options:
-        if isinstance(option, basestring):
-            value = label = option
-        elif isinstance(option, (int, long)):
-            value = label = unicode(option)
-        else:
-            value, label = option[:2]
-            value = unicode(value)
-            if not isinstance(label, literal):
-                label = unicode(label)
-        options_canon.append((value, label))
-    # Make the list of HTML options.
-    opts = []
-    for value, label in options_canon:
-       if value in selected_values:
-           opt = HTML.option(label, value=value, selected="selected")
+        options = [Option("", prompt)] + list(options)
+    # Canonicalize the options and make the HTML options.
+    if not isinstance(options, Options):
+        options = Options(options)
+    html_options = []
+    for opt in options:
+       if opt.value in selected_values:
+           opt = HTML.option(opt.label, value=opt.value, selected="selected")
        else:
-           opt = HTML.option(label, value=value)
-       opts.append(opt)
-    opts_html = "\n".join(opts)
-    opts_html = literal("\n%s\n" % opts_html)
-    return HTML.select(opts_html, **attrs)
+           opt = HTML.option(opt.label, value=opt.value)
+       html_options.append(opt)
+    return HTML.select(
+        "\n", 
+        literal("\n").join(html_options),
+        "\n",
+        **attrs)
 
-def values_for_options(options):
-    """Given an ``options`` argument for ``select``, return the values.
+def radio_group(name, options, values=None, align='horiz', cols=4):
+    return group(name, options, values, align, cols, 'radio')
 
-       >>> values_for_options(["A", 1, ("b", "B")])
-       ['A', u'1', 'b']
-    """
-    values = []
-    for value in options:
-        if not isinstance(value, (basestring, int, long)):
-            value = value[0]   # Get rid of the label.
-        if not isinstance(value, basestring):
-            value = unicode(value)
-        values.append(value)
-    return values
+def checkbox_group(name, options, values=None, align='horiz', cols=4):
+    return group(name, options, values, align, cols, 'checkbox')
+
+def group(name, options, values=None, align='horiz', cols=4, group_type='checkbox'):
+    if not group_type in ['checkbox','radio']:
+        raise ValueError('invalid group type %s' % group_type)
+    values = _format_values(values)
+    output = u''
+    item_counter = 0
+    if len(options) > 0:
+        if align <> 'table':
+            for option in options:
+                if not isinstance(option, list) and not isinstance(option, tuple):
+                    k = option
+                    v = option
+                else:
+                    k=option[0]
+                    v=option[1]
+                checked=literal(u'')
+                if unicode(v) in values:
+                    checked=literal(" checked")
+                break_ = u''
+                if align == 'vert':
+                    break_=literal(u'<br />')
+                output+=literal('<input type="')+literal(group_type)+literal('" name="')+name+literal('" value="')+literal(unicode(v))+literal('" ')+checked+literal(' />')+unicode(k)+break_+literal('\n')
+                item_counter += 1
+        else:
+            output += literal(u'<table border="0" width="100%" cellpadding="0" cellspacing="0">\n    <tr>\n')
+            counter = -1
+            for option in options:
+                counter += 1
+                if ((counter % cols) == 0) and (counter <> 0):
+                    output += literal(u'    </tr>\n    <tr>\n')
+                output += literal('      <td>')
+                checked=literal(u'')
+                align=literal(u'')
+                if not isinstance(option, list) and not isinstance(option, tuple):
+                    k = option
+                    v = option
+                else:
+                    k=option[0]
+                    v=option[1]
+                if unicode(v) in values:
+                    checked=literal(" checked")
+                output+=literal('<input type="checkbox" name="')+name+literal('" value="')+literal(unicode(v))+literal('" ')+checked+literal(' />')+unicode(k)
+                #output += u'<input type="checkbox" name="%s" value="%s"%s />%s%s'%(name, v, checked, k, align)
+                item_counter += 1
+                output += literal(u'</td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n')
+            counter += 1
+            while (counter % cols):
+                counter += 1
+                output += literal(u'      <td></td>\n      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>\n')
+            output += literal(u'    </tr>\n</table>\n')
+    if not type(output) in [unicode, literal]:
+        raise Exception(type(output))
+    return output[:-1]
 
 
 class ModelTags(object):
@@ -527,7 +562,76 @@ class ModelTags(object):
         """
         if self.id_format is not None and 'id' not in kw:
             kw['id'] = self.id_format % name
+
+
+class Option(object):
+    """An option for an HTML select.
+    
+    A simple container with two attributes, ``.value`` and ``.label``.
+    """
+    __slots__ = ("value", "label")
+
+    def __init__(self, value, label):
+        self.value = value
+        self.label = label
+
+
+class Options(tuple):
+    """A tuple of ``Option`` objects for the ``select()`` helper.
+
+    ``select()`` calls this automatically so you don't have to.  However,
+    you may find it useful for organizing your code, and its methods can be
+    convenient.
+
+    This class has multiple jobs:
+    - Canonicalize the options given to ``select()`` into a consistent format.
+    - Avoid canonicalizing the same data multiple times.  It subclasses tuple
+      rather than a list to guarantee that nonconformant elements won't be 
+      added after canonicalization.
+    - Provide convenience methods to iterate the values and labels separately.
+
+    >>> opts = Options(["A", 1, ("b", "B")])
+    >>> opts
+    Options([(u'A', u'A'), (u'1', u'1'), (u'b', u'B')])
+    >>> list(opts.values())
+    [u'A', u'1', u'b']
+    >>> list(opts.labels())
+    [u'A', u'1', u'B']
+    >>> opts[2].value
+    u'b'
+    >>> opts[2].label
+    u'B'
+    """
+
+    def __new__(class_, options):
+        opts = []
+        for opt in options:
+            if not isinstance(opt, Option):
+                if isinstance(opt, (list, tuple)):
+                    value, label = opt[:2]
+                else:
+                    value = label = opt
+                if not isinstance(value, unicode):
+                    value = unicode(value)
+                if not isinstance(label, unicode):  # Preserves literal.
+                    label = unicode(label)
+                opt = Option(value, label)
+            opts.append(opt)
+        return super(Options, class_).__new__(class_, opts)
+
+    def __repr__(self):
+        classname = self.__class__.__name__
+        data = [(x.value, x.label) for x in self]
+        return "%s(%s)" % (classname, data)
         
+    def values(self):
+        """Iterate the value element of each pair."""
+        return (x.value for x in self)
+
+    def labels(self):
+        """Iterate the label element of each pair."""
+        return (x.label for x in self)
+
 #### Hyperlink tags
 
 def link_to(label, url='', **attrs):

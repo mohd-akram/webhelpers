@@ -4,6 +4,9 @@ WebHelpers ChangeLog
 * nl2br() and format-paragraphs were not literal-safe.
 * New module webhelpers.media for multimedia helpers. Currently contains
   functions to determine the size of images and to choose a scaling factor.
+* Add an Options tuple containing Option objects representing SELECT options.
+* Refactor select() to use an Options tuple containing Option objects.  The
+  public API remains the same.
 
 0.6.1 (7/31/2008)
 * Include a faster version of cgi.escape for use by the literal object.
