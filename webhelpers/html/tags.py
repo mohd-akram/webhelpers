@@ -306,6 +306,7 @@ def checkbox_group(name, options, values=None, align='horiz', cols=4):
     return group(name, options, values, align, cols, 'checkbox')
 
 def group(name, options, values=None, align='horiz', cols=4, group_type='checkbox'):
+    raise NotImplementedError()
     if not group_type in ['checkbox','radio']:
         raise ValueError('invalid group type %s' % group_type)
     values = _format_values(values)
