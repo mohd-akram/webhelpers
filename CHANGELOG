@@ -15,8 +15,10 @@ WebHelpers ChangeLog
   - Options tuple contains Option objects for select/checkbox/radio groups.
     select() now uses this automatically.
   - checkbox() and radio() now have a ``label`` argument.
-* Experimental form layout helpers in webhelpers.html.tags (SUBJECT TO CHANGE
-  OR DELETION):
+* webhelpers.html.form_layout: 
+  - THIS MODULE IS EXPERIMENTAL AND SUBJECT TO CHANGE OR DELETION.  If you
+    want to use it in an application, please copy it to the application.
+    Also see the module docstring for known problems.
   - field() provides a simple <div> based layout for a form widget with its
     label, required-ness, and optional hint and error message.
   - form_legend() returns a message about required fields.
