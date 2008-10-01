@@ -160,13 +160,19 @@ def textarea(name, content="", **attrs):
     return HTML.textarea(content, **attrs)
 
 
-def checkbox(name, value="1", checked=False, **attrs):
+def checkbox(name, value="1", checked=False, label=None, **attrs):
     """Create a check box.
 
-    Options:
+    Arguments:
+    ``name`` -- the widget's name.
 
-    * ``checked`` - If true, the checkbox will be initially checked.
-      This may be specified as a positional argument.
+    ``value`` -- the value to return to the application if the box is checked.
+
+    ``checked`` -- true if the box should be initially checked.
+
+    ``label`` -- a text label to display to the right of the box.
+
+    The following HTML attributes may be set by keyword argument:
 
     * ``disabled`` - If true, checkbox will be grayed out.
 
@@ -187,33 +193,25 @@ def checkbox(name, value="1", checked=False, **attrs):
     if checked:
         attrs["checked"] = "checked"
     convert_boolean_attrs(attrs, ["disabled", "readonly"])
-    return HTML.input(**attrs)
+    widget = HTML.input(**attrs)
+    if label:
+        widget = HTML.label(widget, label)
+    return widget
 
-def _make_safe_id_component(idstring):
-    """Make a string safe for including in an id attribute.
-    
-    The HTML spec says that id attributes 'must begin with 
-    a letter ([A-Za-z]) and may be followed by any number 
-    of letters, digits ([0-9]), hyphens ("-"), underscores 
-    ("_"), colons (":"), and periods (".")'. These regexps
-    are slightly over-zealous, in that they remove colons
-    and periods unnecessarily.
-    
-    Whitespace is transformed into underscores, and then
-    anything which is not a hyphen or a character that 
-    matches \w (alphanumerics and underscore) is removed.
-    
-    """
-    # Transform all whitespace to underscore
-    idstring = re.sub(r'\s', "_", '%s' % idstring)
-    # Remove everything that is not a hyphen or a member of \w
-    idstring = re.sub(r'(?!-)\W', "", idstring).lower()
-    return idstring
-
-def radio(name, value, checked=False, **attrs):
+def radio(name, value, checked=False, label=None, **attrs):
     """Create a radio button.
+
+    Arguments:
+    ``name`` -- the field's name.
+
+    ``value`` -- the value returned to the application if the button is
+    pressed.
+
+    ``checked`` -- true if the button should be initially pressed.
+
+    ``label`` -- a text label to display to the right of the button.
     
-    The id of the radio button will be set to the name + ' ' + value to 
+    The id of the radio button will be set to the name + '_' + value to 
     ensure its uniqueness.  An ``id`` keyword arg overrides this.
     
     To arrange multiple radio buttons in a group, see
@@ -224,7 +222,10 @@ def radio(name, value, checked=False, **attrs):
         attrs["checked"] = "checked"
     if not "id" in attrs:
         attrs["id"] = '%s_%s' % (name, _make_safe_id_component(value))
-    return HTML.input(**attrs)
+    widget = HTML.input(**attrs)
+    if label:
+        widget = HTML.label(widget, label)
+    return widget
 
 
 def submit(name, value, **attrs):
@@ -357,7 +358,7 @@ class ModelTags(object):
         self.date_format = date_format
         self.id_format = id_format
     
-    def checkbox(self, name, **kw):
+    def checkbox(self, name, value='1', label=None, **kw):
         """Build a checkbox field.
         
         The box will be initially checked if the value of the corresponding
@@ -373,7 +374,7 @@ class ModelTags(object):
         self._update_id(name, kw)
         value = kw.pop("value", "1")
         checked = bool(self._get_value(name, kw))
-        return checkbox(name, value, checked, **kw)
+        return checkbox(name, value, checked, label, **kw)
 
     def date(self, name, **kw):
         """Same as text but format a date value into a date string.
@@ -424,7 +425,7 @@ class ModelTags(object):
         value = self._get_value(name, kw)
         return password(name, value, **kw)
 
-    def radio(self, name, checked_value, **kw):
+    def radio(self, name, checked_value, label=None, **kw):
         """Build a radio button.
 
         The radio button will initially be selected if the database value 
@@ -450,7 +451,7 @@ class ModelTags(object):
         if 'id' in kw:
             kw["id"] = '%s_%s' % (kw['id'], _make_safe_id_component(checked_value))
         checked = (value == checked_value)
-        return radio(name, checked_value, checked, **kw)
+        return radio(name, checked_value, checked, label, **kw)
 
     def select(self, name, options, **kw):
         """Build a dropdown select box or list box.
@@ -1061,6 +1062,27 @@ def set_input_attrs(attrs, type, name, value):
     attrs["type"] = type
     attrs["name"] = name
     attrs["value"] = value
+
+def _make_safe_id_component(idstring):
+    """Make a string safe for including in an id attribute.
+    
+    The HTML spec says that id attributes 'must begin with 
+    a letter ([A-Za-z]) and may be followed by any number 
+    of letters, digits ([0-9]), hyphens ("-"), underscores 
+    ("_"), colons (":"), and periods (".")'. These regexps
+    are slightly over-zealous, in that they remove colons
+    and periods unnecessarily.
+    
+    Whitespace is transformed into underscores, and then
+    anything which is not a hyphen or a character that 
+    matches \w (alphanumerics and underscore) is removed.
+    
+    """
+    # Transform all whitespace to underscore
+    idstring = re.sub(r'\s', "_", '%s' % idstring)
+    # Remove everything that is not a hyphen or a member of \w
+    idstring = re.sub(r'(?!-)\W', "", idstring).lower()
+    return idstring
 
 
 if __name__ == "__main__":
