@@ -66,9 +66,9 @@ def field(title, required, widget, hint=None, error=None, **attrs):
     
     >>> field("TITLE", True, "WIDGET")
     literal(u'<div class="field">\\n<label><span class="required">TITLE&nbsp;<span class="required-symbol">*</span></span>\\n<div class="field-body">WIDGET</div></label>\\n</div>')
-    >>> field("TITLE", False, text("notes"))
+    >>> field("TITLE", False, tags.text("notes"))
     literal(u'<div class="field">\\n<label><span class="not-required">TITLE</span>\\n<div class="field-body"><input name="notes" type="text" /></div></label>\\n</div>')
-    >>> field("TITLE", True, text("notes"), "HINT", "ERROR", id="my-id")
+    >>> field("TITLE", True, tags.text("notes"), "HINT", "ERROR", id="my-id")
     literal(u'<div class="field" id="my-id">\\n<label><span class="required">TITLE&nbsp;<span class="required-symbol">*</span></span>\\n<div class="field-body"><span class="error-message">ERROR</span><br />\\n<input name="notes" type="text" /><br />\\n<div class="hint">HINT</div></div></label>\\n</div>')
 
     Here's a sample stylesheet to accompany the fields:
