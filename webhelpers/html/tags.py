@@ -13,6 +13,7 @@ import re
 import urllib
 import urlparse
 
+from webhelpers import containers
 from webhelpers.html import escape, HTML, literal, url_escape
 
 __all__ = [
@@ -21,19 +22,21 @@ __all__ = [
            "text", "textarea", "hidden", "file", "password", 
            "checkbox", "radio", "submit",
            "select", "Options", "Option",
-           "ModelTags",
+           "ModelTags", "field",
            # hyperlinks
            "link_to", "link_to_if", "link_to_unless",
            # Table tags
            "th_sortable",
            # Other non-form tags
-           "ol", "ul", "image",
+           "ol", "ul", "image", "BR",
            # Head tags
            "stylesheet_link", "javascript_link", "auto_discovery_link",
            # Utility functions
            "convert_boolean_attrs",
            ]
 
+NL = literal("\n")
+BR = literal("<br />\n")
 
 def form(url, method="post", multipart=False, **attrs):
     """An open tag for a form that will submit to ``url``.
@@ -297,11 +300,7 @@ def select(name, selected_values, options, **attrs):
        else:
            opt = HTML.option(opt.label, value=opt.value)
        html_options.append(opt)
-    return HTML.select(
-        "\n", 
-        literal("\n").join(html_options),
-        "\n",
-        **attrs)
+    return HTML.select(NL, NL.join(html_options), NL, **attrs)
 
 
 class ModelTags(object):
@@ -580,6 +579,80 @@ class Options(tuple):
     def labels(self):
         """Iterate the label element of each pair."""
         return (x.label for x in self)
+
+def field(label, required, widget, hint=None, error=None, **attrs):
+    """A simple formatter for form fields.
+
+    >>> field("LABEL", True, "WIDGET")
+    literal(u'<div class="field">\\n<label><span class="required">LABEL&nbsp;*</span>\\n<div class="field-body">WIDGET</div></label>\\n</div>')
+    >>> field("LABEL", False, text("notes"))
+    literal(u'<div class="field">\\n<label><span class="not-required">LABEL</span>\\n<div class="field-body"><input name="notes" type="text" /></div></label>\\n</div>')
+    >>> field("LABEL", True, text("notes"), "HINT", "ERROR", id="my-id")
+    literal(u'<div class="field" id="my-id">\\n<label><span class="required">LABEL&nbsp;*</span>\\n<div class="field-body"><span class="error-message">ERROR</span><br />\\n<input name="notes" type="text" /><br />\\n<div class="hint">HINT</div></div></label>\\n</div>')
+
+    Here's a sample stylesheet to accompany the fields:
+
+    =====
+    .field {
+        margin-top: 1em;
+        }
+    .required {
+        color: red;
+        font-weight: bold;
+        }
+    .field-body {
+        margin-left: 1em;
+        }
+    .error-message {
+        color: #cc0000;
+        background-color: #ffeeee;
+        font-size: large;
+        font-weight: bold;
+        font-style: italic;
+        padding: 4px;
+        }
+    .hint {
+        color: #006400;
+        font-style: italic;
+        }
+    =====
+    """
+    if required:
+        label_span = HTML.span(label, literal("&nbsp;*"), class_="required")
+    else:
+        label_span = HTML.span(label, class_="not-required")
+    body = []
+    if error:
+        body.append(HTML.span(error, class_="error-message"))
+        body.append(BR)
+    body.append(widget)
+    if hint:
+        body.append(BR)
+        body.append(HTML.div(hint, class_="hint"))
+    return HTML.div(
+        "\n",
+        HTML.label(label_span,
+            "\n",
+            HTML.div(c=body, class_="field-body"),
+            ),
+        "\n",
+        class_="field", **attrs)
+
+def form_legend(**attrs):
+    """Return a span containing standard form instructions.
+
+    Currently it just explains that "*" means the field is required.
+
+    >>> form_legend()
+    literal(u'<span><span class="required">*</span> = required</span>')
+    >>> form_legend(style="font-size: x-small")
+    literal(u'<span style="font-size: x-small"><span class="required">*</span> = required</span>')
+    """
+    return HTML.span(
+        HTML.span("*", class_="required"),
+        " = required",
+        **attrs)
+
 
 #### Hyperlink tags
 
