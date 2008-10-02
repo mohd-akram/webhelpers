@@ -46,6 +46,9 @@ below; see the docstrings in the source for documentation.
     ``webhelpers.tools.markdown()``.  (If you use this library directly, you
     may have to wrap the results in ``literal()`` to prevent double escaping.)
 
+``media``
+    Helpers for images, PDFs, etc.
+
 ``misc``
     Miscellaneous helpers that are neither text, numeric, container, or date.
 

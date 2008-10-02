@@ -13,16 +13,21 @@ setup(
     description='Web Helpers',
     long_description="""
 Web Helpers is a library of helper functions intended to make writing 
-templates in web applications easier. 
+templates in web applications easier. It's the standard function library for
+Pylons and TurboGears 2.  It also contains a large number of functions not
+specific to the web, including text processing, number formatting, date
+calculations, container objects, etc.
 
-One of the sub-sections of Web Helpers contains a full port of the 
-template helpers that are provided by Ruby on Rails with slight 
-adaptations on occasion to accomodate for Python.
+The current documentation is in the module docstrings.  New web documentation is
+being prepared as part of the Pylons 0.9.7 project.  Questions or feedback about
+WebHelpers can be submitted to the `pylons-discuss
+<http://groups.google.com/group/pylons-discuss>`_ mailing list. 
 
 A few of these helpers require `Routes <http://routes.groovie.org/>`_ 
 to function.
 
-* `Development svn <http://pylonshq.com/svn/WebHelpers/trunk#egg=WebHelpers-dev>`_
+* `Development version <http://www.knowledgetap.com/hg/webhelpers/>`_
+  (Mercurial)
 
 """,
     author='Mike Orr, Ben Bangert, Phil Jenvey',
