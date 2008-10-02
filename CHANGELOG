@@ -4,6 +4,20 @@ WebHelpers ChangeLog
 * nl2br() and format-paragraphs were not literal-safe.
 * New module webhelpers.media for multimedia helpers. Currently contains
   functions to determine the size of images and to choose a scaling factor.
+* Add an Options tuple containing Option objects for select/checkbox/radio
+  groups.  select() now uses this automatically.
+* webhelpers.converters:
+  - New helper transpose().
+* webhelpers.media:
+  - New module for muiltimedia helpers.  Initial functions determine the size
+    of an image and choose a scaling factor.
+* webhelpers.html.tags:
+  - Options tuple contains Option objects for select/checkbox/radio groups.
+    select() now uses this automatically.
+  - checkbox() and radio() now have a ``label`` argument.
+* webhelpers.number:
+  - Population standard deviation contributed by Lorenzo Catucci.
+* webhelpers.html.form_layout: form field layout (PRELIMINARY, UNSTABLE).
 
 0.6.1 (7/31/2008)
 * Include a faster version of cgi.escape for use by the literal object.
