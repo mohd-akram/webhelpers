@@ -245,7 +245,7 @@ Acknowledgements <a id="acknowledgements" />
 
 [Michel Fortin][] has ported to Markdown to PHP.
         """
-        self.assertEqual('\n\n<h2>Introduction</h2>\n<p>Markdown is a text-to-HTML conversion tool for web writers.\n</p>\n\n<h2>Acknowledgements <a id="acknowledgements" /></h2>\n<p>[Michel Fortin][] has ported to Markdown to PHP.\n</p>\n\n\n',
+        self.assertEqual('<h2>Introduction</h2>\n<p>Markdown is a text-to-HTML conversion tool for web writers.\n</p>\n\n<h2>Acknowledgements <a id="acknowledgements" /></h2>\n<p>[Michel Fortin][] has ported to Markdown to PHP.\n</p>',
                          markdown(markdown_text))
 
 if __name__ == '__main__':
