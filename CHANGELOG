@@ -1,13 +1,12 @@
 WebHelpers ChangeLog
 
-0.6.2 (tip)
+0.6.3 (tip)
+
+0.6.2 (10/2/2008)
 * nl2br() and format-paragraphs were not literal-safe.
-* New module webhelpers.media for multimedia helpers. Currently contains
-  functions to determine the size of images and to choose a scaling factor.
-* Add an Options tuple containing Option objects for select/checkbox/radio
-  groups.  select() now uses this automatically.
 * webhelpers.converters:
-  - New helper transpose().
+  - New helper transpose() to turn a 2D list sideways (making the rows columns
+    and the columns rows).
 * webhelpers.markdown:
   - Upgrade to Markdown 1.7.
   - Add a warning about escaping untrusted HTML to 
