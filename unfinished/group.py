@@ -1,19 +1,23 @@
-def checkbox_group(name, selected_values, options, ncol, 
-    direction="horizontal"):
+def checkbox_group(name, selected_values, options, nrows=None):
     """Return a group of checkboxes arranged in columns.  See ``group()``.
     """
-    return group(name, selected_values, options, ncol, direction, "checkbox")
+    return group(name, selected_values, options, nrows, "checkbox")
 
-def radio_group(name, selected_values, options, ncol, 
-    direction="horizontal"):
+def radio_group(name, selected_values, options, nrows):
     """Return a group of radio buttons  arranged in columns.  See ``group()``.
     """
-    return group(name, selected_values, options, ncol, direction, "radio")
+    return group(name, selected_values, options, nrows=None, "radio")
 
 
-def group(name, selected_values, options, ncol, direction="horizontal",
-    input_type="checkbox"):
+def group(name, selected_values, options, nrows=None, input_type="checkbox"):
     """Return a group of checkboxes or radio buttons arranged in columns.
+
+    The current implementation puts the widgets in an 
+    ``<ul class="field-group">``, with a ``<div class="field-group-column">``
+    around each column, and a ``<fieldset class="field-group>"`` around the
+    whole thing.  You'll have to set an appropriate style for this
+    class in order to get the column effect; 
+    e.g., "div.field-group-column {float:left, margin-right: 2em}".
 
     Arguments:
 
@@ -25,12 +29,7 @@ def group(name, selected_values, options, ncol, direction="horizontal",
       ``options`` -- a list of ``Option`` objects or ``(value, label)``
           pairs.  See ``select()`` for the range of legal values.
 
-      ``ncol`` -- number of columns.
-
-      ``direction`` -- "horizontal" or "vertical" (or any string starting
-          with "h" or "v", case insensitive).  In horizontal groups, the second
-          element is to the right of the first.  In vertical groups, the
-          second element is below it.
+      ``nrows`` -- number of rows (i.e., max number of widgets per column).
 
       ``input_type`` -- "checkbox" or "radio".
     """
@@ -38,7 +37,7 @@ def group(name, selected_values, options, ncol, direction="horizontal",
         raise ValueError("input type must be 'checkbox' or 'radio'")
     if not isinstance(options, Options):
         options = Options(options)
-    options_html = [
+    html_options = [
         HTML.label(
             HTML.input(type=input_type, name=name, value=x.value),
             x.label)
