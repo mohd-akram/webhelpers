@@ -19,21 +19,29 @@ _paragraph_rx = re.compile(R"\n{2,}")  # Paragraph break: 2 or more newlines.
 br = HTML.br() + "\n"
 
 def markdown(text, **kwargs):
-    """Format the text with MarkDown formatting.
+    """Format the text to HTML with MarkDown formatting.
     
     This function uses the `Python MarkDown library 
     <http://www.freewisdom.org/projects/python-markdown/>`_
-    which is included with WebHelpers.
-
+    which is included with WebHelpers.  It does not include extensions
+    due to circular import issues.  If you need the footnotes or RSS
+    extensions, use the full Markdown package instead.  
+    
     IMPORTANT:
     If your source text is untrusted and may contain malicious HTML markup,
     pass ``safe_mode="escape"`` to escape it, ``safe_mode="replace"`` to
     replace it with a scolding message, or ``safe_mode="remove"`` to strip it.
+
+    There is at least one other Markdown package for Python.  python-markdown2
+    (http://code.google.com/p/python-markdown2/), which claims to be faster and
+    to handle edge cases better.  WebHelpers is sticking to the original Python
+    Markdown for now for backward compatibility and because nobody has
+    complained about the speed.
     """
     return literal(_markdown.markdown(text, **kwargs))
 
 def textilize(text, sanitize=False):
-    """Format the text with Textile formatting.
+    """Format the text to HTML with Textile formatting.
     
     This function uses the `PyTextile library <http://dealmeida.net/>`_ 
     which is included with WebHelpers.
