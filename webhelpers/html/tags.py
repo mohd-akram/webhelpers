@@ -13,41 +13,30 @@ import re
 import urllib
 import urlparse
 
+from webhelpers import containers
 from webhelpers.html import escape, HTML, literal, url_escape
 
 __all__ = [
            # Form tags
-           "form", 
-           "end_form", 
-           "text", 
-           "textarea", 
-           "hidden", 
-           "file",
-           "password", 
-           "text", 
-           "checkbox", 
-           "radio", 
-           "submit",
-           "select", 
+           "form", "end_form", 
+           "text", "textarea", "hidden", "file", "password", 
+           "checkbox", "radio", "submit",
+           "select", "Options", "Option",
            "ModelTags",
            # hyperlinks
-           "link_to",
-           "link_to_if",
-           "link_to_unless",
+           "link_to", "link_to_if", "link_to_unless",
            # Table tags
            "th_sortable",
            # Other non-form tags
-           "ol",
-           "ul",
-           "image",
+           "ol", "ul", "image", "BR",
            # Head tags
-           "auto_discovery_link",
-           "javascript_link",
-           "stylesheet_link",
+           "stylesheet_link", "javascript_link", "auto_discovery_link",
            # Utility functions
            "convert_boolean_attrs",
            ]
 
+NL = literal("\n")
+BR = literal("<br />\n")
 
 def form(url, method="post", multipart=False, **attrs):
     """An open tag for a form that will submit to ``url``.
@@ -170,23 +159,31 @@ def textarea(name, content="", **attrs):
     return HTML.textarea(content, **attrs)
 
 
-def checkbox(name, value="1", checked=False, **attrs):
+def checkbox(name, value="1", checked=False, label=None, **attrs):
     """Create a check box.
 
-    Options:
+    Arguments:
+    ``name`` -- the widget's name.
 
-    * ``checked`` - If true, the checkbox will be initially checked.
-      This may be specified as a positional argument.
+    ``value`` -- the value to return to the application if the box is checked.
+
+    ``checked`` -- true if the box should be initially checked.
+
+    ``label`` -- a text label to display to the right of the box.
+
+    The following HTML attributes may be set by keyword argument:
 
     * ``disabled`` - If true, checkbox will be grayed out.
 
     * ``readonly`` - If true, the user will not be able to modify the checkbox.
 
+    To arrange multiple checkboxes in a group, see
+    webhelpers.containers.distribute().
+
     Example::
     
         >>> checkbox("hi")
         literal(u'<input name="hi" type="checkbox" value="1" />')
-    
     """
     set_input_attrs(attrs, "checkbox", name, value)
     attrs["type"] = "checkbox"
@@ -195,42 +192,39 @@ def checkbox(name, value="1", checked=False, **attrs):
     if checked:
         attrs["checked"] = "checked"
     convert_boolean_attrs(attrs, ["disabled", "readonly"])
-    return HTML.input(**attrs)
+    widget = HTML.input(**attrs)
+    if label:
+        widget = HTML.label(widget, label)
+    return widget
 
-def _make_safe_id_component(idstring):
-    """Make a string safe for including in an id attribute.
-    
-    The HTML spec says that id attributes 'must begin with 
-    a letter ([A-Za-z]) and may be followed by any number 
-    of letters, digits ([0-9]), hyphens ("-"), underscores 
-    ("_"), colons (":"), and periods (".")'. These regexps
-    are slightly over-zealous, in that they remove colons
-    and periods unnecessarily.
-    
-    Whitespace is transformed into underscores, and then
-    anything which is not a hyphen or a character that 
-    matches \w (alphanumerics and underscore) is removed.
-    
-    """
-    # Transform all whitespace to underscore
-    idstring = re.sub(r'\s', "_", '%s' % idstring)
-    # Remove everything that is not a hyphen or a member of \w
-    idstring = re.sub(r'(?!-)\W', "", idstring).lower()
-    return idstring
-
-def radio(name, value, checked=False, **attrs):
+def radio(name, value, checked=False, label=None, **attrs):
     """Create a radio button.
+
+    Arguments:
+    ``name`` -- the field's name.
+
+    ``value`` -- the value returned to the application if the button is
+    pressed.
+
+    ``checked`` -- true if the button should be initially pressed.
+
+    ``label`` -- a text label to display to the right of the button.
     
-    The id of the radio button will be set to the name + ' ' + value to 
+    The id of the radio button will be set to the name + '_' + value to 
     ensure its uniqueness.  An ``id`` keyword arg overrides this.
     
+    To arrange multiple radio buttons in a group, see
+    webhelpers.containers.distribute().
     """
     set_input_attrs(attrs, "radio", name, value)
     if checked:
         attrs["checked"] = "checked"
     if not "id" in attrs:
         attrs["id"] = '%s_%s' % (name, _make_safe_id_component(value))
-    return HTML.input(**attrs)
+    widget = HTML.input(**attrs)
+    if label:
+        widget = HTML.label(widget, label)
+    return widget
 
 
 def submit(name, value, **attrs):
@@ -247,22 +241,27 @@ def select(name, selected_values, options, **attrs):
     * ``selected_values`` -- a string or list of strings or integers giving
       the value(s) that should be preselected.
 
-    * ``options`` -- an iterable of ``(value, label)`` pairs.  The value is 
-      what's returned to the application if this option is chosen; the label
-      is what's shown in the form.  You can also pass an iterable of strings,
-      in which case the labels will be identical to the values.
+    * ``options`` -- an ``Options`` object or iterable of ``(value, label)``
+      pairs.  The label will be shown on the form; the option will be returned
+      to the application if that option is chosen.  If you pass a string or int
+      instead of a 2-tuple, it will be used for both the value and the label.
 
-      CAUTION: this is the opposite order of the old rails helper 
-      ``options_for_select``.  The order was changed because
-      most real-life lists have the value first, including dicts of the form
-      ``{value: label}``.  For those dicts you can simply pass ``D.items()``
-      as this argument.
+      CAUTION: the old rails helper ``options_for_select`` had the label first.
+      The order was reversed because most real-life collections have the value
+      first, including dicts of the form ``{value: label}``.  For those dicts
+      you can simply pass ``D.items()`` as this argument.
 
       HINT: You can sort options alphabetically by label via:
       ``sorted(my_options, key=lambda x: x[1])``
 
+    The following options may only be keyword arguments:
+
     * ``multiple`` -- if true, this control will allow multiple
        selections.
+
+    * ``prompt`` -- if specified, an extra option will be prepended to the 
+      list: ("", ``prompt``).  This is intended for those "Please choose ..."
+      pseudo-options.  Its value is "", equivalent to not making a selection.
 
     Any other keyword args will become HTML attributes for the <select>.
 
@@ -274,6 +273,8 @@ def select(name, selected_values, options, **attrs):
         literal(u'<select class="blue" id="cc" name="cc">\\n<option value="VISA">VISA</option>\\n<option selected="selected" value="MasterCard">MasterCard</option>\\n</select>')
         >>> select("cc", ["VISA", "Discover"], [ "VISA", "MasterCard", "Discover" ])
         literal(u'<select name="cc">\\n<option selected="selected" value="VISA">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option selected="selected" value="Discover">Discover</option>\\n</select>')
+        >>> select("currency", None, [["$", "Dollar"], ["DKK", "Kroner"]], prompt="Please choose ...")
+        literal(u'<select name="currency">\\n<option selected="selected" value="">Please choose ...</option>\\n<option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
         
     """
     attrs["name"] = name
@@ -284,27 +285,23 @@ def select(name, selected_values, options, **attrs):
     # Turn a single string or integer into a list
     elif isinstance(selected_values, (basestring, int)):
         selected_values = (selected_values,)
-    opts = []
     # Cast integer values to strings
     selected_values = map(unicode, selected_values)
-    for option in options:
-        if isinstance(option, basestring):
-            value = label = option
-        elif isinstance(option, (int, long)):
-            value = label = unicode(option)
-        else:
-            value, label = option[:2]
-            value = unicode(value)
-            if not isinstance(label, literal):
-                label = unicode(label)
-        if value in selected_values:
-            opt = HTML.option(label, value=value, selected="selected")
-        else:
-            opt = HTML.option(label, value=value)
-        opts.append(opt)
-    opts_html = "\n".join(opts)
-    opts_html = literal("\n%s\n" % opts_html)
-    return HTML.select(opts_html, **attrs)
+    # Prepend the prompt
+    prompt = attrs.pop("prompt", None)
+    if prompt:
+        options = [Option("", prompt)] + list(options)
+    # Canonicalize the options and make the HTML options.
+    if not isinstance(options, Options):
+        options = Options(options)
+    html_options = []
+    for opt in options:
+       if opt.value in selected_values:
+           opt = HTML.option(opt.label, value=opt.value, selected="selected")
+       else:
+           opt = HTML.option(opt.label, value=opt.value)
+       html_options.append(opt)
+    return HTML.select(NL, NL.join(html_options), NL, **attrs)
 
 
 class ModelTags(object):
@@ -360,7 +357,7 @@ class ModelTags(object):
         self.date_format = date_format
         self.id_format = id_format
     
-    def checkbox(self, name, **kw):
+    def checkbox(self, name, value='1', label=None, **kw):
         """Build a checkbox field.
         
         The box will be initially checked if the value of the corresponding
@@ -369,11 +366,14 @@ class ModelTags(object):
         The submitted form value will be "1" if the box was checked. If the
         box is unchecked, no value will be submitted. (This is a downside of
         the standard checkbox tag.)
+
+        To display multiple checkboxes in a group, see
+        webhelper.containers.distribute().
         """
         self._update_id(name, kw)
         value = kw.pop("value", "1")
         checked = bool(self._get_value(name, kw))
-        return checkbox(name, value, checked, **kw)
+        return checkbox(name, value, checked, label, **kw)
 
     def date(self, name, **kw):
         """Same as text but format a date value into a date string.
@@ -424,7 +424,7 @@ class ModelTags(object):
         value = self._get_value(name, kw)
         return password(name, value, **kw)
 
-    def radio(self, name, checked_value, **kw):
+    def radio(self, name, checked_value, label=None, **kw):
         """Build a radio button.
 
         The radio button will initially be selected if the database value 
@@ -442,13 +442,15 @@ class ModelTags(object):
         3. If no ID was passed or generated by step (1), the radio button 
            will not have an 'id' attribute.
 
+        To display multiple radio buttons in a group, see
+        webhelper.containers.distribute().
         """
         self._update_id(name, kw)
         value = self._get_value(name, kw)
         if 'id' in kw:
             kw["id"] = '%s_%s' % (kw['id'], _make_safe_id_component(checked_value))
         checked = (value == checked_value)
-        return radio(name, checked_value, checked, **kw)
+        return radio(name, checked_value, checked, label, **kw)
 
     def select(self, name, options, **kw):
         """Build a dropdown select box or list box.
@@ -509,7 +511,77 @@ class ModelTags(object):
         """
         if self.id_format is not None and 'id' not in kw:
             kw['id'] = self.id_format % name
+
+
+class Option(object):
+    """An option for an HTML select.
+    
+    A simple container with two attributes, ``.value`` and ``.label``.
+    """
+    __slots__ = ("value", "label")
+
+    def __init__(self, value, label):
+        self.value = value
+        self.label = label
+
+
+class Options(tuple):
+    """A tuple of ``Option`` objects for the ``select()`` helper.
+
+    ``select()`` calls this automatically so you don't have to.  However,
+    you may find it useful for organizing your code, and its methods can be
+    convenient.
+
+    This class has multiple jobs:
+    - Canonicalize the options given to ``select()`` into a consistent format.
+    - Avoid canonicalizing the same data multiple times.  It subclasses tuple
+      rather than a list to guarantee that nonconformant elements won't be 
+      added after canonicalization.
+    - Provide convenience methods to iterate the values and labels separately.
+
+    >>> opts = Options(["A", 1, ("b", "B")])
+    >>> opts
+    Options([(u'A', u'A'), (u'1', u'1'), (u'b', u'B')])
+    >>> list(opts.values())
+    [u'A', u'1', u'b']
+    >>> list(opts.labels())
+    [u'A', u'1', u'B']
+    >>> opts[2].value
+    u'b'
+    >>> opts[2].label
+    u'B'
+    """
+
+    def __new__(class_, options):
+        opts = []
+        for opt in options:
+            if not isinstance(opt, Option):
+                if isinstance(opt, (list, tuple)):
+                    value, label = opt[:2]
+                else:
+                    value = label = opt
+                if not isinstance(value, unicode):
+                    value = unicode(value)
+                if not isinstance(label, unicode):  # Preserves literal.
+                    label = unicode(label)
+                opt = Option(value, label)
+            opts.append(opt)
+        return super(Options, class_).__new__(class_, opts)
+
+    def __repr__(self):
+        classname = self.__class__.__name__
+        data = [(x.value, x.label) for x in self]
+        return "%s(%s)" % (classname, data)
         
+    def values(self):
+        """Iterate the value element of each pair."""
+        return (x.value for x in self)
+
+    def labels(self):
+        """Iterate the label element of each pair."""
+        return (x.label for x in self)
+
+
 #### Hyperlink tags
 
 def link_to(label, url='', **attrs):
@@ -842,6 +914,27 @@ def set_input_attrs(attrs, type, name, value):
     attrs["type"] = type
     attrs["name"] = name
     attrs["value"] = value
+
+def _make_safe_id_component(idstring):
+    """Make a string safe for including in an id attribute.
+    
+    The HTML spec says that id attributes 'must begin with 
+    a letter ([A-Za-z]) and may be followed by any number 
+    of letters, digits ([0-9]), hyphens ("-"), underscores 
+    ("_"), colons (":"), and periods (".")'. These regexps
+    are slightly over-zealous, in that they remove colons
+    and periods unnecessarily.
+    
+    Whitespace is transformed into underscores, and then
+    anything which is not a hyphen or a character that 
+    matches \w (alphanumerics and underscore) is removed.
+    
+    """
+    # Transform all whitespace to underscore
+    idstring = re.sub(r'\s', "_", '%s' % idstring)
+    # Remove everything that is not a hyphen or a member of \w
+    idstring = re.sub(r'(?!-)\W', "", idstring).lower()
+    return idstring
 
 
 if __name__ == "__main__":

@@ -77,9 +77,10 @@ def median(r):
     high = s[center+1]
     return mean([low, high])
 
-def standard_deviation(r,sample=True):
+def standard_deviation(r, sample=True):
     """Standard deviation, `from the Python Cookbook
     <http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/442412>`_
+    Population mode contributed by Lorenzo Catucci.
 
     Standard deviation shows the variability within a sequence of numbers.
     A small standard deviation shows the numbers are close to the same.  A
@@ -88,12 +89,12 @@ def standard_deviation(r,sample=True):
     used to detect whether the average has been skewed by a few extremely high
     or extremely low values.
 
-    This function as a default does compute the unbiased estimate
+    By default the helper computes the unbiased estimate
     for the population standard deviation, by applying an unbiasing
     factor of sqrt(N/(N-1)).
 
     If you'd rather have the function compute the population standard
-    deviation, set sample=False.
+    deviation, pass ``sample=False``.
 
     The following examples are taken from Wikipedia.
     http://en.wikipedia.org/wiki/Standard_deviation
@@ -113,7 +114,7 @@ def standard_deviation(r,sample=True):
 
     (The results reported in Wikipedia are those expected for whole
     population statistics and therefore are equal to the ones we get
-    by setting sample=False in the later tests)
+    by setting ``sample=False`` in the later tests.)
     
     .. code-block:: pycon
     
@@ -142,13 +143,6 @@ def standard_deviation(r,sample=True):
     and "A" (perfect) to the 0.25% higher than 2 stdevs.  Those between 1 and 2
     stdevs below get a "D" (poor), and those below 2 stdevs... we won't talk
     about them.
-
-    a large standard
-    i.e., how far they deviate from the average.
-    If all numbers are the same, the standard deviation is zero.  If the
-    numbers are widely different from average, no matter whether above or
-    below, the standard deviation will be high.  Most natural distributions
-    follow the bell curve and have a standard deviation of 1.
     """
     avg = average(r)
     sdsq = sum([(i - avg) ** 2 for i in r])

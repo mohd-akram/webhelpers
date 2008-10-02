@@ -495,6 +495,40 @@ def distribute(lis, columns, direction, fill=None):
     else:
         raise ValueError("arg ``direction`` must start with 'H' or 'V'")
 
+def transpose(array):
+    """Turn a list of lists sideways, making columns into rows and vice-versa.
+
+    The result is undefined if the array is not rectangular; i.e., if
+    ``len(array[n]) != len(array[0])``.  You may get an ``IndexError`` or
+    missing items.
+
+    Picture the first example as:
+       A B C    =>    A D
+       D E F          B E
+                      C F
+
+    The source array is row-major (``array[n]`` is a row, ``array[n][0]`` is
+    the first element of the row), which is good for an HTML table which is
+    also row-major (columns within rows).  The result is column-major
+    (``array[n]`` is a column, ``array[n][0]`` is the first row in the column),
+    which is good for a group of <div> columns with <br /> between rows.
+
+    >>> transpose([["A", "B", "C"], ["D", "E", "F"]])
+    [['A', 'D'], ['B', 'E'], ['C', 'F']]
+    >>> transpose([["A", "B"], ["C", "D"], ["E", "F"]])
+    [['A', 'C', 'E'], ['B', 'D', 'F']]
+    >>> transpose([])
+    []
+    """
+    if not array:
+        return []
+    ret = []
+    for c in range(len(array[0])):
+        col = [row[c] for row in array]
+        ret.append(col)
+    return ret
+        
+
 
 if __name__ == "__main__":
     import doctest
