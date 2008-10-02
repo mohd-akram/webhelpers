@@ -20,8 +20,13 @@ Acknowledgements <a id="acknowledgements" />
 
 [Michel Fortin][] has ported to Markdown to PHP.
     """
-    eq_('\n\n<h2>Introduction</h2>\n<p>Markdown is a text-to-HTML conversion tool for web writers.\n</p>\n\n<h2>Acknowledgements <a id="acknowledgements" /></h2>\n<p>[Michel Fortin][] has ported to Markdown to PHP.\n</p>\n\n\n',
-                markdown(markdown_text))
+    eq_(markdown(markdown_text), literal(u'<h2>Introduction</h2>\n<p>Markdown is a text-to-HTML conversion tool for web writers.\n</p>\n\n<h2>Acknowledgements <a id="acknowledgements" /></h2>\n<p>[Michel Fortin][] has ported to Markdown to PHP.\n</p>'))
+
+def test_markdown_embedded_html():
+    markdown_text = 'This text includes <script>Javascript</script> & stuff.'
+    expected = literal(u'<p>This text includes &lt;script&gt;Javascript&lt;/script&gt; &amp; stuff.\n</p>')
+    eq_(markdown(markdown_text, safe_mode="escape"), expected)
+
 
 def test_nl2br():
     eq_(u'A B<br />\nC D<br />\n<br />\nE F', nl2br("A B\nC D\r\n\r\nE F"))

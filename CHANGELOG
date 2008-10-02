@@ -8,6 +8,12 @@ WebHelpers ChangeLog
   groups.  select() now uses this automatically.
 * webhelpers.converters:
   - New helper transpose().
+* webhelpers.markdown:
+  - Upgrade to Markdown 1.7.
+  - Add a warning about escaping untrusted HTML to 
+    webhelpers.html.converters.markdown() docstring.
+  - Did not include Markdown's extensions due to circular import issues.
+    Use the full Markdown package if you want footnotes or RSS.
 * webhelpers.media:
   - New module for muiltimedia helpers.  Initial functions determine the size
     of an image and choose a scaling factor.
