@@ -3,7 +3,7 @@
 """
 import re
 
-from webhelpers.html import HTML, literal, lit_sub
+from webhelpers.html import HTML, escape, literal, lit_sub
 import webhelpers.textile as textile
 import webhelpers.markdown as _markdown
 
@@ -24,7 +24,11 @@ def markdown(text, **kwargs):
     This function uses the `Python MarkDown library 
     <http://www.freewisdom.org/projects/python-markdown/>`_
     which is included with WebHelpers.
-    
+
+    IMPORTANT:
+    If your source text is untrusted and may contain malicious HTML markup,
+    pass ``safe_mode="escape"`` to escape it, ``safe_mode="replace"`` to
+    replace it with a scolding message, or ``safe_mode="remove"`` to strip it.
     """
     return literal(_markdown.markdown(text, **kwargs))
 
