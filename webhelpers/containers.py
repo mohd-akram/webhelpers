@@ -487,8 +487,9 @@ def distribute(lis, columns, direction, fill=None):
         if remainder:
             rows += 1
         table = [[fill] * columns for x in range(rows)]
+        #print table
         for i, elm in enumerate(lis):
-            col, row = divmod(i, columns)
+            col, row = divmod(i, rows)
             #print "i=%d, row=%d, col=%d, element=%r" % (i, row, col, elm)
             table[row][col] = elm
         return table
