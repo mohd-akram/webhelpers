@@ -1,7 +1,13 @@
 WebHelpers ChangeLog
 
-0.6.3 (tip)
+0.6.4 (tip)
+
+0.6.3 (10/7/2008)
 * Bugfix in distribute() found by Randy Syring.
+* New helpers title() and required_legend() in webhelpers.html.tags.
+* New directory webhelpers/public for static files
+* Suggested stylesheet webhelpers/public/stylesheets/webhelpers.css
+  (You'll have to manually add this to your application.)
 
 0.6.2 (10/2/2008)
 * nl2br() and format-paragraphs were not literal-safe.
