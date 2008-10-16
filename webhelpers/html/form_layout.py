@@ -64,11 +64,13 @@ def field(title, required, widget, hint=None, error=None, **attrs):
     this sets the class to "field".
 
     
-    >>> field("TITLE", True, "WIDGET")
+    **** Disabled doctests: not maintained. ***
+
+    >> field("TITLE", True, "WIDGET")
     literal(u'<div class="field">\\n<label><span class="required">TITLE&nbsp;<span class="required-symbol">*</span></span>\\n<div class="field-body">WIDGET</div></label>\\n</div>')
-    >>> field("TITLE", False, tags.text("notes"))
+    >> field("TITLE", False, tags.text("notes"))
     literal(u'<div class="field">\\n<label><span class="not-required">TITLE</span>\\n<div class="field-body"><input name="notes" type="text" /></div></label>\\n</div>')
-    >>> field("TITLE", True, tags.text("notes"), "HINT", "ERROR", id="my-id")
+    >> field("TITLE", True, tags.text("notes"), "HINT", "ERROR", id="my-id")
     literal(u'<div class="field" id="my-id">\\n<label><span class="required">TITLE&nbsp;<span class="required-symbol">*</span></span>\\n<div class="field-body"><span class="error-message">ERROR</span><br />\\n<input name="notes" type="text" /><br />\\n<div class="hint">HINT</div></div></label>\\n</div>')
 
     Here's a sample stylesheet to accompany the fields:
@@ -161,9 +163,11 @@ def form_legend(**attrs):
 
     Currently it just explains that "*" means the field is required.
 
-    >>> form_legend()
+    ***Disabled doctests, not maintained.***
+
+    >> form_legend()
     literal(u'<span class="required"><span class="required-symbol">*</span> = required</span>')
-    >>> form_legend(style="font-size: x-small")
+    >> form_legend(style="font-size: x-small")
     literal(u'<span class="required" style="font-size: x-small"><span class="required-symbol">*</span> = required</span>')
     """
     attrs.setdefault("class_", "required")
