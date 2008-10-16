@@ -19,7 +19,7 @@ class TestModelTagsHelperWithObject(WebHelpersTestCase):
     def test_check_box(self):
         self.assertEqual(
             self.m.checkbox("fulltime"),
-            u'<input checked="checked" name="fulltime" type="checkbox" value="1" />',
+            u'<input checked="checked" id="fulltime" name="fulltime" type="checkbox" value="1" />',
         )
 
     def test_hidden_field(self):
@@ -31,12 +31,12 @@ class TestModelTagsHelperWithObject(WebHelpersTestCase):
     def test_password_field(self):
         self.assertEqual(
             self.m.password('name'), 
-            u'<input name="name" type="password" value="Jim" />'
+            u'<input id="name" name="name" type="password" value="Jim" />'
         )
     def test_file_field(self):
         self.assertEqual(
             self.m.file('name'), 
-            u'<input name="name" type="file" value="Jim" />'
+            u'<input id="name" name="name" type="file" value="Jim" />'
         )
 
     def test_radio_button(self):
@@ -54,18 +54,18 @@ class TestModelTagsHelperWithObject(WebHelpersTestCase):
     def test_text_area(self):
         self.assertEqual(
             self.m.textarea("longtext"),
-            u'<textarea name="longtext">lorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\n</textarea>'
+            u'<textarea id="longtext" name="longtext">lorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\n</textarea>'
         )
 
     def test_text_field(self):
         self.assertEqual(
             self.m.text("name"),
-            u'<input name="name" type="text" value="Jim" />'
+            u'<input id="name" name="name" type="text" value="Jim" />'
         )
     def test_select(self):
         self.assertEqual(
             self.m.select("lang", [("en", "English"), ("de", "German"), ("jp", "Japanese")]),
-            u'<select name="lang">\n<option selected="selected" value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
+            u'<select id="lang" name="lang">\n<option selected="selected" value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
         )
 
 class TestModelTagsHelperWithDict(TestModelTagsHelperWithObject):
@@ -77,7 +77,7 @@ class TestModelTagsHelperWithDict(TestModelTagsHelperWithObject):
     def test_check_box(self):
         self.assertEqual(
             self.m.checkbox("fulltime"),
-            u'<input checked="checked" name="fulltime" type="checkbox" value="1" />',
+            u'<input checked="checked" id="fulltime" name="fulltime" type="checkbox" value="1" />',
         )
 
     def test_hidden_field(self):
@@ -89,12 +89,12 @@ class TestModelTagsHelperWithDict(TestModelTagsHelperWithObject):
     def test_password_field(self):
         self.assertEqual(
             self.m.password('name'), 
-            u'<input name="name" type="password" value="Jim" />'
+            u'<input id="name" name="name" type="password" value="Jim" />'
         )
     def test_file_field(self):
         self.assertEqual(
             self.m.file('name'), 
-            u'<input name="name" type="file" value="Jim" />'
+            u'<input id="name" name="name" type="file" value="Jim" />'
         )
 
     def test_radio_button(self):
@@ -112,18 +112,18 @@ class TestModelTagsHelperWithDict(TestModelTagsHelperWithObject):
     def test_text_area(self):
         self.assertEqual(
             self.m.textarea("longtext"),
-            u'<textarea name="longtext">lorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\n</textarea>'
+            u'<textarea id="longtext" name="longtext">lorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\nlorem ipsum lorem ipsum\n</textarea>'
         )
 
     def test_text_field(self):
         self.assertEqual(
             self.m.text("name"),
-            u'<input name="name" type="text" value="Jim" />'
+            u'<input id="name" name="name" type="text" value="Jim" />'
         )
     def test_select(self):
         self.assertEqual(
             self.m.select("lang", [("en", "English"), ("de", "German"), ("jp", "Japanese")]),
-            u'<select name="lang">\n<option selected="selected" value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
+            u'<select id="lang" name="lang">\n<option selected="selected" value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
         )
 
 class TestModelTagsHelperWithIdGeneration(TestModelTagsHelperWithObject):
@@ -193,7 +193,7 @@ class TestModelTagsHelperWithoutObject(WebHelpersTestCase):
     def test_check_box(self):
         self.assertEqual(
             self.m.checkbox("fulltime"),
-            u'<input name="fulltime" type="checkbox" value="1" />',
+            u'<input id="fulltime" name="fulltime" type="checkbox" value="1" />',
         )
 
     def test_hidden_field(self):
@@ -205,12 +205,12 @@ class TestModelTagsHelperWithoutObject(WebHelpersTestCase):
     def test_password_field(self):
         self.assertEqual(
             self.m.password('name'), 
-            u'<input name="name" type="password" value="" />'
+            u'<input id="name" name="name" type="password" value="" />'
         )
     def test_file_field(self):
         self.assertEqual(
             self.m.file('name'), 
-            u'<input name="name" type="file" value="" />'
+            u'<input id="name" name="name" type="file" value="" />'
         )
 
     def test_radio_button(self):
@@ -228,18 +228,18 @@ class TestModelTagsHelperWithoutObject(WebHelpersTestCase):
     def test_text_area(self):
         self.assertEqual(
             self.m.textarea("longtext"),
-            u'<textarea name="longtext"></textarea>'
+            u'<textarea id="longtext" name="longtext"></textarea>'
         )
 
     def test_text_field(self):
         self.assertEqual(
             self.m.text("name"),
-            u'<input name="name" type="text" value="" />'
+            u'<input id="name" name="name" type="text" value="" />'
         )
     def test_select(self):
         self.assertEqual(
             self.m.select("lang", [("en", "English"), ("de", "German"), ("jp", "Japanese")]),
-            u'<select name="lang">\n<option value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
+            u'<select id="lang" name="lang">\n<option value="en">English</option>\n<option value="de">German</option>\n<option value="jp">Japanese</option>\n</select>'
         )        
 if __name__ == '__main__':
     suite = map(unittest.makeSuite, [

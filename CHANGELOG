@@ -1,6 +1,11 @@
 WebHelpers ChangeLog
 
 0.6.4 (tip)
+* text(), password(), checkbox(), textarea(), and select() have a
+  magic 'id attribute. If not specified it defaults to the name. To suppress
+  the ID entirely, pass ``id=""``.  This is to help set the ID for title().
+  radio() doesn't do this because it generates the ID another way.  hidden()
+  doesn't because hidden fields aren't used with labels.
 
 0.6.3 (10/7/2008)
 * Bugfix in distribute() found by Randy Syring.

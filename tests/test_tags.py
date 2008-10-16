@@ -9,7 +9,7 @@ class TestFormTagHelper(WebHelpersTestCase):
     def test_check_box(self):
         self.assertEqual(
             checkbox("admin"),
-            u'<input name="admin" type="checkbox" value="1" />',
+            u'<input id="admin" name="admin" type="checkbox" value="1" />',
         )
 
     def test_form(self):
@@ -47,7 +47,7 @@ class TestFormTagHelper(WebHelpersTestCase):
     def test_password_field(self):
         self.assertEqual(
             password("password"), 
-            u'<input name="password" type="password" />'
+            u'<input id="password" name="password" type="password" />'
         )
 
     def test_radio_button(self):
@@ -83,58 +83,58 @@ class TestFormTagHelper(WebHelpersTestCase):
 
     def test_submit(self):
         self.assertEqual(
-            u'<input name="commit" type="submit" value="Save changes" />',
+            u'<input id="commit" name="commit" type="submit" value="Save changes" />',
             submit("commit", "Save changes")
         )
 
     def test_text_area(self):
         self.assertEqual(
             textarea("aa", ""),
-            u'<textarea name="aa"></textarea>'
+            u'<textarea id="aa" name="aa"></textarea>'
         )
         self.assertEqual(
             textarea("aa", None),
-            u'<textarea name="aa"></textarea>'
+            u'<textarea id="aa" name="aa"></textarea>'
         )
         self.assertEqual(
             textarea("aa", "Hello!"),
-            u'<textarea name="aa">Hello!</textarea>'
+            u'<textarea id="aa" name="aa">Hello!</textarea>'
         )
 
     def test_text_area_size_string(self):
         self.assertEqual(
             textarea("body", "hello world", cols=20, rows=40),
-            u'<textarea cols="20" name="body" rows="40">hello world</textarea>'
+            u'<textarea cols="20" id="body" name="body" rows="40">hello world</textarea>'
         )
 
     def test_text_field(self):
         self.assertEqual(
             text("title", ""),
-            u'<input name="title" type="text" value="" />'
+            u'<input id="title" name="title" type="text" value="" />'
         )
         self.assertEqual(
             text("title", None),
-            u'<input name="title" type="text" />'
+            u'<input id="title" name="title" type="text" />'
         )
         self.assertEqual(
             text("title", "Hello!"),
-            u'<input name="title" type="text" value="Hello!" />'
+            u'<input id="title" name="title" type="text" value="Hello!" />'
         )
 
     def test_text_field_class_string(self):
         self.assertEqual(
             text( "title", "Hello!", class_= "admin"),
-            u'<input class="admin" name="title" type="text" value="Hello!" />'
+            u'<input class="admin" id="title" name="title" type="text" value="Hello!" />'
         )
 
     def test_boolean_options(self):
         self.assertEqual(     
             checkbox("admin", 1, True, disabled = True, readonly="yes"),
-            u'<input checked="checked" disabled="disabled" name="admin" readonly="readonly" type="checkbox" value="1" />'
+            u'<input checked="checked" disabled="disabled" id="admin" name="admin" readonly="readonly" type="checkbox" value="1" />'
         )
         self.assertEqual(
             checkbox("admin", 1, True, disabled = False, readonly = None),
-            u'<input checked="checked" name="admin" type="checkbox" value="1" />'
+            u'<input checked="checked" id="admin" name="admin" type="checkbox" value="1" />'
         )
 
     

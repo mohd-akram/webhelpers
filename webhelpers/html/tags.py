@@ -91,10 +91,16 @@ def end_form():
     return literal("</form>")
 
 
-def text(name, value=None, **attrs):
+def text(name, value=None, id=None, **attrs):
     """Create a standard text field.
     
     ``value`` is a string, the content of the text field.
+
+    ``id`` is the HTML ID attribute, and should be passed as a keyword
+    argument.  By default the ID is the same as the name filtered through
+    ``_make_safe_id_component()``.  Pass the empty string ("") to suppress the
+    ID attribute entirely.
+
     
     Options:
     
@@ -108,7 +114,8 @@ def text(name, value=None, **attrs):
     The remaining keyword args will be standard HTML attributes for the tag.
     
     """
-    set_input_attrs(attrs, "text", name, value)
+    _set_input_attrs(attrs, "text", name, value)
+    _set_id_attr(attrs, id, name)
     convert_boolean_attrs(attrs, ["disabled"])
     return HTML.input(**attrs)
 
@@ -116,11 +123,11 @@ def text(name, value=None, **attrs):
 def hidden(name, value=None, **attrs):
     """Create a hidden field.
     """
-    set_input_attrs(attrs, "hidden", name, value)
+    _set_input_attrs(attrs, "hidden", name, value)
     return HTML.input(**attrs)
 
 
-def file(name, value=None, **attrs):
+def file(name, value=None, id=None, **attrs):
     """Create a file upload field.
     
     If you are using file uploads then you will also need to set the 
@@ -129,37 +136,40 @@ def file(name, value=None, **attrs):
     Example::
 
         >>> file('myfile')
-        literal(u'<input name="myfile" type="file" />')
+        literal(u'<input id="myfile" name="myfile" type="file" />')
     
     """
-    set_input_attrs(attrs, "file", name, value)
+    _set_input_attrs(attrs, "file", name, value)
+    _set_id_attr(attrs, id, name)
     return HTML.input(**attrs)
 
 
-def password(name, value=None, **attrs):
+def password(name, value=None, id=None, **attrs):
     """Create a password field.
     
-    Takes the same options as text_field.
+    Takes the same options as ``text()``.
     
     """
-    set_input_attrs(attrs, "password", name, value)
+    _set_input_attrs(attrs, "password", name, value)
+    _set_id_attr(attrs, id, name)
     return HTML.input(**attrs)
 
 
-def textarea(name, content="", **attrs):
+def textarea(name, content="", id=None, **attrs):
     """Create a text input area.
     
     Example::
     
         >>> textarea("body", "", cols=25, rows=10)
-        literal(u'<textarea cols="25" name="body" rows="10"></textarea>')
+        literal(u'<textarea cols="25" id="body" name="body" rows="10"></textarea>')
     
     """
     attrs["name"] = name
+    _set_id_attr(attrs, id, name)
     return HTML.textarea(content, **attrs)
 
 
-def checkbox(name, value="1", checked=False, label=None, **attrs):
+def checkbox(name, value="1", checked=False, label=None, id=None, **attrs):
     """Create a check box.
 
     Arguments:
@@ -171,6 +181,12 @@ def checkbox(name, value="1", checked=False, label=None, **attrs):
 
     ``label`` -- a text label to display to the right of the box.
 
+    ``id`` is the HTML ID attribute, and should be passed as a keyword
+    argument.  By default the ID is the same as the name filtered through
+    ``_make_safe_id_component()``.  Pass the empty string ("") to suppress the
+    ID attribute entirely.
+
+d
     The following HTML attributes may be set by keyword argument:
 
     * ``disabled`` - If true, checkbox will be grayed out.
@@ -183,12 +199,10 @@ def checkbox(name, value="1", checked=False, label=None, **attrs):
     Example::
     
         >>> checkbox("hi")
-        literal(u'<input name="hi" type="checkbox" value="1" />')
+        literal(u'<input id="hi" name="hi" type="checkbox" value="1" />')
     """
-    set_input_attrs(attrs, "checkbox", name, value)
-    attrs["type"] = "checkbox"
-    attrs["name"] = name
-    attrs["value"] = value
+    _set_input_attrs(attrs, "checkbox", name, value)
+    _set_id_attr(attrs, id, name)
     if checked:
         attrs["checked"] = "checked"
     convert_boolean_attrs(attrs, ["disabled", "readonly"])
@@ -211,12 +225,13 @@ def radio(name, value, checked=False, label=None, **attrs):
     ``label`` -- a text label to display to the right of the button.
     
     The id of the radio button will be set to the name + '_' + value to 
-    ensure its uniqueness.  An ``id`` keyword arg overrides this.
+    ensure its uniqueness.  An ``id`` keyword arg overrides this.  (Note
+    that this behavior is unique to the ``radio()`` helper.)
     
     To arrange multiple radio buttons in a group, see
     webhelpers.containers.distribute().
     """
-    set_input_attrs(attrs, "radio", name, value)
+    _set_input_attrs(attrs, "radio", name, value)
     if checked:
         attrs["checked"] = "checked"
     if not "id" in attrs:
@@ -227,13 +242,14 @@ def radio(name, value, checked=False, label=None, **attrs):
     return widget
 
 
-def submit(name, value, **attrs):
+def submit(name, value, id=None, **attrs):
     """Create a submit button with the text ``value`` as the caption."""
-    set_input_attrs(attrs, "submit", name, value)
+    _set_input_attrs(attrs, "submit", name, value)
+    _set_id_attr(attrs, id, name)
     return HTML.input(**attrs)
 
 
-def select(name, selected_values, options, **attrs):
+def select(name, selected_values, options, id=None, **attrs):
     """Create a dropdown selection box.
 
     * ``name`` -- the name of this control.
@@ -245,6 +261,12 @@ def select(name, selected_values, options, **attrs):
       pairs.  The label will be shown on the form; the option will be returned
       to the application if that option is chosen.  If you pass a string or int
       instead of a 2-tuple, it will be used for both the value and the label.
+
+    ``id`` is the HTML ID attribute, and should be passed as a keyword
+    argument.  By default the ID is the same as the name.  filtered through
+    ``_make_safe_id_component()``.  Pass the empty string ("") to suppress the
+    ID attribute entirely.
+
 
       CAUTION: the old rails helper ``options_for_select`` had the label first.
       The order was reversed because most real-life collections have the value
@@ -268,15 +290,16 @@ def select(name, selected_values, options, **attrs):
     Examples (call, result)::
     
         >>> select("currency", "$", [["$", "Dollar"], ["DKK", "Kroner"]])
-        literal(u'<select name="currency">\\n<option selected="selected" value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
+        literal(u'<select id="currency" name="currency">\\n<option selected="selected" value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
         >>> select("cc", "MasterCard", [ "VISA", "MasterCard" ], id="cc", class_="blue")
         literal(u'<select class="blue" id="cc" name="cc">\\n<option value="VISA">VISA</option>\\n<option selected="selected" value="MasterCard">MasterCard</option>\\n</select>')
         >>> select("cc", ["VISA", "Discover"], [ "VISA", "MasterCard", "Discover" ])
-        literal(u'<select name="cc">\\n<option selected="selected" value="VISA">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option selected="selected" value="Discover">Discover</option>\\n</select>')
+        literal(u'<select id="cc" name="cc">\\n<option selected="selected" value="VISA">VISA</option>\\n<option value="MasterCard">MasterCard</option>\\n<option selected="selected" value="Discover">Discover</option>\\n</select>')
         >>> select("currency", None, [["$", "Dollar"], ["DKK", "Kroner"]], prompt="Please choose ...")
-        literal(u'<select name="currency">\\n<option selected="selected" value="">Please choose ...</option>\\n<option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
+        literal(u'<select id="currency" name="currency">\\n<option selected="selected" value="">Please choose ...</option>\\n<option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
         
     """
+    _set_id_attr(attrs, id, name)
     attrs["name"] = name
     convert_boolean_attrs(attrs, ["multiple"])
     # Accept None as selected_values meaning that no option is selected
@@ -973,10 +996,16 @@ def convert_boolean_attrs(attrs, bool_attrs):
         elif attrs.has_key(a):
             del attrs[a]
 
-def set_input_attrs(attrs, type, name, value):
+def _set_input_attrs(attrs, type, name, value):
     attrs["type"] = type
     attrs["name"] = name
     attrs["value"] = value
+
+def _set_id_attr(attrs, id, name):
+    if id is None:
+        attrs["id"] = _make_safe_id_component(name)
+    elif id != "":
+        attrs["id"] = id
 
 def _make_safe_id_component(idstring):
     """Make a string safe for including in an id attribute.
