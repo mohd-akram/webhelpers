@@ -479,9 +479,18 @@ class ModelTags(object):
         """Build a dropdown select box or list box.
 
         See the ``select()`` function for the meaning of the arguments.
-        """
+
+        If the corresponding database value is not a list or tuple, it's
+        wrapped in a one-element list.  But if it's "" or ``None``, an empty
+        list is substituted.  This is to accommodate multiselect lists, which
+        may have multiple values selected. """
         self._update_id(name, kw)
         selected_values = self._get_value(name, kw)
+        if not isinstance(selected_values, (list, tuple)):
+            if selected_values in ["", None]:
+                selected_values = []
+            else:
+                selected_values = [selected_values]
         return select(name, selected_values, options, **kw)
 
     def text(self, name, **kw):
