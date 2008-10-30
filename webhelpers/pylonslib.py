@@ -41,9 +41,9 @@ class Flash(object):
         <% messages = h.flash.pop_messages() %>
         % if messages:
         <ul id="flash-messages">
-        % for message in messages:
+            % for message in messages:
             <li>${message}</li>
-        % endfor
+            % endfor
         </ul>
         % endif
 
