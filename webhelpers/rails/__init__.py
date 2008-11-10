@@ -42,9 +42,8 @@ def deprecated(func, message):
     return deprecated_method
 
 redirect_to = deprecated(redirect_to, """\
-webhelpers.rails.redirect_to is deprecated; import redirect_to from routes \
-instead""")
+webhelpers.rails.redirect_to is deprecated; import redirect_to from
+pylons.controllers.util (if using Pylons) or routes instead""")
 
 url_for = deprecated(url_for, """\
-webhelpers.rails.url_for is deprecated; import url_for from \
-pylons.controllers.util (if using Pylons) or from routes""")
+webhelpers.rails.url_for is deprecated; import url_for from routes instead""")
