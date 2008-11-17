@@ -6,7 +6,9 @@ WebHelpers ChangeLog
   the ID entirely, pass ``id=""``.  This is to help set the ID for title().
   radio() doesn't do this because it generates the ID another way.  hidden()
   doesn't because hidden fields aren't used with labels.
-* Bugfix in mt.select(): selected values not being passed as list.
+* Bugfixes in mt.select(): 
+  - selected values not being passed as list.
+  - allow currently-selected value to be a long.
 * Delete experimental module webhelpers.html.form_layout.
 
 0.6.3 (10/7/2008)
