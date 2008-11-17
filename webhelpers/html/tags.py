@@ -298,7 +298,7 @@ def select(name, selected_values, options, id=None, **attrs):
         >>> select("currency", None, [["$", "Dollar"], ["DKK", "Kroner"]], prompt="Please choose ...")
         literal(u'<select id="currency" name="currency">\\n<option selected="selected" value="">Please choose ...</option>\\n<option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
         >>> select("privacy", 3L, [(1, "Private"), (2, "Semi-public"), (3, "Public")])
-        literal(u'<select id="privacy" name="privacy">\\n<option value="1">Private</option>\\n<option value="2">Semi-public</option>\\n<option selected="selected" value="3">Public</option>\\n</select>') 
+        literal(u'<select id="privacy" name="privacy">\\n<option value="1">Private</option>\\n<option value="2">Semi-public</option>\\n<option selected="selected" value="3">Public</option>\\n</select>')
     """
     _set_id_attr(attrs, id, name)
     attrs["name"] = name
