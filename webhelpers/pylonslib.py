@@ -21,7 +21,7 @@ class Flash(object):
 
     Normally you instantiate a Flash object in myapp/lib/helpers.py::
 
-        from webhelpers.tools import Flash as _Flash
+        from webhelpers.pylonslib import Flash as _Flash
         flash = _Flash()
 
     The helpers module is then imported into your controllers and
