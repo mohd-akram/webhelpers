@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
-0.6.4 (tip)
+0.6.5 (tip)
+
+0.6.4 (12/2/2008)
 * text(), password(), checkbox(), textarea(), and select() have a
   magic 'id attribute. If not specified it defaults to the name. To suppress
   the ID entirely, pass ``id=""``.  This is to help set the ID for title().
