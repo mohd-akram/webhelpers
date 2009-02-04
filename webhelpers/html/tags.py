@@ -455,6 +455,11 @@ class ModelTags(object):
         equals ``checked_value``.  On form submission the value will be 
         ``checked_value`` if the button was selected, or ``""`` otherwise.
 
+        In case of a ModelTags object that is created from scratch
+        (e.g. ``new_employee=ModelTags(None)``) the option that should
+        be checked can be set by the 'default' parameter. As in:
+        ``new_employee.radio('status', checked_value=7, default=7)``
+
         The control's 'id' attribute will be modified as follows:
 
         1. If not specified but an 'id_format' was given to the constructor,
