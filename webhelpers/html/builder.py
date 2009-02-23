@@ -94,11 +94,11 @@ About XHTML and HTML
 --------------------
 
 This builder always produces tags that are valid as *both* HTML and
-XHTML.  "Empty" tags (like ``<br>``, ``<input>`` etc) are written like ``<br />``,
-with a space and a trailing ``/``.
+XHTML.  "Empty" tags (like ``<br>``, ``<input>`` etc) are written like
+``<br />``, with a space and a trailing ``/``.
 
-*Only* empty tags get this treatment.  The library will never, for example,
-product ``<script src="..." />``, which is invalid HTML.
+*Only* empty tags get this treatment.  The library will never, for
+example, produce ``<script src="..." />``, which is invalid HTML.
 
 The `W3C HTML validator <http://validator.w3.org/>`_ validates these
 constructs as valid HTML Strict.  It does produce warnings, but those
