@@ -91,8 +91,8 @@ http://workaround.org/cgi-bin/hg-paginate that is known at the
 "Paginate" module on PyPi.
 """
 
-__version__ = '0.3.6'
-__date__ = '2008-05-01'
+__version__ = '0.3.7'
+__date__ = '2009-04-23'
 __author__ = 'Christoph Haas <email@christoph-haas.de>'
 __copyright__ = 'Copyright (c) 2007,2008 Christoph Haas <email@christoph-haas.de>'
 
