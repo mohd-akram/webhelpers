@@ -1,6 +1,11 @@
 WebHelpers ChangeLog
 
 0.6.5 (tip)
+* paginate : convert "_range" and "_pagelink" function to Page class method 
+  so that they can be overridden
+* paginate : pager "onclick" argument use template string value. So, javascript code 
+  can use "partial_url" or "page" value or any. Backward compatibility
+  is considered.
 
 0.6.4 (12/2/2008)
 * text(), password(), checkbox(), textarea(), and select() have a
