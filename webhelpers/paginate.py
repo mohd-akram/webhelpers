@@ -320,7 +320,7 @@ class Page(list):
         # The first page has the number 1!
         try:
             self.page = int(page) # make it int() if we get it as a string
-        except ValueError:
+        except (ValueError, TypeError):
             self.page = 1
 
         self.items_per_page = items_per_page
