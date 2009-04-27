@@ -698,7 +698,7 @@ class Page(list):
         text
             Text to be printed in the A-HREF tag
         """
-        from routes import url_for
+        from routes import url_for, request_config
         # Let the url_for() from webhelpers create a new link and set
         # the variable called 'page_param'. Example:
         # You are in '/foo/bar' (controller='foo', action='bar')
@@ -712,6 +712,16 @@ class Page(list):
         # Add keyword arguments from pager() to the link as parameters
         link_params.update(self.pager_kwargs)
         link_params[self.page_param] = pagenr
+
+        # get the configuration for the current request
+        config = request_config()
+        # if the Mapper is configured with explicit=True we have to fetch
+        # the controller and action manually
+        if config.mapper.explicit:
+            if hasattr(config, 'mapper_dict'):
+                for k, v in config.mapper_dict.items():
+                    link_params[k] = v
+
         # Create the URL to load a certain page
         link_url = url_for(**link_params)
         # Create the URL to load the page area part of a certain page (AJAX updates)
