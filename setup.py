@@ -5,7 +5,7 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-version = '0.6.5'
+version = '1.0b1'
 
 setup(
     name="WebHelpers",
@@ -18,21 +18,20 @@ Pylons and TurboGears 2.  It also contains a large number of functions not
 specific to the web, including text processing, number formatting, date
 calculations, container objects, etc.
 
-The current documentation is in the module docstrings.  New web documentation is
-being prepared as part of the Pylons 0.9.7 project.  Questions or feedback about
-WebHelpers can be submitted to the `pylons-discuss
+Complete documentation is in the docstrings in the source code.  Questions or
+feedback about WebHelpers can be submitted to the `pylons-discuss
 <http://groups.google.com/group/pylons-discuss>`_ mailing list. 
 
 A few of these helpers require `Routes <http://routes.groovie.org/>`_ 
 to function.
 
-* `Development version <http://www.knowledgetap.com/hg/webhelpers/>`_
+* `Development version <http://bitbucket.org/bbangert/webhelpers>`_
   (Mercurial)
 
 """,
     author='Mike Orr, Ben Bangert, Phil Jenvey',
     author_email='sluggoster@gmail.com, ben@groovie.org, pjenvey@groovie.org',
-    url='http://pylonshq.com/WebHelpers/',
+    url='http://pylonshq.com/docs/en/0.9.7/thirdparty/webhelpers',
     packages=find_packages(exclude=['ez_setup']),
     zip_safe=False,
     include_package_data=True,
