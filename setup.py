@@ -13,20 +13,25 @@ setup(
     description='Web Helpers',
     long_description="""
 Web Helpers is a library of helper functions intended to make writing 
-templates in web applications easier. It's the standard function library for
-Pylons and TurboGears 2.  It also contains a large number of functions not
-specific to the web, including text processing, number formatting, date
-calculations, container objects, etc.
+web applications easier. It's the standard function library for
+Pylons and TurboGears 2, but can be used with any web framework.  It also
+contains a large number of functions not specific to the web, including text
+processing, number formatting, date calculations, container objects, etc.
 
-Complete documentation is in the docstrings in the source code.  Questions or
+Complete documentation is in the docstrings in the source code.  
+`Online generated docs
+<http://pylonshq.com/docs/en/0.9.7/thirdparty/webhelpers>`_ are hosted at the
+Pylons site.
+Questions or
 feedback about WebHelpers can be submitted to the `pylons-discuss
 <http://groups.google.com/group/pylons-discuss>`_ mailing list. 
 
-A few of these helpers require `Routes <http://routes.groovie.org/>`_ 
-to function.
+WebHelpers does not have any dependencies; however, certain helpers depend on
+`Routes <http://routes.groovie.org/>`_ or other packages as described in the
+module docstrings.
 
-* `Development version <http://bitbucket.org/bbangert/webhelpers>`_
-  (Mercurial)
+The development version of WebHelpers is at
+<http://bitbucket.org/bbangert/webhelpers>`_ (Mercurial)
 
 """,
     author='Mike Orr, Ben Bangert, Phil Jenvey',
