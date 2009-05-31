@@ -1,4 +1,24 @@
 #!/usr/bin/python
+"""A Javascript minification utility.
+
+Minification squeezes out spaces and other characters not significant to
+Javascript.  This results in a shorter file size.
+
+Usage::
+
+    jsm = JavascriptMinify()
+    jsm.minify(input_file_object, output_file_object)
+
+Or if the Javascript is in a string (slightly less efficient)::
+
+    js = jsmin(js)
+
+This is a wrapper around ``JavscriptMinify``, so if your input and output are
+already file objects, it's more efficient to use ``JavascriptMinify`` directly.
+
+Originally written in C by Douglas Crockford, and ported to Python by Baruch 
+Even.
+"""
 
 # This code is original from jsmin by Douglas Crockford, it was translated to
 # Python by Baruch Even. The original code had the following copyright and
