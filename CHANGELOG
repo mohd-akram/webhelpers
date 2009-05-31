@@ -5,6 +5,9 @@ WebHelpers ChangeLog
 * Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
 * webhelpers.feedgenerator:
   - ``rfc3339_date`` now accepts date objects without crashing.
+* webhelprs.html.tags:
+  - Fix bug in tag helpers when passing 'id_' argument (although 'id' is
+    recommended instead).
 * webhelpers.paginate:
   - convert "_range" and "_pagelink" function to Page class method so that they
     can be overridden
