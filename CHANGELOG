@@ -1,7 +1,8 @@
 WebHelpers ChangeLog
 
 1.0b1 (tip)
-* Delete deprecated subpackages: rails
+* Delete deprecated subpackages: rails.
+* Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
 
 0.6.4 (12/2/2008)
 * text(), password(), checkbox(), textarea(), and select() have a
