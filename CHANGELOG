@@ -6,6 +6,7 @@ WebHelpers ChangeLog
 * webhelpers.feedgenerator:
   - ``rfc3339_date`` now accepts date objects without crashing.
 * webhelprs.html.tags:
+  - New helper ``css_classes()`` to add classes to a tag programmatically.
   - Fix bug in tag helpers when passing 'id_' argument (although 'id' is
     recommended instead).
 * webhelpers.paginate:
