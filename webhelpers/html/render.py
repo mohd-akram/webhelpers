@@ -1,13 +1,13 @@
-# !!! WebHelpers note !!!
-#
 # Contributed by Ian Bicking, downloaded from
 # http://svn.w4py.org/ZPTKit/trunk/ZPTKit/htmlrender.py
 # (Webware for Python framework)
 #
-# Consider adding to webhelpers.html.converters module.  It's so big though
-# that maybe it should be its own webhelpers.html module.  Remove 
-# ``backports.textwrap`` dependency; WebHelpers doesn't support
-# Python < 2.3.  Not sure about encode_unicode(); is it necessary?
+# Changed by Mike Orr:
+# - Add ``render()`` docstring.  Export only that function by default.
+# - Add ``sanitize()`` and ``HTMLSanitizer.
+# - Change code when run as a script.
+# - Don't convert Unicode to text.
+# - Drop textwrap backport.  (WebHelpers doesn't support Python < 2.3.)
 
 
 ##########################################################################
@@ -33,46 +33,65 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ##########################################################################
-"""
-A simple renderer for HTML to plain text.  It knows about <p>, <div>,
-and <blockquote>; all other markup is ignored.
+"""An HTML-to-text formatter and HTML sanitizer.
 
-Paragraphs are collected and wrapped.  Blockquotes are indented.
-Paragraphs cannot be nested at this time.  HTML entities are
-substituted.  Usually this should only be used with markup that is
-intended to be used with this renderer (e.g., ZPTKit.emailtemplate).
-
-The render() function is the easiest way to use this.
+``render()`` and ``sanitize()`` are imported to ``webhelpers.html.converters``,
+and should be used from there.
 """
 
 from HTMLParser import HTMLParser
-try:
-    import textwrap
-except:
-    # Was added in Python 2.3
-    from backports import textwrap
-import re
 import htmlentitydefs
+import re
+import textwrap
 
-DEFAULT_ENCODING = 'utf8'
+__all__ = ["render", "sanitize"]
 
-def render(text, width=70):
+#### Public
+def render(html, width=70):
+    """Render HTML as formatted text, like lynx's "print" function.
+
+    Paragraphs are collected and wrapped at the specified width, default 70.
+    Blockquotes are indented.  Paragraphs cannot be nested at this time.  HTML
+    entities are substituted.  
+    
+    The formatting is simplistic, and works best with HTML that was written
+    for this renderer (e.g., ZPTKit.emailtemplate).
+
+    The output usually ends with two newlines.  If the input ends with a close
+    tag plus any whitespace, the output ends with four newlines.  This is
+    probably a bug.
+    """
     context = Context()
     context.width = width
     context.indent = 0
     p = HTMLRenderer()
-    p.feed(text)
+    p.feed(html)
     p.close()
-    paras = [encode_unicode(para.to_text(context))
+    paras = [para.to_text(context)
              for para in p.paragraphs
              if para]
-    return ''.join(paras)
+    return "".join(paras)
 
-def encode_unicode(s, encoding=None):
-    if isinstance(s, unicode):
-        return s.encode(encoding or DEFAULT_ENCODING)
-    return s
+def sanitize(html):
+    """Strip all HTML tags but leave their content.
 
+    Use this to strip any potentially malicious tags from user input.
+
+    HTML entities are left as-is.
+
+    Usage::
+
+        >>> sanitize(u'I <i>really</i> like steak!')
+        u'I really like steak!'
+        >>> sanitize(u'I <i>really</i> like <script language="javascript">NEFARIOUS CODE</script> steak!')
+        u'I really like NEFARIOUS CODE steak!'
+    """
+    p = HTMLSanitizer()
+    p.feed(html)
+    p.close()
+    return "".join(p.output_chunks)
+
+#### Private (though safe to use)
 class HTMLRenderer(HTMLParser):
 
     block_tags = 'p div blockquote h1 h2 h3 h4 h5 h6 ul ol'.split()
@@ -348,6 +367,16 @@ class Indenter:
 class Context:
     pass
 
+class HTMLSanitizer(HTMLParser):
+
+    def reset(self):
+        HTMLParser.reset(self)
+        self.output_chunks = []
+
+    def handle_data(self, data):
+        self.output_chunks.append(data)
+
+
 def normalize(text):
     text = re.sub(r'\s+', ' ', text)
     # nbsp:
@@ -355,11 +384,14 @@ def normalize(text):
         text = text.replace('\xa0', ' ')
     return text
 
-if __name__ == '__main__':
+#### Main routine
+def main():
+    import os
     import sys
-    args = sys.argv[1:]
-    if not args:
-        input = sys.stdin.read()
-    else:
-        input = open(args[0]).read()
-    print render(input)
+    if len(sys.argv) > 1:
+        prog = os.path.basename(sys.argv[0])
+        sys.exit("usage: %s <HTML_FILE" % prog)
+    html = sys.stdin.read()
+    print render(html)
+
+if __name__ == "__main__":  main()

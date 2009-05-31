@@ -1,17 +1,20 @@
-"""Functions that convert from text markup languages to HTML.
+"""Functions that convert from text markup languages to HTML and back.
 
 """
 import re
 
 from webhelpers.html import HTML, escape, literal, lit_sub
+from webhelpers.html.render import render, sanitize
 import webhelpers.textile as textile
 import webhelpers.markdown as _markdown
 
 __all__ = [
-    "markdown", 
-    "textilize",
-    "nl2br",
     "format_paragraphs",
+    "markdown", 
+    "nl2br",
+    "render",
+    "sanitize", 
+    "textilize",
     ]
 
 _universal_newline_rx = re.compile(R"\r\n|\n|\r")  # All types of newline.
