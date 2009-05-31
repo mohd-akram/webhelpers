@@ -11,6 +11,8 @@ WebHelpers ChangeLog
   - pager "onclick" argument use template string value. So, javascript code can
     use "partial_url" or "page" value or any. Backward compatibility is
     considered.
+* webhelpers.pylonslib:
+  - is now a package.
 
 0.6.4 (12/2/2008)
 * text(), password(), checkbox(), textarea(), and select() have a
