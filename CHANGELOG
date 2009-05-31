@@ -1,10 +1,11 @@
 WebHelpers ChangeLog
 
 1.0b1 (tip)
-* Delete deprecated subpackages: rails.
-* Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
 * webhelpers.feedgenerator:
   - ``rfc3339_date`` now accepts date objects without crashing.
+* webhelpers.html.converters:
+  - New helper ``render()`` formats HTML to text.
+  - New helper ``sanitize()`` strips HTML tags from user input.
 * webhelprs.html.tags:
   - New helper ``css_classes()`` to add classes to a tag programmatically.
   - Fix bug in tag helpers when passing 'id_' argument (although 'id' is
@@ -20,6 +21,8 @@ WebHelpers ChangeLog
   - ``webhelpers.pylonslib.minify`` contains enhanced versions of
     ``javascript_link`` and ``stylesheet_link`` to minify (shrink) files for
     more efficient transmission.  (Untested.)
+* Delete deprecated subpackages: rails.
+* Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
 
 0.6.4 (12/2/2008)
 * text(), password(), checkbox(), textarea(), and select() have a
