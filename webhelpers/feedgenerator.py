@@ -56,7 +56,7 @@ def rfc2822_date(date):
     return email.Utils.formatdate(time.mktime(date.timetuple()))
 
 def rfc3339_date(date):
-    if date.tzinfo:
+    if getattr(date, "tzinfo", False):
         return date.strftime('%Y-%m-%dT%H:%M:%S%z')
     else:
         return date.strftime('%Y-%m-%dT%H:%M:%SZ')
