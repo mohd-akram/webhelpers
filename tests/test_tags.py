@@ -5,6 +5,8 @@ from nose.tools import eq_
 from webhelpers.html import HTML
 from webhelpers.html.tags import *
 
+from util import raises
+
 class TestFormTagHelper(object):
     def test_check_box(self):
         eq_(
@@ -136,6 +138,25 @@ class TestFormTagHelper(object):
             checkbox("admin", 1, True, disabled = False, readonly = None),
             u'<input checked="checked" id="admin" name="admin" type="checkbox" value="1" />'
         )
+
+    def test_multiple_id_bug(self):
+        # Don't set multiple id attributes for 'id_' argument.
+        eq_(
+            text("spam", "pizza", id="eggs"),
+            u'<input id="eggs" name="spam" type="text" value="pizza" />')
+        eq_(
+            text("spam", "pizza", id_="eggs"), 
+            u'<input id="eggs" name="spam" type="text" value="pizza" />')
+        eq_(
+            select("spam", [1,2], [2], id="eggs"),
+            u'<select id="eggs" name="spam">\n<option selected="selected" value="2">2</option>\n</select>')
+        eq_(
+            select("spam", [1,2], [2], id_="eggs"),
+            u'<select id="eggs" name="spam">\n<option selected="selected" value="2">2</option>\n</select>')
+
+    def test_id_and_id_(self):
+        raises(TypeError, text, "spam", "pizza", id="fubar", id_="eggs")
+        
 
     
 class TestLinkHelper(object):

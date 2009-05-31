@@ -1017,7 +1017,11 @@ def _set_input_attrs(attrs, type, name, value):
     attrs["value"] = value
 
 def _set_id_attr(attrs, id, name):
-    if id is None:
+    if "id_" in attrs and id is not None:
+        raise TypeError("can't pass both 'id' and 'id_' arguments")
+    elif "id_" in attrs:
+        attrs["id"] = attrs.pop("id_")
+    elif id is None:
         attrs["id"] = _make_safe_id_component(name)
     elif id != "":
         attrs["id"] = id
