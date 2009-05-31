@@ -3,12 +3,8 @@ WebHelpers
 
 WebHelpers provides functions useful in web applications: generating HTML tags,
 showing results a pageful at a time, etc.  It may be used with any web
-framework or template engine.  
-
-The biggest difference between WebHelpers 0.6 and previous versions is the new
-HTML tag generator with smart escaping, and the new helpers written to replace
-the deprecated ``webhelpers.rails``.  A brief summary of the module layout is
-below; see the docstrings in the source for documentation.
+framework or template engine.  A brief summary of the module layout is below;
+see the docstrings in the source for documentation.
 
 ``constants``
     Country codes, states and provinces.
@@ -58,6 +54,11 @@ below; see the docstrings in the source for documentation.
 ``paginate``
     A tool for letting you view a large sequence a screenful at a time,
     with previous/next links.
+
+``pylonslib``
+    Helpers for the Pylons framework.  These depend on Pylons context variables
+    (request, response, session, etc) or other aspects of Pylons and its
+    dependencies.  Most can be ported to other frameworks with little effort.
     
 ``string24``
     The ``string`` module from Python 2.4.  Useful if you're running on
