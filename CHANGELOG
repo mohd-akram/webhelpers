@@ -1,6 +1,7 @@
 WebHelpers ChangeLog
 
 1.0b1 (tip)
+* Delete deprecated subpackages: rails
 
 0.6.4 (12/2/2008)
 * text(), password(), checkbox(), textarea(), and select() have a
