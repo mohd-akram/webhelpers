@@ -106,7 +106,6 @@ Routes_
     - the regression tests in the source distribution
 
     Currently Pylons_, TurboGears_, and Aquarium_ support Routes.
-    (WebHelpers is not 
 
     A future version of WebHelpers will be compatible with Routes 2, which is
     still in development.
