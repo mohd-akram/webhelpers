@@ -1,20 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # vim: sw=4 ts=4 fenc=utf-8
+"""Minification helpers.
+
+This module provides enhanced versions of the ``javascript_link`` and
+``stylesheet_link`` helpers in ``webhelpers.html.tags``.  These versions add
+three additional arguments:
+
+* **minified**: If true, reduce the file size by squeezing out
+  whitespace and other characters insignificant to the Javascript or CSS syntax.
+* **combined**: If true, concatenate the specified files into one file to
+  reduce page load time.
+* **beaker_kwargs** (dict): arguments to pass to ``beaker_cache``.
+
+Dependencies: ``Pylons``, ``Beaker``, and ``cssutils`` (all available in PyPI).
+
+Contributed by Pedro Algarvio and Domen Kozar <ufs@ufsoft.org>.
+URL: http://docs.fubar.si/minwebhelpers/
+"""
 
 import re
 import os
 import logging
 import StringIO
 
-import cssutils
-from jsmin import JavascriptMinify
-from cssutils.serialize import CSSSerializer
-from pylons import config
-from pylons.decorators.cache import beaker_cache
-
 from webhelpers.html.tags import javascript_link as __javascript_link
 from webhelpers.html.tags import stylesheet_link as __stylesheet_link
+from webhelpers.pylonslib.jsmin import JavascriptMinify
 
 
 __all__ = ['javascript_link', 'stylesheet_link']
@@ -56,6 +68,8 @@ def combine_sources(sources, ext, fs_root):
     return [os.path.join(base, fname)]
 
 def minify_sources(sources, ext, fs_root=''):
+    import cssutils 
+
     if 'js' in ext:
         js_minify = JavascriptMinify()
     minified_sources = []
@@ -77,8 +91,9 @@ def minify_sources(sources, ext, fs_root=''):
             js_minify.minify(open(full_source, 'r'), f_minified_source)
         # minify css source
         if 'css' in ext:
+            serializer = get_serializer()
             sheet = cssutils.parseFile(full_source)
-            sheet.setSerializer(CSSUtilsMinificationSerializer())
+            sheet.setSerializer(serializer)
             cssutils.ser.prefs.useMinified()
             f_minified_source.write(sheet.cssText)
 
@@ -88,6 +103,9 @@ def minify_sources(sources, ext, fs_root=''):
     return minified_sources
 
 def base_link(ext, *sources, **options):
+    from pylons import config
+    from pylons.decorators.cache import beaker_cache
+
     combined = options.pop('combined', False)
     minified = options.pop('minified', False)
     beaker_options = options.pop('beaker_kwargs', False)
@@ -115,42 +133,57 @@ def stylesheet_link(*sources, **options):
     return base_link('css', *sources, **options)
 
 
-class CSSUtilsMinificationSerializer(CSSSerializer):
-    def __init__(self, prefs=None):
-        CSSSerializer.__init__(self, prefs)
+_serializer_class = None
 
-    def do_css_CSSStyleDeclaration(self, style, separator=None):
-        try:
-            color = style.getPropertyValue('color')
-            if color and color is not u'':
-                color = self.change_colors(color)
-                style.setProperty('color', color)
-        except:
-            pass
-        return re.sub(r'0\.([\d])+', r'.\1',
-                      re.sub(r'(([^\d][0])+(px|em)+)+', r'\2',
-                      CSSSerializer.do_css_CSSStyleDeclaration(self, style,
-                                                               separator)))
+def get_serializer():
+    # This is in a function to prevent a global import of ``cssutils``,
+    # which is not a WebHelpers dependency.
+    # The class is cached in a global variable so that it will be 
+    # compiled only once.
 
-    def change_colors(self, color):
-        colours = {
-            'black': '#000000',
-            'fuchia': '#ff00ff',
-            'yellow': '#ffff00',
-            '#808080': 'gray',
-            '#008000': 'green',
-            '#800000': 'maroon',
-            '#000800': 'navy',
-            '#808000': 'olive',
-            '#800080': 'purple',
-            '#ff0000': 'red',
-            '#c0c0c0': 'silver',
-            '#008080': 'teal'
-        }
-        if color.lower() in colours:
-            color = colours[color.lower()]
+    import cssutils
 
-        if color.startswith('#') and len(color) == 7:
-            if color[1]==color[2] and color[3]==color[4] and color[5]==color[6]:
-                color = '#%s%s%s' % (color[1], color[3], color[5])
-        return color
+    global _serializer_class
+    if not _serializer_class:
+        class CSSUtilsMinificationSerializer(cssutils.CSSSerializer):
+            def __init__(self, prefs=None):
+                CSSSerializer.__init__(self, prefs)
+
+            def do_css_CSSStyleDeclaration(self, style, separator=None):
+                try:
+                    color = style.getPropertyValue('color')
+                    if color and color is not u'':
+                        color = self.change_colors(color)
+                        style.setProperty('color', color)
+                except:
+                    pass
+                return re.sub(r'0\.([\d])+', r'.\1',
+                              re.sub(r'(([^\d][0])+(px|em)+)+', r'\2',
+                              cssutils.CSSSerializer.do_css_CSSStyleDeclaration(
+                                  self, style, separator)))
+
+            def change_colors(self, color):
+                colours = {
+                    'black': '#000000',
+                    'fuchia': '#ff00ff',
+                    'yellow': '#ffff00',
+                    '#808080': 'gray',
+                    '#008000': 'green',
+                    '#800000': 'maroon',
+                    '#000800': 'navy',
+                    '#808000': 'olive',
+                    '#800080': 'purple',
+                    '#ff0000': 'red',
+                    '#c0c0c0': 'silver',
+                    '#008080': 'teal'
+                }
+                if color.lower() in colours:
+                    color = colours[color.lower()]
+
+                if color.startswith('#') and len(color) == 7:
+                    if color[1]==color[2] and color[3]==color[4] and color[5]==color[6]:
+                        color = '#%s%s%s' % (color[1], color[3], color[5])
+                return color
+        # End of class CSSUtilsMinificationSerializer
+        _serializer_class = CSSUtilsMinificationSerializer
+    return _serializer_class()
