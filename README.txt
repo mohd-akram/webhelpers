@@ -78,32 +78,6 @@ below; see the docstrings in the source for documentation.
 ``util``
     Miscellaneous functions.
 
-The following modules/packages are deprecated and will be removed in a future
-version of WebHelpers:
-
-``commands``
-    Contains a ``distutils`` plugin to compress Javascript/CSS for
-    transmission. This version is buggy; the WebHelpers developers are
-    investigating alternatives.
-
-``hinclude``
-    Client-side include via Javascript. Deprecated because it uses 
-    ``webhelpers.rails`` and is trivial.
-
-``htmlgen``
-    Older version of ``webhelpers.html``, without smart escaping.
-
-``pagination``
-    Older version of ``webhelpers.paginate``.
-
-``rails``
-    A large number of functions ported from Rails.  Most of these have been
-    reimplemented in other WebHelpers modules to take advantage of
-    ``webhelpers.html`` and smart escaping.  (Some of the rails functions are
-    prone to double HTML escaping.)  Includes the "Prototype" and
-    "Scriptaculous" Javascript libraries, which are unsupported.  This package
-    depends on Routes.
-
 WebHelpers is package aimed at providing helper functions for use within web
 applications.
 
