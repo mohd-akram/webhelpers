@@ -13,6 +13,9 @@ WebHelpers ChangeLog
     considered.
 * webhelpers.pylonslib:
   - is now a package.
+  - ``webhelpers.pylonslib.minify`` contains enhanced versions of
+    ``javascript_link`` and ``stylesheet_link`` to minify (shrink) files for
+    more efficient transmission.  (Untested.)
 
 0.6.4 (12/2/2008)
 * text(), password(), checkbox(), textarea(), and select() have a
