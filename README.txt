@@ -103,8 +103,6 @@ Routes_
     - webhelpers.html.tags (required only for ``javascript_link()``,
       ``stylesheet_link()``, or ``auto_discovery_link()`` functions).
     - webhelpers.paginate
-    - webhelpers.pagination
-    - webhelpers.rails
     - the regression tests in the source distribution
 
     Currently Pylons_, TurboGears_, and Aquarium_ support Routes.
@@ -115,8 +113,9 @@ Routes_
 
 Pylons_
 
-    The ``Flash`` class in ``webhelpers.session`` imports ``pylons.session``.
-    The class can easily be reimplemented in another web framework.
+    The helpers in ``webhelpers.pylonslib`` depend on Pylons context variables
+    (e.g., ``pylons.session``).  They can easily be reimplemented in another
+    web framework if desired.
 
 .. _Routes:  http://routes.groovie.org/
 .. _Pylons:  http://pylonshq.com/
