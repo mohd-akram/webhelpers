@@ -91,8 +91,8 @@ http://workaround.org/cgi-bin/hg-paginate that is known at the
 "Paginate" module on PyPi.
 """
 
-__version__ = '0.3.6'
-__date__ = '2008-05-01'
+__version__ = '0.3.7'
+__date__ = '2009-04-23'
 __author__ = 'Christoph Haas <email@christoph-haas.de>'
 __copyright__ = 'Copyright (c) 2007,2008 Christoph Haas <email@christoph-haas.de>'
 
@@ -320,7 +320,7 @@ class Page(list):
         # The first page has the number 1!
         try:
             self.page = int(page) # make it int() if we get it as a string
-        except ValueError:
+        except (ValueError, TypeError):
             self.page = 1
 
         self.items_per_page = items_per_page
@@ -539,145 +539,53 @@ class Page(list):
 
         onclick (optional)
             This paramter is a string containing optional Javascript code
-            that will used as the 'onclick' action of each pager link.
-            Use '%s' in your string where the URL linking to the desired
-            page will be inserted. This can be used to enhance your pager
-            with AJAX actions loading another page into a DOM object.
-            Note that the URL to the destination page contains a 'partial_param'
-            parameter so that you can distinguish between AJAX requests
-            (just refreshing the paginated area of your page) and full
-            requests (loading the whole new page).
+            that will be used as the 'onclick' action of each pager link.
+            It can be used to enhance your pager with AJAX actions loading another 
+            page into a DOM object. 
+
+            In this string the variable '$partial_url' will be replaced by
+            the URL linking to the desired page with an added 'partial=1'
+            parameter (or whatever you set 'partial_param' to).
+            In addition the '$page' variable gets replaced by the
+            respective page number.
+
+            Note that the URL to the destination page contains a 'partial_param' 
+            parameter so that you can distinguish between AJAX requests (just 
+            refreshing the paginated area of your page) and full requests (loading 
+            the whole new page).
+
+            [Backward compatibility: you can use '%s' instead of '$partial_url']
 
             jQuery example:
-                "$('#my-page-area').load('%s'); return false;"
+                "$('#my-page-area').load('$partial_url'); return false;"
 
             Yahoo UI example:
-                "YAHOO.util.Connect.asyncRequest('GET','%s',{
+                "YAHOO.util.Connect.asyncRequest('GET','$partial_url',{
                     success:function(o){YAHOO.util.Dom.get('#my-page-area').innerHTML=o.responseText;}
                     },null); return false;"
 
             scriptaculous example:
-                "new Ajax.Updater('#my-page-area', '%s',
+                "new Ajax.Updater('#my-page-area', '$partial_url',
                     {asynchronous:true, evalScripts:true}); return false;"
 
             ExtJS example:
-                "Ext.get('#my-page-area').load({url:'%s'}); return false;"
+                "Ext.get('#my-page-area').load({url:'$partial_url'}); return false;"
+            
+            Custom example:
+                "my_load_page($page)"
 
         Additional keyword arguments are used as arguments in the links.
         Otherwise the link will be created with url_for() which points 
         to the page you are currently displaying.
         """
-        def _pagerlink(pagenr, text):
-            """
-            Create a URL that links to another page using url_for().
-
-            Parameters:
-                
-            pagenr
-                Number of the page that the link points to
-
-            text
-                Text to be printed in the A-HREF tag
-            """
-            from routes import url_for
-            # Let the url_for() from webhelpers create a new link and set
-            # the variable called 'page_param'. Example:
-            # You are in '/foo/bar' (controller='foo', action='bar')
-            # and you want to add a parameter 'pagenr'. Then you
-            # call the navigator method with page_param='pagenr' and
-            # the url_for() call will create a link '/foo/bar?pagenr=...'
-            # with the respective page number added.
-            link_params = {}
-            # Use the instance kwargs from Page.__init__ as URL parameters
-            link_params.update(self.kwargs)
-            # Add keyword arguments from pager() to the link as parameters
-            link_params.update(kwargs)
-            link_params[page_param] = pagenr
-            # Create the URL to load a certain page
-            link_url = url_for(**link_params)
-            # Create the URL to load the page area part of a certain page (AJAX updates)
-            link_params[partial_param] = 1
-            partial_url = url_for(**link_params)
-
-            if onclick: # create link with onclick action for AJAX
-                onclick_action = onclick % (partial_url,)
-                return HTML.a(text, href=link_url, onclick=onclick_action, **link_attr)
-            else: # return static link
-                return HTML.a(text, href=link_url, **link_attr)
-
-        #------- end of def _pagerlink
-
-        def _range(regexp_match):
-            """
-            Return range of linked pages (e.g. '1 2 [3] 4 5 6 7 8').
-
-            Arguments:
-                
-            regexp_match
-                A "re" (regular expressions) match object containing the
-                radius of linked pages around the current page in
-                regexp_match.group(1) as a string
-
-            This funtion is supposed to be called as a callable in 
-            re.sub.
-            
-            """
-            radius = int(regexp_match.group(1))
-
-            # Compute the first and last page number within the radius
-            # e.g. '1 .. 5 6 [7] 8 9 .. 12'
-            # -> leftmost_page  = 5
-            # -> rightmost_page = 9
-            leftmost_page = max(self.first_page, (self.page-radius))
-            rightmost_page = min(self.last_page, (self.page+radius))
-
-            nav_items = []
-
-            # Create a link to the first page (unless we are on the first page
-            # or there would be no need to insert '..' spacers)
-            if self.page != self.first_page and self.first_page < leftmost_page:
-                nav_items.append( _pagerlink(self.first_page, self.first_page) )
-
-            # Insert dots if there are pages between the first page
-            # and the currently displayed page range
-            if leftmost_page - self.first_page > 1:
-                # Wrap in a SPAN tag if nolink_attr is set
-                text = '..'
-                if dotdot_attr:
-                    text = HTML.span(c=text, **dotdot_attr)
-                nav_items.append(text)
-
-            for thispage in xrange(leftmost_page, rightmost_page+1):
-                # Hilight the current page number and do not use a link
-                if thispage == self.page:
-                    text = '%s' % (thispage,)
-                    # Wrap in a SPAN tag if nolink_attr is set
-                    if curpage_attr:
-                        text = HTML.span(c=text, **curpage_attr)
-                    nav_items.append(text)
-                # Otherwise create just a link to that page
-                else:
-                    text = '%s' % (thispage,)
-                    nav_items.append( _pagerlink(thispage, text) )
-
-            # Insert dots if there are pages between the displayed
-            # page numbers and the end of the page range
-            if self.last_page - rightmost_page > 1:
-                text = '..'
-                # Wrap in a SPAN tag if nolink_attr is set
-                if dotdot_attr:
-                    text = HTML.span(c=text, **dotdot_attr)
-                nav_items.append(text)
-
-            # Create a link to the very last page (unless we are on the last
-            # page or there would be no need to insert '..' spacers)
-            if self.page != self.last_page and rightmost_page < self.last_page:
-                nav_items.append( _pagerlink(self.last_page, self.last_page) )
-
-            return separator.join(nav_items)
-
-        #------- end of def _range
-
+        self.curpage_attr = curpage_attr
+        self.separator = separator
+        self.pager_kwargs = kwargs
+        self.page_param = page_param
+        self.partial_param = partial_param
+        self.onclick = onclick
+        self.link_attr = link_attr
+        self.dotdot_attr = dotdot_attr
 
         # Don't show navigator if there is no more than one page
         if self.page_count == 0 or (self.page_count == 1 and not show_if_single_page):
@@ -685,7 +593,7 @@ class Page(list):
 
 
         # Replace ~...~ in token format by range of pages
-        result = re.sub(r'~(\d+)~', _range, format)
+        result = re.sub(r'~(\d+)~', self._range, format)
 
         # Interpolate '%' variables
         result = Template(result).safe_substitute({
@@ -698,14 +606,136 @@ class Page(list):
             'last_item': self.last_item,
             'item_count': self.item_count,
             'link_first': self.page>self.first_page and \
-                    _pagerlink(self.first_page, symbol_first) or '',
+                    self._pagerlink(self.first_page, symbol_first) or '',
             'link_last': self.page<self.last_page and \
-                    _pagerlink(self.last_page, symbol_last) or '',
+                    self._pagerlink(self.last_page, symbol_last) or '',
             'link_previous': self.previous_page and \
-                    _pagerlink(self.previous_page, symbol_previous) or '',
+                    self._pagerlink(self.previous_page, symbol_previous) or '',
             'link_next': self.next_page and \
-                    _pagerlink(self.next_page, symbol_next) or ''
+                    self._pagerlink(self.next_page, symbol_next) or ''
         })
 
         return literal(result)
 
+    def _range(self, regexp_match):
+        """
+        Return range of linked pages (e.g. '1 2 [3] 4 5 6 7 8').
+
+        Arguments:
+            
+        regexp_match
+            A "re" (regular expressions) match object containing the
+            radius of linked pages around the current page in
+            regexp_match.group(1) as a string
+
+        This funtion is supposed to be called as a callable in 
+        re.sub.
+        
+        """
+        radius = int(regexp_match.group(1))
+
+        # Compute the first and last page number within the radius
+        # e.g. '1 .. 5 6 [7] 8 9 .. 12'
+        # -> leftmost_page  = 5
+        # -> rightmost_page = 9
+        leftmost_page = max(self.first_page, (self.page-radius))
+        rightmost_page = min(self.last_page, (self.page+radius))
+
+        nav_items = []
+
+        # Create a link to the first page (unless we are on the first page
+        # or there would be no need to insert '..' spacers)
+        if self.page != self.first_page and self.first_page < leftmost_page:
+            nav_items.append( self._pagerlink(self.first_page, self.first_page) )
+
+        # Insert dots if there are pages between the first page
+        # and the currently displayed page range
+        if leftmost_page - self.first_page > 1:
+            # Wrap in a SPAN tag if nolink_attr is set
+            text = '..'
+            if self.dotdot_attr:
+                text = HTML.span(c=text, **self.dotdot_attr)
+            nav_items.append(text)
+
+        for thispage in xrange(leftmost_page, rightmost_page+1):
+            # Hilight the current page number and do not use a link
+            if thispage == self.page:
+                text = '%s' % (thispage,)
+                # Wrap in a SPAN tag if nolink_attr is set
+                if self.curpage_attr:
+                    text = HTML.span(c=text, **self.curpage_attr)
+                nav_items.append(text)
+            # Otherwise create just a link to that page
+            else:
+                text = '%s' % (thispage,)
+                nav_items.append( self._pagerlink(thispage, text) )
+
+        # Insert dots if there are pages between the displayed
+        # page numbers and the end of the page range
+        if self.last_page - rightmost_page > 1:
+            text = '..'
+            # Wrap in a SPAN tag if nolink_attr is set
+            if self.dotdot_attr:
+                text = HTML.span(c=text, **self.dotdot_attr)
+            nav_items.append(text)
+
+        # Create a link to the very last page (unless we are on the last
+        # page or there would be no need to insert '..' spacers)
+        if self.page != self.last_page and rightmost_page < self.last_page:
+            nav_items.append( self._pagerlink(self.last_page, self.last_page) )
+
+        return self.separator.join(nav_items)
+
+    def _pagerlink(self, pagenr, text):
+        """
+        Create a URL that links to another page using url_for().
+
+        Parameters:
+            
+        pagenr
+            Number of the page that the link points to
+
+        text
+            Text to be printed in the A-HREF tag
+        """
+        from routes import url_for, request_config
+        # Let the url_for() from webhelpers create a new link and set
+        # the variable called 'page_param'. Example:
+        # You are in '/foo/bar' (controller='foo', action='bar')
+        # and you want to add a parameter 'pagenr'. Then you
+        # call the navigator method with page_param='pagenr' and
+        # the url_for() call will create a link '/foo/bar?pagenr=...'
+        # with the respective page number added.
+        link_params = {}
+        # Use the instance kwargs from Page.__init__ as URL parameters
+        link_params.update(self.kwargs)
+        # Add keyword arguments from pager() to the link as parameters
+        link_params.update(self.pager_kwargs)
+        link_params[self.page_param] = pagenr
+
+        # get the configuration for the current request
+        config = request_config()
+        # if the Mapper is configured with explicit=True we have to fetch
+        # the controller and action manually
+        if config.mapper.explicit:
+            if hasattr(config, 'mapper_dict'):
+                for k, v in config.mapper_dict.items():
+                    link_params[k] = v
+
+        # Create the URL to load a certain page
+        link_url = url_for(**link_params)
+        # Create the URL to load the page area part of a certain page (AJAX updates)
+        link_params[self.partial_param] = 1
+        partial_url = url_for(**link_params)
+
+        if self.onclick: # create link with onclick action for AJAX
+            try: # if '%s' is used in the 'onclick' parameter (backwards compatibility)
+                onclick_action = self.onclick % (partial_url,)
+            except TypeError:
+                onclick_action = Template(self.onclick).safe_substitute({
+                  "partial_url": partial_url,
+                  "page": pagenr
+                })
+            return HTML.a(text, href=link_url, onclick=onclick_action, **self.link_attr)
+        else: # return static link
+            return HTML.a(text, href=link_url, **self.link_attr)
