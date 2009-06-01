@@ -18,6 +18,10 @@ WebHelpers ChangeLog
     considered.
 * webhelpers.pylonslib:
   - is now a package.
+  - The ``Flash`` class now accepts severity categories, thanks to Wichert
+    Akkerman.  The docstring shows how to set up auto-fading messages using
+    Javascript a la Mac OSX's "Growl" feature.  This is backward compatible 
+    although you should delete existing sessions when upgrading from 0.6.x.
   - ``webhelpers.pylonslib.minify`` contains enhanced versions of
     ``javascript_link`` and ``stylesheet_link`` to minify (shrink) files for
     more efficient transmission.  (Untested.)
