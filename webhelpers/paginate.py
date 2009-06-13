@@ -260,7 +260,8 @@ class Page(list):
         
     """
     def __init__(self, collection, page=1, items_per_page=20,
-        item_count=None, sqlalchemy_session=None, *args, **kwargs):
+        item_count=None, sqlalchemy_session=None, presliced_list=False,
+        *args, **kwargs):
         """Create a "Page" instance.
 
         Parameters:
@@ -281,6 +282,11 @@ class Page(list):
             If this parameter is not given then the paginator will count
             the number of elements in the collection every time a "Page"
             is created. Giving this parameter will speed up things.
+        
+        presliced_list (optional)
+            Indicates whether the collection, when a list, has already
+            been sliced for the current viewing page, and thus should
+            *not* be sliced again.
 
         sqlalchemy_session (optional)
             If you want to use an SQLAlchemy (0.4) select object as a
@@ -354,7 +360,10 @@ class Page(list):
             # We use list() so that the items on the current page are retrieved
             # only once. Otherwise it would run the actual SQL query everytime
             # .items would be accessed.
-            self.items = list(self.collection[self.first_item-1:self.last_item])
+            if presliced_list:
+                self.items = self.collection
+            else:
+                self.items = list(self.collection[self.first_item-1:self.last_item])
 
             # Links to previous and next page
             if self.page > self.first_page:
