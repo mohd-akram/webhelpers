@@ -10,6 +10,8 @@ WebHelpers ChangeLog
   - New helper ``css_classes()`` to add classes to a tag programmatically.
   - Fix bug in tag helpers when passing 'id_' argument (although 'id' is
     recommended instead).
+  - Add OptionGroup class and optgroup support to select().  Patch by
+    Alexandre Bourget.
 * webhelpers.paginate:
   - convert "_range" and "_pagelink" function to Page class method so that they
     can be overridden
