@@ -84,13 +84,13 @@ class Flash(object):
     Message categories
     ==================
 
-    WebHelpers 1.0 adds message categories.  These work like severity levels
-    in Python's logging system.  The standard categories are "*warning*",
-    "*notice*", "*error*", and "*success*", with the default being "*notice*".
-    The category is available in the message's ``.category`` attribute, and is
-    normally used to set the container's CSS class.  Unlike the logging system,
-    the flash object does not filter out messages below a certain level; it
-    returns all messages set. 
+    WebHelpers 1.0 adds message categories, contributed by Wichert Akkerman.
+    These work like severity levels in Python's logging system.  The standard
+    categories are "*warning*", "*notice*", "*error*", and "*success*", with
+    the default being "*notice*".  The category is available in the message's
+    ``.category`` attribute, and is normally used to set the container's CSS
+    class.  Unlike the logging system, the flash object does not filter out
+    messages below a certain level; it returns all messages set. 
 
     You can change the standard categories by overriding the ``.categories``
     and ``.default_category`` class attributes.
