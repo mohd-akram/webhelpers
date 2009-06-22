@@ -25,7 +25,9 @@ WebHelpers ChangeLog
     although you should delete existing sessions when upgrading from 0.6.x.
   - ``webhelpers.pylonslib.minify`` contains enhanced versions of
     ``javascript_link`` and ``stylesheet_link`` to minify (shrink) files for
-    more efficient transmission.  (Untested.)
+    more efficient transmission.  (EXPERIMENTAL: tests fail in
+    unfinished/disabled_test_pylonslib_minify.py; see
+    http://pylonshq.com/project/pylonshq/ticket/466 .)
 * Delete deprecated subpackages: rails.
 * Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
 
