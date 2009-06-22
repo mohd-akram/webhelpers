@@ -21,7 +21,7 @@ __all__ = [
            "form", "end_form", 
            "text", "textarea", "hidden", "file", "password", 
            "checkbox", "radio", "submit",
-           "select", "Options", "Option",
+           "select", "Options", "Option", "OptGroup",
            "ModelTags", "title", "required_legend",
            # hyperlinks
            "link_to", "link_to_if", "link_to_unless",
@@ -261,6 +261,8 @@ def select(name, selected_values, options, id=None, **attrs):
       pairs.  The label will be shown on the form; the option will be returned
       to the application if that option is chosen.  If you pass a string or int
       instead of a 2-tuple, it will be used for both the value and the label.
+      If the `value` is a tuple or a list, it will be added as an optgroup,
+      with `label` as label.
 
     ``id`` is the HTML ID attribute, and should be passed as a keyword
     argument.  By default the ID is the same as the name.  filtered through
@@ -299,6 +301,9 @@ def select(name, selected_values, options, id=None, **attrs):
         literal(u'<select id="currency" name="currency">\\n<option selected="selected" value="">Please choose ...</option>\\n<option value="$">Dollar</option>\\n<option value="DKK">Kroner</option>\\n</select>')
         >>> select("privacy", 3L, [(1, "Private"), (2, "Semi-public"), (3, "Public")])
         literal(u'<select id="privacy" name="privacy">\\n<option value="1">Private</option>\\n<option value="2">Semi-public</option>\\n<option selected="selected" value="3">Public</option>\\n</select>')
+        >>> select("recipients", None, [([("u1", "User1"), ("u2", "User2")], "Users"), ([("g1", "Group1"), ("g2", "Group2")], "Groups")])
+        literal(u'<select id="recipients" name="recipients">\\n<optgroup label="Users">\\n<option value="u1">User1</option>\\n<option value="u2">User2</option>\\n</optgroup>\\n<optgroup label="Groups">\\n<option value="g1">Group1</option>\\n<option value="g2">Group2</option>\\n</optgroup>\\n</select>')
+        
     """
     _set_id_attr(attrs, id, name)
     attrs["name"] = name
@@ -319,12 +324,22 @@ def select(name, selected_values, options, id=None, **attrs):
     if not isinstance(options, Options):
         options = Options(options)
     html_options = []
+    # Create the options structure
+    def gen_opt(val, label):
+        if val in selected_values:
+            return HTML.option(label, value=val, selected="selected")
+        else:
+            return HTML.option(label, value=val)
+    # Loop options and create tree (if optgroups presents)
     for opt in options:
-       if opt.value in selected_values:
-           opt = HTML.option(opt.label, value=opt.value, selected="selected")
-       else:
-           opt = HTML.option(opt.label, value=opt.value)
-       html_options.append(opt)
+        if isinstance(opt, OptGroup):
+            optgroup_options = []
+            for subopt in opt.options:
+                optgroup_options.append(gen_opt(subopt.value, subopt.label))
+            optgroup = HTML.optgroup(NL, NL.join(optgroup_options), NL, label=opt.label)
+            html_options.append(optgroup)
+        else:
+            html_options.append(gen_opt(opt.value, opt.label))
     return HTML.select(NL, NL.join(html_options), NL, **attrs)
 
 
@@ -558,10 +573,23 @@ class Option(object):
     """
     __slots__ = ("value", "label")
 
+
+    def __repr__(self):
+        return str((self.value, self.label))
     def __init__(self, value, label):
         self.value = value
         self.label = label
 
+class OptGroup(object):
+    """A container for Options"""
+    __slots__ = ('options', 'label')
+    def __init__(self, label, options):
+        self.options = Options(options)
+        self.label = label
+    def __repr__(self):
+        classname = self.__class__.__name__
+        data = [x for x in self.options]
+        return "%s(%s, %s)" % (classname, data, repr(self.label))
 
 class Options(tuple):
     """A tuple of ``Option`` objects for the ``select()`` helper.
@@ -589,26 +617,30 @@ class Options(tuple):
     >>> opts[2].label
     u'B'
     """
-
     def __new__(class_, options):
         opts = []
         for opt in options:
-            if not isinstance(opt, Option):
-                if isinstance(opt, (list, tuple)):
-                    value, label = opt[:2]
-                else:
-                    value = label = opt
-                if not isinstance(value, unicode):
-                    value = unicode(value)
-                if not isinstance(label, unicode):  # Preserves literal.
-                    label = unicode(label)
-                opt = Option(value, label)
+            if isinstance(opt, (Option, OptGroup)):
+                opts.append(opt)
+                continue
+            if isinstance(opt, (list, tuple)):
+                value, label = opt[:2]
+                if isinstance(value, (list, tuple)):  # It's an optgroup
+                    opts.append(OptGroup(label, value))
+                    continue
+            else:
+                value = label = opt
+            if not isinstance(value, unicode):
+                value = unicode(value)
+            if not isinstance(label, unicode):  # Preserves literal.
+                label = unicode(label)
+            opt = Option(value, label)
             opts.append(opt)
         return super(Options, class_).__new__(class_, opts)
 
     def __repr__(self):
         classname = self.__class__.__name__
-        data = [(x.value, x.label) for x in self]
+        data = [x for x in self]
         return "%s(%s)" % (classname, data)
         
     def values(self):
