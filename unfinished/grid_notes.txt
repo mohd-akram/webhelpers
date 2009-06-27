@@ -1,0 +1,85 @@
+Grid integration plan for WebHelpers
+====================================
+
+The main problem with table generators is that different people want different
+kinds of tables, and you want to try to accommodate them as much as possible,
+without making the simple case too cumbersome.  I'd suggest putting the
+row-number feature in a subclass because many tables won't need it.  
+
+I'd also suggest a subclass or option for a horizontal table: one with the
+headers in the left row.  These are often two-column tables, with the labels
+implied by the first column in the data.  E.g., dumping a dict.
+
+Generate all HTML using webhelpers.html.builder (examples in
+webhelpers.html.tags). This will also mark the HTML as a preformatted literal,
+so Mako's "|n" filter will no longer be necessary.
+
+Replace .render method with .__str__ .  This will make it automatically render
+when stringified, as Mako does with ${my_grid}.
+
+Write complete module docstring with usage and tests.  (See examples in
+webhelpers.html.tags.) Document that this generates only <tr> and below, not
+<table> or <call> etc.
+
+There doesn't seem to be much use for ``*args`` and ``**kwargs`` since you
+accept a small number of arguments with fixed meanings.  I would replace those
+with positional args, with default values for those that are optional.
+'columns' looks like it should be the second arg and required.  Does
+``.__make_header_columns`` work if 'columns' is missing?
+
+Double-underscore method names are unnecessary, because this is unlikely to be
+subclassed except to customize the formatting, and the subclass would not have
+conflicting names.
+
+I don't understand the ordering code, so I'm not sure what it's doing.  
+
+'labels' is ambiguous: is it a column header, form element <label>, row or cell
+label, etc?  Consider 'header' instead.
+
+Interesting that ``.labels`` is a dict rather than a list of headers.  I
+suppose that makes it easier to move columns around.
+
+
+Ergos's original comments from ticket
+=====================================
+
+http://bitbucket.org/bbangert/webhelpers/issue/3/table-from-list-helper
+
+Im,a beginner programmer in python so this may need some improving ;-)
+
+what this class can do:
+
+* ordering support for columns with get params
+* customizable row and column rendering via lambdas, support for adding new columns that dont exist in passed lists like row with links to perform actions,
+* any default column rendering style can be overwritten with something custom
+* rows can be overwritten so user can create something like <tr>columns_row</tr><tr>some_other_info</tr>
+* builtin support for even/odd class styling of rows
+* auto generation of nice headers from keys of sa rows, so something_label becoms Something Label
+* headers have nice styling support with smart class usage, for both ordered and unordered fields
+* support for overwriting any header with something else
+* support to specify what columns are rendered and in what order by columns argument
+* every custom row or column markup is specified by lambda/function that returns formattable string 
+
+the simpliest example usage for mako:
+
+<%
+from webreactor.lib.grid import Grid
+news_grid = Grid(c.news_page,columns=['title','date_of_creation'])
+%>
+
+<table class="stylized"> ${news_grid.render()|n} </table>
+
+more complex examples:
+
+<%
+from webreactor.lib.grid import Grid
+news_grid = Grid(c.news_page,columns=['title','date_of_creation','actions'])
+news_grid.exclude_ordering = news_grid.columns
+news_grid.label = {'title':'Some other title'}
+news_grid.format = {
+'actions':lambda i,item: '<td><a href="%s"><span class="icon newsUpdate"></span></a></td>' % (url())
+}
+%>
+
+<table class="stylized"> ${news_grid.render()|n} </table>
+
