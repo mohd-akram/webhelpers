@@ -27,6 +27,13 @@ with positional args, with default values for those that are optional.
 'columns' looks like it should be the second arg and required.  Does
 ``.__make_header_columns`` work if 'columns' is missing?
 
+Using methods to generate the header columns and regular columns looks
+interesting; I haven't seen another table class do that, but it may make it
+more flexible for subclassing.  Perhaps even more flexible would be a hook
+method that returns:
+    {tr_attributes}, [ (is_th, {th_or_td_attributes}, cell_content) ]
+This might be general enough to support all kinds of tables.
+
 Double-underscore method names are unnecessary, because this is unlikely to be
 subclassed except to customize the formatting, and the subclass would not have
 conflicting names.
