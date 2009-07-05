@@ -31,24 +31,18 @@ class Grid(object):
     def default_header_link(self,url,content):
         return HTML.tag("a", href=url, c=content)
     
-    def __init__(self, itemlist, *args, **kwargs):
+    def __init__(self, itemlist, columns=None, format=None,
+        start_number=1):
         self.custom_record_format = None
         
         self.labels = {}
         self.exclude_ordering = ['_numbered']
         self.itemlist = itemlist
-        columns = kwargs['columns']
         if '_numbered' in columns:
             self.labels['_numbered'] = 'no.'            
         self.columns = columns
-        if 'format' in kwargs:
-            self.format = kwargs['format']
-        else:
-            self.format = {}
-        if 'start_number' in kwargs:
-            self._start_number = kwargs['start_number']
-        else:
-            self._start_number = 1
+        self.format = format or {}
+        self._start_number = start_number
 
     def make_headers(self):
         header_columns = []
