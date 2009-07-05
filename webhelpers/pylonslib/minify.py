@@ -26,7 +26,7 @@ import StringIO
 
 from webhelpers.html.tags import javascript_link as __javascript_link
 from webhelpers.html.tags import stylesheet_link as __stylesheet_link
-from webhelpers.pylonslib.jsmin import JavascriptMinify
+from webhelpers.pylonslib._jsmin import JavascriptMinify
 
 
 __all__ = ['javascript_link', 'stylesheet_link']
