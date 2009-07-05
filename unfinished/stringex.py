@@ -6,17 +6,25 @@ http://github.com/rsl/stringex/tree/master
 
 """
 import re
+from webhelpers.html.tools import strip_tags
 
-from unidecode import unidecode
-from webob.exc import strip_tags
-
+try:
+    from unidecode import unidecode
+except ImportError:
+    unidecode = None
 
 def urlify(string):
     """Create a URI-friendly representation of the string
     
     Can be called manually in order to generate an URI-friendly version
     of any string.
-    
+
+    If the ``unidecode`` package is installed, it will also convert 
+    non-ASCII Latin characters to intelligent ASCII equivalents.
+
+    Examples::
+        >>> urlify("Mighty Mighty Bosstones")
+        'mighty-mighty-bosstones'
     """
     s = remove_formatting(string).lower()
     s = replace_whitespace(s, '-')
@@ -24,17 +32,18 @@ def urlify(string):
 
 
 def remove_formatting(string):
-    """Performs multiple text manipulations.
+    """Simplify HTML text by removing tags and several kinds of formatting.
     
-    Essentially a shortcut for typing them all. View source below to
-    see which methods are run.
-    
+    If the ``unidecode`` package is installed, it will also convert 
+    non-ASCII Latin characters to intelligent ASCII equivalents.
     """
     s = strip_tags(string)
     s = convert_accented_entities(s)
     s = convert_misc_entities(s)
     s = convert_misc_characters(s)
-    return collapse(unidecode(s))
+    if unidecode:
+        s = unidecode(s)
+    return collapse(s)
 
 
 def convert_accented_entities(string):
@@ -49,7 +58,7 @@ def convert_accented_entities(string):
       "&oslash;".convert_accented_entities #: "o"
       "&uuml;".convert_accented_entities #: "u"
     
-    Note: This does not do any conversion of Unicode/Ascii
+    Note: This does not do any conversion of Unicode/ASCII
     accented-characters. For that functionality please use unidecode.
     
     """
