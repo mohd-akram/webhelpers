@@ -12,6 +12,8 @@ WebHelpers ChangeLog
     recommended instead).
   - Add OptionGroup class and optgroup support to select().  Patch by
     Alexandre Bourget.
+* webhelpers.html.tools:
+  - New helper ``strip_tags()`` deletes HTML tags in a string.
 * webhelpers.paginate:
   - convert "_range" and "_pagelink" function to Page class method so that they
     can be overridden
