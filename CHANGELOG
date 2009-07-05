@@ -32,6 +32,15 @@ WebHelpers ChangeLog
     more efficient transmission.  (EXPERIMENTAL: tests fail in
     unfinished/disabled_test_pylonslib_minify.py; see
     http://pylonshq.com/project/pylonshq/ticket/466 .)
+* webhelpers.text:
+  - Port several helpers from Ruby's "stringex" package.
+    + ``urlify()`` converts any string to a URL-friendly equivalent.  
+    + ``remove_formatting()``
+    + If the ``unidecode`` package is installed, these two helpers will also
+      transliterate non-ASCII characters to their closest pronounciation
+      equvivalent in ASCII.  
+    + Four other helpers reduce HTML entities or whitespace.
+
 * Delete deprecated subpackages: rails.
 * Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
 
