@@ -11,13 +11,17 @@ from webhelpers.html import HTML, literal, lit_sub, escape
 from webhelpers.html.tags import convert_boolean_attrs
 
 __all__ = [
-    'button_to', 
-    'mail_to',
-    'highlight', 
-    'strip_links',
     'auto_link', 
+    'button_to', 
+    'highlight', 
+    'mail_to',
+    'strip_links',
+    'strip_tags',
     ]
 
+tag_re = re.compile(r'<.*?>', re.S)
+br_re = re.compile(r'<br.*?>', re.I|re.S)
+comment_re = re.compile(r'<!--|-->')
 
 AUTO_LINK_RE = re.compile(r"""
                         (                          # leading text
@@ -306,3 +310,24 @@ def strip_links(text):
         lit = lambda x: x
     strip_re = re.compile(r'<a\b.*?>(.*?)<\/a>', re.I | re.M)
     return lit(strip_re.sub(r'\1', text))
+
+def strip_tags(text):
+    """Delete any HTML tags in the text, leaving their contents intact.
+    Convert newlines to spaces, and <br /> to newlines.
+
+    Example::
+        >>> strip_tags('Text <em>emphasis</em> <script>Javascript</script>.')
+        'Text emphasis Javascript.'
+        >>> strip_tags('Ordinary <!-- COMMENT! --> text.')
+        'Ordinary  COMMENT!  text.'
+        >>> strip_tags('Line\\n1<br />Line 2')
+        'Line 1\\nLine 2'
+
+    Implementation copied from ``WebOb``.
+    """
+    text = text.replace('\n', ' ')
+    text = text.replace('\r', '')
+    text = br_re.sub('\n', text)
+    text = comment_re.sub('', text)
+    text = tag_re.sub('', text)
+    return text
