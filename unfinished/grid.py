@@ -1,5 +1,4 @@
 from routes.util import url_for
-from pylons import request
 from webhelpers.html.builder import HTML, literal
 
 class Grid(object):
@@ -31,7 +30,7 @@ class Grid(object):
     def default_header_link(self,url,content):
         return HTML.tag("a", href=url, c=content)
     
-    def __init__(self, itemlist, columns=None, format=None,
+    def __init__(self, itemlist, columns=None, order_by=None, format=None,
         start_number=1):
         self.custom_record_format = None
         
@@ -41,18 +40,13 @@ class Grid(object):
         if '_numbered' in columns:
             self.labels['_numbered'] = 'no.'            
         self.columns = columns
+        self.order_column = order_by
         self.format = format or {}
         self._start_number = start_number
 
     def make_headers(self):
         header_columns = []
-        request_copy = request.copy()
-        if 'order_by' in request_copy.GET:
-            self.order_column = request_copy.GET.pop('order_by')
-        else:
-            self.order_column = None
-            
-        for i,column in enumerate(self.columns):
+        for i, column in enumerate(self.columns):
             #lets generate header column contents
             label_text = ''
             if column in self.labels:
