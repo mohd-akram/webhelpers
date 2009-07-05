@@ -1,6 +1,8 @@
 #!/usr/bin/python
 """A Javascript minification utility.
 
+Users should not use this module directly; see the ``minify`` module instead.
+
 Minification squeezes out spaces and other characters not significant to
 Javascript.  This results in a shorter file size.
 
