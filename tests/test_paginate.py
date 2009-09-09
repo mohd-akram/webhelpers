@@ -1,4 +1,5 @@
 """"Test webhelpers.paginate package."""
+import sys
 
 from routes import Mapper
 
@@ -62,7 +63,9 @@ def test_many_pages():
     assert page.pager(separator='_') == '<span class="pager_curpage">1</span>_<a class="pager_link" href="/content?page=2">2</a>_<a class="pager_link" href="/content?page=3">3</a>_<span class="pager_dotdot">..</span>_<a class="pager_link" href="/content?page=7">7</a>'
     assert page.pager(page_param='xy') == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?xy=2">2</a> <a class="pager_link" href="/content?xy=3">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?xy=7">7</a>'
     assert page.pager(link_attr={'style':'s1'}, curpage_attr={'style':'s2'}, dotdot_attr={'style':'s3'}) == '<span style="s2">1</span> <a href="/content?page=2" style="s1">2</a> <a href="/content?page=3" style="s1">3</a> <span style="s3">..</span> <a href="/content?page=7" style="s1">7</a>'
-    assert page.pager(onclick="load('%s')") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(\'/content?partial=1&amp;page=2\')">2</a> <a class="pager_link" href="/content?page=3" onclick="load(\'/content?partial=1&amp;page=3\')">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(\'/content?partial=1&amp;page=7\')">7</a>'
     assert page.pager(onclick="empty") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="empty">2</a> <a class="pager_link" href="/content?page=3" onclick="empty">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="empty">7</a>'
     assert page.pager(onclick="load('$page')") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(\'2\')">2</a> <a class="pager_link" href="/content?page=3" onclick="load(\'3\')">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(\'7\')">7</a>'
-    assert page.pager(onclick="load('$partial_url')") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(\'/content?partial=1&amp;page=2\')">2</a> <a class="pager_link" href="/content?page=3" onclick="load(\'/content?partial=1&amp;page=3\')">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(\'/content?partial=1&amp;page=7\')">7</a>'
+    if not sys.platform.startswith('java'):
+        # XXX: these assume dict ordering
+        assert page.pager(onclick="load('%s')") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(\'/content?partial=1&amp;page=2\')">2</a> <a class="pager_link" href="/content?page=3" onclick="load(\'/content?partial=1&amp;page=3\')">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(\'/content?partial=1&amp;page=7\')">7</a>'
+        assert page.pager(onclick="load('$partial_url')") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(\'/content?partial=1&amp;page=2\')">2</a> <a class="pager_link" href="/content?page=3" onclick="load(\'/content?partial=1&amp;page=3\')">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(\'/content?partial=1&amp;page=7\')">7</a>'
