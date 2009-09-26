@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% set title = 'Overview' %}
+{% block body %}
+<h1>WebHelpers</h1>
+
+<img src="_images/webhelpers-logo.png" width="100" height="110" 
+    style="float:left; margin-right:1em" />
+  
+<p>WebHelpers is a collection of utility functions useful in web application
+templates, controller/view code, and non-web applications.  It consists of
+several independent subpackages:</p>
+
+<br clear="all" />
+
+<table style="border:outset">
+    <tr><th>constants</th><td>Countries &amp; states for address forms
+    </td></tr>
+    <tr><th>containers</th><td>Helpers for collections</td></tr>
+    <tr><th>date</th><td>Date/time helpers</td></tr>
+    <tr><th>feedgenerator</th><td>Create RSS or Atom feeds</td></tr>
+    <tr><th>html</th><td>HTML tags and form tags</td></tr>
+    <tr><th>markdown/textile</th><td>Convert
+    wiki-like text to HTML</td></tr>
+    <tr><th>media</th><td>Image files</td></tr>
+    <tr><th>mimehelper</th><td>MIME types</td></tr>
+    <tr><th>misc/util</th><td>Other helpers</td></tr>
+    <tr><th>number</th><td>Formatters and statistics</td></tr>
+    <tr><th>paginate</th><td>Display records a pageful at a time
+    </td></tr>
+    <tr><th>pylonslib</th><td>Helpers for Pylons</td></tr>
+    <tr><th>text</th><td>Text processing</td></tr>
+</table>
+
+<p>WebHelpers is pure Python and has no dependencies.  However, a few
+helpers depend on 
+<a href="http://routes.groovie.org/">Routes</a>, 
+<a href="http://pylonshq.com/">Pylons</a>, 
+<a href="http://python.org/pypi/Unidecode/">unidecode</a>, 
+<a href="http://pythonpaste.org/webob/">WebOb</a>
+as noted in their documentation.  WebHelpers comes with an extensive set of
+unit tests.</p>
+
+<p>For support/question/patches, please use the `
+<a href="http://groups.google.com/group/pylons-discuss">Pylons mailing list</a>.</p>
+
+<h2>New features</h2>
+
+<div style="font-size:smaller">
+
+<p>Version 1.0b1 (YYYY-MM-DD -- not released yet)</p>
+
+<ul>
+    <li>Documentation rewrite.</li>
+    <li>Many new helpers in <code>html.converters</code>,
+    <code>html.tags</code>, <code>html.tools</code>, <code>paginate</code>,
+    <code>pylonslib</code>, <code>text</code>.</li>
+    <li>Delete deprecated subpackages: <code>commands</code>,
+    <code>hinclude</code>, <code>htmlgen</code>, <code>pagination</code>,
+    <code>rails</code>. <strong>CAUTION:</strong> if using these helpers, stick
+    to WebHelpers 0.6.4.</li>
+</ul>
+
+<p>Version 0.6.4 (2008-12-02)
+
+<ul>
+    <li>Several form helpers have magic ID attribute.</li>
+    <li>Bugfixes in <code>ModelTags.select</code>.</li>
+</ul>
+
+</div>
+
+<p><a href="changes.html">Full changelog</a></p>
+
+
+  <h2>Documentation</h2>
+  <table class="contentstable" align="center" style="margin-left: 30px"><tr>
+    <td width="50%">
+      <p class="biglink"><a class="biglink" href="{{ pathto("contents") }}">Contents</a><br/>
+         <span class="linkdescr">for a complete overview</span></p>
+      <p class="biglink"><a class="biglink" href="{{ pathto("search") }}">Search</a><br/>
+         <span class="linkdescr">search the documentation</span></p>
+      <p class="biglink"><a class="biglink" href="{{ pathto("todo") }}">TODO</a><br/>
+         <span class="linkdescr">future development plans</span></p>
+    </td><td width="50%">
+      <p class="biglink"><a class="biglink" href="{{ pathto("genindex") }}">General Index</a><br/>
+         <span class="linkdescr">all functions, classes, terms</span></p>
+      <p class="biglink"><a class="biglink" href="{{ pathto("modindex") }}">Module Index</a><br/>
+         <span class="linkdescr">quick access to all documented modules</span></p>
+    </td></tr>
+  </table>
+  
+  <p>Download <a href="http://webhelpers.groovie.org/webhelpers.pdf">WebHelpers PDF documentation</a>.</p>
+
+  <h2>Developers / Source Code</h2>
+  <p>WebHelpers' Mercurial repository can be found at
+    <a href="http://bitbucket.org/bbangert/webhelpers/"><tt>http://bitbucket.org/bbangert/webhelpers/</tt></a>.</p>
+    
+    <p>To check it out:</p>
+    
+      <pre>hg clone http://www.bitbucket.org/bbangert/webhelpers</pre>
+
+{% endblock %}
