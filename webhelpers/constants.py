@@ -1,16 +1,14 @@
 # -*- encoding: latin-1 -*-
 # Latin-1 encoding needed for countries list.
 """Geographical and other constants often used in web forms.
-
-The timezone functions have been removed.  Install the PyTZ package if you
-need them.
 """
 
 def uk_counties():
     """\
-    Returns a list of UK county names based on data from http://www.gbet.com/AtoZ_counties/
-    Last updated on 2007-10-24.
+    Return a list of UK county names.
     """
+    # Based on http://www.gbet.com/AtoZ_counties/
+    # Updated 2007-10-24
     return [x.strip()[2:] for x in """\
     * Avon
     * Bedfordshire
@@ -86,17 +84,9 @@ def uk_counties():
 _country_codes = None
 def country_codes():
     """\
-    Return a list of all country names and their respective codes specified by the ISO in the format::
+    Return a list of all country names and their respective codes specified by
+    the ISO in the format ``("GB", "United Kingdom")``
     
-        [
-            ...
-            ['GB', 'United Kingodom],
-            ...
-        ]
-
-    See here for more information:
-    http://www.iso.org/iso/english_country_names_and_code_elements
-
     Can be used like this::
 
         h.select(
@@ -108,8 +98,11 @@ def country_codes():
             ),
         )
 
-    Last updated on 2007-10-24.
+    See here for more information:
+    http://www.iso.org/iso/english_country_names_and_code_elements
     """
+    # Updated on 2007-10-24.
+    #
     # This might seem a funny implementation but it makes it easier to updated next
     # time there is a change
 
@@ -402,7 +395,7 @@ ZIMBABWE 	ZW
                 if part.strip():
                     p.append(part.strip())
             if len(p)>2:
-                raise Exception("Invalid entry %s"%p)
+                raise Exception("Invalid entry %s" % p)
 
             p.reverse()
             if len(p) == 1:
@@ -414,6 +407,7 @@ ZIMBABWE 	ZW
                 else:
                     # We just want to ignore it
                     continue
+            p = tuple(p)
             e.append(p)
     _country_codes = e
     return _country_codes
@@ -423,10 +417,9 @@ def us_states():
 
     Return a list of (abbreviation, name) for all US states, sorted by name.
     Includes the District of Columbia.
-
-    From http://www.usps.com/ncsc/lookups/abbreviations.html
-    Updated 2008-05-01
     """
+    # From http://www.usps.com/ncsc/lookups/abbreviations.html
+    #Updated 2008-05-01
     return [
         ("AL", "Alabama"),
         ("AK", "Alaska"),
@@ -483,10 +476,9 @@ def us_states():
 
 def us_territories():
     """USA postal abbreviations for territories, protectorates, and military.
-
-    From http://www.usps.com/ncsc/lookups/abbreviations.html
-    Updated 2008-05-01
     """
+    # From http://www.usps.com/ncsc/lookups/abbreviations.html
+    # Updated 2008-05-01
     return [
         ("AS", "American Samoa"),
         ("AA", "Armed Forces Americas"),
@@ -507,13 +499,12 @@ def canada_provinces():
 
     Return a list of (abbreviation, name) for all Canadian
     provinces and territories, sorted by name.
-
-    Transcribed from Wikipedia on 2008-05-01.
-    http://en.wikipedia.org/wiki/Canadian_subnational_postal_abbreviations
-
-    See also
-    http://en.wikipedia.org/wiki/Provinces_and_territories_of_Canada
     """
+    # Based on:
+    # http://en.wikipedia.org/wiki/Canadian_subnational_postal_abbreviations
+    # See also: 
+    # http://en.wikipedia.org/wiki/Provinces_and_territories_of_Canada
+    # Updated 2008-05-01
     provinces = [
         ("Alberta", "AB"),
         ("British Columbia", "BC"),

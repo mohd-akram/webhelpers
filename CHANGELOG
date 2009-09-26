@@ -1,6 +1,8 @@
 WebHelpers ChangeLog
 
 1.0b1 (tip)
+* webhelpers.constants:
+  - ``uk_counties`` returns tuples rather than lists.
 * webhelpers.feedgenerator:
   - ``rfc3339_date`` now accepts date objects without crashing.
 * webhelpers.html.converters:
