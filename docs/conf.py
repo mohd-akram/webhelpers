@@ -35,7 +35,7 @@ master_doc = 'contents'
 
 # General substitutions.
 project = 'WebHelpers'
-copyright = '2009, Mike Orr and Ben Bangert'
+copyright = '2009, Ben Bangert and Mike Orr'
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.
