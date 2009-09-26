@@ -3,7 +3,7 @@
 from datetime import datetime
 import time
 
-__all__ = ['distance_of_time_in_words']
+__all__ = ["distance_of_time_in_words", "time_ago_in_words"]
 
 def _process_carryover(deltas, carry_over):
     """A helper function to process negative deltas based on the deltas
@@ -53,7 +53,7 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second",
     'second'
     
     Setting ``round`` to true will check the granularity finer than the
-    set granularity and if the value is greater than 50% of it's range
+    set granularity and if the value is greater than 50% of its range
     the value at granularity will be increased by 1
     
     Examples:
@@ -197,9 +197,7 @@ def time_ago_in_words(from_time, granularity="second", round=False):
     """
     Return approximate-time-distance string for ``from_time`` till now.
 
-    See ``distance_of_time_in_words`` -- same here, but ``to_time`` is 
-    fixed to ``datetime.now()``.
-    
+    Same as ``distance_of_time_in_words`` but the endpoint is now.
     """
     return distance_of_time_in_words(from_time, datetime.now(), 
         granularity, round)
