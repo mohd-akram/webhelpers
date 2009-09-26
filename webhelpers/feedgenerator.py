@@ -73,7 +73,8 @@ class SyndicationFeed(object):
     """Base class for all syndication feeds. Subclasses should provide write()"""
     def __init__(self, title, link, description, language=None, author_email=None,
             author_name=None, author_link=None, subtitle=None, categories=None,
-            feed_url=None, feed_copyright=None, feed_guid=None, ttl=None):
+            feed_url=None, feed_copyright=None, feed_guid=None, ttl=None, 
+            generator=None, source=None):
         self.feed = {
             'title': title,
             'link': link,
@@ -88,6 +89,8 @@ class SyndicationFeed(object):
             'feed_copyright': feed_copyright,
             'id': feed_guid or link,
             'ttl': ttl,
+            'generator': generator,
+            'source': source,
         }
         self.items = []
 
@@ -218,6 +221,10 @@ class Rss201rev2Feed(RssFeed):
                 handler.addQuickElement(u"guid", item['unique_id'])
             if item['ttl'] is not None:
                 handler.addQuickElement(u"ttl", item['ttl'])
+            if item['generator'] is not None:
+                handler.addQuickElement(u"generator", item['generator'])
+            if item['source'] is not None:
+                handler.addQuickElement(u"source", item['source'])
 
             # Enclosure.
             if item['enclosure'] is not None:

@@ -5,6 +5,8 @@ WebHelpers ChangeLog
   - ``uk_counties`` returns tuples rather than lists.
 * webhelpers.feedgenerator:
   - ``rfc3339_date`` now accepts date objects without crashing.
+  - Add 'generator' and 'source' properties to RSS2 feeds. Patch by
+    Vince Spicer.
 * webhelpers.html.converters:
   - New helper ``render()`` formats HTML to text.
   - New helper ``sanitize()`` strips HTML tags from user input.
