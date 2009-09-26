@@ -7,6 +7,8 @@ WebHelpers Documentation
    overview
    constants
    containers
+   date
+   feedgenerator
 
 .. toctree::
    :maxdepth: 1
