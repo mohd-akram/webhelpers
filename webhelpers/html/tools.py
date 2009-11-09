@@ -38,7 +38,7 @@ AUTO_LINK_RE = re.compile(r"""
                           (?:\.[-\w]+)*            # remaining subdomains or domain
                           (?::\d+)?                # port
                           (?:/(?:(?:[~\w\+%-]|(?:[,.;:][^\s$]))+)?)* # path
-                          (?:\?[\w\+%&=.;-]+)?     # query string
+                          (?:\?[\w\+\/%&=.;-]+)?     # query string
                           (?:\#[\w\-]*)?           # trailing anchor
                         )
                         ([\.,"'?!;:]|\s|<|$)       # trailing text

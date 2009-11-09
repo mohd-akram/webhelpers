@@ -18,6 +18,7 @@ WebHelpers ChangeLog
     Alexandre Bourget.
 * webhelpers.html.tools:
   - New helper ``strip_tags()`` deletes HTML tags in a string.
+  - Fixed ``auto_link()`` to parse slash characters in query string.
 * webhelpers.paginate:
   - convert "_range" and "_pagelink" function to Page class method so that they
     can be overridden
