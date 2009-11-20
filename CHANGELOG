@@ -1,6 +1,16 @@
 WebHelpers ChangeLog
+====================
 
-1.0b1 (tip)
+tip (development version)
+-------------------------
+
+
+1.0b1 (2009-11-20)
+------------------
+* Delete deprecated subpackage: rails.
+  These are replaced by new helpers in date, html, misc, number, text.
+* Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
+  Pagination is replaced by paginate.
 * webhelpers.constants:
   - ``uk_counties`` returns tuples rather than lists.
 * webhelpers.feedgenerator:
@@ -45,10 +55,8 @@ WebHelpers ChangeLog
       equvivalent in ASCII.  
     + Four other helpers reduce HTML entities or whitespace.
 
-* Delete deprecated subpackages: rails.
-* Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
-
 0.6.4 (12/2/2008)
+-----------------
 * text(), password(), checkbox(), textarea(), and select() have a
   magic 'id attribute. If not specified it defaults to the name. To suppress
   the ID entirely, pass ``id=""``.  This is to help set the ID for title().
@@ -60,6 +68,7 @@ WebHelpers ChangeLog
 * Delete experimental module webhelpers.html.form_layout.
 
 0.6.3 (10/7/2008)
+-----------------
 * Bugfix in distribute() found by Randy Syring.
 * New helpers title() and required_legend() in webhelpers.html.tags.
 * New directory webhelpers/public for static files
@@ -67,6 +76,7 @@ WebHelpers ChangeLog
   (You'll have to manually add this to your application.)
 
 0.6.2 (10/2/2008)
+-----------------
 * nl2br() and format-paragraphs were not literal-safe.
 * webhelpers.converters:
   - New helper transpose() to turn a 2D list sideways (making the rows columns
@@ -89,6 +99,7 @@ WebHelpers ChangeLog
 * webhelpers.html.form_layout: form field layout (PRELIMINARY, UNSTABLE).
 
 0.6.1 (7/31/2008)
+-----------------
 * Include a faster version of cgi.escape for use by the literal object.
 * Fixed bug in SimplerXMLGenerator that the FeedGenerator uses, so that
   it doesn't use a {} arg.
@@ -102,6 +113,7 @@ WebHelpers ChangeLog
   webhelpers.rails.url_for(), and webhelpers.pagination.
 
 0.6 (07/08/2008)
+----------------
 * Add webhelpers.html.builder to generate HTML tags with smart escaping,
   along with a literal type to mark preformatted strings.
 * Deprecate webhelpers.rails, including its Javascript libraries (Prototype
@@ -121,7 +133,8 @@ WebHelpers ChangeLog
 * Removed dependency on simplejson and normalized quotes. Patch by Elisha 
   Cook.
 
-COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
+COMPATIBILITY CHANGES IN 0.6 DEV VERSION
+----------------------------------------
 - image(), javascript_link(), stylesheet_link(), and auto_discovery_link()
   in webhelpers.html.tags do not add prefixes or suffixes to the URL args
   anymore; they output the exact URL given. Same for button_to() in
@@ -129,15 +142,18 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
 - webhelpers.html.tags.javascript_path was deleted.
 
 0.3.4 (03/18/08)
+----------------
 * Fixed missing javascripts dir.
 
 0.3.3 (02/27/08)
+----------------
 * Fixed strip_unders so that it won't explode during iteration when the size
   changes.
 * Updated feedgenerator with the latest changes from Django's version (only
   a few additional attributes).
 
 0.3.2 (09/05/07)
+----------------
 * Added capability to pass pagination a SA 0.4 Session object which will be 
   used for queries. This allows compatibility with Session.mapper'd objects
   and normal SA 0.4 mapper relations.
@@ -146,6 +162,7 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
   1.5.1). Thanks errcw. Fixes #288.
 
 0.3.1 (07/14/07)
+----------------
 * Added the secure_form_tag helper module, for generating form tags
   including client-specific authorization tokens for preventing CSRF
   attacks. Original patch by David Turner. Fixes #157.
@@ -162,6 +179,7 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
   enable this command for your package.
 
 0.3 (03/18/2007)
+----------------
 * WARNING: paginate now takes arguments intended for the collection object as
   query_args. This could affect backwards compatibility. This fixes a common
   issue that non-keyword arguments passed into paginate get eaten by
@@ -201,6 +219,7 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
   backslashes and allow passing html_options to javascript_tag).
 
 0.2.2 (10/20/06)
+----------------
 * Fixed tag_options function to not str() string and let html_escape handle
   it so unicode is properly handled. Reported with fix by Michael G. Noll.
 * Added sqlalchemy.Query support to the pagination orm wrappers, patch from
@@ -209,6 +228,7 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
   Jamie Wilkinson)
 
 0.2.1 (9/7/06)
+--------------
 * Adding counter func to text helpers, patch from Jamie Wilkinson.
 * Sync'd Rails Text helper to 4994.
 * Sync'd Rails Asset tag helper to 4999.
@@ -227,6 +247,7 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
 * Fixed form tag's method matching to be case insensitive.
 
 0.2 (8/31/06)
+-------------
 * Adding simplejson req, adding use of json'ification. Updated scriptaculous
   helpers to split out JS generation for use in JS Generation port.
 * Finished sync'ing Rails ports (urls, tags) in WebHelpers. Closes #69.
@@ -244,6 +265,7 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION:
 * Brought asset/date/text helpers up to date with revision info.
 
 0.1.3 (Release)
+---------------
 * Brought feedgenerator in line with Django's version, which fixed the missing
   support for feed categories and updated classes for new-style. Other minor
   feed updates as well. Now synced as of Django r3143.
