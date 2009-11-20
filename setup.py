@@ -36,7 +36,7 @@ The development version of WebHelpers is at
 """,
     author='Mike Orr, Ben Bangert, Phil Jenvey',
     author_email='sluggoster@gmail.com, ben@groovie.org, pjenvey@groovie.org',
-    url='http://pylonshq.com/docs/en/0.9.7/thirdparty/webhelpers',
+    url='http://bitbucket.org/bbangert/webhelpers',
     packages=find_packages(exclude=['ez_setup']),
     zip_safe=False,
     include_package_data=True,
