@@ -9,6 +9,8 @@ WebHelpers Documentation
    containers
    date
    feedgenerator
+   media
+   mimehelper
 
 .. toctree::
    :maxdepth: 1
