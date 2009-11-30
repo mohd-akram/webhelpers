@@ -19,6 +19,10 @@ class Message(object):
 
     __unicode__ = __str__
 
+    @property
+    def __html__(self):
+        return getattr(self.message, '__html__')
+
 
 class Flash(object):
     """Accumulate a list of messages to show at the next page request.
