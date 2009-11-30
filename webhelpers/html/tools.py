@@ -292,7 +292,7 @@ def _auto_link_urls(text, **href_options):
 
 def _auto_link_email_addresses(text):
     return lit_sub(r'([\w\.!#\$%\-+.]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+)',
-                   r'<a href="mailto:\1">\1</a>', text)
+                   literal(r'<a href="mailto:\1">\1</a>'), text)
 
 def strip_links(text):
     """

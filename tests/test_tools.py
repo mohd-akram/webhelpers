@@ -61,6 +61,7 @@ class TestToolsHelper(WebHelpersTestCase):
         for k, v in result_values_templates.iteritems():
             result_values[k] = Template(v).substitute(raw_values)
 
+        self.assertEqual(result_values["email_result"], auto_link(raw_values['email_raw'], 'email_addresses'))
         self.assertEqual(u"hello %(email_result)s" % result_values, auto_link("hello %(email_raw)s" % raw_values, 'email_addresses'))
         self.assertEqual(u"Go to %(link_result)s" % result_values, auto_link("Go to %(link_raw)s" % raw_values, 'urls'))
         self.assertEqual(u"Go to %(link_raw)s" % raw_values, auto_link("Go to %(link_raw)s" % raw_values, 'email_addresses'))

@@ -3,6 +3,8 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.html.tools:
+  - Fix HTML overescaping in auto_link().  Patch by Marius Gedminas.
 * webhelpers.pylonslib:
   - Fix HTML overescaping.  Patch by Marius Gedminas.
 
