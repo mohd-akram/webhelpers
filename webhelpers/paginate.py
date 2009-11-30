@@ -316,7 +316,7 @@ class Page(list):
 
         # Decorate the ORM/sequence object with __getitem__ and __len__
         # functions to be able to get slices.
-        if collection:
+        if collection is not None:
             # Determine the type of collection and use a wrapper for ORMs
             self.collection = get_wrapper(collection, sqlalchemy_session)
         else:
