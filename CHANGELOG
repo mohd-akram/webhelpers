@@ -5,6 +5,8 @@ tip (development version)
 -------------------------
 * webhelpers.constants:
   - Fix spelling of Massachusetts.
+* webhelpers.html:
+  - New ``HTML.cdata()`` method for producing "<!![CDATA[ ... ]]>" sections.
 * webhelpers.html.tools:
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
     Gedminas.
