@@ -2,6 +2,7 @@ from nose.plugins.skip import SkipTest
 from nose.tools import eq_
 
 from webhelpers.pylonslib import Flash, Message
+from webhelpers.html import literal, escape
 
 class FakeSession(dict):
     def save(self):
@@ -34,6 +35,17 @@ class TestFlash(object):
         eq_(messages[1].category, "warning")
         messages = flash.pop_messages()
         eq_(len(messages), 0)
+
+    def test_flash_literal(self):
+        MESSAGE1 = literal("Record <b>#775</b> deleted.")
+        MESSAGE2 = "Hope you like the <b>s."
+        flash = Flash()
+        flash(MESSAGE1)
+        flash(MESSAGE2)
+        messages = flash.pop_messages()
+        eq_(len(messages), 2)
+        eq_(escape(messages[0]), literal("Record <b>#775</b> deleted."))
+        eq_(escape(messages[1]), literal("Hope you like the &lt;b&gt;s."))
 
     def test_multiple_flashes(self):
         MESSAGE = "Hello, world!"
