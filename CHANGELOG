@@ -8,6 +8,8 @@ tip (development version)
 * webhelpers.html.tools:
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
     Gedminas.
+* webhelpers.paginate:
+  - Change for SQLAlchemy 0.6. (bug #11)
 * webhelpers.pylonslib:
   - Fix HTML overescaping.  Patch by Marius Gedminas.
 
