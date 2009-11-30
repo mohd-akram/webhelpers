@@ -3,6 +3,8 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.constants:
+  - Fix spelling of Massachusetts.
 * webhelpers.html.tools:
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
     Gedminas.

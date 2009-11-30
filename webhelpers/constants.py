@@ -442,7 +442,7 @@ def us_states():
         ("LA", "Louisiana"),
         ("ME", "Maine"),
         ("MD", "Maryland"),
-        ("MA", "Massachussetts"),
+        ("MA", "Massachusetts"),
         ("MI", "Michigan"),
         ("MN", "Minnesota"),
         ("MS", "Mississippi"),
