@@ -268,7 +268,8 @@ def auto_link(text, link="all", **href_options):
         
     """
     if not text:
-        return u""
+        return literal(u"")
+    text = escape(text)
     if link == "all":
         return _auto_link_urls(_auto_link_email_addresses(text), **href_options)
     elif link == "email_addresses":
