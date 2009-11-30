@@ -102,6 +102,8 @@ class TestToolsHelper(WebHelpersTestCase):
         self.assertEqual(u"<p>Go to %(link9_result)s. seriously, %(link9_result)s? i think I'll say hello to %(email_result)s. instead.</p>" % result_values, auto_link(literal("<p>Go to %(link9_raw)s. seriously, %(link9_raw)s? i think I'll say hello to %(email_raw)s. instead.</p>") % raw_values))
         self.assertEqual(u"", auto_link(None))
         self.assertEqual(u"", auto_link(""))
+        # Failing test: PylonsHQ bug #657
+        #self.assertEqual(u'&lt;<a href="http://www.google.com">www.google.com</a>&gt;', auto_link("<www.google.com>"))
 
     def test_highlighter(self):
         self.assertEqual("This is a <strong class=\"highlight\">beautiful</strong> morning",
