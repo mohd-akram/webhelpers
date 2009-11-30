@@ -87,6 +87,16 @@ The ``HTML`` object has the following methods for tag building:
     >>> HTML.a("Foo", href="http://example.com/", class_="important")
     literal(u'<a class="important" href="http://example.com/">Foo</a>')
 
+``HTML.cdata``
+    Wrap the text in a "<![CDATA[ ... ]]>" section. Plain strings will not be
+    escaped because CDATA itself is an escaping syntax.
+
+    >>> HTML.cdata(u"Foo")
+    literal(u'<![CDATA[Foo]]>')
+
+    >>> HTML.cdata(u"<p>")
+    literal(u'<![CDATA[<p>]]>')
+
 The protocol is simple: if an object has an ``.__html__`` method, ``escape()``
 calls it rather than ``.__str__()`` to obtain a string representation.
 
@@ -199,6 +209,19 @@ class HTMLBuilder(object):
     def tag(self, tag, *args, **kw):
         return make_tag(tag, *args, **kw)
 
+    def cdata(self, *content): 
+        """Wrap the content in a "<![CDATA[ ... ]]>" section.
+
+        The content will not be escaped because CDATA itself is an 
+        escaping syntax.
+        """
+        # _CDATA_START and _CDATA_END are defined at end of module.
+        parts = []
+        parts.append(_CDATA_START)
+        parts.extend(content)
+        parts.append(_CDATA_END)
+        s = "".join(parts)
+        return literal(s)
 
 def _attr_decode(v):
     """Parse out attributes that begin with '_'."""
@@ -399,4 +422,8 @@ class _EscapedItem(DictMixin):
 
 empty_tags = set("area base basefont br col frame hr img input isindex link meta param".split())
 
+# Constants depending on literal().
+_CDATA_START = literal(u"<![CDATA[") 
+_CDATA_END = literal(u"]]>")
+    
 HTML = HTMLBuilder()
