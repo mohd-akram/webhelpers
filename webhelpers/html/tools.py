@@ -267,6 +267,7 @@ def highlight(text, phrase, highlighter=None, case_sensitive=False,
     """
     if not phrase or not text:
         return text
+    text = escape(text)
     if case_sensitive:
         flags = 0   # No flags.
     else:

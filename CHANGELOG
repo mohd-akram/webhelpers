@@ -13,8 +13,12 @@ tip (development version)
     algorithm in ``webhelpers.media``. It also logs the dimensions to the
     debug log for troubleshooting.
 * webhelpers.html.tools:
+  - Reimplement ``highlight()`` using the HTML builder. New arguments add
+    flexibility.  Deprecate the ``highlighter`` argument, which creates tags
+    via string interpolation.
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
-    Gedminas.
+    Gedminas.  A parsing bug remains: 
+    http://pylonshq.com/project/pylonshq/ticket/657
 * webhelpers.media:
   - Bugfix in ``get_dimensions_pil``.
 * webhelpers.paginate:
