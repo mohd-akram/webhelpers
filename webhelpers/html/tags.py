@@ -42,7 +42,7 @@ log = logging.getLogger(__name__)
 NL = literal("\n")
 BR = literal("<br />\n")
 
-def form(url, method="post", multipart=False, **attrs):
+def form(url, method="post", multipart=False, hidden_fields=None, **attrs):
     """An open tag for a form that will submit to ``url``.
 
     You must close the form yourself by calling ``end_form()`` or outputting
@@ -50,17 +50,29 @@ def form(url, method="post", multipart=False, **attrs):
     
     Options:
 
-    ``multipart``
-        If set to True, the enctype is set to "multipart/form-data".
-        You must set it to true when uploading files, or the browser will
-        submit the filename rather than the file.
-
     ``method``
         The method to use when submitting the form, usually either 
         "GET" or "POST". If "PUT", "DELETE", or another verb is used, a
         hidden input with name _method is added to simulate the verb
         over POST.
     
+    ``multipart``
+        If set to True, the enctype is set to "multipart/form-data".
+        You must set it to true when uploading files, or the browser will
+        submit the filename rather than the file.
+
+    ``hidden_fields``
+        Additional hidden fields to add to the beginning of the form.  It may
+        be a dict or an iterable of key-value tuples. This is implemented by
+        calling the object's ``.items()`` method if it has one, or just
+        iterating the object.  (This will successfuly get multiple values for
+        the same key in WebOb MultiDict objects.)
+
+    Because input tags must be placed in a block tag rather than directly
+    inside the form, all hidden fields will be put in a 
+    '<div style="display:none">'.  The style prevents the <div> from being
+    displayed or affecting the layout.
+
     Examples:
 
     >>> form("/submit")
@@ -68,20 +80,35 @@ def form(url, method="post", multipart=False, **attrs):
     >>> form("/submit", method="get")
     literal(u'<form action="/submit" method="get">')
     >>> form("/submit", method="put")
-    literal(u'<form action="/submit" method="post"><input name="_method" type="hidden" value="put" />')
+    literal(u'<form action="/submit" method="post"><div style="display:none">\\n<input id="_method" name="_method" type="hidden" value="put" />\\n</div>\\n')
     >>> form("/submit", "post", multipart=True) 
     literal(u'<form action="/submit" enctype="multipart/form-data" method="post">')
+
+    Changed in WebHelpers 2.0b2: add <div> and ``hidden_fields`` arg.
     """
+    fields = []
+    attrs["action"] = url
     if multipart:
         attrs["enctype"] = "multipart/form-data"
-    method_tag = literal("")
     if method.lower() in ['post', 'get']:
         attrs['method'] = method
     else:
         attrs['method'] = "post"
-        method_tag = HTML.input(type="hidden", name="_method", value=method)
-    attrs["action"] = url
-    return HTML.form(method_tag, _closed=False, **attrs)
+        field = hidden("_method", method)
+        fields.append(field)
+    if hidden_fields is not None:
+        try:
+            it = hidden_fields.items()
+        except AttributeError:
+            it = hidden_fields
+        for name, value in it:
+            field = hidden(name, value)
+            fields.append(field)
+    if fields:
+        div = HTML.div(*fields, style="display:none", _nl=True)
+    else:
+        div = None
+    return HTML.form(div, _closed=False, **attrs)
 
 
 def end_form():

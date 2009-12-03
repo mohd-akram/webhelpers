@@ -16,6 +16,10 @@ tip (development version)
     The exact spacing is subject to change.  The tag building code has been
     refactored to accommodate this.
 * webhelpers.html.tags:
+  - ``form()`` puts its hidden "_method" field in a '<div style="display:none">'
+    to conform to XHTML syntax. The style prevents the div from being displayed
+    or affecting the layout. A new arg ``hidden_fields`` may be a dict or
+    iterable of additional hidden fields, which will be added to the div.
   - Set magic ID attribute in ``hidden`` helper to match behavior of the other
     tag helpers.
   - ``image()`` can now calculate the width and height automatically
