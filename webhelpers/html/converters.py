@@ -6,7 +6,6 @@ import re
 from webhelpers.html import HTML, escape, literal, lit_sub
 from webhelpers.html.render import render, sanitize
 import webhelpers.textile as textile
-import webhelpers.markdown as _markdown
 
 __all__ = [
     "format_paragraphs",
@@ -21,27 +20,41 @@ _universal_newline_rx = re.compile(R"\r\n|\n|\r")  # All types of newline.
 _paragraph_rx = re.compile(R"\n{2,}")  # Paragraph break: 2 or more newlines.
 br = HTML.br() + "\n"
 
-def markdown(text, **kwargs):
-    """Format the text to HTML with MarkDown formatting.
-    
-    This function uses the `Python MarkDown library 
-    <http://www.freewisdom.org/projects/python-markdown/>`_
-    which is included with WebHelpers.  It does not include extensions
-    due to circular import issues.  If you need the footnotes or RSS
-    extensions, use the full Markdown package instead.  
+def markdown(text, markdown=None, **kwargs):
+    """Format the text to HTML with Markdown formatting.
+
+    Markdown is a wiki-like text markup language, originally written by
+    John Gruber for Perl.  The helper converts Markdown text to HTML.
+
+    There are at least two Python implementations of Markdown.
+    Markdown <http://www.freewisdom.org/projects/python-markdown/>`_is the
+    original port, and version 2.x contains extensions for footnotes, RSS, etc. 
+    `Markdown2 <http://code.google.com/p/python-markdown2/>`_ is another port
+    which claims to be faster and to handle edge cases better. 
+    WebHelpers itself contains an old version of Markdown
+    (``webhelpers.markdown`` == Markdown 1.7 without the extensions), but it's 
+    deprecated.  Most WebHelpers users use Markdown from Freewisdom.com.
+
+    You can pass the desired Markdown module as the ``markdown``
+    argument, or the helper will try to import ``markdown`` and fall back to
+    ``webhelpers.markdown`` if it can't. (The latter will trigger a deprecation
+    warning.)
     
     IMPORTANT:
     If your source text is untrusted and may contain malicious HTML markup,
     pass ``safe_mode="escape"`` to escape it, ``safe_mode="replace"`` to
     replace it with a scolding message, or ``safe_mode="remove"`` to strip it.
-
-    There is at least one other Markdown package for Python.  python-markdown2
-    (http://code.google.com/p/python-markdown2/), which claims to be faster and
-    to handle edge cases better.  WebHelpers is sticking to the original Python
-    Markdown for now for backward compatibility and because nobody has
-    complained about the speed.
     """
-    return literal(_markdown.markdown(text, **kwargs))
+    if not markdown:
+        markdown = _get_markdown_module()
+    return literal(markdown.markdown(text, **kwargs))
+
+def _get_markdown_module():
+    try:
+        import markdown
+    except ImportError:
+        import webhelpers.markdown as markdown
+    return markdown
 
 def textilize(text, sanitize=False):
     """Format the text to HTML with Textile formatting.

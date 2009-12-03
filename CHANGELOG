@@ -21,6 +21,13 @@ tip (development version)
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
     Gedminas.  A parsing bug remains: 
     http://pylonshq.com/project/pylonshq/ticket/657
+* webhelpers.markdown / webhelpers.html.converters:
+  - Deprecate ``webhelpers.markdown``, which is Markdown 1.7 without its
+    extensions. Users can upgrade to Markdown 2 in PyPi, or use the alternative
+    Markdown2 package. The ``markdown()`` helper in
+    ``webhelpers.html.converters`` now takes a ``markdown`` argument to specify
+    which implementation to use, or it will attempt to import ``markdown``, or
+    else fall back to ``webhelpers.markdown`` (with a deprecation warning).
 * webhelpers.media:
   - Bugfix in ``get_dimensions_pil``.
 * webhelpers.paginate:
