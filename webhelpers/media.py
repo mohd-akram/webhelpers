@@ -18,7 +18,7 @@ def get_dimensions_pil(path, default=(None, None)):
     """Get an image's size using the Python Imaging Library (PIL)
 
     Returns ``(width, height)`` as two integers, or ``default`` if the size
-    could not be ascertained.  Failuer usually means the file does not exist
+    could not be ascertained.  Failure usually means the file does not exist
     or is not in a format recognized by PIL.
 
     Depends on the Python Imaging Library (http://pypi.python.org/pypi/PIL).
@@ -26,7 +26,7 @@ def get_dimensions_pil(path, default=(None, None)):
     """
     import Image
     try:
-        im = Image(path)
+        im = Image.open(path)
     except Exception:
         return default
     return im.size
