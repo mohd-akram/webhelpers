@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-from util import WebHelpersTestCase
+import re
 import unittest
 from string24 import Template
 
+# Relative import
+from util import WebHelpersTestCase
+
+from nose.tools import eq_
 from routes import url_for
 
 from webhelpers.html import HTML, literal
@@ -105,29 +109,6 @@ class TestToolsHelper(WebHelpersTestCase):
         # Failing test: PylonsHQ bug #657
         #self.assertEqual(u'&lt;<a href="http://www.google.com">www.google.com</a>&gt;', auto_link("<www.google.com>"))
 
-    def test_highlighter(self):
-        self.assertEqual("This is a <strong class=\"highlight\">beautiful</strong> morning",
-                         highlight("This is a beautiful morning", "beautiful"))
-        self.assertEqual(
-            "This is a <strong class=\"highlight\">beautiful</strong> morning, but also a <strong class=\"highlight\">beautiful</strong> day",
-            highlight("This is a beautiful morning, but also a beautiful day", "beautiful"))
-        self.assertEqual("This is a <b>beautiful</b> morning, but also a <b>beautiful</b> day",
-                         highlight("This is a beautiful morning, but also a beautiful day",
-                                   "beautiful", r'<b>\1</b>'))
-        self.assertEqual("This text is not changed because we supplied an empty phrase",
-                         highlight("This text is not changed because we supplied an empty phrase",
-                                   None))
-
-    def test_highlighter_with_regex(self):
-        self.assertEqual("This is a <strong class=\"highlight\">beautiful!</strong> morning",
-                     highlight("This is a beautiful! morning", "beautiful!"))
-
-        self.assertEqual("This is a <strong class=\"highlight\">beautiful! morning</strong>",
-                     highlight("This is a beautiful! morning", "beautiful! morning"))
-
-        self.assertEqual("This is a <strong class=\"highlight\">beautiful? morning</strong>",
-                     highlight("This is a beautiful? morning", "beautiful? morning"))
-
     def test_strip_links(self):
         self.assertEqual("on my mind", strip_links("<a href='almost'>on my mind</a>"))
         self.assertEqual("on my mind", strip_links("<A href='almost'>on my mind</A>"))
@@ -214,9 +195,50 @@ class TestURLHelper(WebHelpersTestCase):
         self.assertEqual(u"<script type=\"text/javascript\">\n//<![CDATA[\neval(unescape('%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%61%20%68%72%65%66%3d%22%6d%61%69%6c%74%6f%3a%6d%65%40%64%6f%6d%61%69%6e%2e%63%6f%6d%22%3e%4d%79%20%65%6d%61%69%6c%3c%2f%61%3e%27%29%3b'))\n//]]>\n</script>",
                          mail_to("me@domain.com", "My email", encode = "javascript", replace_at = "(at)", replace_dot = "(dot)"))
 
+
+class TestHighlightHelper(WebHelpersTestCase):
+    def test_highlight(self):
+        eq_("This is a <strong class=\"highlight\">beautiful</strong> morning",
+                         highlight("This is a beautiful morning", "beautiful"))
+        eq_(
+            "This is a <strong class=\"highlight\">beautiful</strong> morning, but also a <strong class=\"highlight\">beautiful</strong> day",
+            highlight("This is a beautiful morning, but also a beautiful day", "beautiful"))
+        eq_("This text is not changed because we supplied an empty phrase",
+                         highlight("This text is not changed because we supplied an empty phrase",
+                                   None))
+
+    def test_highlight_with_regex(self):
+        eq_("This is a <strong class=\"highlight\">beautiful!</strong> morning",
+                     highlight("This is a beautiful! morning", "beautiful!"))
+
+        eq_("This is a <strong class=\"highlight\">beautiful! morning</strong>",
+                     highlight("This is a beautiful! morning", "beautiful! morning"))
+
+        eq_("This is a <strong class=\"highlight\">beautiful? morning</strong>",
+                     highlight("This is a beautiful? morning", "beautiful? morning"))
+
+    def test_highlight_phrases(self):
+        eq_('The c<strong class="highlight">at</strong> in the h<strong class="highlight">at</strong>.',
+            highlight("The cat in the hat.", "at"))
+        eq_('The <strong class="highlight">cat</strong> in the <strong class="highlight">hat</strong>.',
+            highlight("The cat in the hat.", ["cat", "hat"]))
+        eq_('The <strong class="highlight">cat</strong> is <strong class="highlight">cut</strong>.',
+            highlight("The cat is cut.", re.compile(R"c.t")))
+
+    def test_highlight_args(self):
+        eq_('The c<strong class="highlight">at</strong> in the h<strong class="highlight">at</strong>.',
+            highlight("The cat in the hat.", "AT"))
+        eq_('The cat in the hat.',
+            highlight("The cat in the hat.", "AT", case_sensitive=True))
+        eq_('The c<strong style="color:red">at</strong> in the h<strong style="color:red">at</strong>.',
+            highlight("The cat in the hat.", "at", class_=None,
+                style="color:red"))
+
+
 if __name__ == '__main__':
     suite = map(unittest.makeSuite, [
         TestToolsHelper,
+        TestHighlightHelper,
         TestURLHelper,
         ])
     for testsuite in suite:

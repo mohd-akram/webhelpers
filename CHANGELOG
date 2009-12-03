@@ -14,6 +14,11 @@ tip (development version)
   - Change for SQLAlchemy 0.6. (bug #11)
 * webhelpers.pylonslib:
   - Fix HTML overescaping.  Patch by Marius Gedminas.
+* webhelpers.tools:
+  - Reimplement ``highlight`` using HTML builder. Deprecate ``highlighter`` 
+    argument. Allow search phrase to be a string, a list of strings, or a 
+    regular expression. Add ``case_sensitive``, ``class_``, and ``**attrs``
+    arguments.
 
 
 1.0b1 (2009-11-20)
