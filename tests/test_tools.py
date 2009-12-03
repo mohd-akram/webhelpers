@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+# Relative import -- must be first in file to avoid ImportError
+from util import WebHelpersTestCase
+
 import re
 import unittest
 from string24 import Template
 
-# Relative import
-from util import WebHelpersTestCase
 
 from nose.tools import eq_
 from routes import url_for
