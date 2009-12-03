@@ -273,11 +273,7 @@ def highlight(text, phrase, highlighter=None, case_sensitive=False,
     else:
         flags = re.IGNORECASE
     if highlighter:
-        warnings.warn("the ``highlighter`` argument is deprecated",
-            DeprecationWarning)
-        pat = "(%s)" % re.escape(phrase)
-        rx = re.compile(pat, flags)
-        return lit_sub(rx, highlighter, text)
+        return _legacy_highlight(text, phrase, highlighter, flags)
     if isinstance(phrase, basestring):
         pat = re.escape(phrase)
         rx = re.compile(pat, flags)
@@ -291,6 +287,16 @@ def highlight(text, phrase, highlighter=None, case_sensitive=False,
         return HTML.strong(m.group(), class_=class_, **attrs)
     return lit_sub(rx, repl, text)
 
+
+def _legacy_highlight(text, phrase, highlighter, flags):
+    """WebHelpers 0.6 style highlight with deprecated ``highlighter arg."""
+    warnings.warn("the ``highlighter`` argument is deprecated",
+        DeprecationWarning)
+    pat = "(%s)" % re.escape(phrase)
+    rx = re.compile(pat, flags)
+    highlighter = literal(highlighter)
+    return lit_sub(rx, highlighter, text)
+    
 
 def auto_link(text, link="all", **href_options):
     """

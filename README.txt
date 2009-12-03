@@ -98,7 +98,7 @@ on third-party libraries.
 
 Routes_
 
-    Version >= 1.7 but < 2.0 must be installed and running in the current
+    Version >= 1.7 must be installed and running in the current
     web framework for:
 
     - webhelpers.html.tags (required only for ``javascript_link()``,
@@ -107,9 +107,6 @@ Routes_
     - the regression tests in the source distribution
 
     Currently Pylons_, TurboGears_, and Aquarium_ support Routes.
-
-    A future version of WebHelpers will be compatible with Routes 2, which is
-    still in development.
 
 Pylons_
 
