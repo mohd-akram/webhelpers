@@ -1,3 +1,5 @@
+from nose.tools import eq_
+
 from webhelpers.html import literal, lit_sub, escape, HTML
 
 def test_double_escape():
@@ -73,3 +75,11 @@ def test_unclosed_tag():
     
     result = HTML.form(_closed=False, action="hello")
     assert u'<form action="hello">' == result
+
+def test_newline_arg():
+    eq_(HTML.a(),         literal(u'<a></a>'))
+    eq_(HTML.a(_nl=True), literal(u'<a>\n</a>\n'))
+    eq_(HTML.a(_closed=False),           literal(u'<a>'))
+    eq_(HTML.a(_closed=False, _nl=True), literal(u'<a>\n'))
+    eq_(HTML.a("A", "B", href="/"),         literal(u'<a href="/">AB</a>'))
+    eq_(HTML.a("A", "B", href="/", _nl=True), literal(u'<a href="/">\nA\nB\n</a>\n'))

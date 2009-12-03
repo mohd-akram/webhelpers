@@ -74,6 +74,10 @@ The ``HTML`` object has the following methods for tag building:
         closed with a closing tag or an XHTML-style trailing slash as described
         below.
 
+    ``_nl``
+        If present and true, insert a newline before the first content
+        element, between each content element, and at the end of the tag.
+
     Example:
 
     >>> HTML.tag("a", href="http://www.yahoo.com", name=None, 
@@ -237,21 +241,25 @@ def make_tag(tag, *args, **kw):
 "in conjunction with non-keyword arguments"
         args = kw.pop("c")
     closed = kw.pop("_closed", True)
+    nl = kw.pop("_nl", False)
     htmlArgs = [' %s="%s"' % (_attr_decode(attr), escape(value))
                 for attr, value in sorted(kw.iteritems())
                 if value is not None]
     if not args and tag in empty_tags and closed:
         substr = '<%s%s />'
-        return literal(substr % (tag, "".join(htmlArgs)))
+        html = literal(substr % (tag, "".join(htmlArgs)))
     else:
-        close_tag = ""
+        chunks = ["<%s%s>" % (tag, "".join(htmlArgs))]
+        chunks.extend(escape(x) for x in args)
         if closed:
-            close_tag = "</%s>" %(tag)
-        return literal("<%s%s>%s%s" % (
-            tag,
-            "".join(htmlArgs),
-            "".join([escape(x) for x in args]),
-            close_tag))
+            chunks.append("</%s>" % tag)
+        if nl:
+            html = "\n".join(chunks)
+        else:
+            html = "".join(chunks)
+    if nl:
+        html += "\n"
+    return literal(html)
 
 
 class literal(unicode):
@@ -422,8 +430,11 @@ class _EscapedItem(DictMixin):
 
 empty_tags = set("area base basefont br col frame hr img input isindex link meta param".split())
 
-# Constants depending on literal().
+HTML = HTMLBuilder()
+
+# Constants depending on ``literal()`` and/or ``HTML``.
+NL = literal("\n")
+EMPTY = literal("")
+BR = HTML.br(_nl=True)
 _CDATA_START = literal(u"<![CDATA[") 
 _CDATA_END = literal(u"]]>")
-    
-HTML = HTMLBuilder()
