@@ -234,6 +234,12 @@ class TestHighlightHelper(WebHelpersTestCase):
             highlight("The cat in the hat.", "at", class_=None,
                 style="color:red"))
 
+    def test_highlight_literal(self):
+        eq_(literal(u'The &lt;red&gt; c<strong class="highlight">at</strong>.'),
+            highlight("The <red> cat.", "at"))
+        eq_(literal(u'The <red> c<strong class="highlight">at</strong>.'),
+            highlight(literal("The <red> cat."), "at"))
+
 
 if __name__ == '__main__':
     suite = map(unittest.makeSuite, [
