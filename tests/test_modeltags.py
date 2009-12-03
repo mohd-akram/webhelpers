@@ -25,7 +25,7 @@ class TestModelTagsHelperWithObject(WebHelpersTestCase):
     def test_hidden_field(self):
         self.assertEqual(
             self.m.hidden("name"),
-            u'<input name="name" type="hidden" value="Jim" />'
+            u'<input id="name" name="name" type="hidden" value="Jim" />'
         )
 
     def test_password_field(self):
@@ -83,7 +83,7 @@ class TestModelTagsHelperWithDict(TestModelTagsHelperWithObject):
     def test_hidden_field(self):
         self.assertEqual(
             self.m.hidden("name"),
-            u'<input name="name" type="hidden" value="Jim" />'
+            u'<input id="name" name="name" type="hidden" value="Jim" />'
         )
 
     def test_password_field(self):
@@ -199,7 +199,7 @@ class TestModelTagsHelperWithoutObject(WebHelpersTestCase):
     def test_hidden_field(self):
         self.assertEqual(
             self.m.hidden("name"),
-            u'<input name="name" type="hidden" value="" />'
+            u'<input id="name" name="name" type="hidden" value="" />'
         )
 
     def test_password_field(self):
