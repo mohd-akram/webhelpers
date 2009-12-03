@@ -8,6 +8,7 @@ the helpers' docstrings.
 """
 
 import datetime
+import logging
 import os
 import re
 import urllib
@@ -15,6 +16,7 @@ import urlparse
 
 from webhelpers import containers
 from webhelpers.html import escape, HTML, literal, url_escape
+import webhelpers.media as media
 
 __all__ = [
            # Form tags
@@ -34,6 +36,8 @@ __all__ = [
            # Utility functions
            "css_classes", "convert_boolean_attrs",
            ]
+
+log = logging.getLogger(__name__)
 
 NL = literal("\n")
 BR = literal("<br />\n")
@@ -873,7 +877,8 @@ def _list(tag, items, default, attrs, li_attrs):
     return getattr(HTML, tag)(content, **attrs)
     
 
-def image(url, alt, width=None, height=None, **attrs):
+def image(url, alt, width=None, height=None, path=None, use_pil=False, 
+    **attrs):
     """Return an image tag for the specified ``source``.
 
     ``url``
@@ -888,10 +893,25 @@ def image(url, alt, width=None, height=None, **attrs):
         alt tag completely, pass None.
 
     ``width``
-        The width of the image, default is not included
+        The width of the image, default is not included.
 
     ``height``
-        The height of the image, default is not included
+        The height of the image, default is not included.
+
+    ``path``
+        Calculate the width and height based on the image file at ``path`` if
+        possible. May not be specified if ``width`` or ``height`` is 
+        specified. The results are also written to the debug log for
+        troubleshooting.
+
+    ``use_pil``
+        If true, calcuate the image dimensions using the Python Imaging 
+        Library, which must be installed. Otherwise use a pure Python
+        algorithm which understands fewer image formats and may be less
+        accurate. This flag controls whether
+        ``webhelpers.media.get_dimensions_pil`` or
+        ``webhelpers.media.get_dimensions`` is called. It has no effect if
+        ``path`` is not specified.
         
     Examples::
 
@@ -909,14 +929,26 @@ def image(url, alt, width=None, height=None, **attrs):
 
         >>> image("/icons/icon.gif", None, width=16)
         literal(u'<img alt="" src="/icons/icon.gif" width="16" />')
-        
     """
     if not alt:
         alt = ""
-    if width is not None:
+    if width is not None or height is not None:
         attrs['width'] = width
-    if height is not None:
         attrs['height'] = height
+        if path:
+            raise TypeError(
+                "can't specify path if width and height are specified")
+    elif path:
+        if use_pil:
+            result = media.get_dimensions_pil(path)
+            msg = "using PIL"
+        else:
+            result = media.get_dimensions(path)
+            msg = "not using PIL"
+        abspath = os.path.abspath(path)
+        log.debug("image size is %s for '%s' (%s)", result, abspath, msg)
+        attrs['width'] = result[0]
+        attrs['height'] = result[1]
     return HTML.img(src=url, alt=alt, **attrs)
 
 #### Non-tag utilities
