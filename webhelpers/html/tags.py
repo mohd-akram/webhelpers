@@ -124,10 +124,11 @@ def text(name, value=None, id=None, **attrs):
     return HTML.input(**attrs)
 
 
-def hidden(name, value=None, **attrs):
+def hidden(name, value=None, id=None, **attrs):
     """Create a hidden field.
     """
     _set_input_attrs(attrs, "hidden", name, value)
+    _set_id_attr(attrs, id, name)
     return HTML.input(**attrs)
 
 

@@ -37,13 +37,13 @@ class TestFormTagHelper(object):
     def test_hidden_field(self):
         eq_(
             hidden("id", 3),
-            u'<input name="id" type="hidden" value="3" />'
+            u'<input id="id" name="id" type="hidden" value="3" />'
         )
 
     def test_hidden_field_alt(self):
         eq_(
             hidden("id", '3'),
-            u'<input name="id" type="hidden" value="3" />'
+            u'<input id="id" name="id" type="hidden" value="3" />'
         )
 
     def test_password_field(self):
