@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+import warnings
+warnings.warn("``webhelpers.markdown`` is deprecated, please install the "
+    "current Markdown package (http://python.org/pypi/Markdown)",
+    DeprecationWarning)
+
 version = "1.7"
 version_info = (1,7,0,"rc-2")
 __revision__ = "$Rev: 72 $"
