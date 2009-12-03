@@ -241,6 +241,10 @@ class TestHighlightHelper(WebHelpersTestCase):
         eq_(literal(u'The <red> c<strong class="highlight">at</strong>.'),
             highlight(literal("The <red> cat."), "at"))
 
+    def test_highlight_legacy_highlighter(self):
+        eq_("This is a <b>beautiful</b> morning, but also a <b>beautiful</b> day",
+                         highlight("This is a beautiful morning, but also a beautiful day",
+                                   "beautiful", r'<b>\1</b>'))
 
 if __name__ == '__main__':
     suite = map(unittest.makeSuite, [
