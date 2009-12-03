@@ -7,6 +7,14 @@ tip (development version)
   - Fix spelling of Massachusetts.
 * webhelpers.html:
   - New ``HTML.cdata()`` method for producing "<!![CDATA[ ... ]]>" sections.
+  - The basic tag builders (``HTML.a()`` and ``HTML.tag("a")``) now have a
+    ``_nl`` arg which, if true, inserts a newline between content elements
+    and at the end of the tag for readability.  Example:  
+        HTML.a("A", "B", href="/")  =>   '<a href="/">AB</a>'
+        HTML.a("A", "B", href="/", _nl=True)   =>   '<a href="/">\nA\nB\n</a>\n'
+    This does not affect HTML attributes nor the higher-level tag helpers.
+    The exact spacing is subject to change.  The tag building code has been
+    refactored to accommodate this.
 * webhelpers.html.tags:
   - Set magic ID attribute in ``hidden`` helper to match behavior of the other
     tag helpers.
