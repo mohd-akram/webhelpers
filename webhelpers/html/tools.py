@@ -6,6 +6,7 @@ BeautifulSoup and HTMLTidy handle this well.
 
 import re
 import urllib
+import warnings
 
 from webhelpers.html import HTML, literal, lit_sub, escape
 from webhelpers.html.tags import convert_boolean_attrs
@@ -221,36 +222,73 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
         return tag
 
 
-def highlight(text, phrase, 
-              highlighter='<strong class="highlight">\\1</strong>'):
-    """Highlight the ``phrase`` where it is found in the ``text``.
-    
-    The highlighted phrase will be surrounded by the highlighter, 
-    by default::
-    
-        <strong class="highlight">I'm a highlight phrase</strong>
-    
-    ``highlighter``
-        Defines the highlighting phrase. This argument should be a 
-        single-quoted string with ``\\1`` where the phrase is supposed 
-        to be inserted.
-        
-    Note: The ``phrase`` is sanitized to include only letters, digits, 
-    and spaces before use.
 
-    Example::
+def highlight(text, phrase, highlighter=None, case_sensitive=False, 
+    class_="highlight", **attrs):
+    """Highlight all occurrences of ``phrase`` in ``text``.
 
-        >>> highlight('You searched for: Pylons', 'Pylons')
-        'You searched for: <strong class="highlight">Pylons</strong>'
-        
+    This inserts "<strong class="highlight">...</strong>" around every
+    occurrence.
+
+    Arguments:
+    
+    ``text``: 
+        The full text.
+    
+    ``phrase``: 
+        A phrase to find in the text. This may be a string, a list of strings, 
+        or a compiled regular expression. If a string, it's regex-escaped and
+        compiled. If a list, all of the strings will be highlighted.  This is
+        done by regex-escaping all elements and then joining them using the
+        regex "|" token.
+
+    ``highlighter``:
+        Deprecated.  A replacement expression for the regex substitution.
+        This was deprecated because it bypasses the HTML builder and creates
+        tags via string mangling.  The previous default was '<strong
+        class="highlight">\\1</strong>', which mimics the normal behavior of
+        this function.  ``phrase`` must be a string if ``highlighter`` is
+        specified.  Overrides ``class_`` and ``attrs_`` arguments.
+
+    ``case_sensitive``:
+        If false (default), the phrases are searched in a case-insensitive
+        manner. No effect if ``phrase`` is a regex object.
+
+    ``class_``:
+        CSS class for the <strong> tag.
+
+    ``**attrs``:
+        Additional HTML attributes for the <strong> tag.
+
+    Changed in WebHelpers 1.0b2: new implementation using HTML builder.
+    Allow ``phrase`` to be list or regex.  Deprecate ``highlighter`` and
+    change its default value to None. Add ``case_sensitive``, ``class_``,
+    and ``**attrs`` arguments.
     """
     if not phrase or not text:
         return text
-    highlight_re = re.compile('(%s)' % re.escape(phrase), re.I)
-    if hasattr(text, '__html__'):
-        return literal(highlight_re.sub(highlighter, text))
+    if case_sensitive:
+        flags = 0   # No flags.
     else:
-        return highlight_re.sub(highlighter, text)
+        flags = re.IGNORECASE
+    if highlighter:
+        warnings.warn("the ``highlighter`` argument is deprecated",
+            DeprecationWarning)
+        pat = "(%s)" % re.escape(phrase)
+        rx = re.compile(pat, flags)
+        return lit_sub(rx, highlighter, text)
+    if isinstance(phrase, basestring):
+        pat = re.escape(phrase)
+        rx = re.compile(pat, flags)
+    elif isinstance(phrase, (list, tuple)):
+        parts = [re.escape(x) for x in phrase]
+        pat = "|".join(parts)
+        rx = re.compile(pat, flags)
+    else:
+        rx = phrase
+    def repl(m):
+        return HTML.strong(m.group(), class_=class_, **attrs)
+    return lit_sub(rx, repl, text)
 
 
 def auto_link(text, link="all", **href_options):
