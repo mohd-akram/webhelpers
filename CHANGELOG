@@ -7,6 +7,11 @@ tip (development version)
   - Fix spelling of Massachusetts.
 * webhelpers.html:
   - New ``HTML.cdata()`` method for producing "<!![CDATA[ ... ]]>" sections.
+* webhelpers.html.tags:
+  - ``image()`` can now calculate the width and height automatically
+    from an image file, using either the PIL algorithm or the pure Python
+    algorithm in ``webhelpers.media``. It also logs the dimensions to the
+    debug log for troubleshooting.
 * webhelpers.html.tools:
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
     Gedminas.
