@@ -5,7 +5,12 @@ from util import WebHelpersTestCase
 import re
 import unittest
 from string24 import Template
+import warnings
 
+# Ignore deprecation warnings about legacy 'highlighter' argument
+warnings.filterwarnings("ignore", 
+    category=DeprecationWarning, module=R"webhelpers\.html\.tools")
+    # Can't find a 'message' argument that matches the warning.
 
 from nose.tools import eq_
 from routes import url_for
