@@ -221,10 +221,11 @@ class Rss201rev2Feed(RssFeed):
                 handler.addQuickElement(u"guid", item['unique_id'])
             if item['ttl'] is not None:
                 handler.addQuickElement(u"ttl", item['ttl'])
-            if item['generator'] is not None:
-                handler.addQuickElement(u"generator", item['generator'])
-            if item['source'] is not None:
-                handler.addQuickElement(u"source", item['source'])
+            # XXX DISABLED: these are defined at the feed level.
+            #if item['generator'] is not None:
+            #    handler.addQuickElement(u"generator", item['generator'])
+            #if item['source'] is not None:
+            #    handler.addQuickElement(u"source", item['source'])
 
             # Enclosure.
             if item['enclosure'] is not None:
