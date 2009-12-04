@@ -5,6 +5,9 @@ tip (development version)
 -------------------------
 * webhelpers.constants:
   - Fix spelling of Massachusetts.
+* webhelpers.feedgenerator:
+  - Disable 'generator' and 'source' properties; they seem to be defined
+    in the wrong place.
 * webhelpers.html:
   - New ``HTML.cdata()`` method for producing "<!![CDATA[ ... ]]>" sections.
   - The basic tag builders (``HTML.a()`` and ``HTML.tag("a")``) now have a
