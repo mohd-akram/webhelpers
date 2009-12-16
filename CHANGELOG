@@ -33,6 +33,8 @@ tip (development version)
   - Reimplement ``highlight()`` using the HTML builder. New arguments add
     flexibility.  Deprecate the ``highlighter`` argument, which creates tags
     via string interpolation.
+  - Fixed ``auto_link()`` to parse slash characters in query string.
+    Patch by hanula; Bitbucket issue #10.
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
     Gedminas.  A parsing bug remains: 
     http://pylonshq.com/project/pylonshq/ticket/657
