@@ -37,12 +37,18 @@ tip (development version)
     Gedminas.  A parsing bug remains: 
     http://pylonshq.com/project/pylonshq/ticket/657
 * webhelpers.markdown / webhelpers.html.converters:
-  - Deprecate ``webhelpers.markdown``, which is Markdown 1.7 without its
-    extensions. Users can upgrade to Markdown 2 in PyPi, or use the alternative
-    Markdown2 package. The ``markdown()`` helper in
-    ``webhelpers.html.converters`` now takes a ``markdown`` argument to specify
-    which implementation to use, or it will attempt to import ``markdown``, or
-    else fall back to ``webhelpers.markdown`` (with a deprecation warning).
+  - ``webhelpers.markdown`` will not be upgraded to the version 2 series but
+    will remain at 1.7. Users who want the latest bugfixes and extensions
+    should download the full Markdown package or the alternative Markdown2
+    from PyPI.
+  - The ``markdown()`` helper in
+    ``webhelpers.html.converters`` now has support for external Markdown
+    implementations. You can pass a specific module via the ``markdown`` 
+    argument, otherwise it will attempt to import ``markdown`` or fall back
+    to ``webhelpers.markdown``. 
+  - To see which version is autoloaded,  
+    call ``_get_markdown_module()`` and inspect the ``.__file__``, 
+    ``.version``, and/or ``.version_info`` attributes of the return value.
 * webhelpers.media:
   - Bugfix in ``get_dimensions_pil``.
 * webhelpers.paginate:
