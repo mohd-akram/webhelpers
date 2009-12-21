@@ -8,9 +8,9 @@ tip (development version)
 * webhelpers.feedgenerator:
   - Sync with Django rev 11910. This adds GeoRSS and makes the API more
     extensible, as well as fixing a few bugs.
-    It loses the 'published', 'generator', and 'source' properties which were
-    added locally. However, the 'generator' and 'source' patch was buggy
-    anyway.
+    (Re-added the Atom1 'published' property.)
+    (The 'generator' and 'source' properties were lost, but they weren't
+    working correctly anyway.)
 * webhelpers.html:
   - New ``HTML.cdata()`` method for producing "<!![CDATA[ ... ]]>" sections.
   - The basic tag builders (``HTML.a()`` and ``HTML.tag("a")``) now have a
