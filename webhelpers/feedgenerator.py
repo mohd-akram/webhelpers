@@ -44,6 +44,10 @@
 # - Apply ``rfc3339_date`` bugfix (02044132a2ef) to both that function and
 #   and ``rfc2822_date``.  (``.tzinfo`` attribute may not exist in datetime
 #   objects.)
+# - Apply 'published' property patch (1f234b039b58).
+# - Note: 'generator' and 'source' properties were lost from a previous
+#   revision of webhelpers.feedgenerator. The implementation had a bug and
+#   can't be used as is.
 
 
 """
