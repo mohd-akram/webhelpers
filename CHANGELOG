@@ -3,6 +3,9 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+
+1.0b2 (2009-12-21)
+------------------
 * webhelpers.constants:
   - Fix spelling of Massachusetts.
 * webhelpers.feedgenerator:
