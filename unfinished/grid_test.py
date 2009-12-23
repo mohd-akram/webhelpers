@@ -10,9 +10,9 @@ test_data = [
              ]
 
 test_grid = grid.Grid(test_data, columns=['_numbered','group_name','options'])
-test_grid.exclude_ordering = ['options']
+test_grid.exclude_ordering = test_grid.columns
 test_grid.format = {
-'options':lambda i,item: HTML.tag('td', 'baz')
+'options':lambda col_num, i,item: HTML.tag('td', 'baz', class_='c%s' % (col_num))
 }
 
 
