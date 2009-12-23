@@ -3,11 +3,24 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.html.tools:
+  - New helper ``js_obfuscate`` implements the old rails helper of the same name.
+
+1.0b2 (2009-12-21)
+------------------
 * webhelpers.constants:
   - Fix spelling of Massachusetts.
 * webhelpers.feedgenerator:
-  - Disable 'generator' and 'source' properties; they seem to be defined
-    in the wrong place.
+  - Sync with Django rev 11910. This adds GeoRSS and makes the API more
+    extensible, as well as fixing a few bugs.
+    (Re-added the Atom1 'published' property.)
+    (The 'generator' and 'source' properties were lost, but they weren't
+    working correctly anyway.)
+    GeoRSS usage: use the Geo\* classes and add  ``geometry=(lat, lon)`` to
+    each news item. Other shapes and a (not yet implemented) Geometry class are
+    allowed; see the source.
+    Note: you should specify the latitude first, but the longitude appears
+    first in the newsfeed.  This is a feature, to comply with the spec.
 * webhelpers.html:
   - New ``HTML.cdata()`` method for producing "<!![CDATA[ ... ]]>" sections.
   - The basic tag builders (``HTML.a()`` and ``HTML.tag("a")``) now have a
@@ -33,6 +46,8 @@ tip (development version)
   - Reimplement ``highlight()`` using the HTML builder. New arguments add
     flexibility.  Deprecate the ``highlighter`` argument, which creates tags
     via string interpolation.
+  - Fixed ``auto_link()`` to parse slash characters in query string.
+    Patch by hanula; Bitbucket issue #10.
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
     Gedminas.  A parsing bug remains: 
     http://pylonshq.com/project/pylonshq/ticket/657

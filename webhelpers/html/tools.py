@@ -14,6 +14,7 @@ from webhelpers.html.tags import convert_boolean_attrs
 __all__ = [
     'auto_link', 
     'button_to', 
+    'js_obfuscate',
     'highlight', 
     'mail_to',
     'strip_links',
@@ -39,7 +40,7 @@ AUTO_LINK_RE = re.compile(r"""
                           (?:\.[-\w]+)*            # remaining subdomains or domain
                           (?::\d+)?                # port
                           (?:/(?:(?:[~\w\+%-]|(?:[,.;:][^\s$]))+)?)* # path
-                          (?:\?[\w\+%&=.;-]+)?     # query string
+                          (?:\?[\w\+\/%&=.;-]+)?     # query string
                           (?:\#[\w\-]*)?           # trailing anchor
                         )
                         ([\.,"'?!;:]|\s|<|$)       # trailing text
@@ -137,6 +138,21 @@ def button_to(name, url='', **html_options):
     
     return HTML.form(method=form_method, action=url, class_="button-to",
                      c=[HTML.div(method_tag, HTML.input(**html_options))])
+
+def js_obfuscate(content):
+    """Obfuscate data in a Javascript tag.
+    
+    Example::
+        
+        >>> js_obfuscate("<input type='hidden' name='check' value='valid' />")
+        literal(u'<script type="text/javascript">\\n//<![CDATA[\\neval(unescape(\\'%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%27%3c%69%6e%70%75%74%20%74%79%70%65%3d%27%68%69%64%64%65%6e%27%20%6e%61%6d%65%3d%27%63%68%65%63%6b%27%20%76%61%6c%75%65%3d%27%76%61%6c%69%64%27%20%2f%3e%27%29%3b\\'))\\n//]]>\\n</script>')
+        
+    """
+    doc_write = "document.write('%s');" % content
+    obfuscated = ''.join(['%%%x' % ord(x) for x in doc_write])
+    complete = "eval(unescape('%s'))" % obfuscated
+    cdata = HTML.cdata("\n", complete, "\n//")
+    return HTML.script("\n//", cdata, "\n", type="text/javascript")
 
 
 def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, 
