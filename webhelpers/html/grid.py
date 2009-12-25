@@ -2,39 +2,6 @@ from webhelpers.html.builder import HTML, literal
 
 class Grid(object):
     
-    def default_column_format(self, column_number, i, record, column_name):
-        class_name = 'c%s' % (column_number)
-        return HTML.tag('td', record[column_name], class_=class_name)
-    
-    def numbered_column_format(self, column_number, i, record):
-        class_name = 'c%s' % (column_number)
-        return HTML.tag('td', i, class_=class_name)
-    
-    def default_record_format(self, i, record, class_name, columns):
-        return HTML.tag('tr', columns, class_=class_name)
-
-    def default_record_format(self, i, record, class_name, columns):
-        return HTML.tag('tr', columns, class_=class_name)
-
-    def default_header_record_format(self, headers):
-        return HTML.tag('tr', headers, class_='header')
-
-    def default_header_ordered_column_format(self, column_number, order, column_name, header_label):
-        header_label = HTML(header_label, HTML.tag('span', class_='marker'))
-        if column_name == '_numbered':
-            column_name = 'numbered'
-        class_name = 'c%s ordering %s %s' % (column_number, order, column_name)
-        return HTML.tag('td', header_label, class_=class_name)
-
-    def default_header_column_format(self, column_number, column_name, header_label):
-        if column_name == '_numbered':
-            column_name = 'numbered'
-        class_name = 'c%s %s' % (column_number, column_name)
-        return HTML.tag('td', header_label, class_=class_name)
-    
-    def generate_header_link(self, column_number, column, label_text):
-        return None
-    
     def __init__(self, itemlist, *args, **kwargs):
         self.custom_record_format = None
         self.labels = {}
@@ -100,3 +67,39 @@ class Grid(object):
     
     def __str__(self):
         return self.__html__()
+
+    def generate_header_link(self, column_number, column, label_text):
+        return None
+
+    #### Default HTML tag formats ####
+
+    def default_column_format(self, column_number, i, record, column_name):
+        class_name = 'c%s' % (column_number)
+        return HTML.tag('td', record[column_name], class_=class_name)
+    
+    def numbered_column_format(self, column_number, i, record):
+        class_name = 'c%s' % (column_number)
+        return HTML.tag('td', i, class_=class_name)
+    
+    def default_record_format(self, i, record, class_name, columns):
+        return HTML.tag('tr', columns, class_=class_name)
+
+    def default_record_format(self, i, record, class_name, columns):
+        return HTML.tag('tr', columns, class_=class_name)
+
+    def default_header_record_format(self, headers):
+        return HTML.tag('tr', headers, class_='header')
+
+    def default_header_ordered_column_format(self, column_number, order, column_name, header_label):
+        header_label = HTML(header_label, HTML.tag('span', class_='marker'))
+        if column_name == '_numbered':
+            column_name = 'numbered'
+        class_name = 'c%s ordering %s %s' % (column_number, order, column_name)
+        return HTML.tag('td', header_label, class_=class_name)
+
+    def default_header_column_format(self, column_number, column_name, header_label):
+        if column_name == '_numbered':
+            column_name = 'numbered'
+        class_name = 'c%s %s' % (column_number, column_name)
+        return HTML.tag('td', header_label, class_=class_name)
+    
