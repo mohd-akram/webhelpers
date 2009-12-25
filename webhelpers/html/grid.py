@@ -2,17 +2,16 @@ from webhelpers.html.builder import HTML, literal
 
 class Grid(object):
     
-    def __init__(self, itemlist, *args, **kwargs):
+    def __init__(self, itemlist, columns, column_formats=None, start_number=1):
         self.custom_record_format = None
         self.labels = {}
         self.exclude_ordering = ["_numbered"]
         self.itemlist = itemlist
-        columns = kwargs["columns"]
         if "_numbered" in columns:
             self.labels["_numbered"] = "no."
         self.columns = columns
-        self.format = kwargs.get("format", {})
-        self._start_number = kwargs.get("start_number", 1)
+        self.column_formats = column_formats or {}
+        self._start_number = start_number
         
 
     def make_headers(self):
@@ -27,42 +26,49 @@ class Grid(object):
                 label_text = column.replace("_", " ").title()
             # handle non clickable columns
             if column in self.exclude_ordering:
-                header = self.default_header_column_format(i + 1, column, label_text)
+                header = self.default_header_column_format(i + 1, column, 
+                    label_text)
             # handle clickable columns
             else:
                 header = self.generate_header_link(i + 1, column, label_text)
                 if header is None:
-                    header = self.default_header_column_format(i + 1, column, label_text)                    
+                    header = self.default_header_column_format(i + 1, column, 
+                        label_text)                    
             header_columns.append(header)               
         return HTML(*header_columns)
     
     def make_columns(self, i, record):
         columns = []        
         for col_num, column in enumerate(self.columns):
-            if column in self.format:
-                columns.append(self.format[column](col_num, i, record))
+            if column in self.column_formats:
+                columns.append(self.column_formats[column](col_num, i, record))
             else:
                 if column == "_numbered":
-                    columns.append(self.numbered_column_format(col_num, i + self._start_number, record))
+                    r = self.numbered_column_format(col_num, 
+                        i + self._start_number, record)
                 else:
-                    columns.append(self.default_column_format(col_num, i, record, column)) 
+                    r = self.default_column_format(col_num, i, record, column)
+                columns.append(r)
         return HTML(*columns)
     
     def __html__(self):
         """ renders the grid """
         records = []
         #first render headers record
-        records.append(self.default_header_record_format(self.make_headers()))
+        headers = self.make_headers()
+        r = self.default_header_record_format(headers)
+        records.append(r)
         for i, record in enumerate(self.itemlist):
             if i % 2 == 0:
                 class_name = "even"
             else:
                 class_name = "odd"
+            columns = self.make_columns(i, record)
             if self.custom_record_format is None:
-                records.append(self.default_record_format(i, record, class_name, self.make_columns(i, record)))
+                r = self.default_record_format(i, record, class_name, columns)
             else:
-                records.append(self.custom_record_format(i, record, class_name, self.make_columns(i, record)))
-
+                r = self.custom_record_format(i, record, class_name, columns)
+            records.append(r)
         return HTML(*records)
     
     def __str__(self):
@@ -90,14 +96,16 @@ class Grid(object):
     def default_header_record_format(self, headers):
         return HTML.tag("tr", headers, class_="header")
 
-    def default_header_ordered_column_format(self, column_number, order, column_name, header_label):
+    def default_header_ordered_column_format(self, column_number, order, 
+        column_name, header_label):
         header_label = HTML(header_label, HTML.tag("span", class_="marker"))
         if column_name == "_numbered":
             column_name = "numbered"
         class_name = "c%s ordering %s %s" % (column_number, order, column_name)
         return HTML.tag("td", header_label, class_=class_name)
 
-    def default_header_column_format(self, column_number, column_name, header_label):
+    def default_header_column_format(self, column_number, column_name, 
+        header_label):
         if column_name == "_numbered":
             column_name = "numbered"
         class_name = "c%s %s" % (column_number, column_name)
