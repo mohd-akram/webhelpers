@@ -143,6 +143,9 @@ from webhelpers.util import cgi_escape
 
 __all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
 
+# Not included in __all__ because for specialized purposes only: 
+# "format_attrs".
+
 class UnfinishedTag(object):
     
     """Represents an unfinished or empty tag."""
