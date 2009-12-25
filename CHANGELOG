@@ -3,8 +3,14 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.html.grid:
+  - New module to create an HTML table from a list of records.
+* webhelpers.html.tags:
+  - New helpers ``Doctype`` (class) and ``xml_declaration``.
 * webhelpers.html.tools:
-  - New helper ``js_obfuscate`` implements the old rails helper of the same name.
+  - New helper ``js_obfuscate`` implements the old rails helpera.
+* webhelpers.util:
+  - New helper ``update_params`` to update query parameters in a URL.
 
 1.0b2 (2009-12-21)
 ------------------
