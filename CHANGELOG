@@ -5,6 +5,8 @@ tip (development version)
 -------------------------
 * webhelpers.html.grid:
   - New module to create an HTML table from a list of records.
+* webhelpers.html.tags:
+  - New helpers ``Doctype`` (class) and ``xml_declaration``.
 * webhelpers.html.tools:
   - New helper ``js_obfuscate`` implements the old rails helpera.
 * webhelpers.util:
