@@ -1,4 +1,3 @@
-from pylons import request, url
 from webhelpers.html.builder import HTML, literal
 import webhelpers.html.grid as grid
 
@@ -8,6 +7,8 @@ class NoRequestException(Exception):
 class GridPylons(grid.Grid):
     
     def generate_header_link(self, column_number, column, label_text):
+        from pylons import request, url
+
         # this will handle possible URL generation
         if not hasattr(self, "request"):
             raise NoRequestException(
