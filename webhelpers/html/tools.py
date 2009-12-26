@@ -9,7 +9,7 @@ import urllib
 import warnings
 
 from webhelpers.html import HTML, literal, lit_sub, escape
-from webhelpers.html.tags import convert_boolean_attrs
+import webhelpers.html.tags as tags
 
 __all__ = [
     'auto_link', 
@@ -115,7 +115,7 @@ def button_to(name, url='', **html_options):
     
     """
     if html_options:
-        convert_boolean_attrs(html_options, ['disabled'])
+        tags.convert_boolean_attrs(html_options, ['disabled'])
     
     method_tag = ''
     method = html_options.pop('method', '')
