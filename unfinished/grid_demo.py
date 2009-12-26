@@ -44,7 +44,7 @@ HTML_TEMPLATE = literal("""\
         <p>%(description)s</p>
     </body>
 </html>
-"""
+""")
 # XXX There should be helpers to create a basic HTML file.
 
 #### Demo base class ####
@@ -129,7 +129,7 @@ def main():
         filename = name + ".html"
         dic = {
             "title": d.name or d.__class__.__name__.lower(),
-            "description" d.description,
+            "description": d.description,
             "grid": d.get_grid(),
             }
         html = HTML_TEMPLATE % dic
