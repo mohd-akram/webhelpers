@@ -3,6 +3,9 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+
+1.0b3 (2009-12-29)
+------------------
 * webhelpers.feedgenerator:
 
   - Allow either lat-lon and lon-lat formats in geometry data. The default is
