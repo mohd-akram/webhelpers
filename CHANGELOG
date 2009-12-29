@@ -5,9 +5,11 @@ tip (development version)
 -------------------------
 * webhelpers.feedgenerator:
 
-  - Don't swap latitude and longitude. The input data and GeoRSS format are
-    both latitude first. Django's feedgenerator swaps the two because GeoDjango
-    has longitude first, but that doesn't apply to WebHelpers.
+  - Allow either lat-lon and lon-lat formats in geometry data. The default is
+    lat-lon. For lon-lat, set ``GeoFeedMixin.is_input_latitude_first`` to 
+    false. (You can set in a subclass or instance before writing the output.)
+    lat-lon is the most common format but GeoDjango and some other libraries
+    use lon-lat. The XML output is always lat-lon per the GeoRSS spec.
 
 * webhelpers.html.grid:
 
