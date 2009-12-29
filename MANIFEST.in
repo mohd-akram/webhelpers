@@ -1,0 +1,2 @@
+recursive-include webhelpers/public *
+include CHANGELOG LICENSE TODO
