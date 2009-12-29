@@ -98,7 +98,7 @@ tip (development version)
   - New helper ``sanitize()`` strips HTML tags from user input.
 * webhelprs.html.tags:
   - New helper ``css_classes()`` to add classes to a tag programmatically.
-  - Fix bug in tag helpers when passing 'id_' argument (although 'id' is
+  - Fix bug in tag helpers when passing ``id_`` argument (although ``id`` is
     recommended instead).
   - Add OptionGroup class and optgroup support to select().  Patch by
     Alexandre Bourget.
@@ -260,7 +260,7 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION
 * WARNING: paginate now takes arguments intended for the collection object as
   query_args. This could affect backwards compatibility. This fixes a common
   issue that non-keyword arguments passed into paginate get eaten by
-  paginate's keyword arguments instead of being in *args to go on to the
+  paginate's keyword arguments instead of being in \*args to go on to the
   collection.
 * Added environ checking with Routes so that page will be automatically pulled
   out of the query string, or from the Routes match dict if available.
@@ -281,7 +281,7 @@ COMPATIBILITY CHANGES IN 0.6 DEV VERSION
 * Sync'd Tags helper to 5857.
 * Sync'd Asset tag helper to 6057.
 * Sync'd Rails Number helper to 6045.
-* Updated Ajax commands to internally use 'with_' to avoid name conflicts with
+* Updated Ajax commands to internally use ``with_`` to avoid name conflicts with
   Python 2.5 and beyond. Reported by anilj. Fixes #190.
 * Applied patch from David Smith to decode URL parts as Routes does.
   Fixes #186.
