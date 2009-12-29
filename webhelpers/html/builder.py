@@ -143,6 +143,9 @@ from webhelpers.util import cgi_escape
 
 __all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
 
+# Not included in __all__ because for specialized purposes only: 
+# "format_attrs".
+
 class UnfinishedTag(object):
     
     """Represents an unfinished or empty tag."""
@@ -242,14 +245,12 @@ def make_tag(tag, *args, **kw):
         args = kw.pop("c")
     closed = kw.pop("_closed", True)
     nl = kw.pop("_nl", False)
-    htmlArgs = [' %s="%s"' % (_attr_decode(attr), escape(value))
-                for attr, value in sorted(kw.iteritems())
-                if value is not None]
+    attrs_str = format_attrs(**kw)
     if not args and tag in empty_tags and closed:
         substr = '<%s%s />'
-        html = literal(substr % (tag, "".join(htmlArgs)))
+        html = literal(substr % (tag, attrs_str))
     else:
-        chunks = ["<%s%s>" % (tag, "".join(htmlArgs))]
+        chunks = ["<%s%s>" % (tag, attrs_str)]
         chunks.extend(escape(x) for x in args)
         if closed:
             chunks.append("</%s>" % tag)
@@ -261,6 +262,25 @@ def make_tag(tag, *args, **kw):
         html += "\n"
     return literal(html)
 
+def format_attrs(**attrs):
+    """Format HTML attributes into a string of ' key="value"' pairs which
+    can be inserted into an HTML tag.
+
+    The attributes are sorted alphabetically.  If any value is None, the entire
+    attribute is suppressed.
+
+    Usage:
+    >>> format_attrs(p=2, q=3)
+    literal(u' p="2" q="3"')
+    >>> format_attrs(p=2, q=None)
+    literal(u' p="2"')
+    >>> format_attrs(p=None)
+    literal(u'')
+    """
+    strings = [u' %s="%s"' % (_attr_decode(attr), escape(value))
+        for attr, value in sorted(attrs.iteritems())
+        if value is not None]
+    return literal("".join(strings))
 
 class literal(unicode):
     """Represents an HTML literal.

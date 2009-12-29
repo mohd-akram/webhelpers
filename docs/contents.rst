@@ -13,6 +13,10 @@ WebHelpers Documentation
 .. toctree::
    :maxdepth: 1
 
+   changes
+   modules
+   todo
+
 
 Indices and tables
 ==================
