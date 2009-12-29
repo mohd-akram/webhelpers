@@ -33,7 +33,8 @@ class GridPylons(grid.Grid):
         if (column == self.order_column):
             return self.default_header_ordered_column_format(column_number,
                                                              self.order_dir,
-                                                             column, label_text)
+                                                             column, 
+                                                             label_text)
         else:
             return self.default_header_column_format(column_number, column,
                                                      label_text)
