@@ -13,6 +13,7 @@ import urllib
 from webhelpers.html import *
 from webhelpers.html.grid import Grid
 from webhelpers.html.tags import link_to
+from webhelpers.misc import subclasses_only
 # XXX You may find other helpers in webhelpers.html.tags useful too
 
 #### Global constants ####
@@ -187,7 +188,7 @@ class _DemoBase(object):
 class BasicDemo(_DemoBase):
     name = "Tickets"
     description = """\
-This table shows Basic grid."""
+This table shows a basic grid."""
 
     def get_grid(self):
         """
@@ -201,11 +202,11 @@ This table shows Basic grid."""
 class CustomColumnDemo(_DemoBase):
     name = "CustomColumn"
     description = """\
-This table shows grid with customized column and header label."""
+This table shows a grid with a customized column and header label."""
 
     def get_grid(self):
         """
-        lets override how rows look like
+        let's override how rows look like
         subject is link
         categories and status hold text based on param of item text , the
         translations are dicts holding translation strings correlated with
@@ -229,10 +230,9 @@ This table shows grid with customized column and header label."""
             }
         return g
 
-#demos = [x for x in globals().iteritems() if\
-#    isinstance(x, _DemoBase) and x is not _DemoBase]
+demos = subclasses_only(_DemoBase, globals())
 
-demos = [BasicDemo, CustomColumnDemo]
+#demos = [BasicDemo, CustomColumnDemo]
 
 #### Utility functions ####
 def url(urlpath, **params):
