@@ -26,7 +26,7 @@ tip (development version)
 
 * webhelpers.html.tools:
 
-  - New helper ``js_obfuscate`` implements the old rails helpera.
+  - New helper ``js_obfuscate`` implements the old rails helpers.
 
 * webhelpers.util:
 
