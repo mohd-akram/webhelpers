@@ -3,11 +3,16 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+
+1.0b3 (2009-12-29)
+------------------
 * webhelpers.feedgenerator:
 
-  - Don't swap latitude and longitude. The input data and GeoRSS format are
-    both latitude first. Django's feedgenerator swaps the two because GeoDjango
-    has longitude first, but that doesn't apply to WebHelpers.
+  - Allow either lat-lon and lon-lat formats in geometry data. The default is
+    lat-lon. For lon-lat, set ``GeoFeedMixin.is_input_latitude_first`` to 
+    false. (You can set in a subclass or instance before writing the output.)
+    lat-lon is the most common format but GeoDjango and some other libraries
+    use lon-lat. The XML output is always lat-lon per the GeoRSS spec.
 
 * webhelpers.html.grid:
 
@@ -17,9 +22,11 @@ tip (development version)
 
   - New helpers ``Doctype`` (class) and ``xml_declaration``.
 
+  - Python 2.5 compatibility fix by Yuen Ho Wong. (#20)
+
 * webhelpers.html.tools:
 
-  - New helper ``js_obfuscate`` implements the old rails helpera.
+  - New helper ``js_obfuscate`` implements the old rails helpers.
 
 * webhelpers.util:
 

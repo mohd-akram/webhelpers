@@ -55,7 +55,7 @@
 #   lon-lat by setting the ``GeoFeedMixin.is_input_latitude_first`` flag to
 #   false. (The flag can be set in a subclass or instance anytime before the
 #   output is written.) The swapping is done in
-#   ``GeoFeedMixin.georss_coords()``.
+#   ``GeoFeedMixin.georss_coords()`` and ``.add_georss_point()``.
 
 
 """
@@ -439,7 +439,10 @@ class GeoFeedMixin(object):
         W3C Geo specification.
         """
         if w3c_geo:
-            lon, lat = coords[:2]
+            if self.is_input_latitude_first:
+                lat, lon = coords[:2]
+            else:
+                lon, lat = coords[:2]
             handler.addQuickElement(u'geo:lat', u'%f' % lat)
             handler.addQuickElement(u'geo:lon', u'%f' % lon)
         else:
