@@ -8,7 +8,7 @@ class Grid(object):
         self.exclude_ordering = ["_numbered"]
         self.itemlist = itemlist
         if "_numbered" in columns:
-            self.labels["_numbered"] = "no."
+            self.labels["_numbered"] = "#"
         self.columns = columns
         self.column_formats = column_formats or {}
         self._start_number = start_number
