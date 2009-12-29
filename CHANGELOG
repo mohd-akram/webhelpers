@@ -3,6 +3,9 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.html.tags:
+
+  - Python 2.5 compatibility fix.
 
 1.0b2 (2009-12-21)
 ------------------

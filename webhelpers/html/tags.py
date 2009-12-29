@@ -105,7 +105,7 @@ def form(url, method="post", multipart=False, hidden_fields=None, **attrs):
             field = hidden(name, value)
             fields.append(field)
     if fields:
-        div = HTML.div(*fields, style="display:none", _nl=True)
+        div = HTML.div(style="display:none", _nl=True, *fields)
     else:
         div = None
     return HTML.form(div, _closed=False, **attrs)
