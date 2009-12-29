@@ -3,6 +3,14 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.misc:
+
+  - New helper ``subclasses_only`` to extract the subclasses of an abstract
+    base class from a module or iterable.
+
+* webhelpers.pylonslib.grid:
+
+  - Bugfixes.
 
 1.0b3 (2009-12-29)
 ------------------
