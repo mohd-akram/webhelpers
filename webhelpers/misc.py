@@ -2,6 +2,7 @@
 """
 
 import itertools
+import types
 
 def all(seq, pred=None):
     """Is ``pred(elm)`` true for all elements?
@@ -103,6 +104,30 @@ def convert_or_none(value, type_):
         return type_(value)
     except Exception:
         return None
+
+def subclasses_only(class_, it):
+    """Extract the subclasses of a class from a module, dict, or iterable.
+
+    Return a list of subclasses found. The class itself will not be included.
+    This is useful to collect the concrete subclasses of an abstract base
+    class.
+
+    ``class_`` is a class.
+
+    ``it`` is a dict or iterable. If a dict is passed, examine its values,
+    not its keys. To introspect the current module, pass ``globals()``. To
+    introspect another module or namespace, pass
+    ``vars(the_module_or_namespace)``.
+
+    Example: to collect all subclasses in the current module::
+    >>> subclasses_only(MyBaseClass, globals())   # doctest: +SKIP
+    [Subclass1, Subclass2]
+    """
+    if isinstance(it, dict):
+        it = it.itervalues()
+    class_types = (type, types.ClassType)
+    return [x for x in it if isinstance(x, class_types) and 
+        issubclass(x, class_) and x is not class_]
 
 class DeclarativeException(Exception):
     """A simpler way to define an exception with a fixed message.
