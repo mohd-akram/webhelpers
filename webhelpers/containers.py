@@ -503,7 +503,8 @@ def transpose(array):
     ``len(array[n]) != len(array[0])``.  You may get an ``IndexError`` or
     missing items.
 
-    Picture the first example as:
+    Picture the first example as::
+
        A B C    =>    A D
        D E F          B E
                       C F

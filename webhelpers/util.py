@@ -6,8 +6,60 @@ import cgi
 import copy
 import sys
 import urllib
+import urlparse
 from UserDict import DictMixin
 from xml.sax.saxutils import XMLGenerator
+
+def update_params(url, **params):
+    """Update query parameters in a URL.
+
+    ``url`` is any URL.
+    ``params`` are query parameters to add or replace. If any value is None,
+    the corresponding parameter is deleted from the URL if present.
+
+    Return the new URL.
+
+    This function does not handle multiple parameters with the same name.
+    It will arbitrarily choose one value and discard the others.
+
+    *Debug mode:* if a pseudo-parameter '_debug' with a true value is passed,
+    return a tuple: ``[0]`` is the URL without query string or fragment,
+    ``[1]`` is the final query parameters as a dict, and ``[2]`` is the
+    fragment part of the original URL or the empty string.
+
+    Usage::
+    >>> update_params("foo", new1="NEW1")
+    'foo?new1=NEW1'
+    >>> update_params("foo?p=1", p="2")
+    'foo?p=2'
+    >>> update_params("foo?p=1", p=None)
+    'foo'
+    >>> update_params("http://example.com/foo?new1=OLD1#myfrag", new1="NEW1")
+    'http://example.com/foo?new1=NEW1#myfrag'
+    >>> update_params("http://example.com/foo?new1=OLD1#myfrag", new1="NEW1", _debug=True)
+    ('http://example.com/foo', {'new1': 'NEW1'}, 'myfrag')
+    """
+    debug = params.pop("_debug", False)
+    orig_url = url
+    url, fragment = urlparse.urldefrag(url)
+    if "?" in url:
+        url, qs = url.split("?", 1)
+        query = urlparse.parse_qs(qs)
+    else:
+        query = {}
+    for key, value in params.iteritems():
+        if value is not None:
+            query[key] = value
+        elif key in query:
+            del query[key]
+    if debug:
+        return url, query, fragment
+    qs = urllib.urlencode(query)
+    if qs:
+        qs = "?" + qs
+    if fragment:
+        fragment = "#" + fragment
+    return "%s%s%s" % (url, qs, fragment)
 
 def cgi_escape(s, quote=False):
     """Replace special characters '&', '<' and '>' by SGML entities.

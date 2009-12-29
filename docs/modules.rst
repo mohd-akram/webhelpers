@@ -28,7 +28,7 @@ Module Contents
     </td></tr>
     <tr><th>pylonslib</th><td>Helpers for Pylons</td></tr>
     <tr><th>text</th><td>Text processing</td></tr>
-</table>
+    </table>
 
 <p>WebHelpers is pure Python and has no dependencies.  However, a few
 helpers depend on 

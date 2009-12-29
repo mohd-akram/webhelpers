@@ -44,6 +44,18 @@
 # - Apply ``rfc3339_date`` bugfix (02044132a2ef) to both that function and
 #   and ``rfc2822_date``.  (``.tzinfo`` attribute may not exist in datetime
 #   objects.)
+# - Apply 'published' property patch (1f234b039b58).
+# - Note: 'generator' and 'source' properties were lost from a previous
+#   revision of webhelpers.feedgenerator. The implementation had a bug and
+#   can't be used as is.
+# - Extend latitude-longitude behavior so that data can be input in either
+#   lat-lon or lon-lat format. Output is always written in lat-lon per the
+#   GeoRSS spec. Django's feedgenerator expects lon-lat input for GeoDjango
+#   compatibility.  WebHelpers defaults to lat-lon but can be switched to
+#   lon-lat by setting the ``GeoFeedMixin.is_input_latitude_first`` flag to
+#   false. (The flag can be set in a subclass or instance anytime before the
+#   output is written.) The swapping is done in
+#   ``GeoFeedMixin.georss_coords()``.
 
 
 """
@@ -405,13 +417,20 @@ class GeoFeedMixin(object):
     to produce simple GeoRSS or W3C Geo elements.
     """
 
+    # Set to True if the input data is in lat-lon order, or False if lon-lat.
+    # The output is always written in lat-lon order.
+    is_input_latitude_first = True
+
     def georss_coords(self, coords):
         """
         In GeoRSS coordinate pairs are ordered by lat/lon and separated by
         a single white space.  Given a tuple of coordinates, this will return
         a unicode GeoRSS representation.
         """
-        return u' '.join([u'%f %f' % (coord[1], coord[0]) for coord in coords])
+        if self.is_input_latitude_first:
+            return u' '.join([u'%f %f' % x for x in coords])
+        else:
+            return u' '.join([u'%f %f' % (x[1], x[0]) for x in coords])
 
     def add_georss_point(self, handler, coords, w3c_geo=False):
         """
