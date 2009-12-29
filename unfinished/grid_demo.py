@@ -23,7 +23,127 @@ Run the demos in this module and put the HTML output in
 OUTPUT_DIRECTORY."""
 
 STYLESHEET = """\
-/* Put styles here. */
+/******************* tables ****************/
+table.stylized {
+    background-color: #ffffff;
+    border-collapse: separate;
+    border-spacing: 1px;
+    border-bottom: 2px solid #666666;
+    margin: 1px 5px 5px 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.stylized caption {
+    color: #ffffff;
+    background-color: #444466;
+    padding: 5px;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 5px 0px 0px 0px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+
+
+table.stylized caption a:link,table.stylized caption a:visited{
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+table.stylized caption a:link,table.stylized caption a:hover{
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+}
+    
+table.stylized thead {
+    background-color: #ffffff;
+}
+
+table.stylized tbody {
+    background-color: #ffffff;
+}
+
+table.stylized tfooter {
+    background-color: #ffffff;
+}
+
+table.stylized th {
+    text-align: center;
+}
+
+table.stylized tr.header {
+    text-align: center;
+}
+
+table.stylized tr.header td, table.stylized th {
+    text-align: center;
+    color: #ffffff;
+    background-color: #444466;
+}
+
+table.stylized td {
+    padding: 5px 5px 5px 5px;
+    border: 1px solid #dcdcdc;
+}
+
+
+table.stylized tr.odd td {
+    border-top: 1px solid #999 !important;
+    background-color: #ffffff;
+}
+
+table.stylized tr.even td {
+    border-top: 1px solid #999 !important;
+    background-color: #f6f6f6;
+}
+
+table.stylized .no {
+    width: 30px;
+}
+
+table.stylized td.ordering.dsc {
+    background-color: #666666;
+    padding-right: 20px;
+}
+
+table.stylized td.ordering.asc {
+    background-color: #666666;
+    padding-right: 20px;
+}
+
+table.stylized td.ordering.dsc .marker {
+    height: 20px;
+    width: 20px;
+    display: block;
+    float: right;
+    margin: 0px -18px;
+}
+
+table.stylized td.ordering.asc .marker {
+    height: 20px;
+    width: 20px;
+    display: block;
+    float: right;
+    margin: 0px -18px;
+}
+
+table.stylized .header a:link,table.stylized .header a:visited {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+table.stylized td.ordering a:link,table.stylized td.ordering a:visited {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+}
 """
 
 HTML_TEMPLATE = literal("""\
@@ -37,7 +157,7 @@ HTML_TEMPLATE = literal("""\
     <body>
         <h1>%(title)s</h1>
 
-        <table>
+        <table class="stylized">
 %(grid)s
         </table>
 
@@ -46,6 +166,13 @@ HTML_TEMPLATE = literal("""\
 </html>
 """)
 # XXX There should be helpers to create a basic HTML file.
+
+test_data = [
+             {"group_name": "foo", "options": "lalala", "id":1},
+             {"group_name": "foo2", "options": "lalala2", "id":2},
+             {"group_name": "foo3", "options": "lalala3", "id":3},
+             {"group_name": "foo4", "options": "lalala4", "id":4},
+             ]
 
 #### Demo base class ####
 class _DemoBase(object):
@@ -57,10 +184,24 @@ class _DemoBase(object):
 
 
 #### Demo classes ###
-class TicketsDemo(_DemoBase):
-    title = "Tickets"
+class BasicDemo(_DemoBase):
+    name = "Tickets"
     description = """\
-This table shows [XXX mention features]."""
+This table shows Basic grid."""
+
+    def get_grid(self):
+        """
+        basic demo
+        """
+        
+        g = Grid(test_data, columns=["_numbered","group_name","options"])
+        return g
+
+#### Demo classes ###
+class CustomColumnDemo(_DemoBase):
+    name = "CustomColumn"
+    description = """\
+This table shows grid with customized column and header label."""
 
     def get_grid(self):
         """
@@ -70,34 +211,28 @@ This table shows [XXX mention features]."""
         translations are dicts holding translation strings correlated with
         integers from db, in this example
         """
-        columns = ['_numbered','subject','category','status','date']
-        g = Grid(c.tickets, columns=columns)
-        g.format = {
-            "subject": self.subject,
-            "category": self.category,
-            "status": self.status,
-            # XXX What about 'Date' column?
+        def options_td(col_num, i, item):
+            # XXX This module can't depend on 'app_globals' or 'url' or
+            # external data. Define data within this method or class or
+            # in a base class.
+            # Could use HTML.a() instead of link_to().
+            u = url("/tickets/view", ticket_id=item["id"])
+            a = link_to(item["options"], u)
+            return HTML.td(a)
+        
+        g = Grid(test_data, columns=["_numbered","group_name","options"])
+        g.labels = {
+            "options":'FOOBAAR'
+                    }
+        g.column_formats = {
+            "options": options_td,
             }
         return g
 
-    def subject(self, i, item):
-        # XXX This module can't depend on 'app_globals' or 'url' or
-        # external data. Define data within this method or class or
-        # in a base class.
-        # Could use HTML.a() instead of link_to().
-        u = url("/tickets/view", ticket_id=item["id"])
-        a = link_to(item["subject"], u)
-        return HTML.td(a)
+#demos = [x for x in globals().iteritems() if\
+#    isinstance(x, _DemoBase) and x is not _DemoBase]
 
-    def category(self, i, item):
-        return HTML.td(item["category"])
-
-    def status(self, i, item):
-        return HTML.td(item["status"])
-
-
-demos = [x for x in globals().iteritems() if
-    isinstance(x, _DemoBase) and x is not _DemoBase]
+demos = [BasicDemo, CustomColumnDemo]
 
 #### Utility functions ####
 def url(urlpath, **params):
@@ -125,7 +260,7 @@ def main():
     write_file(dir, "demo.css", STYLESHEET)
     for class_ in demos:
         d = class_()
-        title = d.name or d.__class__.__name__
+        name = d.name or d.__class__.__name__
         filename = name + ".html"
         dic = {
             "title": d.name or d.__class__.__name__.lower(),

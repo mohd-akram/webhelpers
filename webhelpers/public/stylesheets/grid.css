@@ -59,6 +59,7 @@ table.stylized tr.header {
 table.stylized tr.header td, table.stylized th {
 	text-align: center;
 	color: #ffffff;
+	background-color: #444466;
 }
 
 table.stylized td {
