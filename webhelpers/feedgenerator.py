@@ -48,6 +48,9 @@
 # - Note: 'generator' and 'source' properties were lost from a previous
 #   revision of webhelpers.feedgenerator. The implementation had a bug and
 #   can't be used as is.
+# - Don't swap latitude and longitude in ``GeoFeedMixin.georss_coords()``.
+#   Django's feedgenerator does to be compatible with GeoDjango which has
+#   longitude first, but that doesn't apply to WebHelpers.
 
 
 """
@@ -415,7 +418,7 @@ class GeoFeedMixin(object):
         a single white space.  Given a tuple of coordinates, this will return
         a unicode GeoRSS representation.
         """
-        return u' '.join([u'%f %f' % (coord[1], coord[0]) for coord in coords])
+        return u' '.join([u'%f %f' % coord for coord in coords])
 
     def add_georss_point(self, handler, coords, w3c_geo=False):
         """

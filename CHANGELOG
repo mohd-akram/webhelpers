@@ -3,6 +3,10 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.feedgenerator:
+  - Don't swap latitude and longitude. The input data and GeoRSS format are
+    both latitude first. Django's feedgenerator swaps the two because GeoDjango
+    has longitude first, but that doesn't apply to WebHelpers.
 * webhelpers.html.grid:
   - New module to create an HTML table from a list of records.
 * webhelpers.html.tags:
@@ -25,8 +29,6 @@ tip (development version)
     GeoRSS usage: use the Geo\* classes and add  ``geometry=(lat, lon)`` to
     each news item. Other shapes and a (not yet implemented) Geometry class are
     allowed; see the source.
-    Note: you should specify the latitude first, but the longitude appears
-    first in the newsfeed.  This is a feature, to comply with the spec.
 * webhelpers.html:
   - New ``HTML.cdata()`` method for producing "<!![CDATA[ ... ]]>" sections.
   - The basic tag builders (``HTML.a()`` and ``HTML.tag("a")``) now have a
