@@ -4,42 +4,61 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 * webhelpers.feedgenerator:
+
   - Don't swap latitude and longitude. The input data and GeoRSS format are
     both latitude first. Django's feedgenerator swaps the two because GeoDjango
     has longitude first, but that doesn't apply to WebHelpers.
+
 * webhelpers.html.grid:
+
   - New module to create an HTML table from a list of records.
+
 * webhelpers.html.tags:
+
   - New helpers ``Doctype`` (class) and ``xml_declaration``.
+
 * webhelpers.html.tools:
+
   - New helper ``js_obfuscate`` implements the old rails helpera.
+
 * webhelpers.util:
-  - New helper ``update_params`` to update query parameters in a URL.
+
+- New helper ``update_params`` to update query parameters in a URL.
 
 1.0b2 (2009-12-21)
 ------------------
 * webhelpers.constants:
+
   - Fix spelling of Massachusetts.
+
 * webhelpers.feedgenerator:
+
   - Sync with Django rev 11910. This adds GeoRSS and makes the API more
     extensible, as well as fixing a few bugs.
     (Re-added the Atom1 'published' property.)
     (The 'generator' and 'source' properties were lost, but they weren't
     working correctly anyway.)
+
     GeoRSS usage: use the Geo\* classes and add  ``geometry=(lat, lon)`` to
     each news item. Other shapes and a (not yet implemented) Geometry class are
     allowed; see the source.
+
 * webhelpers.html:
+
   - New ``HTML.cdata()`` method for producing "<!![CDATA[ ... ]]>" sections.
   - The basic tag builders (``HTML.a()`` and ``HTML.tag("a")``) now have a
     ``_nl`` arg which, if true, inserts a newline between content elements
-    and at the end of the tag for readability.  Example:  
+    and at the end of the tag for readability.  Example::
+
         HTML.a("A", "B", href="/")  =>   '<a href="/">AB</a>'
         HTML.a("A", "B", href="/", _nl=True)   =>   '<a href="/">\nA\nB\n</a>\n'
+
     This does not affect HTML attributes nor the higher-level tag helpers.
     The exact spacing is subject to change.  The tag building code has been
     refactored to accommodate this.
+
 * webhelpers.html.tags:
+
   - ``form()`` puts its hidden "_method" field in a '<div style="display:none">'
     to conform to XHTML syntax. The style prevents the div from being displayed
     or affecting the layout. A new arg ``hidden_fields`` may be a dict or
@@ -50,7 +69,9 @@ tip (development version)
     from an image file, using either the PIL algorithm or the pure Python
     algorithm in ``webhelpers.media``. It also logs the dimensions to the
     debug log for troubleshooting.
+
 * webhelpers.html.tools:
+
   - Reimplement ``highlight()`` using the HTML builder. New arguments add
     flexibility.  Deprecate the ``highlighter`` argument, which creates tags
     via string interpolation.
@@ -59,7 +80,9 @@ tip (development version)
   - Fix HTML overescaping and underescaping in auto_link().  Patch by Marius
     Gedminas.  A parsing bug remains: 
     http://pylonshq.com/project/pylonshq/ticket/657
+
 * webhelpers.markdown / webhelpers.html.converters:
+
   - ``webhelpers.markdown`` will not be upgraded to the version 2 series but
     will remain at 1.7. Users who want the latest bugfixes and extensions
     should download the full Markdown package or the alternative Markdown2
@@ -72,11 +95,17 @@ tip (development version)
   - To see which version is autoloaded,  
     call ``_get_markdown_module()`` and inspect the ``.__file__``, 
     ``.version``, and/or ``.version_info`` attributes of the return value.
+
 * webhelpers.media:
+
   - Bugfix in ``get_dimensions_pil``.
+
 * webhelpers.paginate:
+
   - Change for SQLAlchemy 0.6. (bug #11)
+
 * webhelpers.pylonslib:
+
   - Fix HTML overescaping.  Patch by Marius Gedminas.
 
 
@@ -87,24 +116,35 @@ tip (development version)
 * Delete other deprecated subpackages: commands, hinclude, htmlgen, pagination.
   Pagination is replaced by paginate.
 * webhelpers.constants:
+
   - ``uk_counties`` returns tuples rather than lists.
+
 * webhelpers.feedgenerator:
+
   - ``rfc3339_date`` now accepts date objects without crashing.
   - Add 'generator' and 'source' properties to RSS2 feeds. Patch by
     Vince Spicer.
   - Add 'published' property to Atom1 feeds.
+
 * webhelpers.html.converters:
+
   - New helper ``render()`` formats HTML to text.
   - New helper ``sanitize()`` strips HTML tags from user input.
+
 * webhelprs.html.tags:
+
   - New helper ``css_classes()`` to add classes to a tag programmatically.
   - Fix bug in tag helpers when passing ``id_`` argument (although ``id`` is
     recommended instead).
   - Add OptionGroup class and optgroup support to select().  Patch by
     Alexandre Bourget.
+
 * webhelpers.html.tools:
-  - New helper ``strip_tags()`` deletes HTML tags in a string.
+
+- New helper ``strip_tags()`` deletes HTML tags in a string.
+
 * webhelpers.paginate:
+
   - Allow all versions of SQLAlchemy > 0.3.
   - convert "_range" and "_pagelink" function to Page class method so that they
     can be overridden
@@ -112,7 +152,9 @@ tip (development version)
     use "partial_url" or "page" value or any. Backward compatibility is
     considered.
   - Add presliced list option to avoid slicing when list is already.
+
 * webhelpers.pylonslib:
+
   - is now a package.
   - The ``Flash`` class now accepts severity categories, thanks to Wichert
     Akkerman.  The docstring shows how to set up auto-fading messages using
@@ -123,10 +165,13 @@ tip (development version)
     more efficient transmission.  (EXPERIMENTAL: tests fail in
     unfinished/disabled_test_pylonslib_minify.py; see
     http://pylonshq.com/project/pylonshq/ticket/466 .)
-* webhelpers.text:
+
+ * webhelpers.text:
+
   - Port several helpers from Ruby's "stringex" package.
+
     + ``urlify()`` converts any string to a URL-friendly equivalent.  
-    + ``remove_formatting()``
+    + ``remove_formatting()``.
     + If the ``unidecode`` package is installed, these two helpers will also
       transliterate non-ASCII characters to their closest pronounciation
       equvivalent in ASCII.  
@@ -140,8 +185,10 @@ tip (development version)
   radio() doesn't do this because it generates the ID another way.  hidden()
   doesn't because hidden fields aren't used with labels.
 * Bugfixes in mt.select(): 
+
   - selected values not being passed as list.
   - allow currently-selected value to be a long.
+
 * Delete experimental module webhelpers.html.form_layout.
 
 0.6.3 (10/7/2008)
@@ -156,23 +203,33 @@ tip (development version)
 -----------------
 * nl2br() and format-paragraphs were not literal-safe.
 * webhelpers.converters:
+
   - New helper transpose() to turn a 2D list sideways (making the rows columns
     and the columns rows).
+
 * webhelpers.markdown:
+
   - Upgrade to Markdown 1.7.
   - Add a warning about escaping untrusted HTML to 
     webhelpers.html.converters.markdown() docstring.
   - Did not include Markdown's extensions due to relative import issues.
     Use the full Markdown package if you want footnotes or RSS.
+
 * webhelpers.media:
+
   - New module for muiltimedia helpers.  Initial functions determine the size
     of an image and choose a scaling factor.
+
 * webhelpers.html.tags:
+
   - Options tuple contains Option objects for select/checkbox/radio groups.
     select() now uses this automatically.
   - checkbox() and radio() now have a ``label`` argument.
+
 * webhelpers.number:
+
   - Population standard deviation contributed by Lorenzo Catucci.
+
 * webhelpers.html.form_layout: form field layout (PRELIMINARY, UNSTABLE).
 
 0.6.1 (7/31/2008)
@@ -181,9 +238,11 @@ tip (development version)
 * Fixed bug in SimplerXMLGenerator that the FeedGenerator uses, so that
   it doesn't use a {} arg.
 * New helpers:
+
   - nl2br() and format_paragraphs() in webhelpers.html.converters.
   - ul() and ol() in webhelpers.html.tags.
   - series() in webhelpers.text.
+
 * HTML.tag() is a synonym for make_tag(), both in webhelpers.html.builder.
 * Change default form method to "post" (rather than "POST") to conform to XHTML.
 * Add DeprecationWarning for webhelpers.rails package,
@@ -196,27 +255,29 @@ tip (development version)
 * Deprecate webhelpers.rails, including its Javascript libraries (Prototype
   and Scriptaculous).  Wrap all rails helpers in a literal.
 * Many new modules:
-  constants - countries, states, and provinces.
-  containers - high-level collections, including flash messages.
-  date - date/time (rails replacement).
-  html.converters - text-to-HTML (rails replacement).
-  html.tags - HTML tags (rails replacement).
-  html.tools - larger HTML chunks (rails replacement).
-  mail - sending email.
-  misc -  helpers that are neither text, numeric, container, nor date.
-  number - numeric helpers and number formatters.
-  paginate - successor to deprecated pagination module.
-  text - non-HTML text formatting (rails replacement).
+
+  - constants - countries, states, and provinces.
+  - containers - high-level collections, including flash messages.
+  - date - date/time (rails replacement).
+  - html.converters - text-to-HTML (rails replacement).
+  - html.tags - HTML tags (rails replacement).
+  - html.tools - larger HTML chunks (rails replacement).
+  - mail - sending email.
+  - misc -  helpers that are neither text, numeric, container, nor date.
+  - number - numeric helpers and number formatters.
+  - paginate - successor to deprecated pagination module.
+  - text - non-HTML text formatting (rails replacement).
+
 * Removed dependency on simplejson and normalized quotes. Patch by Elisha 
   Cook.
 
 COMPATIBILITY CHANGES IN 0.6 DEV VERSION
 ----------------------------------------
-- image(), javascript_link(), stylesheet_link(), and auto_discovery_link()
+* image(), javascript_link(), stylesheet_link(), and auto_discovery_link()
   in webhelpers.html.tags do not add prefixes or suffixes to the URL args
   anymore; they output the exact URL given. Same for button_to() in
   webhelpers.html.tools.
-- webhelpers.html.tags.javascript_path was deleted.
+* webhelpers.html.tags.javascript_path was deleted.
 
 0.3.4 (03/18/08)
 ----------------
