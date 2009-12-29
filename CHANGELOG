@@ -3,6 +3,11 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.html.grid_demo:
+
+  - Demonstrates ``webhelpers.html.grid``. Run as 
+    "python -m webhelpers.html.grid_demo OUTPUT_DIRECTORY".
+
 * webhelpers.misc:
 
   - New helper ``subclasses_only`` to extract the subclasses of an abstract
