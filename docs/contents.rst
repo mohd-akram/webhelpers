@@ -5,17 +5,17 @@ WebHelpers Documentation
    :maxdepth: 1
    
    overview
-   constants
-   containers
-   date
-   feedgenerator
+   modules/constants
+   modules/containers
+   modules/date
+   modules/feedgenerator
 
 .. toctree::
    :maxdepth: 1
 
    changes
-   modules
    todo
+   modules
 
 
 Indices and tables
