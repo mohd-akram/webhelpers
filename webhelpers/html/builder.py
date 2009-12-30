@@ -27,7 +27,7 @@ these all work::
     literal(", ").join(["A", literal("B")])
     literal("%s %s") % (16, literal("kg"))
 
-But these return an ordinary string which is prone to double-escaping later:
+But these return an ordinary string which is prone to double-escaping later::
 
     "\n".join([literal('<span class="foo">Foo!</span>'), literal('Bar!')])
     "%s %s" % (literal("16"), literal("&lt;em&gt;kg&lt;/em&gt;"))
