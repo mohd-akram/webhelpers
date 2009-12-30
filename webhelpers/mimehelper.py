@@ -19,18 +19,20 @@ class MIMETypes(object):
         """Loads a default mapping of extensions and mimetypes
         
         These are suitable for most web applications by default. 
-        Additional types can be added with the using the mimetypes
-        module.
+        Additional types can be added by using the mimetypes module.
         
         """
         mimetypes.init()
     init = classmethod(init)
     
     def add_alias(cls, alias, mimetype):
-        """Creates a MIMEType alias to a full mimetype
-        
-        These aliases may not include /'s. Examples include 
-        html->text/html, xml->application/xml."""
+        """Create a MIMEType alias to a full mimetype.
+
+        Examples: ``('html', 'text/html')``, ``('xml', 'application/xml')``.
+
+        An ``alias`` may not contain a ``/`` character.
+
+        """
         if '/' in alias:
             raise ValueError("MIMEType aliases may not contain '/'")
         cls.aliases[alias] = mimetype
@@ -52,8 +54,8 @@ class MIMETypes(object):
         type is set as well.
                 
         This works best with URLs that end in extensions that differentiate
-        content-type. Examples: http://example.com/example, 
-        http://example.com/example.xml, http://example.com/example.csv
+        content-type. Examples: ``http://example.com/example``, 
+        ``http://example.com/example.xml``, ``http://example.com/example.csv``
                 
         Since browsers generally allow for any content-type, but should be
         sent HTML when possible, the html mimetype check should always come
