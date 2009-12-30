@@ -1,6 +1,9 @@
 WebHelpers Documentation
 ========================
 
+Subpackages
+-----------
+
 .. toctree::
    :maxdepth: 1
    
@@ -9,6 +12,26 @@ WebHelpers Documentation
    modules/containers
    modules/date
    modules/feedgenerator
+   modules/media
+   modules/mimehelper
+   modules/misc
+   modules/number
+   modules/paginate
+   modules/pylonslib
+   modules/text
+   modules/util
+
+Minor subpackages
++++++++++++++++++
+
+.. toctree::
+  :maxdepth: 1
+
+  modules/markdown
+  modules/textile
+
+Metadata
+++++++++
 
 .. toctree::
    :maxdepth: 1
@@ -16,6 +39,7 @@ WebHelpers Documentation
    changes
    todo
    modules
+   third_party
 
 
 Indices and tables
