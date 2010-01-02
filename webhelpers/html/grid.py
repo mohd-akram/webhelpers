@@ -16,7 +16,11 @@ class Grid(object):
     columns will be rendered - also keep note of special column name that can be
     passed in list that defines order - ``_numbered`` - this adds additional
     column that shows the number of item. For paging sql data there one can pass
-    ``start_number`` argument to the grid to define where to start counting
+    ``start_number`` argument to the grid to define where to start counting.
+    Descendant sorting on ``_numbered`` column decrements the value, you can
+    change how numberign function behaves by overloading ``calc_row_no`` 
+    property.
+    
     
     Then printing the grid instance forces rendering of data into html output,
     the headers are created and for every entry in list a table row will be
@@ -83,25 +87,27 @@ class Grid(object):
      
      
     """
-    def __init__(self, itemlist, columns, column_formats=None, start_number=1,
+    def __init__(self, itemlist, columns, column_labels=None,
+                  column_formats=None, start_number=1,
                  order_column=None, order_direction='asc'):
-        self.custom_record_format = None
-        self.labels = {}
+        self.labels = column_labels or {}
         self.exclude_ordering = columns
         self.itemlist = itemlist
-        if "_numbered" in columns:
-            self.labels["_numbered"] = "#"
         self.columns = columns
         self.column_formats = column_formats or {}
-        self._start_number = start_number
+        if "_numbered" in columns:
+            self.labels["_numbered"] = "#"
+        if "_numbered" not in self.column_formats: 
+            self.column_formats["_numbered"] = self.numbered_column_format 
+        self.start_number = start_number
         self.order_dir = order_direction
         self.order_column = order_column
     
-    def calc_row_no(self, i, column ):
-        if self.order_dir == 'dsc' and self.order_column == "_numbered":
-            return self._start_number - i
+    def calc_row_no(self, i, column):
+        if self.order_dir == 'dsc' and self.order_column == column:
+            return self.start_number - i
         else:
-            return self._start_number + i
+            return self.start_number + i
         
     def make_headers(self):
         header_columns = []
@@ -115,7 +121,7 @@ class Grid(object):
                 label_text = column.replace("_", " ").title()
             # handle non clickable columns
             if column in self.exclude_ordering:
-                header = self.default_header_column_format(i + 1, column, 
+                header = self.default_header_column_format(i + 1, column,
                     label_text)
             # handle clickable columns
             else:
@@ -127,15 +133,14 @@ class Grid(object):
         columns = []        
         for col_num, column in enumerate(self.columns):
             if column in self.column_formats:
-                columns.append(self.column_formats[column](col_num, i, record))
+                r = self.column_formats[column](col_num,
+                                                self. calc_row_no(i, column),
+                                                record)
             else:
-                if column == "_numbered":
-                    r = self.numbered_column_format(col_num,
-                                                    self.calc_row_no(i, column), 
-                                                    record)
-                else:
-                    r = self.default_column_format(col_num, i, record, column)
-                columns.append(r)
+                r = self.default_column_format(col_num,
+                                               self.calc_row_no(i, column),
+                                               record, column)
+            columns.append(r)
         return HTML(*columns)
     
     def __html__(self):
@@ -148,10 +153,10 @@ class Grid(object):
         # now lets render the actual item grid
         for i, record in enumerate(self.itemlist):
             columns = self.make_columns(i, record)
-            if self.custom_record_format is None:
-                r = self.default_record_format(i, record, columns)
-            else:
+            if hasattr(self, 'custom_record_format'):
                 r = self.custom_record_format(i, record, columns)
+            else:
+                r = self.default_record_format(i, record, columns)
             records.append(r)
         return HTML(*records)
     
@@ -159,14 +164,10 @@ class Grid(object):
         return self.__html__()
 
     def generate_header_link(self, column_number, column, label_text):
-        if column == self.order_column and self.order_dir == "asc":
-            new_order_dir = "dsc"
-        else:
-            new_order_dir = "asc"
         # Is the current column the one we're ordering on?
         if (column == self.order_column):
             return self.default_header_ordered_column_format(column_number,
-                                                             column, 
+                                                             column,
                                                              label_text)
         else:
             return self.default_header_column_format(column_number, column,
@@ -200,7 +201,7 @@ class Grid(object):
         class_name = "c%s ordering %s %s" % (column_number, self.order_dir, column_name)
         return HTML.tag("td", header_label, class_=class_name)
 
-    def default_header_column_format(self, column_number, column_name, 
+    def default_header_column_format(self, column_number, column_name,
         header_label):
         if column_name == "_numbered":
             column_name = "numbered"
