@@ -222,9 +222,7 @@ This table shows a grid with a customized column and header label."""
             return HTML.td(a)
         
         g = Grid(test_data, columns=["_numbered","group_name","options"])
-        g.labels = {
-            "options":'FOOBAAR'
-                    }
+        g.labels["options"] = 'FOOBAAR'
         g.column_formats = {
             "options": options_td,
             }
