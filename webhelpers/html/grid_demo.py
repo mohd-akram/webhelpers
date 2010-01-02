@@ -175,7 +175,6 @@ test_data = [
              {"group_name": "foo4", "options": "lalala4", "id":4},
              ]
 
-#### Demo base class ####
 class _DemoBase(object):
     title = None
     description = None
@@ -223,11 +222,42 @@ This table shows a grid with a customized column and header label."""
         
         g = Grid(test_data, columns=["_numbered","group_name","options"])
         g.labels["options"] = 'FOOBAAR'
-        g.column_formats = {
-            "options": options_td,
-            }
+        g.column_formats["options"] = options_td
         return g
 
+class OrderShiftDemo(_DemoBase):
+    name = "OrderShift"
+    description = """\
+This table shows a grid with order starting from 10."""
+
+    def get_grid(self):
+        """
+        order direction demo
+        """
+        
+        g = Grid(test_data, columns=["_numbered","group_name","options"],
+                 start_number=10
+                 )
+        return g
+
+
+class OrderingDirectionHeaderAwareDemo(_DemoBase):
+    name = "OrderDirectionHeaderAwareDemo"
+    description = """\
+This table shows a grid that has a markup indicating order direction.
+Options column has sorting set to "asc" """
+
+    def get_grid(self):
+        """
+        order direction demo
+        """
+        
+        g = Grid(test_data, columns=["_numbered","group_name","options"],
+                 order_column='options', order_direction='asc'
+                 )
+        #enable ordering support
+        g.exclude_ordering = []
+        return g
 demos = subclasses_only(_DemoBase, globals())
 
 #demos = [BasicDemo, CustomColumnDemo]
