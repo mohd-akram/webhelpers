@@ -1,0 +1,52 @@
+WebHelpers Documentation
+========================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 1
+   
+   overview
+   modules/__init__
+   modules/constants
+   modules/containers
+   modules/date
+   modules/feedgenerator
+   modules/html/__init__
+   modules/html/builder
+   modules/html/converters
+   modules/html/grid
+   modules/html/render
+   modules/html/secure_form
+   modules/html/tags
+   modules/html/tools
+   modules/media
+   modules/mimehelper
+   modules/misc
+   modules/number
+   modules/paginate
+   modules/pylonslib
+   modules/text
+   modules/util
+
+`Non-essential modules <modules/other.html>`_: markdown, textile, string24.
+
+Metadata
+++++++++
+
+.. toctree::
+   :maxdepth: 1
+
+   changes
+   todo
+   modules
+   third_party
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
