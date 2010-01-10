@@ -52,7 +52,7 @@ tip (development version)
 
 * webhelpers.util:
 
-- New helper ``update_params`` to update query parameters in a URL.
+  - New helper ``update_params`` to update query parameters in a URL.
 
 1.0b2 (2009-12-21)
 ------------------
