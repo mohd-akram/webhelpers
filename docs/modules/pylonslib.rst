@@ -4,3 +4,5 @@
 .. automodule:: webhelpers.pylonslib
 
 .. currentmodule:: webhelpers.pylonslib
+
+.. autoclass:: Flash
