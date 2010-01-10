@@ -1,7 +1,7 @@
 /**
  * Sphinx Doc Design
  *
- * Local changes: font size.
+ * Local changes: font size. text-align left.
  *
  */
 
@@ -348,7 +348,7 @@ a.headerlink:hover {
 }
 
 div.body p, div.body dd, div.body li {
-    text-align: justify;
+    text-align: left;
     line-height: 130%;
 }
 
