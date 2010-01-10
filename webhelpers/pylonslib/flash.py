@@ -116,6 +116,8 @@ example::
 This can easily created from a template. If you are using Genshi this
 should work:
 
+.. code-block: html
+
   <div id="selfHealingFeedback">
     <p class="notice" py:for="message in h.flash.pop_messages()"
        py:attrs="{'class' : message.category}" py:content="message">
@@ -123,7 +125,9 @@ should work:
     </p>
   </div>
 
-The needed CSS is very simple::
+The needed CSS is very simple:
+
+.. code-block: css
 
     #selfHealingFeedback {
         position: fixed;

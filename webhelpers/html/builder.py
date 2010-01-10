@@ -29,7 +29,7 @@ these all work::
 
 But these return an ordinary string which is prone to double-escaping later::
 
-    "\n".join([literal('<span class="foo">Foo!</span>'), literal('Bar!')])
+    "\\n".join([literal('<span class="foo">Foo!</span>'), literal('Bar!')])
     "%s %s" % (literal("16"), literal("&lt;em&gt;kg&lt;/em&gt;"))
 
 Third-party libraries that don't want to import ``literal`` and thus avoid a
