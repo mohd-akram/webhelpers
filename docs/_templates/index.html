@@ -6,87 +6,44 @@
 <img src="_images/webhelpers-logo.png" width="100" height="110" 
     style="float:left; margin-right:1em" />
   
-<p>WebHelpers contains a wide variety of functions for web application
-templates, MVC controller code, and non-web applications.  Main features:
+<p>WebHelpers contains a wide variety of utility functions for web applications
+and other applications. It's pure Python and can be used with any web
+framework.  Version 0.6.x has been used in production sites since July 2008.
+Version 1.0 is almost finished and contains many enhancements. WebHelpers comes
+with an extensive set of doctests and Nose unittests.</p>
 
-    <ul>
-        <li>Works with any web framework</li>
-        <li>An HTML tag generator that smartly escapes text content
-        to prevent cross-site scripting attacks and double-escaping</li>
-        <li>Convenience functions to produce form tags, links, and other common
-        tags.</li>
-        <li>A <code>ModelTags</code> object </li>
-    </ul>
+<p>WebHelpers includes the widely-used HTML tag builder with smart escaping and
+convenience functions for common tags. These ensure the HTML tags are
+syntactically correct and prevent cross-site scripting attacks. Convenience
+functions for form input tags and other common tags are provided.</p> 
 
-It consists of
-several independent subpackages for generating HTML tags and form tags,
-text processing, displaying records a pageful at a time, generating Atom and
-RSS feeds, number formatting and  statistical calculations, handling MIME
-types, and more.  There are also high-level container types, including a value
-counter and accumulator.  There are lists of country names, country codes, US
-states, Canadian provinces, and UK counties.:</p>
-
-<table style="border:outset">
-    <tr><th>constants</th><td>Countries &amp; states for address forms
-    </td></tr>
-    <tr><th>containers</th><td>High-level containers &amp; counters</td></tr>
-    <tr><th>date</th><td>Date/time helpers</td></tr>
-    <tr><th>feedgenerator</th><td>Create Ato and RSS feeds</td></tr>
-    <tr><th>html</th><td>Generate HTML tags and form tags</td></tr>
-    <tr><th>markdown/textile</th><td>Convert
-    wiki-like text to HTML</td></tr>
-    <tr><th>media</th><td>Image file calculations</td></tr>
-    <tr><th>mimehelper</th><td>MIME types</td></tr>
-    <tr><th>number</th><td>Formatters and statistics</td></tr>
-    <tr><th>paginate</th><td>Display records a pageful at a time
-    </td></tr>
-    <tr><th>pylonslib</th><td>Helpers for Pylons</td></tr>
-    <tr><th>text</th><td>Text processing</td></tr>
-</table>
-
-<br clear="all" />
-
-
+<p>Other helpers
+perform text processing, display records a pageful at a time, generate Atom/RSS
+feeds with geographical (GIS) data, handle MIME types, calculate statistics,
+and more.  There are also high-level container types, including a value counter
+and accumulator.  There are lists of country names, country codes, US states,
+Canadian provinces, and UK counties.</p>
 
 <p>WebHelpers is pure Python and has no dependencies.  However, a few
 helpers depend on 
 <a href="http://routes.groovie.org/">Routes</a>, 
-, 
 <a href="http://python.org/pypi/Unidecode/">unidecode</a>, 
-<a href="http://pythonpaste.org/webob/">WebOb</a>
-as noted in their documentation.  The Pylons helpers are designed for <a
-href="http://pylonshq.com/">Pylons</a>' request/response/session objects but
-can easily be ported to another web framework.  WebHelpers comes with an
-extensive set of unit tests.</p>
+<a href="http://pythonpaste.org/webob/">WebOb</a>, or
+<a href="http://pylonshq.com/">Pylons</a>, or
+as noted in their documentation.</p>
 
-<p>For support/question/patches, please use the `
-<a href="http://groups.google.com/group/pylons-discuss">Pylons mailing list</a>.</p>
+<p>For support/question/patches, please use the
+<a href="http://groups.google.com/group/pylons-discuss">pylons-discuss</a>
+mailing list.</p>
 
-<h2>New features</h2>
+<h2>Upgrading</h2>
 
-<div style="font-size:smaller">
+<p>The helpers deprecated in 0.6 have been deleted in 1.0.  This includes the
+entire Rails suite, Prototype, and Scriptaculous. If you're still using these
+helpers, stick with version 0.6.4.</p>
 
-<p>Version 1.0b1 (YYYY-MM-DD -- not released yet)</p>
-
-<ul>
-    <li>Documentation rewrite.</li>
-    <li>Many new helpers in <code>html.converters</code>,
-    <code>html.tags</code>, <code>html.tools</code>, <code>paginate</code>,
-    <code>pylonslib</code>, <code>text</code>.</li>
-    <li>Delete deprecated subpackages: <code>commands</code>,
-    <code>hinclude</code>, <code>htmlgen</code>, <code>pagination</code>,
-    <code>rails</code>. <strong>CAUTION:</strong> if using these helpers, stick
-    to WebHelpers 0.6.4.</li>
-</ul>
-
-<p>Version 0.6.4 (2008-12-02)
-
-<ul>
-    <li>Several form helpers have magic ID attribute.</li>
-    <li>Bugfixes in <code>ModelTags.select</code>.</li>
-</ul>
-
-</div>
+<p>WebHelpers requires Python 2.4 or later. It has not been tested with Python
+3 yet.</p>
 
 <p><a href="changes.html">Full changelog</a></p>
 
