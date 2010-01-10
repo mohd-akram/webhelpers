@@ -22,6 +22,10 @@ tip (development version)
 
   - Bugfixes.
 
+* webhelpers.string24:
+
+  - Delete module. WebHelpers no longer supports Python 2.3.
+
 1.0b3 (2009-12-29)
 ------------------
 * webhelpers.feedgenerator:
