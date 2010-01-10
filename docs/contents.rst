@@ -30,7 +30,15 @@ Subpackages
    modules/text
    modules/util
 
-`Non-essential modules <modules/other.html>`_: markdown, textile, string24.
+Non-essential subpackages
++++++++++++++++++++++++++
+
+.. toctree::
+    :maxdepth: 2
+
+    modules/markdown
+    modules/textile
+
 
 Metadata
 ++++++++

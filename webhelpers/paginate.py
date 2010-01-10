@@ -120,15 +120,8 @@ __copyright__ = 'Copyright (c) 2007,2008 Christoph Haas <email@christoph-haas.de
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import re
+from string import Template
 import warnings
-
-# Use templating for the .pager() [available since Python 2.4].
-# Otherwise the Template module is provided by the string24.py
-# for Python 2.3
-try:
-    from string import Template
-except ImportError:
-    from webhelpers.string24 import Template
 
 # Import the webhelpers to create URLs
 from webhelpers.html import literal, HTML
