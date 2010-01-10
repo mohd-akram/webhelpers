@@ -13,6 +13,11 @@ tip (development version)
   - New helper ``subclasses_only`` to extract the subclasses of an abstract
     base class from a module or iterable.
 
+* webhelpers.pylonslib.flash:
+
+  - Moved to its own module.
+  - Changed ``Flash.__html__()`` implementation.
+
 * webhelpers.pylonslib.grid:
 
   - Bugfixes.
