@@ -3,14 +3,15 @@
 {% block body %}
 <h1>WebHelpers</h1>
 
-<img src="_images/webhelpers-logo.png" width="100" height="110" 
-    style="float:left; margin-right:1em" />
+<img src="_images/webhelpers-logo.png" width="100" height="110"
+style="float:left; margin-right:1em" />
   
 <p>WebHelpers contains a wide variety of utility functions for web applications
 and other applications. It's pure Python and can be used with any web
-framework.  Version 0.6.x has been used in production sites since July 2008.
-Version 1.0 is almost finished and contains many enhancements. WebHelpers comes
-with an extensive set of doctests and Nose unittests.</p>
+framework.  <strong>Version 0.6.x</strong> has been used in production sites
+since July 2008.  <strong>Version 1.0</strong> is almost finished and contains
+many enhancements while remaining compatible. (The helpers deprecated in 0.6
+are removed in 1.0, including the entire rails suite.)</p>
 
 <p>WebHelpers includes the widely-used HTML tag builder with smart escaping and
 convenience functions for common tags. These ensure the HTML tags are
@@ -30,22 +31,13 @@ helpers depend on
 <a href="http://python.org/pypi/Unidecode/">unidecode</a>, 
 <a href="http://pythonpaste.org/webob/">WebOb</a>, or
 <a href="http://pylonshq.com/">Pylons</a>, or
-as noted in their documentation.</p>
+as noted in their documentation.  WebHelpers requires Python 2.4 or higher,
+and has not yet been tested with Python 3. An extensive test suite for doctest
+and Nose is included.</p>
 
 <p>For support/question/patches, please use the
 <a href="http://groups.google.com/group/pylons-discuss">pylons-discuss</a>
 mailing list.</p>
-
-<h2>Upgrading</h2>
-
-<p>The helpers deprecated in 0.6 have been deleted in 1.0.  This includes the
-entire Rails suite, Prototype, and Scriptaculous. If you're still using these
-helpers, stick with version 0.6.4.</p>
-
-<p>WebHelpers requires Python 2.4 or later. It has not been tested with Python
-3 yet.</p>
-
-<p><a href="changes.html">Full changelog</a></p>
 
 
   <h2>Documentation</h2>
@@ -55,6 +47,8 @@ helpers, stick with version 0.6.4.</p>
          <span class="linkdescr">for a complete overview</span></p>
       <p class="biglink"><a class="biglink" href="{{ pathto("search") }}">Search</a><br/>
          <span class="linkdescr">search the documentation</span></p>
+      <p class="biglink"><a class="biglink" href="{{ pathto("changes") }}">CHANGELOG</a><br/>
+         <span class="linkdescr">full list of changes</span></p>
       <p class="biglink"><a class="biglink" href="{{ pathto("todo") }}">TODO</a><br/>
          <span class="linkdescr">future development plans</span></p>
     </td><td width="50%">
