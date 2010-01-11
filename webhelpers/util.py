@@ -22,12 +22,13 @@ def update_params(url, **params):
     This function does not handle multiple parameters with the same name.
     It will arbitrarily choose one value and discard the others.
 
-    *Debug mode:* if a pseudo-parameter '_debug' with a true value is passed,
+    *Debug mode:* if a pseudo-parameter ``_debug=True`` is passed,
     return a tuple: ``[0]`` is the URL without query string or fragment,
     ``[1]`` is the final query parameters as a dict, and ``[2]`` is the
     fragment part of the original URL or the empty string.
 
-    Usage::
+    Usage:
+
     >>> update_params("foo", new1="NEW1")
     'foo?new1=NEW1'
     >>> update_params("foo?p=1", p="2")
@@ -125,7 +126,12 @@ def iri_to_uri(iri):
 
 class Partial(object):
     
-    """Partial object, which will be in Python 2.5"""
+    """
+    A partial function object.
+
+    Equivalent to functools.partial, which was introduced in Python 2.5.
+
+    """
     
     def __init__(*args, **kw):
         self = args[0]
