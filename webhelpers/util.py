@@ -1,6 +1,8 @@
 """Utility functions used by various web helpers
 
-This module is such a mess that no new helpers should be added to it.
+This module contains support functions used by other helpers, and functions for
+URL manipulation. Most of these helpers predate the 0.6 reorganization; they
+would have been put in other subpackages if they have been created later.
 """
 import cgi
 import copy
@@ -39,6 +41,7 @@ def update_params(url, **params):
     'http://example.com/foo?new1=NEW1#myfrag'
     >>> update_params("http://example.com/foo?new1=OLD1#myfrag", new1="NEW1", _debug=True)
     ('http://example.com/foo', {'new1': 'NEW1'}, 'myfrag')
+
     """
     debug = params.pop("_debug", False)
     orig_url = url
@@ -68,7 +71,12 @@ def cgi_escape(s, quote=False):
     This is a slightly more efficient version of the cgi.escape by
     using 'in' membership to test if the replace is needed.
 
+    This function returns a plain string. Programs using the HTML builder
+    should call ``webhelpers.html.builder.escape()`` instead of this to prevent
+    double-escaping.
+
     """
+    # Called by webhelpers.html.builder
     if '&' in s:
         s = s.replace("&", "&amp;") # Must be done first!
     if '<' in s:
@@ -89,6 +97,9 @@ def html_escape(s):
     
     None is treated specially, and returns the empty string.
     
+    This function returns a plain string. Programs using the HTML builder
+    should wrap the result in ``literal()`` to prevent double-escaping.
+
     """
     if s is None:
         return ''
@@ -114,8 +125,10 @@ def iri_to_uri(iri):
     simplify things a little from the full method.
 
     Returns an ASCII string containing the encoded result.
-    
+
     """
+    # Called by webhelpers.feedgenerator
+    #
     # The list of safe characters here is constructed from the printable ASCII
     # characters that are not explicitly excluded by the list at the end of
     # section 3.1 of RFC 3987.
@@ -146,6 +159,8 @@ class Partial(object):
         return self.fn(*(self.args + args), **d)
 
 class SimplerXMLGenerator(XMLGenerator):
+    # Used by webhelpers.feedgenerator
+
     def addQuickElement(self, name, contents=None, attrs=None):
         """Add an element with no children."""
         if attrs is None:

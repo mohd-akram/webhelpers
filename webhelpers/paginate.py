@@ -25,7 +25,9 @@ initalized with two parameters at least:
 A simple example (ipython session)::
 
     # Set up the routes context (only if you are not using a Pylons application)
-    >>> from routes import Mapper; mapper=Mapper(); mapper.connect(':controller')
+    >>> import routes
+    >>> mapper=routes.Mapper()
+    >>> mapper.connect(None, '/{controller}')
 
     # Create a sample collection of 1000 items
     >>> my_collection = range(1000)
@@ -83,7 +85,7 @@ because users expect that the first page has number 1 and the first item
 on a page also has number 1. So if you want to use the page's items by
 their index number please note that you have to substract 1.
 
-This module is the successor to the deprecated ``webhelpers.pagination``
+This module is the successor to the obsolete ``webhelpers.pagination``
 module.  It is **NOT** API compatible.
 
 This version of paginate is based on the code from
