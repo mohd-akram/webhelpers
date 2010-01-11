@@ -84,7 +84,7 @@ on a page also has number 1. So if you want to use the page's items by
 their index number please note that you have to substract 1.
 
 This module is the successor to the deprecated ``webhelpers.pagination``
-module.  It is *NOT* API compatible.
+module.  It is **NOT** API compatible.
 
 This version of paginate is based on the code from
 http://workaround.org/cgi-bin/hg-paginate that is known at the
