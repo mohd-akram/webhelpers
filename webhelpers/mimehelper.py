@@ -28,9 +28,12 @@ class MIMETypes(object):
     def add_alias(cls, alias, mimetype):
         """Create a MIMEType alias to a full mimetype.
 
-        Examples: ``('html', 'text/html')``, ``('xml', 'application/xml')``.
+        Examples:
 
-        An ``alias`` may not contain a ``/`` character.
+        - ``add_alias('html', 'text/html')``
+        - ``add_alias('xml', 'application/xml')``
+
+        An ``alias`` may not contain the ``/`` character.
 
         """
         if '/' in alias:
