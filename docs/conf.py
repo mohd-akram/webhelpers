@@ -41,7 +41,7 @@ copyright = '2009, Ben Bangert and Mike Orr'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '1.0b1'
+version = '1.0b3'
 # The full version, including alpha/beta/rc tags.
 release = '1.0b1'
 
