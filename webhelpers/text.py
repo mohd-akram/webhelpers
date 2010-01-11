@@ -148,9 +148,13 @@ def chop_at(s, sub, inclusive=False):
 
 def lchop(s, sub):
     """Chop ``sub`` off the front of ``s`` if present.
-    
+
     >>> lchop("##This is a comment.##", "##")
     'This is a comment.##'
+
+    The difference between ``lchop`` and ``s.lstrip`` is that ``lchop`` strips
+    only the exact prefix, while ``s.lstrip`` treats the argument as a set of
+    leading characters to delete regardless of order.
     """
     if s.startswith(sub):
         s = s[len(sub):]
@@ -161,6 +165,10 @@ def rchop(s, sub):
     
     >>> rchop("##This is a comment.##", "##")
     '##This is a comment.'
+
+    The difference between ``rchop`` and ``s.rstrip`` is that ``rchop`` strips
+    only the exact suffix, while ``s.rstrip`` treats the argument as a set of
+    trailing characters to delete regardless of order.
     """
     if s.endswith(sub):
         s = s[:-len(sub)]
@@ -210,7 +218,7 @@ def wrap_paragraphs(text, width=72):
     return "".join(result)
 
 def series(items, conjunction="and", strict_commas=True):
-    """Format a series for use in English text.
+    """Join strings using commas and a conjunction such as "and" or "or".
 
     Examples:
 

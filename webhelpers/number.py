@@ -1,4 +1,4 @@
-"""Number formatting and numeric helpers"""
+"""Number formatting, numeric helpers, and numeric statistics"""
 
 import re
 
@@ -14,9 +14,7 @@ def percent_of(part, whole):
     return float(part * 100) / whole
 
 def mean(r):
-    """Return the mean of a sequence of numbers.
-    
-    The mean is the average of all the numbers.
+    """Return the mean (i.e., average) of a sequence of numbers.
 
     >>> mean([5, 10])
     7.5
@@ -51,15 +49,6 @@ def median(r):
 
     The median here is somewhat close to the majority of incomes, while the
     mean is far from anybody's income.
-
-        [20 000,
-        40 000,
-        60 000,
-        9 999 999]
-    
-    The median would be around 50 000, which is close to what the majority of
-    respondents make.  The average would be in the millions, which is far from
-    what any of the respondents make.
     
     This implementation makes a temporary list of all numbers in memory.
     """
@@ -78,16 +67,30 @@ def median(r):
     return mean([low, high])
 
 def standard_deviation(r, sample=True):
-    """Standard deviation, `from the Python Cookbook
-    <http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/442412>`_
+    """Standard deviation. 
+    
+    `from the Python Cookbook
+    <http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/442412>`_.
     Population mode contributed by Lorenzo Catucci.
 
     Standard deviation shows the variability within a sequence of numbers.
-    A small standard deviation shows the numbers are close to the same.  A
+    A small standard deviation means the numbers are close to each other.  A
     large standard deviation shows they are widely different.  In fact it
     shows how far the numbers tend to deviate from the average.  This can be
     used to detect whether the average has been skewed by a few extremely high
     or extremely low values.
+
+    Most natural and random phenomena follow the normal distribution (aka the
+    bell curve), which says that most values are close to average but a few are
+    extreme.  E.g., most people are close to 5'9" tall but a few are very tall
+    or very short.  If the data does follow the bell curve, 68% of the values
+    will be within 1 standard deviation (stdev) of the average, and 95% will be
+    within 2 standard deviations.  So a university professor grading exams on a
+    curve might give a "C" (mediocre) grade to students within 1 stdev of the
+    average score, "B" (better than average) to those within 2 stdevs above,
+    and "A" (perfect) to the 0.25% higher than 2 stdevs.  Those between 1 and 2
+    stdevs below get a "D" (poor), and those below 2 stdevs... we won't talk
+    about them.
 
     By default the helper computes the unbiased estimate
     for the population standard deviation, by applying an unbiasing
@@ -131,18 +134,6 @@ def standard_deviation(r, sample=True):
         45.1378360405574...
         >>> standard_deviation([-32, -10, 20, 30, 60, 90, 100, 80, 60, 30, 10, -32], sample=False) # doctest: +ELLIPSIS
         43.2161878106906...
-
-    Most natural and random phenomena follow the normal distribution (aka the
-    bell curve), which says that most values are close to average but a few are
-    extreme.  E.g., most people are close to 5'9" tall but a few are very tall
-    or very short.  If the data does follow the bell curve, 68% of the values
-    will be within 1 standard deviation (stdev) of the average, and 95% will be
-    within 2 standard deviations.  So a university professor grading exams on a
-    curve might give a "C" (mediocre) grade to students within 1 stdev of the
-    average score, "B" (better than average) to those within 2 stdevs above,
-    and "A" (perfect) to the 0.25% higher than 2 stdevs.  Those between 1 and 2
-    stdevs below get a "D" (poor), and those below 2 stdevs... we won't talk
-    about them.
     """
     avg = average(r)
     sdsq = sum([(i - avg) ** 2 for i in r])
@@ -153,7 +144,7 @@ def standard_deviation(r, sample=True):
     return (sdsq / normal_denom) ** 0.5
 
 class SimpleStats(object):
-    """Calculate a few simple stats on data.
+    """Calculate a few simple statistics on data.
     
     This class calculates the minimum, maximum, and count of all the values
     given to it.  The values are not saved in the object.  Usage::
@@ -270,8 +261,8 @@ class Stats(SimpleStats):
     ``.finish()`` and then call ``.finish()`` again.  This recalculates the
     stats over the entire data set.
 
-    The ``SimpleStats`` hook methods are available for subclasses, and 
-    additionally the ``._finish_stats`` method.
+    In addition to the hook methods provided by ``SimpleStats``, subclasses
+    can override ``._finish-stats`` to provide additional statistics.
     """
     __version__ = 1
 
