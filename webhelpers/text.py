@@ -114,6 +114,7 @@ def plural(n, singular, plural, with_number=True):
     """Return the singular or plural form of a word, according to the number.
 
     Usage:
+
     >>> plural(2, "ox", "oxen")
     '2 oxen'
     >>> plural(2, "ox", "oxen", False)
@@ -283,14 +284,20 @@ def remove_formatting(string):
 def convert_accented_entities(string):
     """Converts HTML entities into the respective non-accented letters.
     
-    Examples:
+    Examples::
     
-      "&aacute;".convert_accented_entities #: "a"
-      "&ccedil;".convert_accented_entities #: "c"
-      "&egrave;".convert_accented_entities #: "e"
-      "&icirc;".convert_accented_entities #: "i"
-      "&oslash;".convert_accented_entities #: "o"
-      "&uuml;".convert_accented_entities #: "u"
+      >>> convert_accented_entities("&aacute;")
+      'a'
+      >>> convert_accented_entities("&ccedil;")
+      'c'
+      >>> convert_accented_entities("&egrave;")
+      'e'
+      >>> convert_accented_entities("&icirc;")
+      'i'
+      >>> convert_accented_entities("&oslash;")
+      'o'
+      >>> convert_accented_entities("&uuml;")
+      'u'
     
     Note: This does not do any conversion of Unicode/ASCII
     accented-characters. For that functionality please use unidecode.
@@ -344,14 +351,22 @@ def convert_misc_characters(string):
     
     Examples::
       
-        convert_misc_characters("foo & bar") #: "foo and bar"
-        convert_misc_characters("Chanel #9") #: "Chanel number nine"
-        convert_misc_characters("user@host") #: "user at host"
-        convert_misc_characters("google.com") #: "google dot com"
-        convert_misc_characters("$10") #: "10 dollars"
-        convert_misc_characters("*69") #: "star 69"
-        convert_misc_characters("100%") #: "100 percent"
-        convert_misc_characters("windows/mac/linux") #: "windows slash mac slash linux"
+        >>> convert_misc_characters("foo & bar")
+        'foo and bar'
+        >>> convert_misc_characters("Chanel #9")
+        'Chanel number nine'
+        >>> convert_misc_characters("user@host")
+        'user at host'
+        >>> convert_misc_characters("google.com")
+        'google dot com'
+        >>> convert_misc_characters("$10")
+        '10 dollars'
+        >>> convert_misc_characters("*69")
+        'star 69'
+        >>> convert_misc_characters("100%")
+        '100 percent'
+        >>> convert_misc_characters("windows/mac/linux")
+        'windows slash mac slash linux'
       
     Note: Because this method will convert any '&' symbols to the string
     "and", you should run any methods which convert HTML entities 
@@ -396,8 +411,10 @@ def replace_whitespace(string, replace=" "):
     Defaults to a single space but any replacement string may be
     specified as an argument. Examples::
 
-        replace_whitespace("Foo       bar") # => "Foo bar"
-        replace_whitespace("Foo       bar", "-") # => "Foo-bar"
+        >>> replace_whitespace("Foo       bar")
+        'Foo bar'
+        >>> replace_whitespace("Foo       bar", "-")
+        'Foo-bar'
     
     Based on Ruby's stringex package
     (http://github.com/rsl/stringex/tree/master)
