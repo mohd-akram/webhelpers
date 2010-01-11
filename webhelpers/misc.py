@@ -93,6 +93,7 @@ def count_true(seq, pred=lambda x: x):
 
 def convert_or_none(value, type_):
     """Return the value converted to the type, or None if error.
+
     ``type_`` may be a Python type or any function taking one argument.
 
     >>> print convert_or_none("5", int)
@@ -133,6 +134,7 @@ class DeclarativeException(Exception):
     """A simpler way to define an exception with a fixed message.
 
     Example:
+
     >>> class MyException(DeclarativeException):
     ...     message="can't frob the bar when foo is enabled"
     ...

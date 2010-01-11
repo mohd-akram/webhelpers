@@ -9,7 +9,7 @@ __all__ = ["choose_height", "get_dimensions_pil", "get_dimensions"]
 
 def choose_height(new_width, width, height):
     """Return the height corresponding to ``new_width`` that's proportional
-       to the original size (``width * height``).
+       to the original size (``width`` x ``height``).
     """
     proportion = float(height) / float(width)
     return int(new_width * proportion)
@@ -22,8 +22,9 @@ def get_dimensions_pil(path, default=(None, None)):
     or is not in a format recognized by PIL.
 
     Depends on the `Python Imaging Library
-    <http://pypi.python.org/pypi/PIL>`_. See ``get_dimensions()`` if your
-    application is not otherwise using PIL.
+    <http://pypi.python.org/pypi/PIL>`_. If your application is not
+    otherwise using PIL, see the ``get_dimensions()`` function, which does
+    not have external dependencies.
     """
     import Image
     try:
