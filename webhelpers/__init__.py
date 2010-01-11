@@ -1,17 +1,28 @@
-"""Functions useful in web applications (and other applications)
+"""WebHelpers contains a wide variety of functions for web applications.
+It's pure Python and can be used with any web framework, and many of the
+helpers are also useful in non-web applications.
 
-WebHelpers provides a wide variety of functions useful in any web application,
-including an HTML tag generator with smart escaping, tag functions,
-text-to-HTML converters, a paginator, etc.  These can be used in any web
-framework.  A few Pylons-specific helpers are in ``webehlpers.pylonslib``;
-these can be ported to other frameworks by simply replacing the
-framework-specific API calls (request/response/session/URL).
+WebHelpers includes the widely-used HTML tag builder with smart escaping and
+convenience functions for common tags. These ensure the HTML tags are
+syntactically correct and prevent cross-site scripting attacks. Convenience
+functions for form input tags and other common tags are provided.
 
-Some helpers are also useful in non-web applications.  There are text
-formatters, advanced container types, country & state abbreviations, simple
-numeric statistics, etc.
+Other helpers perform text processing, display records a pageful at a time,
+generate Atom/RSS feeds with geographical (GIS) data, handle MIME types,
+calculate statistics, and more.  There are also high-level container types,
+including a value counter and accumulator.  There are lists of country names,
+country codes, US states, Canadian provinces, and UK counties.
 
-The main criteria for incuding helpers are: 
+WebHelpers requires Python 2.4 or higher. It has not yet been tested with 
+Python 3.  WebHelpers has no formal dependencies; however, a few individual
+helpers depend on 
+`Routes <http://routes.groovie.org/>`_, 
+`Unidecode <http://python.org/pypi/Unidecode/>`_, 
+`WebOb <http://pythonpaste.org/webob>`_, or
+`Pylons <a href="http://pylonshq.com/>`_,
+as noted in their documentation.
+
+The main criteria for adding new helpers are: 
 
 * Is it useful in a wide variety of applications, especially web applications?
 
@@ -21,26 +32,8 @@ The main criteria for incuding helpers are:
 * Is it too small to be released as its own project, and is there no other
   Python project more appropriate for it?
 
-Helper functions are organized into modules by theme.  All HTML generators are
-under the ``webhelpers.html`` package, except for a few third-party modules
-which are directly under ``webhelpers``.
-
-WebHelpers depends on Routes 1.x due to the unit tests and deprecated Rails
-helpers.
-
-Users of WebHelpers 0.3 will notice significant changes in 0.6.  All helpers
-ported from Rails (the ``webhelpers.rails`` package) have been deprecated, and
-most have been replaced with new functions in ``webhelpers.html`` or elsewhere.
-``from webhelpers import *`` no longer imports all helpers; you must
-specifically import the modules or functions you want.  Javascript libraries
-(Prototype, Scriptaculous, and ``link_to_remote()``) have also been deprecated
-because the Javascript state-of-the-art changes too rapidly.
-
-Pylons applications ported to Pylons 0.9.7 that depend on the deprecated Rails
-helpers should add the following to myapp/lib/helpers.py::
-
-    from webhelpers.rails.wrapped import *
-    from routes import url_for, redirect_to
-
-A few helpers have external dependencies as noted in their module docstrings.
+WebHelpers was originally created as a utility package for Pylons. Many of the
+helpers were ported from Ruby on Rails. Version 0.6 introduced the HTML tag
+builder and deprecated the rails helpers; new subpackages were added to replace
+the rails helpers. Version 1.0 builds on this with many additional helpers.
 """
