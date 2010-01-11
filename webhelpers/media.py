@@ -38,8 +38,8 @@ def get_dimensions(path, default=(None, None)):
 
     Returns ``(width, height)`` as two integers, or ``default`` if the size
     could not be ascertained.  Failure usually means the file does not exist
-    or is not in a recognized format.  Only JPG, PNG, GIF, BMP are supported at
-    this time.
+    or is not in a recognized format.  Only JPG, PNG, GIF, and BMP are
+    supported at this time.
 
     The algorithms are based on a `PyCode recipe
     <http://www.pycode.com/modules/?id=32&tab=download>`_ by

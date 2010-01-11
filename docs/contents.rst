@@ -1,13 +1,9 @@
 WebHelpers Documentation
 ========================
 
-Subpackages
------------
-
 .. toctree::
    :maxdepth: 1
    
-   overview
    modules/__init__
    modules/constants
    modules/containers
