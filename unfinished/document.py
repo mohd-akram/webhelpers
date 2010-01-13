@@ -26,6 +26,9 @@ class HTMLDocument(object):
     def html4(self):
         doctype = self.doctype or Doctype().html4()
 
+    # XXX Allow subclassing for custom heads. Refactor into superclass with
+    # get_head method?
+
     #### Private methods
     def _get_dict(self, dic):
         if dic is None:
