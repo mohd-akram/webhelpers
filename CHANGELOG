@@ -19,6 +19,7 @@ tip (development version)
 
   - Moved to its own module.
   - Changed ``Flash.__html__()`` implementation.
+  - Categories may be specified in constructor. Patch by Eli Collins.
 
 * webhelpers.pylonslib.grid:
 
