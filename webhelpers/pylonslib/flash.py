@@ -71,7 +71,8 @@ class.  Unlike the logging system, the flash object does not filter out
 messages below a certain level; it returns all messages set. 
 
 You can change the standard categories by overriding the ``.categories``
-and ``.default_category`` class attributes.
+and ``.default_category`` class attributes, or by providing alternate
+values using constructor keywords.
 
 Note that messages are _not_ grouped by category, nor is it possible to 
 pop one category of messages while leaving the others.  If you want to 
@@ -308,13 +309,25 @@ class Flash(object):
     # Default category if none is specified.
     default_category = "notice"
 
-    def __init__(self, session_key="flash"):
+    def __init__(self, session_key="flash", categories=None, default_category=None):
         """Instantiate a ``Flash`` object.
 
         ``session_key`` is the key to save the messages under in the user's
-        session.
+        session. 
+
+        ``categories`` is an optional list which overrides the default list 
+        of categories. 
+
+        ``default_category`` overrides the default category used for messages 
+        when none is specified.
         """
         self.session_key = session_key
+        if categories is not None:
+            self.categories = categories
+        if default_category is not None:
+            self.default_category = default_category
+        if self.categories and self.default_category not in self.categories:
+            raise ValueError("unrecognized default category %r" % (self.default_category,))
 
     def __call__(self, message, category=None):
         """Add a message to the session.
@@ -328,7 +341,7 @@ class Flash(object):
         if not category:
             category = self.default_category
         elif self.categories and category not in self.categories:
-            raise ValueError("unrecognized category '%s'" % category)
+            raise ValueError("unrecognized category %r" % (category,))
         # Don't store Message objects in the session, to avoid unpickling
         # errors in edge cases.
         from pylons import session
