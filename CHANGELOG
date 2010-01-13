@@ -3,6 +3,8 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* Delete ``webhelpers.string24``.  WebHelpers no longer supports Python 2.3.
+
 * webhelpers.html.grid_demo:
 
   - Demonstrates ``webhelpers.html.grid``. Run as 
@@ -22,9 +24,10 @@ tip (development version)
 
   - Bugfixes.
 
-* webhelpers.string24:
+* webhelpers.util:
 
-  - Delete module. WebHelpers no longer supports Python 2.3.
+  - Bugfix: ``parse_qs`` moved from ``cgi`` to ``urlparse`` in Python 2.6.
+    Patch by Mike Verdone.
 
 1.0b3 (2009-12-29)
 ------------------

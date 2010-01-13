@@ -12,6 +12,12 @@ import urlparse
 from UserDict import DictMixin
 from xml.sax.saxutils import XMLGenerator
 
+try:
+    from urlparse import parse_qs
+except ImportError:   # Python < 2.6
+    from cgi import parse_qs
+
+
 def update_params(url, **params):
     """Update query parameters in a URL.
 
@@ -48,7 +54,7 @@ def update_params(url, **params):
     url, fragment = urlparse.urldefrag(url)
     if "?" in url:
         url, qs = url.split("?", 1)
-        query = urlparse.parse_qs(qs)
+        query = parse_qs(qs)
     else:
         query = {}
     for key, value in params.iteritems():
