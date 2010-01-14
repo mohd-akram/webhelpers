@@ -106,6 +106,25 @@ def convert_or_none(value, type_):
     except Exception:
         return None
 
+def flatten(iterable):
+    """Recursively iterate lists and tuples.
+
+    Examples:
+
+    >>> list(flatten([1, [2, 3], 4]))
+    [1, 2, 3, 4]
+    >>> list(flatten([1, (2, 3, [4]), 5]))
+    [1, 2, 3, 4, 5]
+    """
+    for elm in iterable:
+        if isinstance(elm, (list, tuple)):
+            for relm in flatten(elm):
+                yield relm
+        else:
+            yield elm
+
+
+
 def subclasses_only(class_, it):
     """Extract the subclasses of a class from a module, dict, or iterable.
 
