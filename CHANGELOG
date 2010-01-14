@@ -12,8 +12,13 @@ tip (development version)
 
 * webhelpers.misc:
 
+  - New helper ``flatten`` to interpolate embedded lists and tuples.
   - New helper ``subclasses_only`` to extract the subclasses of an abstract
     base class from a module or iterable.
+
+* webhelpers.path:
+  - New module for object-oriented path operations. (A subset of the Unipath
+    package.)
 
 * webhelpers.pylonslib.flash:
 
