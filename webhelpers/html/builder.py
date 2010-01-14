@@ -1,11 +1,15 @@
 """HTML/XHTML tag builder
 
-HTML Builder provides an ``HTML`` object that creates (X)HTML tags in a
-Pythonic way,  a ``literal`` class used to mark strings containing intentional
-HTML markup, and a smart ``escape()`` function that preserves literals but
-escapes other strings that may accidentally contain markup characters ("<",
-">", "&") or malicious Javascript tags.  Escaped strings are returned as
-literals to prevent them from being double-escaped later.
+HTML Builder provides: 
+
+* an ``HTML`` object that creates (X)HTML tags in a Pythonic way.  
+
+* a ``literal`` class used to mark strings containing intentional HTML markup. 
+
+* a smart ``escape()`` function that preserves literals but
+  escapes other strings that may accidentally contain markup characters ("<",
+  ">", "&") or malicious Javascript tags.  Escaped strings are returned as
+  literals to prevent them from being double-escaped later.
 
 ``literal`` is a subclass of ``unicode``, so it works with all string methods
 and expressions.  The only thing special about it is the ``.__html__`` method,
@@ -101,23 +105,21 @@ The ``HTML`` object has the following methods for tag building:
     >>> HTML.cdata(u"<p>")
     literal(u'<![CDATA[<p>]]>')
 
-The protocol is simple: if an object has an ``.__html__`` method, ``escape()``
-calls it rather than ``.__str__()`` to obtain a string representation.
-
 About XHTML and HTML
 --------------------
 
-This builder always produces tags that are valid as *both* HTML and
-XHTML.  "Empty" tags (like ``<br>``, ``<input>`` etc) are written like
-``<br />``, with a space and a trailing ``/``.
+This builder always produces tags that are valid as *both* HTML and XHTML.
+"Void" tags -- those which can never have content like ``<br>`` and ``<input>``
+-- are written like ``<br />``, with a space and a trailing ``/``.
 
-*Only* empty tags get this treatment.  The library will never, for
-example, produce ``<script src="..." />``, which is invalid HTML.
+*Only* void tags get this treatment.  The library will never, for
+example, produce ``<script src="..." />``, which is invalid HTML.  Instead
+it will produce ``<script src="..."></script>``.
 
 The `W3C HTML validator <http://validator.w3.org/>`_ validates these
 constructs as valid HTML Strict.  It does produce warnings, but those
 warnings warn about the ambiguity if this same XML-style self-closing
-tags are used for HTML elements that can take content (``<script>``,
+tags are used for HTML elements that are allowed to take content (``<script>``,
 ``<textarea>``, etc).  This library never produces markup like that.
 
 Rather than add options to generate different kinds of behavior, we
@@ -128,7 +130,7 @@ keep track of whether markup is being rendered in an HTML or XHTML
 context.
 
 If you _really_ want tags without training slashes (e.g., ``<br>`)`, you can
-"abuse" ``_closed=False`` to produce them.
+abuse ``_closed=False`` to produce them.
 
 """
 import re
@@ -374,7 +376,8 @@ for k in dir(literal):
 
 def lit_sub(*args, **kw):
     """Literal-safe version of re.sub.  If the string to be operated on is
-    a literal, return a literal result.
+    a literal, return a literal result.  All arguments are passed directly to
+    ``re.sub``.
     """
     lit = hasattr(args[2], '__html__')
     cls = args[2].__class__
