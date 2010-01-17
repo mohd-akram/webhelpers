@@ -21,6 +21,7 @@ mimehelper
 misc
 number
 paginate
+path
 pylonslib
 pylonslib.flash
 text
