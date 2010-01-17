@@ -249,13 +249,28 @@ class Path(_base):
         return self.__class__(p)
     
     #### HIGH-LEVEL OPERATIONS ####
-    def read_file(self, mode="rU"):
+    def read_file(self, mode="rU", encoding=None, errors="strict"):
+        """Read a file and return the contents.
+        
+        ``encoding`` and ``errors`` are used to decode the content to Unicode.
+        If ``encoding`` is not specified, the bytestring is returned as is.
+        """
         f = open(self, mode)
         content = f.read()
         f.close()
+        if encoding:
+            content = content.encode(encoding, errors)
         return content
 
-    def write_file(self, content, mode="w"):
+    def write_file(self, content, mode="w", encoding=None, errors="strict"):
+        """Write a file.
+        
+        ``encoding`` and ``errors`` are used to encode the content to a 
+        bytestring. If ``encoding`` is not specified, the content will be
+        written as is, which may raise an exception.
+        """
+        if encoding:
+            content = content.encode(encoding, errors)
         f = open(self, mode)
         f.write(content)
         f.close()
