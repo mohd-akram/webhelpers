@@ -31,14 +31,11 @@ def markdown(text, markdown=None, **kwargs):
     original port, and version 2.x contains extensions for footnotes, RSS, etc. 
     `Markdown2 <http://code.google.com/p/python-markdown2/>`_ is another port
     which claims to be faster and to handle edge cases better. 
-    WebHelpers itself contains an old version of Markdown
-    (``webhelpers.markdown`` == Markdown 1.7 without the extensions), but it's 
-    deprecated.  Most WebHelpers users use Markdown from Freewisdom.com.
 
     You can pass the desired Markdown module as the ``markdown``
-    argument, or the helper will try to import ``markdown`` and fall back to
-    ``webhelpers.markdown`` if it can't. (The latter will trigger a deprecation
-    warning.)
+    argument, or the helper will try to import ``markdown``. If neither is
+    available, it will fall back to ``webhelpers.markdown``, which is
+    Freewisdom's Markdown 1.7 without extensions.
     
     IMPORTANT:
     If your source text is untrusted and may contain malicious HTML markup,
