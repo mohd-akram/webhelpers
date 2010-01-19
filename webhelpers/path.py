@@ -29,11 +29,30 @@ class UnsafePathError(ValueError):
 _base = os.path.supports_unicode_filenames and unicode or str
 
 class Path(_base):
-    """An object-oriented approach to os.path functions."""
+    """A filesystem path with ``os.path``-like methods."""
     auto_norm = False
 
     #### Special Python methods.
     def __new__(class_, *args, **kw):
+        """Create a path object.
+
+        ``*args`` are one or more string paths, which will be joined using
+        ``os.path.join``. An argument can also be a ``Path`` object or a list
+        of strings, which will be interpolated and joined.
+
+
+        Only one keyword argument is allowed, ``norm``.  If ``norm`` is true
+        or the class attribute ``.auto_norm`` is true, call ``.norm()`` to
+        clean up redundant ".." and ".", double slashes, wrong-direction
+        slashes, etc. On case-insensitive filesystems it also converts
+        uppercase to lower case. Warning: if the filesystem contains symbolic
+        links, normalizing ".." goes to the parent of the symbolic link rather
+        than the parent of the linked-to file. Because normalization can 
+        sometimes produce a different path than expected, it's disabled by
+        default. If you want ``Path`` to always normalize paths, set the 
+        ``.auto_norm`` attribute to True at the beginning of your program.
+        """
+
         norm = kw.pop("norm", None)
         if norm is None:
             norm = class_.auto_norm
@@ -44,7 +63,7 @@ class Path(_base):
         if isinstance(newpath, class_):
             return newpath
         if norm:
-            newpath = class_.os.path.normpath(newpath)
+            newpath = os.path.normpath(newpath)
             # Can't call .norm() because the path isn't instantiated yet.
         return _base.__new__(class_, newpath)
 
@@ -159,6 +178,15 @@ class Path(_base):
         for i in range(n):
             p = os.path.dirname(p)
         return self.__class__(p)
+
+    def joinpath(self, *children):
+        """Same as ``os.path.join`` or ``Path(self, \*children)``.
+
+        The children are not checked for special path characters
+        ("/", "..", ".").  See ``.child`` for a "safe" version of this 
+        method.
+        """
+        return self.__class__(self, *children)
 
     def child(self, *children):
         """Join paths in a safe manner.
