@@ -147,7 +147,7 @@ def get_serializer():
     if not _serializer_class:
         class CSSUtilsMinificationSerializer(cssutils.CSSSerializer):
             def __init__(self, prefs=None):
-                CSSSerializer.__init__(self, prefs)
+                cssutils.CSSSerializer.__init__(self, prefs)
 
             def do_css_CSSStyleDeclaration(self, style, separator=None):
                 try:

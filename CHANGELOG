@@ -30,6 +30,10 @@ tip (development version)
 
   - Bugfixes.
 
+* webhelpers.pylonslib.minify:
+
+  - Bugfix.
+
 * webhelpers.util:
 
   - Bugfix: ``parse_qs`` moved from ``cgi`` to ``urlparse`` in Python 2.6.
