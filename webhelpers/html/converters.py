@@ -4,15 +4,12 @@
 import re
 
 from webhelpers.html import HTML, escape, literal, lit_sub
-from webhelpers.html.render import render, sanitize
 import webhelpers.textile as textile
 
 __all__ = [
     "format_paragraphs",
     "markdown", 
     "nl2br",
-    "render",
-    "sanitize", 
     "textilize",
     ]
 
