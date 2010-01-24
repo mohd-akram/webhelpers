@@ -22,7 +22,6 @@ WebHelpers Documentation
    modules/misc
    modules/number
    modules/paginate
-   modules/path
    modules/pylonslib
    modules/text
    modules/util
