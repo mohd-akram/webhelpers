@@ -1,3 +1,9 @@
+"""
+*This module's API will be changing soon to accommodate a broader range of data
+types. Some arguments will also change. If your application depends on the
+current API, please copy the module into your application.*
+"""
+
 from webhelpers.html.builder import HTML, literal
 
 class Grid(object):
