@@ -12,7 +12,12 @@ tip (development version)
 
 * webhelpers.html.converters:
 
-  - Don't import ``render`` and ``sanitize`` from ``webhelpers.html.render``.
+  - Don't import ``render`` and ``sanitize`` to converters module.
+
+* webhelpers.html.secure_form:
+
+  - Move module to ``webhelpers.pylonslib.secure_form`` because it depends
+    on ``pylons.session``.
 
 * webhelpers.misc:
 
