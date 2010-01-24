@@ -14,7 +14,6 @@ WebHelpers Documentation
    modules/html/converters
    modules/html/grid
    modules/html/render
-   modules/html/secure_form
    modules/html/tags
    modules/html/tools
    modules/media
@@ -22,7 +21,11 @@ WebHelpers Documentation
    modules/misc
    modules/number
    modules/paginate
-   modules/pylonslib
+   modules/pylonslib/__init__
+   modules/pylonslib/flash
+   modules/pylonslib/grid
+   modules/pylonslib/minify
+   modules/pylonslib/secure_form
    modules/text
    modules/util
 
