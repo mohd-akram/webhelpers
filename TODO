@@ -1,2 +1,10 @@
 WebHelpers TODO
 ===============
+
+See also the bug list at http://bigbucket.org/bbangert/webhelpers .
+
+``webhelpers.text.convert_misc_characters`` fails tests. It's producing
+incorrect output.  This affects ``remove_formatting`` too.
+
+``webhelpers.html.grid`` needs some API changes to make a table from a list of
+lists and from a dict. Some arguments will be changing also.
