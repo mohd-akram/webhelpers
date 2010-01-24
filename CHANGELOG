@@ -10,6 +10,10 @@ tip (development version)
   - Demonstrates ``webhelpers.html.grid``. Run as 
     "python -m webhelpers.html.grid_demo OUTPUT_DIRECTORY".
 
+* webhelpers.html.converters:
+
+  - Don't import ``render`` and ``sanitize`` from ``webhelpers.html.render``.
+
 * webhelpers.misc:
 
   - New helper ``flatten`` to interpolate embedded lists and tuples.

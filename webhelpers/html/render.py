@@ -34,9 +34,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ##########################################################################
 """An HTML-to-text formatter and HTML sanitizer.
-
-``render()`` and ``sanitize()`` are imported to ``webhelpers.html.converters``,
-and should be used from there.
 """
 
 from HTMLParser import HTMLParser
