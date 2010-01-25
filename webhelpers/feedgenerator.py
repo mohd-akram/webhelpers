@@ -56,6 +56,9 @@
 #   false. (The flag can be set in a subclass or instance anytime before the
 #   output is written.) The swapping is done in
 #   ``GeoFeedMixin.georss_coords()`` and ``.add_georss_point()``.
+# - "if geom is not None" syntax fix in ``GeoFeedMixin.get_georss_element()``.
+# - Add a ``Geometry`` class for passing geometries to the Geo classes.
+# - ``GeoFeedMixin`` docstring.
 
 
 """
@@ -415,6 +418,36 @@ class GeoFeedMixin(object):
     """
     This mixin provides the necessary routines for SyndicationFeed subclasses
     to produce simple GeoRSS or W3C Geo elements.
+
+    Subclasses recognize a ``geometry`` keyword argument to ``.add_item()``.
+    The value may be any of several types:
+
+    * a 2-element tuple or list of floats representing latitude/longitude: 
+      ``(X, Y)``.  This is called a "point".
+
+    * a 4-element tuple or list of floats representing a box:
+      ``(X0, Y0, X1, Y1)``.
+
+    * a tuple or list of two points: ``( (X0, Y0), (X1, Y1) )``.
+
+    * a ``Geometry`` instance. (Or any compatible class.)  This provides
+      limited support for points, lines, and polygons. Read the ``Geometry``
+      docstring and the source of ``GeoFeedMixin.add_georss_element()``
+      before using this.
+
+    The mixin provides one class attribute:
+
+    .. attribute:: is_input_latitude_first
+
+       The default value False indicates that input data is in
+       latitude/longitude order. Change to True if the input data is
+       longitude/latitude. The output is always written latitude/longitude
+       to conform to the GeoRSS spec.
+
+       The reason for this attribute is that the Django original stores data
+       in longitude/latutude order and reverses the arguments before writing.
+       WebHelpers does not do this by default, but if you're using Django data
+       or other data that has longitude first, you'll have to set this.
     """
 
     # Set to True if the input data is in lat-lon order, or False if lon-lat.
@@ -454,7 +487,7 @@ class GeoFeedMixin(object):
         """
         # Getting the Geometry object.
         geom = item.get('geometry', None)
-        if not geom is None:
+        if geom is not None:
             if isinstance(geom, (list, tuple)):
                 # Special case if a tuple/list was passed in.  The tuple may be
                 # a point or a box
@@ -537,3 +570,34 @@ class W3CGeoFeed(Rss201rev2Feed, GeoFeedMixin):
     def add_root_elements(self, handler):
         super(W3CGeoFeed, self).add_root_elements(handler)
         self.add_georss_element(handler, self.feed, w3c_geo=True)
+
+
+class Geometry(object):
+    """A basic geometry class for ``GeoFeedMixin``.
+
+    Instances have two public attributes:
+
+    .. attribute:: geom_type
+
+       "point", "linestring", "linearring", "polygon"
+
+    .. attribute:: coords
+
+       For **point**, a tuple or list of two floats: ``(X, Y)``.
+
+       For **linestring** or **linearring**, a string: ``"X0 Y0  X1 Y1 ..."``.
+
+       For **polygon**, a list of strings: ``["X0 Y0  X1 Y1 ..."]``. Only the
+       first element is used because the Geo classes support only the exterior
+       ring.
+
+    The constructor does not check its argument types.
+      
+    This class was created for WebHelpers based on the interface expected by
+    ``GeoFeedMixin.add_georss_element()``.  The class is untested. Please send
+    us feedback on whether it works for you.
+    """
+
+    def __init__(self, geom_type, coords):
+        self.geom_type = geom_type
+        coords = coords
