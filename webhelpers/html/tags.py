@@ -1,10 +1,10 @@
 """Helpers producing simple HTML tags
 
-Most helpers have an ``\*\*attrs`` argument to specify additional HTML
+Most helpers have an ``**attrs`` argument to specify additional HTML
 attributes.  A trailing underscore in the name will be deleted; this is 
-especially important for attributes that match Python keywords; e.g.,
-``class_``.  Some helpers handle certain keywords specially; these are noted in
-the helpers' docstrings.
+especially important for attributes that are identical to Python keywords;
+e.g., ``class_``.  Some helpers handle certain keywords specially; these are
+noted in the helpers' docstrings.
 """
 
 import datetime
@@ -219,7 +219,6 @@ def checkbox(name, value="1", checked=False, label=None, id=None, **attrs):
     ``_make_safe_id_component()``.  Pass the empty string ("") to suppress the
     ID attribute entirely.
 
-d
     The following HTML attributes may be set by keyword argument:
 
     * ``disabled`` - If true, checkbox will be grayed out.
@@ -632,6 +631,7 @@ class Options(tuple):
     convenient.
 
     This class has multiple jobs:
+
     - Canonicalize the options given to ``select()`` into a consistent format.
     - Avoid canonicalizing the same data multiple times.  It subclasses tuple
       rather than a list to guarantee that nonconformant elements won't be 
@@ -692,7 +692,7 @@ def title(title, required=False, label_for=None):
 
     ``title`` -- the name of the field; e.g., "First Name".
 
-    ``required `` -- if true, append a "*" to the title and use the
+    ``required`` -- if true, append a \*" to the title and use the
     'required' HTML format (see example); otherwise use the 'not
     required' format.
 
@@ -1129,22 +1129,24 @@ class Doctype(object):
     def html5(self):
         """Create a <!DOCTYPE> for HTML 5.
         
-           Usage:
-           >>> Doctype().html5()
-           literal(u'<!doctype html>')
+        Usage::
+
+            >>> Doctype().html5()
+            literal(u'<!doctype html>')
         """
         return literal("<!doctype html>")
 
     def xhtml1(self, subtype="transitional", version="1.0"):
         """Create a <!DOCTYPE> for XHTML 1.
 
-           Usage:
-           >>> Doctype().xhtml1()
-           literal(u'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">')
-           >>> Doctype().xhtml1("strict")
-           literal(u'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
-           >>> Doctype().xhtml1("frameset")
-           literal(u'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">')
+           Usage::
+
+               >>> Doctype().xhtml1()
+               literal(u'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">')
+               >>> Doctype().xhtml1("strict")
+               literal(u'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
+               >>> Doctype().xhtml1("frameset")
+               literal(u'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">')
         """
         if subtype in ["transitional", "loose"]:
             name = "Transitional"
@@ -1160,12 +1162,13 @@ class Doctype(object):
         """Create a <!DOCTYPE> for HTML 4.
 
            Usage:
-           >>> Doctype().html4()
-           literal(u'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">')
-           >>> Doctype().html4("strict")
-           literal(u'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">')
-           >>> Doctype().html4("frameset")
-           literal(u'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">')
+
+               >>> Doctype().html4()
+               literal(u'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">')
+               >>> Doctype().html4("strict")
+               literal(u'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">')
+               >>> Doctype().html4("frameset")
+               literal(u'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">')
         """
         if subtype in ["transitional", "loose"]:
             name = "Transitional"
@@ -1185,9 +1188,10 @@ class Doctype(object):
 def xml_declaration(version="1.0", encoding="utf-8"):
     """Create an XML declaration.
 
-       Usage:
-       >>> xml_declaration()
-       literal(u'<?xml version="1.0" encoding="utf-8" ?>')
+       Usage::
+
+           >>> xml_declaration()
+           literal(u'<?xml version="1.0" encoding="utf-8" ?>')
     """
     return literal('<?xml version="%s" encoding="%s" ?>') % (version, encoding)
 
