@@ -5,6 +5,10 @@ tip (development version)
 -------------------------
 * Delete ``webhelpers.string24``.  WebHelpers no longer supports Python 2.3.
 
+* webhelpers.feedgenerator:
+
+  - Add a basic ``Geometry`` class for the Geo helpers.
+
 * webhelpers.html.grid_demo:
 
   - Demonstrates ``webhelpers.html.grid``. Run as 
