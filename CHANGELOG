@@ -3,6 +3,10 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+
+1.0b4 (2010-01-24)
+------------------
+
 * Delete ``webhelpers.string24``.  WebHelpers no longer supports Python 2.3.
 
 * webhelpers.feedgenerator:
