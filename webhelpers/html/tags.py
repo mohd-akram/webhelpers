@@ -5,6 +5,9 @@ attributes.  A trailing underscore in the name will be deleted; this is
 especially important for attributes that are identical to Python keywords;
 e.g., ``class_``.  Some helpers handle certain keywords specially; these are
 noted in the helpers' docstrings.
+
+A set of CSS styles complemeting these helpers is in
+``webhelpers/public/stylesheets/webhelpers.css``.
 """
 
 import datetime

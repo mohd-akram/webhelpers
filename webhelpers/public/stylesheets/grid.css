@@ -24,13 +24,13 @@ table.stylized caption {
 
 
 
-table.stylized caption a:link,table.stylized caption a:visited{
+table.stylized caption a:link,table.stylized caption a:visited {
 	color: #ffffff;
 	text-decoration: none;
 	font-weight: bold;
 }
 
-table.stylized caption a:link,table.stylized caption a:hover{
+table.stylized caption a:link,table.stylized caption a:hover {
 	color: #ffcc00;
 	text-decoration: none;
 	font-weight: bold;
