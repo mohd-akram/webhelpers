@@ -1,7 +1,13 @@
-"""
-*This module's API will be changing soon to accommodate a broader range of data
-types. Some arguments will also change. If your application depends on the
-current API, please copy the module into your application.*
+"""A helper to make HTML tables.
+
+**This module is experimental. The API will be changing soon to accommodate a
+broader range of data types. Some arguments will also change. If your
+application depends on the current API, please copy the module into your
+application.**
+
+A set of CSS styles complementing this helper is in
+"webhelpers/html/public/stylesheets/grid.css". To use them, include the 
+stylesheet in your applcation and set your <table> class to "stylized".
 """
 
 from webhelpers.html.builder import HTML, literal
@@ -12,11 +18,11 @@ class Grid(object):
     tables/grids - structures that are mostly built from datasets.
     
     To create a grid at minimum one one needs to pass a dataset,
-    like a list of dictionaries, or sqlalchemy proxy or query object.
+    like a list of dictionaries, or sqlalchemy proxy or query object::
     
-    grid = Grid(itemlist, ['_numbered','c1', 'c2','c4'])
-    where itemlist in this simple scenario is a list of dicts:
-    [{'c1':1,'c2'...}, {'c1'...}, ...]
+        grid = Grid(itemlist, ['_numbered','c1', 'c2','c4'])
+        where itemlist in this simple scenario is a list of dicts:
+        [{'c1':1,'c2'...}, {'c1'...}, ...]
     
     This helper also received the list that defines order in which
     columns will be rendered - also keep note of special column name that can be
@@ -28,14 +34,26 @@ class Grid(object):
     property.
     
     
-    Then printing the grid instance forces rendering of data into html output,
-    the headers are created and for every entry in list a table row will be
-    created. The names of the columns will get automatically converted for
+    Converting the grid to a string renders the table rows. That's *just*
+    the <tr> tags, not the <table> around them. The part outside the <tr>s
+    have too many variations for us to render it. In many template systems,
+    you can simply assign the grid to a template variable and it will be
+    automatically converted to a string. Example using a Mako template:
+
+    .. code-block:: html
+
+        <table class="stylized">
+        <caption>My Lovely Grid</caption>
+        <col class="c1" />
+        ${my_grid}
+        </table>
+
+    The names of the columns will get automatically converted for
     humans ie. foo_bar becomes Foo Bar. If you want the title to be something
     else you can change the grid.labels dict. If you want the column ``part_no``
-    to become ``Catalogue Number`` just do:
+    to become ``Catalogue Number`` just do::
     
-    grid.labels[``part_no``] = u'Catalogue Number'
+        grid.labels[``part_no``] = u'Catalogue Number'
     
     It may be desired to exclude some or all columns from generation sorting
     urls (used by subclasses that are sorting aware). You can use grids
@@ -50,48 +68,46 @@ class Grid(object):
     Since very often this behavior needs to be overridden like we need date
     formatted, use conditionals or generate a link one can use
     the  ``column_formats`` dict and pass a rendering function/lambda to it. 
-    For example we want to apppend ``foo`` to part number:
+    For example we want to apppend ``foo`` to part number::
     
-    def custem_part_no_td(col_num, i, item):
-        return HTML.td(`Foo %s` % item[``part_no``])
-    
-    grid.labels[``part_no``] = custem_part_no_td
+        def custem_part_no_td(col_num, i, item):
+            return HTML.td(`Foo %s` % item[``part_no``])
+        
+        grid.labels[``part_no``] = custem_part_no_td
     
     You can customize the grids look and behavior by overloading grids instance
-    render functions:
+    render functions::
     
-    grid.default_column_format(self, column_number, i, record, column_name)
-    by default generates markup like:
-    <td class="cNO">VALUE</td>
-    
-    grid.default_header_column_format(self, column_number, column_name, 
-        header_label)
-    by default generates markup like:
-    <td class="cNO COLUMN_NAME">VALUE</td>
+        grid.default_column_format(self, column_number, i, record, column_name)
+        by default generates markup like:
+        <td class="cNO">VALUE</td>
         
-    grid.default_header_ordered_column_format(self, column_number, order, 
-        column_name, header_label)
-    Used by grids that support ordering of columns in the grid like, 
-    webhelpers.pylonslib.grid.GridPylons.
-    by default generates markup like:
-    <td class="cNO ordering ORDER_DIRECTION COLUMN_NAME">LABEL</td>
-    
-    grid.default_header_record_format(self, headers)
-    by default generates markup like:
-    <tr class="header">HEADERS_MARKUP</tr>
-    
-    grid.default_record_format(self, i, record, columns)
-    <tr class="ODD_OR_EVEN">RECORD_MARKUP</tr>
-    
-    grid.generate_header_link(self, column_number, column, label_text)
-    by default just sets the order direction and column properties for grid.
-    Actual link generation is handled by sublasses of Grid.
-    
-    grid.numbered_column_format(self, column_number, i, record)
-    by default generates markup like:
-    <td class="cNO">RECORD_NO</td>
-     
-     
+        grid.default_header_column_format(self, column_number, column_name, 
+            header_label)
+        by default generates markup like:
+        <td class="cNO COLUMN_NAME">VALUE</td>
+            
+        grid.default_header_ordered_column_format(self, column_number, order, 
+            column_name, header_label)
+        Used by grids that support ordering of columns in the grid like, 
+        webhelpers.pylonslib.grid.GridPylons.
+        by default generates markup like:
+        <td class="cNO ordering ORDER_DIRECTION COLUMN_NAME">LABEL</td>
+        
+        grid.default_header_record_format(self, headers)
+        by default generates markup like:
+        <tr class="header">HEADERS_MARKUP</tr>
+        
+        grid.default_record_format(self, i, record, columns)
+        <tr class="ODD_OR_EVEN">RECORD_MARKUP</tr>
+        
+        grid.generate_header_link(self, column_number, column, label_text)
+        by default just sets the order direction and column properties for grid.
+        Actual link generation is handled by sublasses of Grid.
+        
+        grid.numbered_column_format(self, column_number, i, record)
+        by default generates markup like:
+        <td class="cNO">RECORD_NO</td>
     """
     def __init__(self, itemlist, columns, column_labels=None,
                   column_formats=None, start_number=1,
