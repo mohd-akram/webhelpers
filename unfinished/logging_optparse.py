@@ -182,6 +182,11 @@ class OptionParser(optparse.OptionParser):
         if opts.log:
             self._init_logging_from_specs(opts.log)
 
+    def error(self, message, *args):
+        if args:
+            message %= args
+        OptionParser.error(self, message)
+
     #### Private methods
 
 
