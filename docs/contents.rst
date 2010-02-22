@@ -45,6 +45,7 @@ Metadata
 .. toctree::
    :maxdepth: 1
 
+   upgrading
    changes
    todo
    modules
