@@ -1,10 +1,11 @@
 WebHelpers Documentation
 ========================
 
+All helpers are organized into subpackages.
+
 .. toctree::
    :maxdepth: 1
    
-   modules/__init__
    modules/constants
    modules/containers
    modules/date
@@ -29,6 +30,23 @@ WebHelpers Documentation
    modules/text
    modules/util
 
+Metadata
+++++++++
+
+WebHelpers was originally created as a utility package for Pylons. Many of the
+helpers were ported from Ruby on Rails. Version 0.6 introduced the HTML tag
+builder and deprecated the rails helpers; new subpackages were added to replace
+the rails helpers. Version 1.0 builds on this with many additional helpers.
+
+.. toctree::
+   :maxdepth: 1
+
+   upgrading
+   changes
+   third_party
+   development
+   todo
+
 Non-essential subpackages
 +++++++++++++++++++++++++
 
@@ -38,18 +56,6 @@ Non-essential subpackages
     modules/markdown
     modules/textile
 
-
-Metadata
-++++++++
-
-.. toctree::
-   :maxdepth: 1
-
-   upgrading
-   changes
-   todo
-   modules
-   third_party
 
 
 Indices and tables
