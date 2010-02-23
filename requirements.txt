@@ -1,5 +1,5 @@
 # Pip requirements to build WebHelpers documentation and run tests.
-#
+
 # Required for tests
 Nose
 Routes
@@ -8,5 +8,9 @@ WebOb
 # Required for generating HTML documentation
 Sphinx
 
-# Optional for certain helpers
+# Optional enhancement for certain helpers
 Unidecode
+
+# Required by pylons.media.get_dimensions_pil()
+# (To avoid installing this, use pylons.media.get_dimensions() instead.)
+#Imaging

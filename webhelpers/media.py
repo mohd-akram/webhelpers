@@ -15,11 +15,15 @@ def choose_height(new_width, width, height):
     return int(new_width * proportion)
 
 def get_dimensions_pil(path, default=(None, None)):
-    """Get an image's size using the Python Imaging Library (PIL)
+    """Get an image's size using the Python Imaging Library (PIL).
 
-    Returns ``(width, height)`` as two integers, or ``default`` if the size
-    could not be ascertained.  Failure usually means the file does not exist
-    or is not in a format recognized by PIL.
+    ``path`` is the path of the image file.
+
+    ``default`` is returned if the size could not be ascertained. This
+    usually means the file does not exist or is not in a format recognized by
+    PIL.
+
+    The normal return value is a tuple: ``(width, height)``.
 
     Depends on the `Python Imaging Library
     <http://pypi.python.org/pypi/PIL>`_. If your application is not
@@ -34,12 +38,15 @@ def get_dimensions_pil(path, default=(None, None)):
     return im.size
 
 def get_dimensions(path, default=(None, None)):
-    """Get an image's size using only the Python standard library
+    """Get an image's size using only the Python standard library.
 
-    Returns ``(width, height)`` as two integers, or ``default`` if the size
-    could not be ascertained.  Failure usually means the file does not exist
-    or is not in a recognized format.  Only JPG, PNG, GIF, and BMP are
-    supported at this time.
+    ``path`` is the path of the image file.
+
+    ``default`` is returned if the size could not be ascertained. This
+    usually means the file does not exist or is not in a recognized format.
+    PIL. Only JPG, PNG, GIF, and BMP are supported at this time.
+
+    The normal return value is a tuple: ``(width, height)``.
 
     The algorithms are based on a `PyCode recipe
     <http://www.pycode.com/modules/?id=32&tab=download>`_ by
@@ -47,6 +54,9 @@ def get_dimensions(path, default=(None, None)):
 
     This helper recognizes fewer image formats and is potentially less
     accurate than ``get_dimensions_pil()``.
+
+    Running this module as a script tests this helper. It will print the
+    size of each image file specified on the command line.
     """
     apath = os.path.abspath(path)
     try:
@@ -122,5 +132,4 @@ def test_get_dimensions():
             print "%s x %s" % (width, height)
             
         
-
 if __name__ == "__main__":  test_get_dimensions()

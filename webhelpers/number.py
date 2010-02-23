@@ -69,7 +69,7 @@ def median(r):
 def standard_deviation(r, sample=True):
     """Standard deviation. 
     
-    `from the Python Cookbook
+    `From the Python Cookbook
     <http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/442412>`_.
     Population mode contributed by Lorenzo Catucci.
 
@@ -174,15 +174,16 @@ class SimpleStats(object):
     >>> stats2.max
     'foo'
 
-    If the ``numeric`` constructor arg is true, only ``int``, ``long``, and 
-    ``float`` values will be accepted.  This flag is intended to enable
-    additional numeric statistics, although none are currently implemented.
-
     ``.min`` and ``.max`` are ``None`` until the first data value is
     registered.
 
     Subclasses can override ``._init_stats`` and ``._update_stats`` to add
-    additional statistics.
+    additional statistics. 
+    
+    The constructor accepts one optional argument, ``numeric``. If true, the
+    instance accepts only values that are ``int``, ``long``, or ``float``.
+    The default is false, which accepts any value. This is meant for instances
+    or subclasses that don't want non-numeric values.
     """
     __version__ = 1
 

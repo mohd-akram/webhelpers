@@ -5,6 +5,9 @@
 
 .. currentmodule:: webhelpers.number
 
+Functions
+---------
+
 .. autofunction:: percent_of
 .. autofunction:: mean
 .. function:: average(r)
@@ -13,6 +16,10 @@
 
 .. autofunction:: median
 .. autofunction:: standard_deviation
+.. autofunction:: format_number
+
+Classes
+-------
 
 .. autoclass:: SimpleStats
     :members:
@@ -22,4 +29,3 @@
     :members:
     :undoc-members:
 
-.. autofunction:: format_number
