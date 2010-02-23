@@ -1,4 +1,4 @@
-"""Helpers producing simple HTML tags
+"""Helpers that produce simple HTML tags.
 
 Most helpers have an ``**attrs`` argument to specify additional HTML
 attributes.  A trailing underscore in the name will be deleted; this is 
@@ -6,7 +6,9 @@ especially important for attributes that are identical to Python keywords;
 e.g., ``class_``.  Some helpers handle certain keywords specially; these are
 noted in the helpers' docstrings.
 
-A set of CSS styles complemeting these helpers is in
+to create your own custom tags, see ``webhelpers.html.builder``.
+
+A set of CSS styles complementing these helpers is in
 ``webhelpers/public/stylesheets/webhelpers.css``.
 """
 
@@ -781,7 +783,8 @@ def link_to_if(condition, label, url='', **attrs):
         return label
 
 def link_to_unless(condition, label, url='', **attrs):
-    """Same as ``link_to`` but return just the label if the condition is true.
+    """The opposite of ``link_to``. Return just the label if the condition is 
+    true.
     """
     if not condition:
         return link_to(label, url, **attrs)

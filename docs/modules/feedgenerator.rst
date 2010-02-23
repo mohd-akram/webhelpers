@@ -2,7 +2,7 @@
 ================================================
 
 This is a port of Django's feeed generator for creating RSS and Atom feeds.
-The Geo classes are also ported for publishing geographical (GIS) data.
+The Geo classes for publishing geographical (GIS) data are also ported.
 
 .. automodule:: webhelpers.feedgenerator
 

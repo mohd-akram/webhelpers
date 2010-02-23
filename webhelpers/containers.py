@@ -1,7 +1,8 @@
-"""Container objects and list/dict helpers.
+"""Container objects, and helpers for lists and dicts.
 
-I would have called this "collections" except that Python 2 can't import a
-top-level module that's the same name as a module in the current package.
+This would have been called this "collections" except that Python 2 can't
+import a top-level module that's the same name as a module in the current
+package.
 """
 
 import sys
@@ -91,28 +92,30 @@ class DumbObject(object):
 class Counter(object):
     """I count the number of occurrences of each value registered with me.
     
-    Usage:
-    >>> counter = Counter()
-    >>> counter("foo")
-    >>> counter("bar")
-    >>> counter("foo")
-    >>> sorted(counter.result.items())
-    [('bar', 1), ('foo', 2)]
+    Call the instance to register a value. The result is available as the
+    ``.result`` attribute.  Example::
 
-    >> counter.result
-    {'foo': 2, 'bar': 1}
+        >>> counter = Counter()
+        >>> counter("foo")
+        >>> counter("bar")
+        >>> counter("foo")
+        >>> sorted(counter.result.items())
+        [('bar', 1), ('foo', 2)]
 
-    To see the most frequently-occurring items in order:
+        >> counter.result
+        {'foo': 2, 'bar': 1}
 
-    >>> counter.get_popular(1)
-    [(2, 'foo')]
-    >>> counter.get_popular()
-    [(2, 'foo'), (1, 'bar')]
+    To see the most frequently-occurring items in order::
 
-    Or if you prefer the list in item order:
+        >>> counter.get_popular(1)
+        [(2, 'foo')]
+        >>> counter.get_popular()
+        [(2, 'foo'), (1, 'bar')]
 
-    >>> counter.get_sorted_items()
-    [('bar', 1), ('foo', 2)]
+    Or if you prefer the list in item order::
+
+        >>> counter.get_sorted_items()
+        [('bar', 1), ('foo', 2)]
     """
 
     def __init__(self):
@@ -125,8 +128,9 @@ class Counter(object):
         self.total += 1
 
     def get_popular(self, max_items=None):
-        """Return the results as as a list of (count, item) pairs, with the
+        """Return the results as as a list of ``(count, item)`` pairs, with the
         most frequently occurring items first.
+
         If ``max_items`` is provided, return no more than that many items.
         """
         data = [(x[1], x[0]) for x in self.result.iteritems()]
@@ -137,23 +141,24 @@ class Counter(object):
             return data
 
     def get_sorted_items(self):
-        """Return the result as a list of (item, count) pairs sorted by item.
+        """Return the result as a list of ``(item, count)`` pairs sorted by item.
         """
         data = self.result.items()
         data.sort()
         return data
 
-    #@classmethod
     def correlate(class_, iterable):
         """Build a Counter from an iterable in one step.
 
         This is the same as adding each item individually.
 
-        >>> counter = Counter.correlate(["A", "B", "A"])
-        >>> counter.result["A"]
-        2
-        >>> counter.result["B"]
-        1
+        ::
+
+            >>> counter = Counter.correlate(["A", "B", "A"])
+            >>> counter.result["A"]
+            2
+            >>> counter.result["B"]
+            1
         """
         counter = class_()
         for elm in iterable:
@@ -165,17 +170,19 @@ class Counter(object):
 class Accumulator(object):
     """Accumulate a dict of all values for each key.
 
-    Usage:
-    >>> bowling_scores = Accumulator()
-    >>> bowling_scores("Fred", 0)
-    >>> bowling_scores("Barney", 10)
-    >>> bowling_scores("Fred", 1)
-    >>> bowling_scores("Barney", 9)
-    >>> sorted(bowling_scores.result.items())
-    [('Barney', [10, 9]), ('Fred', [0, 1])]
+    Call the instance to register a value. The result is available as the
+    ``.result`` attribute.  Example::
 
-    >> bowling_scores.result
-    {'Fred': [0, 1], 'Barney': [10, 9]}
+        >>> bowling_scores = Accumulator()
+        >>> bowling_scores("Fred", 0)
+        >>> bowling_scores("Barney", 10)
+        >>> bowling_scores("Fred", 1)
+        >>> bowling_scores("Barney", 9)
+        >>> sorted(bowling_scores.result.items())
+        [('Barney', [10, 9]), ('Fred', [0, 1])]
+
+        >> bowling_scores.result
+        {'Fred': [0, 1], 'Barney': [10, 9]}
 
     The values are stored in the order they're registered.
 
@@ -187,11 +194,11 @@ class Accumulator(object):
         self.result = defaultdict(list)
 
     def __call__(self, key, value):
+        """Register a key-value pair."""
         self.result[key].append(value)
 
-    #@classmethod
     def correlate(class_, iterable, key):
-        """Correlate several items into an Accumulator in one step.
+        """Create an Accumulator based on several related values.
 
         ``key`` is a function to calculate the key for each item, akin to
         ``list.sort(key=)``.
@@ -209,21 +216,26 @@ class UniqueAccumulator(object):
     """Accumulate a dict of unique values for each key.
 
     The values are stored in an unordered set.
+
+    Call the instance to register a value. The result is available as the
+    ``.result`` attribute.
     """
 
     def __init__(self):
         self.result = defaultdict(set)
 
     def __call__(self, key, value):
+        """Register a key-value pair."""
         self.result[key].add(value)
 
 
 def unique(it):
     """Return a list of unique elements in the iterable, preserving the order.
 
-    Usage:
-    >>> unique([None, "spam", 2, "spam", "A", "spam", "spam", "eggs", "spam"])
-    [None, 'spam', 2, 'A', 'eggs']
+    Usage::
+
+        >>> unique([None, "spam", 2, "spam", "A", "spam", "spam", "eggs", "spam"])
+        [None, 'spam', 2, 'A', 'eggs']
     """
     seen = set()
     ret = []
@@ -236,11 +248,13 @@ def unique(it):
 def only_some_keys(dic, keys):
     """Return a copy of the dict with only the specified keys present.  
     
-    ``dic`` may be any mapping; the return value is always a Python dict.
+    ``dic`` may be any mapping. The return value is always a Python dict.
 
-    >> only_some_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"])
-    >>> sorted(only_some_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"]).items())
-    [('A', 1), ('C', 3)]
+    ::
+
+        >> only_some_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"])
+        >>> sorted(only_some_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"]).items())
+        [('A', 1), ('C', 3)]
     """
     ret = {}
     for key in keys:
@@ -250,8 +264,10 @@ def only_some_keys(dic, keys):
 def except_keys(dic, keys):
     """Return a copy of the dict without the specified keys.
 
-    >>> except_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"])
-    {'B': 2}
+    ::
+
+        >>> except_keys({"A": 1, "B": 2, "C": 3}, ["A", "C"])
+        {'B': 2}
     """
     ret = dic.copy()
     for key in keys:
@@ -265,13 +281,15 @@ def extract_keys(dic, keys):
     """Return two copies of the dict.  The first has only the keys specified.
     The second has all the *other* keys from the original dict.
 
-    >> extract_keys({"From": "F", "To": "T", "Received", R"}, ["To", "From"]) 
-    ({"From": "F", "To": "T"}, {"Recived": "R"})
-    >>> regular, extra = extract_keys({"From": "F", "To": "T", "Received": "R"}, ["To", "From"]) 
-    >>> sorted(regular.keys())
-    ['From', 'To']
-    >>> sorted(extra.keys())
-    ['Received']
+    ::
+
+        >> extract_keys({"From": "F", "To": "T", "Received", R"}, ["To", "From"]) 
+        ({"From": "F", "To": "T"}, {"Recived": "R"})
+        >>> regular, extra = extract_keys({"From": "F", "To": "T", "Received": "R"}, ["To", "From"]) 
+        >>> sorted(regular.keys())
+        ['From', 'To']
+        >>> sorted(extra.keys())
+        ['Received']
     """
     for k in keys:
         if k not in dic:
@@ -286,24 +304,27 @@ def extract_keys(dic, keys):
     return r1, r2
 
 def ordered_items(dic, key_order, other_keys=True, default=NotGiven):
-    """Like dict.iteritems() but with a specified key order.
+    """Like ``dict.iteritems()`` but with a specified key order.
 
-    ``dic`` is any mapping.
-    ``key_order`` is a list of keys.  Items will be yielded in this order.
-    ``other_keys`` is a boolean.
-    ``default`` is a value returned if the key is not in the dict.
+    Arguments:
+
+    * ``dic`` is any mapping.
+    * ``key_order`` is a list of keys.  Items will be yielded in this order.
+    * ``other_keys`` is a boolean.
+    * ``default`` is a value returned if the key is not in the dict.
 
     This yields the items listed in ``key_order``.  If a key does not exist
     in the dict, yield the default value if specified, otherwise skip the
     missing key.  Afterwards, if ``other_keys`` is true, yield the remaining
     items in an arbitrary order.
 
-    Usage:
-    >>> dic = {"To": "you", "From": "me", "Date": "2008/1/4", "Subject": "X"}
-    >>> dic["received"] = "..."
-    >>> order = ["From", "To", "Subject"]
-    >>> list(ordered_items(dic, order, False))
-    [('From', 'me'), ('To', 'you'), ('Subject', 'X')]
+    Usage::
+
+        >>> dic = {"To": "you", "From": "me", "Date": "2008/1/4", "Subject": "X"}
+        >>> dic["received"] = "..."
+        >>> order = ["From", "To", "Subject"]
+        >>> list(ordered_items(dic, order, False))
+        [('From', 'me'), ('To', 'you'), ('Subject', 'X')]
     """
     d = dict(dic)
     for key in key_order:
@@ -320,10 +341,12 @@ def del_quiet(dic, keys):
     
     This modifies the dict in place.
 
-    >>> d ={"A": 1, "B": 2, "C": 3}
-    >>> del_quiet(d, ["A", "C"])
-    >>> d
-    {'B': 2}
+    ::
+
+        >>> d ={"A": 1, "B": 2, "C": 3}
+        >>> del_quiet(d, ["A", "C"])
+        >>> d
+        {'B': 2}
     """
     for key in keys:
         try:
@@ -334,16 +357,18 @@ def del_quiet(dic, keys):
 def correlate_dicts(dicts, key):
     """Correlate several dicts under one superdict.
 
-    E.g., If you have several dicts each with a 'name' key, this can
-    put them in a container dict keyed by name.
+    If you have several dicts each with a 'name' key, this 
+    puts them in a container dict keyed by name.
 
-    >>> d1 = {"name": "Fred", "age": 41}
-    >>> d2 = {"name": "Barney", "age": 31}
-    >>> flintstones = correlate_dicts([d1, d2], "name")
-    >>> sorted(flintstones.keys())
-    ['Barney', 'Fred']
-    >>> flintstones["Fred"]["age"]
-    41
+    ::
+
+        >>> d1 = {"name": "Fred", "age": 41}
+        >>> d2 = {"name": "Barney", "age": 31}
+        >>> flintstones = correlate_dicts([d1, d2], "name")
+        >>> sorted(flintstones.keys())
+        ['Barney', 'Fred']
+        >>> flintstones["Fred"]["age"]
+        41
 
     If you're having trouble spelling this method correctly, remember:
     "relate" has one 'l'.  The 'r' is doubled because it occurs after a prefix.
@@ -367,19 +392,21 @@ def correlate_dicts(dicts, key):
 def correlate_objects(objects, attr):
     """Correlate several objects under one dict.
 
-    E.g., If you have several objects each with a 'name' attribute, this can
-    create a dict containing each object keyed by name.
+    If you have several objects each with a 'name' attribute, this
+    puts them in a dict keyed by name.
 
-    >>> class Flintstone(DumbObject):
-    ...    pass
-    ...
-    >>> fred = Flintstone(name="Fred", age=41)
-    >>> barney = Flintstone(name="Barney", age=31)
-    >>> flintstones = correlate_objects([fred, barney], "name")
-    >>> sorted(flintstones.keys())
-    ['Barney', 'Fred']
-    >>> flintstones["Barney"].age
-    31
+    ::
+
+        >>> class Flintstone(DumbObject):
+        ...    pass
+        ...
+        >>> fred = Flintstone(name="Fred", age=41)
+        >>> barney = Flintstone(name="Barney", age=31)
+        >>> flintstones = correlate_objects([fred, barney], "name")
+        >>> sorted(flintstones.keys())
+        ['Barney', 'Fred']
+        >>> flintstones["Barney"].age
+        31
 
     If you're having trouble spelling this method correctly, remember:
     "relate" has one 'l'.  The 'r' is doubled because it occurs after a prefix.
@@ -438,19 +465,15 @@ def distribute(lis, columns, direction, fill=None):
         </table>
 
     In a horizontal table, each row is filled before going on to the next row.
-    This is the same as dividing the list into chunks.
+    This is the same as dividing the list into chunks::
 
-    .. code-block:: pycon
-    
         >>> distribute([1, 2, 3, 4, 5, 6, 7, 8], 3, "H")
         [[1, 2, 3], [4, 5, 6], [7, 8, None]]
 
     In a vertical table, the first element of each sublist is filled before
     going on to the second element.  This is useful for displaying an
     alphabetical list in columns, or when the entire column will be placed in
-    a single <td> with a <br /> between each element.
-
-    .. code-block:: pycon
+    a single <td> with a <br /> between each element::
 
         >>> food = ["apple", "banana", "carrot", "daikon", "egg", "fish", "gelato", "honey"]
         >>> table = distribute(food, 3, "V", "")
@@ -499,28 +522,35 @@ def distribute(lis, columns, direction, fill=None):
 def transpose(array):
     """Turn a list of lists sideways, making columns into rows and vice-versa.
 
-    The result is undefined if the array is not rectangular; i.e., if
-    ``len(array[n]) != len(array[0])``.  You may get an ``IndexError`` or
-    missing items.
+    ``array`` must be rectangular; i.e., all elements must be the same 
+    length. Otherwise the behavior is undefined: you may get ``IndexError``
+    or missing items.
 
-    Picture the first example as::
+    Examples::
+
+        >>> transpose([["A", "B", "C"], ["D", "E", "F"]])
+        [['A', 'D'], ['B', 'E'], ['C', 'F']]
+        >>> transpose([["A", "B"], ["C", "D"], ["E", "F"]])
+        [['A', 'C', 'E'], ['B', 'D', 'F']]
+        >>> transpose([])
+        []
+        
+    Here's a pictoral view of the first example::
 
        A B C    =>    A D
        D E F          B E
                       C F
 
-    The source array is row-major (``array[n]`` is a row, ``array[n][0]`` is
-    the first element of the row), which is good for an HTML table which is
-    also row-major (columns within rows).  The result is column-major
-    (``array[n]`` is a column, ``array[n][0]`` is the first row in the column),
-    which is good for a group of <div> columns with <br /> between rows.
-
-    >>> transpose([["A", "B", "C"], ["D", "E", "F"]])
-    [['A', 'D'], ['B', 'E'], ['C', 'F']]
-    >>> transpose([["A", "B"], ["C", "D"], ["E", "F"]])
-    [['A', 'C', 'E'], ['B', 'D', 'F']]
-    >>> transpose([])
-    []
+    This can be used to turn an HTML table into a group of div columns. An HTML
+    table is row major: it consists of several <tr> rows, each containing
+    several <td> cells.  But a <div> layout consists of only one row, each
+    containing an entire subarray. The <div>s have style "float:left", which
+    makes them appear horizonally. The items within each <div> are placed in
+    their own <div>'s or separatad by <br />, which makes them appear
+    vertically.  The point is that an HTML table is row major (``array[0]`` is
+    the first row), while a group of div columns is column major (``array[0]``
+    is the first column). ``transpose()`` can be used to switch between the
+    two.
     """
     if not array:
         return []

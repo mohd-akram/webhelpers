@@ -8,3 +8,5 @@ incorrect output.  This affects ``remove_formatting`` too.
 
 ``webhelpers.html.grid`` needs some API changes to make a table from a list of
 lists and from a dict. Some arguments will be changing also.
+
+Run tests on Python 2.4 to see if any 2.5isms have crept in.

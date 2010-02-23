@@ -10,7 +10,7 @@ Other functions
 
 .. autofunction:: lit_sub
 
-``webhelpers.html.builder`` **url_escape** (*s, safe='/'*)
+.. function:: url_escape(s, safe='/')
 
     Urlencode the path portion of a URL. This is the same function as
     ``urllib.quote`` in the Python standard library. It's exported here

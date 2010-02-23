@@ -47,7 +47,7 @@ AUTO_LINK_RE = re.compile(r"""
                            """, re.X)
 
 
-def button_to(name, url='', **html_options):
+def button_to(name, url='', **html_attrs):
     """Generate a form containing a sole button that submits to
     ``url``. 
     
@@ -55,12 +55,12 @@ def button_to(name, url='', **html_options):
     the safe HTTP GET semantics implied by using a hypertext link.
     
     The parameters are the same as for ``link_to``.  Any 
-    ``html_options`` that you pass will be applied to the inner
+    ``html_attrs`` that you pass will be applied to the inner
     ``input`` element. In particular, pass
     
         disabled = True/False
     
-    as part of ``html_options`` to control whether the button is
+    as part of ``html_attrs`` to control whether the button is
     disabled.  The generated form element is given the class
     'button-to', to which you can attach CSS styles for display
     purposes.
@@ -114,11 +114,11 @@ def button_to(name, url='', **html_options):
         (Bottom line: Always validate your HTML before going public.)
     
     """
-    if html_options:
-        tags.convert_boolean_attrs(html_options, ['disabled'])
+    if html_attrs:
+        tags.convert_boolean_attrs(html_attrs, ['disabled'])
     
     method_tag = ''
-    method = html_options.pop('method', '')
+    method = html_attrs.pop('method', '')
     if method.upper() in ['PUT', 'DELETE']:
         method_tag = HTML.input(
             type='hidden', id='_method', name_='_method', value=method)
@@ -127,17 +127,17 @@ def button_to(name, url='', **html_options):
     
     url, name = url, name or url
     
-    submit_type = html_options.get('type')
-    img_source = html_options.get('src')
+    submit_type = html_attrs.get('type')
+    img_source = html_attrs.get('src')
     if submit_type == 'image' and img_source:
-        html_options["value"] = name
-        html_options.setdefault("alt", name)
+        html_attrs["value"] = name
+        html_attrs.setdefault("alt", name)
     else:
-        html_options["type"] = "submit"
-        html_options["value"] = name
+        html_attrs["type"] = "submit"
+        html_attrs["value"] = name
     
     return HTML.form(method=form_method, action=url, class_="button-to",
-                     c=[HTML.div(method_tag, HTML.input(**html_options))])
+                     c=[HTML.div(method_tag, HTML.input(**html_attrs))])
 
 def js_obfuscate(content):
     """Obfuscate data in a Javascript tag.
@@ -156,13 +156,13 @@ def js_obfuscate(content):
 
 
 def mail_to(email_address, name=None, cc=None, bcc=None, subject=None, 
-    body=None, replace_at=None, replace_dot=None, encode=None, **html_options):
+    body=None, replace_at=None, replace_dot=None, encode=None, **html_attrs):
     """Create a link tag for starting an email to the specified 
     ``email_address``.
     
     This ``email_address`` is also used as the name of the link unless
     ``name`` is specified. Additional HTML options, such as class or
-    id, can be passed in the ``html_options`` hash.
+    id, can be passed in the ``html_attrs`` hash.
     
     You can also make it difficult for spiders to harvest email address
     by obfuscating them.
@@ -224,9 +224,9 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
     url = HTML.literal(protocol + email_address)
     if options_query:
         url += HTML.literal('?') + options_query
-    html_options['href'] = url
+    html_attrs['href'] = url
 
-    tag = HTML.a(name or email_address_obfuscated, **html_options)
+    tag = HTML.a(name or email_address_obfuscated, **html_attrs)
 
     if encode == 'javascript':
         tmp = "document.write('%s');" % tag
@@ -314,13 +314,16 @@ def _legacy_highlight(text, phrase, highlighter, flags):
     return lit_sub(rx, highlighter, text)
     
 
-def auto_link(text, link="all", **href_options):
+def auto_link(text, link="all", **href_attrs):
     """
     Turn all urls and email addresses into clickable links.
     
     ``link``
         Used to determine what to link. Options are "all", 
         "email_addresses", or "urls"
+
+    ``href_attrs``
+        Additional attributes for generated <a> tags.
     
     Example::
     
@@ -332,13 +335,13 @@ def auto_link(text, link="all", **href_options):
         return literal(u"")
     text = escape(text)
     if link == "all":
-        return _auto_link_urls(_auto_link_email_addresses(text), **href_options)
+        return _auto_link_urls(_auto_link_email_addresses(text), **href_attrs)
     elif link == "email_addresses":
         return _auto_link_email_addresses(text)
     else:
-        return _auto_link_urls(text, **href_options)
+        return _auto_link_urls(text, **href_attrs)
 
-def _auto_link_urls(text, **href_options):
+def _auto_link_urls(text, **href_attrs):
     def handle_match(matchobj):
         all = matchobj.group()
         before, prefix, link, after = matchobj.group(1, 2, 3, 4)
@@ -347,7 +350,7 @@ def _auto_link_urls(text, **href_options):
         text = literal(prefix + link)
         if prefix == "www.":
             prefix = "http://www."
-        a_options = dict(href_options)
+        a_options = dict(href_attrs)
         a_options['href'] = literal(prefix + link)
         return literal(before) + HTML.a(text, **a_options) + literal(after)
     return literal(re.sub(AUTO_LINK_RE, handle_match, text))

@@ -16,6 +16,7 @@ from nose.tools import eq_
 from routes import url_for
 
 from webhelpers.html import HTML, literal
+import webhelpers.html.render as render
 from webhelpers.html.tools import *
 
 class TestToolsHelper(WebHelpersTestCase):
@@ -252,11 +253,17 @@ class TestHighlightHelper(WebHelpersTestCase):
                          highlight("This is a beautiful morning, but also a beautiful day",
                                    "beautiful", r'<b>\1</b>'))
 
+class TestStripTagsHelper(WebHelpersTestCase):
+    def test_compare_strip_tags_to_sanitize(self):
+        text = u'I <i>really</i> like <script language="javascript">NEFARIOUS CODE</script> steak!'
+        eq_(strip_tags(text), render.sanitize(text))
+
 if __name__ == '__main__':
     suite = map(unittest.makeSuite, [
         TestToolsHelper,
         TestHighlightHelper,
         TestURLHelper,
+        TestStripTagsHelper,
         ])
     for testsuite in suite:
         unittest.TextTestRunner(verbosity=1).run(testsuite)

@@ -13,11 +13,11 @@ HTML Builder provides:
 
 ``literal`` is a subclass of ``unicode``, so it works with all string methods
 and expressions.  The only thing special about it is the ``.__html__`` method,
-which returns the string itself.  ``escape()`` follows a simple protocol: if
-the object has an ``.__html__`` method, it calls that rather than ``.__str__``
-to get the HTML representation.  Third-party libraries that do not want to
-import ``literal`` (and this create a dependency on WebHelpers) can put an
-``.__html__`` method in their own classes returning the desired HTML
+which returns the string itself.  The ``escape()`` function follows a simple
+protocol: if the object has an ``.__html__`` method, it calls that rather than
+``.__str__`` to get the HTML representation.  Third-party libraries that do not
+want to import ``literal`` (and this create a dependency on WebHelpers) can put
+an ``.__html__`` method in their own classes returning the desired HTML
 representation.
 
 When used in a mixed expression containing both literals and ordinary strings,
