@@ -152,19 +152,23 @@ def subclasses_only(class_, it):
 class DeclarativeException(Exception):
     """A simpler way to define an exception with a fixed message.
 
-    Example:
+    Subclasses have a class attribute ``.message``, which is used if no
+    message is passed to the constructor. The default message is the empty
+    string.
 
-    >>> class MyException(DeclarativeException):
-    ...     message="can't frob the bar when foo is enabled"
-    ...
-    >>> try:
-    ...     raise MyException()
-    ... except Exception, e:
-    ...      print e
-    ...
-    can't frob the bar when foo is enabled
+    Example::
+
+        >>> class MyException(DeclarativeException):
+        ...     message="can't frob the bar when foo is enabled"
+        ...
+        >>> try:
+        ...     raise MyException()
+        ... except Exception, e:
+        ...      print e
+        ...
+        can't frob the bar when foo is enabled
     """
-    message=""
+    message = ""
 
     def __init__(self, message=None):
         Exception.__init__(self, message or self.message)

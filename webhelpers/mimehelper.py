@@ -9,7 +9,7 @@ class MIMETypes(object):
     
     The MIMETypes object class provides a single point to hold onto all
     the registered mimetypes, and their association extensions. It's
-    used by the mimetypes function to determine the appropriate content
+    used by the mimetypes method to determine the appropriate content
     type to return to a client.
     
     """
@@ -44,17 +44,18 @@ class MIMETypes(object):
     def __init__(self, environ):
         self.env = environ
     
-    def _set_responce_conetent_type(self, mimetype):
+    def _set_response_content_type(self, mimetype):
         if 'pylons.pylons' in self.env:
             self.env['pylons.pylons'].response.content_type = mimetype
         return mimetype
         
     def mimetype(self, content_type):
-        """Check the PATH_INFO of the current request and clients HTTP Accept 
-        to attempt to use the appropriate mime-type
-    
-        If a content-type is matched, the appropriate response content
-        type is set as well.
+        """Check the PATH_INFO of the current request and client's HTTP Accept 
+        to attempt to use the appropriate mime-type.
+
+        If a content-type is matched, return the appropriate response
+        content type, and if running under Pylons, set the response content
+        type directly. If a content-type is not matched, return ``False``.
                 
         This works best with URLs that end in extensions that differentiate
         content-type. Examples: ``http://example.com/example``, 
@@ -72,7 +73,7 @@ class MIMETypes(object):
             MIMETypes.add_alias('xml', 'application/xml')
             MIMETypes.add_alias('csv', 'text/csv')
             
-            # code in a controller
+            # code in a Pylons controller
             def somaction(self):
                 # prepare a bunch of data
                 # ......
@@ -89,7 +90,11 @@ class MIMETypes(object):
                     return csvfile
                 else:
                     abort(404)
-        
+
+            # Code in a non-Pylons controller.
+            m = MIMETypes(environ)
+            response_type = m.mimetype('html')
+            # ``response_type`` is a MIME type or ``False``.
         """
         import webob
 
@@ -108,15 +113,15 @@ class MIMETypes(object):
                 self.env['HTTP_ACCEPT'])
         if has_extension == False:
             if possible_from_accept_header is None:
-                return self._set_responce_conetent_type(content_type)
+                return self._set_response_content_type(content_type)
             elif content_type in possible_from_accept_header:
-                return self._set_responce_conetent_type(content_type)
+                return self._set_response_content_type(content_type)
             else:
                 return False
         if content_type == guess_from_url:
             # Guessed same mimetype
-            return self._set_responce_conetent_type(content_type)
+            return self._set_response_content_type(content_type)
         elif guess_from_url is None and content_type in possible_from_accept_header:
-            return self._set_responce_conetent_type(content_type)
+            return self._set_response_content_type(content_type)
         else:
             return False
