@@ -1,6 +1,6 @@
 # -*- encoding: latin-1 -*-
 # Latin-1 encoding needed for countries list.
-"""Geographical and other constants often used in web forms.
+"""Place names and other constants often used in web forms.
 """
 
 def uk_counties():
@@ -83,28 +83,24 @@ def uk_counties():
 
 _country_codes = None
 def country_codes():
-    """\
-    Return a list of all country names and their respective codes specified by
-    the ISO in the format ``("GB", "United Kingdom")``
+    """Return a list of all country names as tuples. The tuple value is the
+    country's 2-letter ISO code and its name; e.g., 
+    ``("GB", "United Kingdom")``. The countries are in name order.
     
     Can be used like this::
 
-        h.select(
-            "country", 
-            option_tags=options_with_please_select(
-                country_codes(),
-                selected = 'GB',
-                caption = 'Please choose a country'
-            ),
-        )
+        import webhelpers.constants as constants
+        from webhelpers.html.tags import select
+        select("country", country_codes(),
+            prompt="Please choose a country ...")
 
     See here for more information:
     http://www.iso.org/iso/english_country_names_and_code_elements
     """
     # Updated on 2007-10-24.
     #
-    # This might seem a funny implementation but it makes it easier to updated next
-    # time there is a change
+    # This might seem a funny implementation but it makes it easier to update
+    # next time there is a change
 
     global _country_codes
     if _country_codes is not None:
@@ -413,9 +409,9 @@ ZIMBABWE 	ZW
     return _country_codes
 
 def us_states():
-    """USA states.
+    """List of USA states.
 
-    Return a list of (abbreviation, name) for all US states, sorted by name.
+    Return a list of ``(abbreviation, name)`` for all US states, sorted by name.
     Includes the District of Columbia.
     """
     # From http://www.usps.com/ncsc/lookups/abbreviations.html
@@ -476,6 +472,9 @@ def us_states():
 
 def us_territories():
     """USA postal abbreviations for territories, protectorates, and military.
+    
+    The return value is a list of ``(abbreviation, name)`` tuples. The
+    locations are sorted by name.
     """
     # From http://www.usps.com/ncsc/lookups/abbreviations.html
     # Updated 2008-05-01
@@ -495,9 +494,9 @@ def us_territories():
     
 
 def canada_provinces():
-    """Canadian provinces and abbreviations.
+    """List of Canadian provinces.
 
-    Return a list of (abbreviation, name) for all Canadian
+    Return a list of ``(abbreviation, name)`` tuples for all Canadian
     provinces and territories, sorted by name.
     """
     # Based on:

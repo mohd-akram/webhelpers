@@ -82,6 +82,9 @@ def sanitize(html):
         u'I really like steak!'
         >>> sanitize(u'I <i>really</i> like <script language="javascript">NEFARIOUS CODE</script> steak!')
         u'I really like NEFARIOUS CODE steak!'
+
+    This is the same as ``webhelpers.render.sanitize`` but is an older
+    implementation.
     """
     p = HTMLSanitizer()
     p.feed(html)

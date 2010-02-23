@@ -1,4 +1,4 @@
-"""Date/Time Helpers"""
+"""Date and time helpers."""
 
 from datetime import datetime
 import time
@@ -39,22 +39,19 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second",
                               round=False):
     """
     Return the absolute time-distance string for two datetime objects,
-    ints or any combination of which you can dream
+    ints or any combination you can dream of.
     
-    If times are integers, they are interpreted as seconds from now
+    If times are integers, they are interpreted as seconds from now.
     
     ``granularity`` dictates where the string calculation is stopped.
     If set to seconds (default) you will receive the full string. If
-    another accuracy is supplied you will be provided with an
-    approximation stopping at the granularity supplied.  Available
-    parameter values are:
-    
+    another accuracy is supplied you will receive an approximation.
+    Available granularities are:
     'century', 'decade', 'year', 'month', 'day', 'hour', 'minute',
     'second'
     
-    Setting ``round`` to true will check the granularity finer than the
-    set granularity and if the value is greater than 50% of its range
-    the value at granularity will be increased by 1
+    Setting ``round`` to true will increase the result by 1 if the fractional
+    value is greater than 50% of the granularity unit.
     
     Examples:
 
@@ -83,7 +80,7 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second",
                         'day': 15, 'hour': 24, 'minute': 60, 'second': 60 }
     
     if granularity not in granularities:
-        raise Exception("Please provide a valid granularity: %s" %
+        raise ValueError("Please provide a valid granularity: %s" %
                         (granularities))
     
     # Get everything into datetimes
