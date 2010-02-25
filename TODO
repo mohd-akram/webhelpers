@@ -1,0 +1,23 @@
+WebHelpers TODO
+===============
+
+See also the bug list at http://bigbucket.org/bbangert/webhelpers .
+
+``webhelpers.text.convert_misc_characters`` fails tests. It's producing
+incorrect output.  This affects ``remove_formatting`` too.
+
+``webhelpers.html.grid`` needs some API changes to make a table from a list of
+lists and from a dict. Some arguments will be changing also.
+
+Run tests on Python 2.4 to see if any 2.5isms have crept in.
+
+What is the purpose of webhelpers.mimehelper? It has a hidden Pylons
+dependency, although it's optional. Under what circumstances would you use it, 
+and how much of an advantage is it to pass a short alias like
+m.mimetype("html")? Need better documentation.`
+
+Document MIMETypes.__init__().
+
+webhelpers.number: document __call__ methods.
+
+
