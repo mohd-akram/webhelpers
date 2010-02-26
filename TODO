@@ -20,4 +20,4 @@ Document MIMETypes.__init__().
 
 webhelpers.number: document __call__ methods.
 
-
+Too many strip_tags / sanitize / bleach functions.
