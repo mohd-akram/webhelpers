@@ -113,6 +113,9 @@ def excerpt(text, phrase, radius=100, excerpt_string="..."):
 def plural(n, singular, plural, with_number=True):
     """Return the singular or plural form of a word, according to the number.
 
+    If ``with_number`` is true (default), the return value will be the number
+    followed by the word. Otherwise the word alone will be returned.
+
     Usage:
 
     >>> plural(2, "ox", "oxen")
@@ -186,9 +189,9 @@ def strip_leading_whitespace(s):
 def wrap_paragraphs(text, width=72):
     """Wrap all paragraphs in a text string to the specified width.
 
-    ``width`` may also be a ``textwrap.TextWrapper`` instance, in which case it
-    will be used to do the wrapping.  This provides a way to set other options
-    besides the width, and is more efficient when wrapping many texts.
+    ``width`` may be an int or a ``textwrap.TextWrapper`` instance.  
+    The latter allows you to set other options besides the width, and is more
+    efficient when wrapping many texts.  
     """
     if isinstance(width, textwrap.TextWrapper):
         wrapper = width

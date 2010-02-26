@@ -1,4 +1,4 @@
-"""Utility functions used by various web helpers
+"""Utility functions used by various web helpers.
 
 This module contains support functions used by other helpers, and functions for
 URL manipulation. Most of these helpers predate the 0.6 reorganization; they
@@ -165,6 +165,8 @@ class Partial(object):
         return self.fn(*(self.args + args), **d)
 
 class SimplerXMLGenerator(XMLGenerator):
+    """A subclass of Python's SAX XMLGenerator."""
+
     # Used by webhelpers.feedgenerator
 
     def addQuickElement(self, name, contents=None, attrs=None):
