@@ -173,6 +173,16 @@ class DeclarativeException(Exception):
     def __init__(self, message=None):
         Exception.__init__(self, message or self.message)
 
+
+class OverwriteError(Exception):
+    """Refusing to overwrite an existing file or directory."""
+
+    def __init__(self, filename, message="not overwriting '%s'"):
+        message %= (filename,)
+        Exception.__init__(self, message)
+        self.filename = filename
+
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

@@ -14,3 +14,7 @@
 .. autoclass:: DeclarativeException
     :members:
     :undoc-members:
+
+.. autoclass:: OverwriteError
+   :members:
+   :undoc-members:
