@@ -3,6 +3,9 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.misc:
+
+  - New exception ``OverwriteError``.
 
 1.0b4 (2010-01-24)
 ------------------
