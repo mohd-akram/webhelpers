@@ -67,17 +67,18 @@ These work like severity levels in Python's logging system.  The standard
 categories are "*warning*", "*notice*", "*error*", and "*success*", with
 the default being "*notice*".  The category is available in the message's
 ``.category`` attribute, and is normally used to set the container's CSS
-class.  Unlike the logging system, the flash object does not filter out
-messages below a certain level; it returns all messages set. 
+class.  
+
+This is the *only* thing it does. Calling ``.pop_messages()`` pops all messages
+in the order registered, regardless of category.  It is *not* possible to pop
+only a certain category, or all levels above a certain level, or to group
+messages by category. If you want to group different kinds of messages
+together, or pop only certain categories while leaving other categories, you
+should use multiple ``Flash`` objects.
 
 You can change the standard categories by overriding the ``.categories``
 and ``.default_category`` class attributes, or by providing alternate
 values using constructor keywords.
-
-Note that messages are _not_ grouped by category, nor is it possible to 
-pop one category of messages while leaving the others.  If you want to 
-group different kinds of messages together, you should use multiple flash
-objects.
 
 Category example
 ----------------
@@ -275,15 +276,11 @@ __all__ = ["Flash", "Message"]
 class Message(object):
     """A message returned by ``Flash.pop_messages()``.
 
-    ``Message`` instances have the following attributes:
+    Converting the message to a string returns the message text. Instances
+    also have the following attributes:
 
     * ``message``: the message text.
     * ``category``: the category specified when the message was created.
-
-    Calling ``str(message)`` ``unicode(message)``, or ``message.__html__()`` 
-    returns the message text. (The latter returns an escaped literal
-    unless the message is already a literal; see 
-    ``webhelpers.html.builder``.)
     """
 
     def __init__(self, category, message):
