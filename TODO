@@ -9,6 +9,16 @@ incorrect output.  This affects ``remove_formatting`` too.
 ``webhelpers.html.grid`` needs some API changes to make a table from a list of
 lists and from a dict. Some arguments will be changing also.
 
+The "unfinished" directory in the WebHelpers source distribution contains
+potential future helpers which are not finished enough for release. These are
+not installed by the installer; they are available only in the source tarball.
+
 Run tests on Python 2.4 to see if any 2.5isms have crept in.
 
 Too many strip_tags / sanitize / bleach functions.
+
+Finish the third-party page.
+
+Finish the Upgrading page.
+
+Make a high-level changes list based on the beta changelogs.
