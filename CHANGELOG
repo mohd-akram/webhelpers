@@ -6,6 +6,7 @@ tip (development version)
 * webhelpers.misc:
 
   - New exception ``OverwriteError``.
+  - Add ``exclude`` argument to ``subclasses_only``.
 
 1.0b4 (2010-01-24)
 ------------------

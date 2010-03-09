@@ -125,7 +125,7 @@ def flatten(iterable):
 
 
 
-def subclasses_only(class_, it):
+def subclasses_only(class_, it, exclude=None):
     """Extract the subclasses of a class from a module, dict, or iterable.
 
     Return a list of subclasses found. The class itself will not be included.
@@ -139,15 +139,17 @@ def subclasses_only(class_, it):
     introspect another module or namespace, pass
     ``vars(the_module_or_namespace)``.
 
-    Example: to collect all subclasses in the current module::
-    >>> subclasses_only(MyBaseClass, globals())   # doctest: +SKIP
-    [Subclass1, Subclass2]
+    ``exclude`` is an optional list of additional classes to ignore. 
+    This is mainly used to exclude abstract subclasses.
     """
     if isinstance(it, dict):
         it = it.itervalues()
     class_types = (type, types.ClassType)
+    ignore = [class_]
+    if exclude:
+        ignore.extend(exclude)
     return [x for x in it if isinstance(x, class_types) and 
-        issubclass(x, class_) and x is not class_]
+        issubclass(x, class_) and x not in ignore]
 
 class DeclarativeException(Exception):
     """A simpler way to define an exception with a fixed message.
