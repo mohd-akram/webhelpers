@@ -1,6 +1,6 @@
-"""MIMEType helpers
+"""MIME Type helpers
 
-These helpers depend on the WebOb package.
+This helper depends on the WebOb package, and has optional Pylons support.
 """
 import mimetypes
 
@@ -42,6 +42,7 @@ class MIMETypes(object):
     add_alias = classmethod(add_alias)
     
     def __init__(self, environ):
+        """``environ`` is the WSGI environment of the current request."""
         self.env = environ
     
     def _set_response_content_type(self, mimetype):

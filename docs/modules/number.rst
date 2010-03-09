@@ -22,10 +22,8 @@ Classes
 -------
 
 .. autoclass:: SimpleStats
-    :members:
-    :undoc-members:
+    :members: __call__, extend
 
 .. autoclass:: Stats
-    :members:
-    :undoc-members:
+    :members: __call__, extend, finish
 

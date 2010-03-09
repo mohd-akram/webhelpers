@@ -5,5 +5,11 @@
 
 .. currentmodule:: webhelpers.pylonslib.flash
 
+Classes
+-------
+
 .. autoclass:: Flash
-    :members:
+   :members: __call__, pop_messages
+
+.. autoclass:: Message
+   :members:

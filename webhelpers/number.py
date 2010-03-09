@@ -277,6 +277,7 @@ class Stats(SimpleStats):
         self._init_stats()
 
     def __call__(self, value):
+        """Add a data value."""
         if self.count == 0:
             self.min = self.max = value
         else:
@@ -288,6 +289,11 @@ class Stats(SimpleStats):
         self.set.add(value)
 
     def finish(self):
+        """Finish calculations. (Call after adding all data values.)
+        
+        Call this after adding all data values, or the results will be
+        incomplete.
+        """
         self.mean = mean(self.list)
         self.median = median(self.list)
         self.standard_deviation = standard_deviation(self.list)
