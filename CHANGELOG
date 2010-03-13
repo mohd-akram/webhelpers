@@ -3,6 +3,11 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+* webhelpers.html.converters:
+
+  - Re-add import of ``render`` and ``sanitize`` from
+    ``webhelpers.html.render``.  That module is not public.
+
 * webhelpers.misc:
 
   - New exception ``OverwriteError``.
@@ -25,6 +30,7 @@ tip (development version)
 * webhelpers.html.converters:
 
   - Don't import ``render`` and ``sanitize`` to converters module.
+    (Reversed in 1.0b5.)
 
 * webhelpers.html.secure_form:
 
@@ -176,13 +182,13 @@ tip (development version)
   Pagination is replaced by paginate.
 * webhelpers.constants:
 
-  - ``uk_counties`` returns tuples rather than lists.
+  - ``uk_counties`` returns tuples rather than strings.
 
 * webhelpers.feedgenerator:
 
   - ``rfc3339_date`` now accepts date objects without crashing.
   - Add 'generator' and 'source' properties to RSS2 feeds. Patch by
-    Vince Spicer.
+    Vince Spicer. (Removed in 1.0b2 due to bugs.)
   - Add 'published' property to Atom1 feeds.
 
 * webhelpers.html.converters:

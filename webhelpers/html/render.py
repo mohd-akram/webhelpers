@@ -1,3 +1,6 @@
+# This is a private implementation module.  Import render() and sanitize()
+# from webhelpers.html.converters .
+
 # Contributed by Ian Bicking, downloaded from
 # http://svn.w4py.org/ZPTKit/trunk/ZPTKit/htmlrender.py
 # (Webware for Python framework)
@@ -82,9 +85,6 @@ def sanitize(html):
         u'I really like steak!'
         >>> sanitize(u'I <i>really</i> like <script language="javascript">NEFARIOUS CODE</script> steak!')
         u'I really like NEFARIOUS CODE steak!'
-
-    This is the same as ``webhelpers.render.sanitize`` but is an older
-    implementation.
     """
     p = HTMLSanitizer()
     p.feed(html)
