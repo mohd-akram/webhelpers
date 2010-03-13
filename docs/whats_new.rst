@@ -1,0 +1,137 @@
+What's New in WebHelpers
+========================
+
+This is a high-level overview of recent changes. **Incompatible changes are
+in boldface;** these may require modifying your application.  See `Changelog
+<changes.html>`_ for the full changelog.
+
+Version 1.0
+-----------
+
+WebHelpers 1.0 has a lot of new features compared to 0.6.4. Several modules
+deprecated in 0.6.4 were removed, but otherwise there are only a few API
+incompatibilties with the 0.6 series.
+
+Deleted packages
+++++++++++++++++
+
+**The following deprecated packages were removed: rails, commands, hinclude,
+htmlgen, paginate, and string24.** Most of the functionality of the rails
+helpers was replaced by new helpers in the ``date``, ``html``, ``misc``,
+``number``, and ``text`` packages. Prototype and Scriptaculous are not
+replaced; WebHelpers no longer ships with Javascript libraries.  ``pagination``
+was replaced by ``paginate``.  If you can't switch to the replacement helpers,
+stick with WebHelpers 0.6.4.
+
+secure_form
++++++++++++
+
+**webhelpers.html.secure_form was moved to
+webhelpers.pylonslib.secure_form because it depends on Pylons.**
+
+webhelpers.constants
+++++++++++++++++++++
+
+**uk_counties() now returns tuples rather than strings.**
+
+webhelpers.feedgenerator
+++++++++++++++++++++++++
+
+``webhelpers.feedgenerator`` was upgraded to the Django original (December 2009
+version), and the "Geo" classes were added for geographical (GIS) feeds.
+There's a flag for latitude/longitude or longitude/latitude format.  Points may
+be in latitude/longitude or longitude/latitude format.  (The default is
+latitude first, but Django and a few others others use longitude first.) A
+``Geometry`` class was reverse engineered for other geometries, but it's
+untested.  Add a "published" property for Atom feeds.
+
+webhelpers.html.builder
++++++++++++++++++++++++
+
+New method for producing CDATA sections.  The basic tag builders have a ``_nl``
+flag to add a newline between content elements and after the tag for
+readability.
+
+webhelpers.html.converters
+++++++++++++++++++++++++++
+
+New helpers to render HTML to text, and to sanitize user input by stripping
+HTML tags.
+
+``markdown()`` adds an argument to choose a Markdown implementation.
+The Markdown included in WebHelpers will remain at version 1.7, but Markdown
+2.x is available on PyPI, and a separate implementation confusingly called
+"Markdown2" is also available on PyPI.
+
+webhelpers.html.tags
+++++++++++++++++++++
+
+New helpers to add CSS classes to a tag
+programmatically, to support option groups in <select> tags, and to generate
+<!doctype> and <?xml ?> declarations.
+
+``image()`` can calculate the width and height of an image automatically, using
+either the Python Imaging Library (PIL) or a pure Python algorithm in
+``webhelpers.media``. 
+
+``form()`` puts its hidden "_method" field in a <div> for
+XHTML compliance, and the ``hidden()`` helper has a magic ID attribute to match
+the other helpers.
+
+webhelpers.html.tools
++++++++++++++++++++++
+
+Ported ``js_obfuscate()`` from the old rails helpers.
+
+``highlight()`` adds new arguments for flexibility, and
+is reimplemented using the HTML builder. **The 'highlighter' argument is
+deprecated.**
+
+webhelpers.misc
++++++++++++++++
+
+New helpers to flatten nested lists and tuples, and to
+gather all the subclasses of a specified class. There's an exception
+``OverwriteError``, and a ``DeclarativeException`` class for making your own
+exceptions with constant messages.
+
+webhelpers.paginate
++++++++++++++++++++
+
+``webhelpers.paginate`` has some enhancements for Javascript, works with all
+versions of SQLAlchemy 0.4 and higher, and has a presliced list option.
+
+webhelpers.pylonslib
+++++++++++++++++++++
+
+``webhelpers.pylonslib`` is now a package. The ``Flash`` class accepts severity
+categories, which you can use to style more severe messages differently. **The
+session structure is different, so delete existing HTTP sessions when
+upgrading.**
+
+webhelpers.util
++++++++++++++++
+
+New helper to update the query parameters in a URL.
+
+Experimental code
++++++++++++++++++
+
+``webhelpers.html.grid`` and ``webhelpers.pylonslib.grid`` contain helpers to
+make an HTML table from a list of objects such as database records. It has
+a demo program and an optional stylesheet.  It's "experimental" because the API
+needs some changes and the docstrings aren't very clear. But it works.
+The next version will add support for more input types: a list of sequences, a
+list of dicts, or a single dict.
+
+``webhelpers.pylonslib.minify`` contains versions of ``javascript_link()`` and
+``stylesheet_link()`` that compress their files. It's experimental because
+their tests fail, so they probably don't work.
+
+``webhelpers.text`` contains a suite of helpers from Ruby's stringex package to
+convert strings to URL-friendly format, and to remove inconvenient accents from
+characters, etc.  It's experimental because ``convert_misc_characters()`` has
+bugs: it adds extra spaces, and we're not sure a number-to-word conversion in
+the test suite should be implemented.
+
+Other experiments are in the "unfinished" directory in the source distribution.

@@ -389,6 +389,9 @@ def strip_tags(text):
         'Line 1\\nLine 2'
 
     Implementation copied from ``WebOb``.
+
+    ``webhelpers.html.converters`` contains more sophisticated versions of 
+    this.
     """
     text = text.replace('\n', ' ')
     text = text.replace('\r', '')

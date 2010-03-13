@@ -14,7 +14,6 @@ All helpers are organized into subpackages.
    modules/html/builder
    modules/html/converters
    modules/html/grid
-   modules/html/render
    modules/html/tags
    modules/html/tools
    modules/media
@@ -41,8 +40,8 @@ the rails helpers. Version 1.0 builds on this with many additional helpers.
 .. toctree::
    :maxdepth: 1
 
-   upgrading
-   changes
+   whats_new
+   changelog
    third_party
    development
    todo
