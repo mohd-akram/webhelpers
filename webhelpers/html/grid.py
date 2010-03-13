@@ -1,9 +1,8 @@
 """A helper to make HTML tables.
 
-**This module is experimental. The API will be changing soon to accommodate a
-broader range of data types. Some arguments will also change. If your
-application depends on the current API, please copy the module into your
-application.**
+**This module is experimental. API changes are expected in the next version.
+If your application depends on the current API, please copy the module into
+your application.**
 
 A set of CSS styles complementing this helper is in
 "webhelpers/html/public/stylesheets/grid.css". To use them, include the 
@@ -99,6 +98,8 @@ class Grid(object):
         <tr class="header">HEADERS_MARKUP</tr>
         
         grid.default_record_format(self, i, record, columns)
+make an HTML table from a list of objects, and soon a list of sequences, a list
+of dicts, and a single dict. 
         <tr class="ODD_OR_EVEN">RECORD_MARKUP</tr>
         
         grid.generate_header_link(self, column_number, column, label_text)
