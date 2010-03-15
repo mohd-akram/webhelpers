@@ -42,3 +42,9 @@ class GridPylons(grid.Grid):
         else:
             return self.default_header_column_format(column_number, column,
                                                      label_text)
+
+class GridPylonsSqlalchemy(GridPylons):
+    """ This grid will work well with sqlalchemy row instances """
+    def default_column_format(self, column_number, i, record, column_name):
+        class_name = "c%s" % (column_number)
+        return HTML.tag("td", getattr(record, column_name), class_=class_name)
