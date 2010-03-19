@@ -1,52 +1,53 @@
-This directory contains functions contributed by James Gardner that need some
-work before they can be included in the release.
+This directory contains helpers that aren't ready to put into the distribution.
+Some work but need API changes or documentation. Others fail their tests or
+don't work at all.
 
-constants.py
+baseN.py
 
-[Already moved to webhelpers.constants.]
+    Convert an int to any base using any alphabet. This can be used to encode
+    base64, or to compress large numbers into fewer digits.
 
-    * Need unit tests.
-    * Need list of US states.
-    * Need docstrings.
+containers.py
 
-fields.py
+    Functions being considered for ``webhelpers.containers``.
 
-    * Needs significant work, not added yet. Left as WebHelpers/james_gardner/fields.py. Recommend 
+disabled_test_pylonslib_minify.py
 
-moving to webhelpers.form when finished.
+    Failing tests for ``webhelpers.pylonslib.minify``.  Need expertise to
+    tell whether these tests are valid or not.
 
-    * form_start() and form_end() are too trivial to add.
-    * radio_group() and checkbox() group are features missing in webhelpers.
-    * "&nbsp;" is not appropriate for styling. Use margin-left style or empty-cells style instead.
-    * Recommend distributing a default stylesheet.
-    * field() is useful as a poor man's form generator. It generates 1-3 <tr>'s depending on the arguments.
-    * All functions need docstrings. Especially field(). What is field's defect and error ars for? How is help different from field_desc and label_desc?
-    * Where are the <form:error> tags for htmlfill?
-    * Need to port all HTML tags to webhelpers.html.HTML, and use literal() where necessary.
-    * options_with_caption: refactor for new select() helper, rename to select_with_caption() or something. Or drop because it's so trivial.
-    * ids_from_options(): too trivial and obscure to add.
-    * value_from_option_id(): what is this function for? Either drop this or refactor it for new select() helper.
-    * Need unit tests. 
+document.py
 
-helpers.py
+    Beginning of a helper to generate a well-formed (X)HTML document with a 
+    minimum of inputs (body, optional head, optional head features).
 
-    * Needs work, did not add yet. Left as WebHelpers/james_gardner/helpers.py.
-    * Recommend adding size_to_human() to webhelpers.text
-    * Recommend inlining divide() into size_to_human because it's trivial and not widely useful.
-    * I'm getting six doctest failures, due to divide() rounding differently than expected, or where the expected string was nothing.
-    * size_to_human may not work as expected with shift to true division. The 'else' part should be rewritten as 'a // b' but I'm not sure if that's legal in Python 2.3. But the test are failing anyway. Consider refactoring with math.modf(), "%d", or "%f". Is it really necessary to divide the same numbers twice? You can divide once, call math.modf() to split out the fractional portion, and if the fraction is zero return the int of the whole, and if it's nonzero return the original result. 
+logging_optparse.py
 
-time.py:
+    An extension of Python's ``optparse`` module that adds standard logging
+    options, including a new trace level and SQLAlchemy engine logging.
+    The plan is to port it to the ``argparse`` module which is in PyPI and
+    will be standard in Python 2.7 and 3.2.
 
-    * What is this module for? Why is it important enough to be a webhelper? 
+multimedia.py
 
+    More multimedia helpers. These have various dependencies and file naming
+    conventions which may not be appropriate for WebHelpers.
 
-Update 2008-04-29
------------------
-helpers.patch addresses some of the issues in helpers.py.
+number_to_human_size.py
 
-test_mail.py is a test suite for webhelpers.mail.  It depends on an SMTP server
-being available, so we're unsure how to integrate it with the standard test
-suite.  
+    The ``number_to_human_size()`` helper from WebHelpers 0.6.4 rails helpers.
+    We're planning to offer a more comprehensive helper but haven't settled on
+    the API yet; 
+    see http://bitbucket.org/bbangert/webhelpers/issue/2/reinstate-number_to_human_size
+    In the meantime, you can copy this version to your application if
+    you need it.
 
-wsgiapp_image.jpg is a file used by test_mail.py.
+opener.py
+
+    A unified opener for regular or compressed files. Leaving as is to see if
+    we can make a better one in Python 3.
+
+sanitize_filename.py
+
+    Sanitize an arbitrary path (as from a file upload) to a safe filename.
+    
