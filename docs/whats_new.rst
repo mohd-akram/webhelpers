@@ -39,11 +39,10 @@ webhelpers.feedgenerator
 
 ``webhelpers.feedgenerator`` was upgraded to the Django original (December 2009
 version), and the "Geo" classes were added for geographical (GIS) feeds.
-There's a flag for latitude/longitude or longitude/latitude format.  Points may
-be in latitude/longitude or longitude/latitude format.  (The default is
-latitude first, but Django and a few others others use longitude first.) A
-``Geometry`` class was reverse engineered for other geometries, but it's
-untested.  Add a "published" property for Atom feeds.
+Points are latitude/longitude by default, but there's a flag if your data is
+longitude first (as Django is). A ``Geometry`` class was reverse engineered for
+other geometries, but it's untested.  Add a "published" property for Atom
+feeds.
 
 webhelpers.html.builder
 +++++++++++++++++++++++
@@ -109,6 +108,13 @@ categories, which you can use to style more severe messages differently. **The
 session structure is different, so delete existing HTTP sessions when
 upgrading.**
 
+webhelpers.text
+++++++++++++++++
+
+``webhelpers.text`` adds a suite of helpers from Ruby's stringex package to
+convert strings to URL-friendly format, and to remove inconvenient accents from
+characters, etc.
+
 webhelpers.util
 +++++++++++++++
 
@@ -127,11 +133,5 @@ list of dicts, or a single dict.
 ``webhelpers.pylonslib.minify`` contains versions of ``javascript_link()`` and
 ``stylesheet_link()`` that compress their files. It's experimental because
 their tests fail, so they probably don't work.
-
-``webhelpers.text`` contains a suite of helpers from Ruby's stringex package to
-convert strings to URL-friendly format, and to remove inconvenient accents from
-characters, etc.  It's experimental because ``convert_misc_characters()`` has
-bugs: it adds extra spaces, and we're not sure a number-to-word conversion in
-the test suite should be implemented.
 
 Other experiments are in the "unfinished" directory in the source distribution.

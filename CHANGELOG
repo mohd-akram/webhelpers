@@ -13,6 +13,10 @@ tip (development version)
   - New exception ``OverwriteError``.
   - Add ``exclude`` argument to ``subclasses_only``.
 
+* webhelpers.text:
+  - Disable ``convert_misc_characters``: it fails its doctests and there's
+    no consensus on what it should do.
+
 1.0b4 (2010-01-24)
 ------------------
 

@@ -18,7 +18,7 @@ __all__ = [
     "chop_at",
     "collapse",
     "convert_accented_entities",
-    "convert_misc_characters",
+    #"convert_misc_characters",   # DISABLED
     "convert_misc_entities",
     "excerpt",
     "lchop",
@@ -286,7 +286,7 @@ def remove_formatting(string):
     s = strip_tags(string)
     s = convert_accented_entities(s)
     s = convert_misc_entities(s)
-    s = convert_misc_characters(s)
+    #s = convert_misc_characters(s)
     if unidecode:
         s = unidecode(s)
     return collapse(s)
@@ -356,6 +356,9 @@ def convert_misc_entities(string):
     return re.sub(r'\&[^;]+;', '', string)
 
 
+'''*** DISABLED convert_misc_characters: fails doc tests.
+Confirming what behavior should be.
+
 def convert_misc_characters(string):
     """Converts various common plaintext characters to a more
     URI-friendly representation
@@ -414,6 +417,7 @@ def convert_misc_characters(string):
         s = re.sub(repl, r' %s ' % subst, s)
     s = re.sub(r"(^|\w)'(\w|$)", r'\1\2', s)
     return re.sub(r"[\.\,\:\;\(\)\[\]\/\?\!\^'\"_]", " ", s)
+'''
 
 
 def replace_whitespace(string, replace=" "):
