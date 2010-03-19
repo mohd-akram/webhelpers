@@ -17,6 +17,10 @@ tip (development version)
   - Disable ``convert_misc_characters``: it fails its doctests and there's
     no consensus on what it should do.
 
+* "number_to_human_size.py" is in unfinished directory. This is an old rails
+  helper from WebHelpers 0.6.4. It's here pending a more comprehensive helper;
+  see http://bitbucket.org/bbangert/webhelpers/issue/2/reinstate-number_to_human_size
+
 1.0b4 (2010-01-24)
 ------------------
 

@@ -20,7 +20,9 @@ htmlgen, paginate, and string24.** Most of the functionality of the rails
 helpers was replaced by new helpers in the ``date``, ``html``, ``misc``,
 ``number``, and ``text`` packages. Prototype and Scriptaculous are not
 replaced; WebHelpers no longer ships with Javascript libraries.  ``pagination``
-was replaced by ``paginate``.  If you can't switch to the replacement helpers,
+was replaced by ``paginate``.  ``number_to_human_size()`` is in the unfinished
+directory in the source distribution; you can copy it to your application if
+you need it.  If you can't switch to the replacement helpers,
 stick with WebHelpers 0.6.4.
 
 secure_form
