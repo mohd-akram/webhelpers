@@ -4,7 +4,7 @@ from util import WebHelpersTestCase
 
 import re
 import unittest
-from string24 import Template
+from string import Template
 import warnings
 
 # Ignore deprecation warnings about legacy 'highlighter' argument
