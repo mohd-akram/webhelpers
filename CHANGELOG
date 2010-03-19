@@ -3,6 +3,12 @@ WebHelpers ChangeLog
 
 tip (development version)
 -------------------------
+
+No changes yet.
+
+1.0b5 (2010-03-18)
+------------------
+
 * webhelpers.html.converters:
 
   - Re-add import of ``render`` and ``sanitize`` from
@@ -14,6 +20,7 @@ tip (development version)
   - Add ``exclude`` argument to ``subclasses_only``.
 
 * webhelpers.text:
+
   - Disable ``convert_misc_characters``: it fails its doctests and there's
     no consensus on what it should do.
 
