@@ -1,3 +1,10 @@
+"""
+**This module is experimental. API changes are expected in the next version.
+If your application depends on the current API, please copy the module into
+your application.**
+"""
+
+
 from webhelpers.html.builder import HTML, literal
 import webhelpers.html.grid as grid
 

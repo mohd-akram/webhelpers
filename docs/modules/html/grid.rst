@@ -22,3 +22,5 @@ A subclass specialized for Pylons is in ``webhelpers.pylonslib.grid``.
 .. autoclass:: Grid
    :members:
 
+.. autoclass:: GridSqlalchemy
+   :members:
