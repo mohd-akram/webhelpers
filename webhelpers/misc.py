@@ -3,6 +3,7 @@
 
 import itertools
 import types
+import warnings
 
 def all(seq, pred=None):
     """Is ``pred(elm)`` true for all elements?
@@ -183,6 +184,22 @@ class OverwriteError(Exception):
         message %= (filename,)
         Exception.__init__(self, message)
         self.filename = filename
+
+def deprecate(message, pending=False, stacklevel=2):
+    """Issue a deprecation warning.
+
+    ``message``: the deprecation message.
+
+    ``pending``: if true, use ``PendingDeprecationWarning``. If false (default), 
+    use ``DeprecationWarning``. Python displays deprecations and ignores
+    pending deprecations by default.
+
+    ``stacklevel``: passed to ``warnings.warn``. The default level 2 makes the
+    traceback end at the caller's level. Higher numbers make it end at higher
+    levels.
+    """
+    category = pending and PendingDeprecationWarning or DeprecationWarning
+    warnings.warn(message, category, stacklevel)
 
 
 if __name__ == "__main__":
