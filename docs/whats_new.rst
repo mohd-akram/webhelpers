@@ -93,8 +93,8 @@ webhelpers.misc
 
 New helpers to flatten nested lists and tuples, and to
 gather all the subclasses of a specified class. There's an exception
-``OverwriteError``, and a ``DeclarativeException`` class for making your own
-exceptions with constant messages.
+``OverwriteError``, a ``DeclarativeException`` class for making your own
+exceptions with constant messages, and a ``deprecate`` function.
 
 webhelpers.paginate
 +++++++++++++++++++

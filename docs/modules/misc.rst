@@ -10,6 +10,7 @@
 .. autofunction:: no(seq[, pred])
 .. autofunction:: count_true(seq[, pred])
 .. autofunction:: convert_or_none
+.. autofunction:: deprecate
 
 .. autoclass:: DeclarativeException
     :members:
