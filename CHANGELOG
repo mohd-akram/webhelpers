@@ -17,6 +17,7 @@ No changes yet.
 * webhelpers.misc:
 
   - New exception ``OverwriteError``.
+  - New function ``deprecate``.
   - Add ``exclude`` argument to ``subclasses_only``.
 
 * webhelpers.text:
