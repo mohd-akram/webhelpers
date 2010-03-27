@@ -72,7 +72,7 @@ class Grid(object):
         def custem_part_no_td(col_num, i, item):
             return HTML.td(`Foo %s` % item[``part_no``])
         
-        grid.labels[``part_no``] = custem_part_no_td
+        grid.column_formats[``part_no``] = custem_part_no_td
     
     You can customize the grids look and behavior by overloading grids instance
     render functions::
@@ -230,4 +230,10 @@ of dicts, and a single dict.
             column_name = "numbered"
         class_name = "c%s %s" % (column_number, column_name)
         return HTML.tag("td", header_label, class_=class_name)
-    
+
+
+class GridSqlalchemy(Grid):
+    """ This grid will work well with sqlalchemy row instances """
+    def default_column_format(self, column_number, i, record, column_name):
+        class_name = "c%s" % (column_number)
+        return HTML.tag("td", getattr(record, column_name), class_=class_name)
