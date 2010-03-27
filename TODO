@@ -22,3 +22,5 @@ Finish the third-party page.
 Finish the Upgrading page.
 
 Make a high-level changes list based on the beta changelogs.
+
+grid_demo: usage message shows "__main__" rather than package.module.
