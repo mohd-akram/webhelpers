@@ -4,7 +4,13 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
-No changes yet.
+* webhelpers.html.grid / webhelpers.pylonslib.grid:
+
+  - Updates by Ergo, including SQLAlchemy grid classes.
+
+* webhelpers.misc:
+
+  - New function ``deprecate``.
 
 1.0b5 (2010-03-18)
 ------------------
@@ -17,7 +23,6 @@ No changes yet.
 * webhelpers.misc:
 
   - New exception ``OverwriteError``.
-  - New function ``deprecate``.
   - Add ``exclude`` argument to ``subclasses_only``.
 
 * webhelpers.text:
