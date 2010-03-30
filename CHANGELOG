@@ -4,6 +4,10 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
+* webhelpers.containers / webhelpers.misc:
+
+  - ``NotGiven`` moved to webhelpers.misc.
+
 * webhelpers.html.grid / webhelpers.pylonslib.grid:
 
   - Updates by Ergo, including SQLAlchemy grid classes.

@@ -152,6 +152,26 @@ def subclasses_only(class_, it, exclude=None):
     return [x for x in it if isinstance(x, class_types) and 
         issubclass(x, class_) and x not in ignore]
 
+
+class NotGiven(object):
+    """A default value for function args.
+
+    Use this when you need to distinguish between ``None`` and no value.
+    
+    Example::
+    
+        >>> def foo(arg=NotGiven):
+        ...     print arg is NotGiven
+        ...
+        >>> foo()
+        True
+        >>> foo(None)
+        False
+
+    """
+    pass
+
+
 class DeclarativeException(Exception):
     """A simpler way to define an exception with a fixed message.
 

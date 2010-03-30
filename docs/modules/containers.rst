@@ -34,7 +34,6 @@ Classes
        >> d = defaultdict(int);  d[ANYTHING] += 1
 
 .. autoclass:: DumbObject
-.. autoclass:: NotGiven
 
 Functions
 ---------
