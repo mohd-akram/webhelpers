@@ -5,6 +5,8 @@
 
 .. currentmodule:: webhelpers.misc
 
+.. autoclass:: NotGiven
+
 .. autofunction:: all(seq[, pred])
 .. autofunction:: any(seq[, pred])
 .. autofunction:: no(seq[, pred])

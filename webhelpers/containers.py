@@ -7,6 +7,8 @@ package.
 
 import sys
 
+from webhelpers.misc import NotGiven
+
 try:
     from collections import defaultdict
 except ImportError:   # Python < 2.5
@@ -50,25 +52,6 @@ except ImportError:   # Python < 2.5
         def __repr__(self):
             return 'defaultdict(%s, %s)' % (self.default_factory,
                                             dict.__repr__(self))
-
-class NotGiven(object):
-    """A default value for function args.
-
-    Use this when you need to distinguish between ``None`` and no value.
-    
-    Example::
-    
-        >>> def foo(arg=NotGiven):
-        ...     print arg is NotGiven
-        ...
-        >>> foo()
-        True
-        >>> foo(None)
-        False
-
-    """
-    pass
-
 
 class DumbObject(object):
     """A container for arbitrary attributes.
