@@ -5,13 +5,13 @@
 
 .. currentmodule:: webhelpers.number
 
-Functions
----------
+Calculations
+------------
 
 .. autofunction:: percent_of
-.. autofunction:: format_data_size
-.. autofunction:: format_byte_size
-.. autofunction:: format_bit_size
+
+Statistics
+----------
 
 .. autofunction:: mean
 .. function:: average(r)
@@ -22,12 +22,16 @@ Functions
 .. autofunction:: standard_deviation
 .. autofunction:: format_number
 
-Classes
--------
-
 .. autoclass:: SimpleStats
     :members: __call__, extend
 
 .. autoclass:: Stats
     :members: __call__, extend, finish
+
+Number formatting
+-----------------
+
+.. autofunction:: format_data_size
+.. autofunction:: format_byte_size
+.. autofunction:: format_bit_size
 
