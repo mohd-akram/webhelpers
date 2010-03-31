@@ -96,6 +96,12 @@ gather all the subclasses of a specified class. There's an exception
 ``OverwriteError``, a ``DeclarativeException`` class for making your own
 exceptions with constant messages, and a ``deprecate`` functioand n.
 
+webhelpers.number
++++++++++++++++++
+``format_data_size()`` and its derivatives ``format_byte_size()`` and
+``format_bit_size()`` provide a convenient way to display numbers using SI
+units ("1.2 kilobytes", "1.2 kB", "1.0 KiB").
+
 webhelpers.paginate
 +++++++++++++++++++
 
