@@ -20,7 +20,8 @@ tip (development version)
 
   - New functions ``format_data_size``, ``format_byte_size``, and
     ``format_bit_size`` for displaying numbers in SI units
-    ("1.2 kilobytes", "1.2 kB", "1.0 KiB").
+    ("1.2 kilobytes", "1.2 kB", "1.0 KiB"). Contributed by
+    Wojciech Malinowski.
 
 1.0b5 (2010-03-18)
 ------------------
