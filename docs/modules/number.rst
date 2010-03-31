@@ -9,6 +9,10 @@ Functions
 ---------
 
 .. autofunction:: percent_of
+.. autofunction:: format_data_size
+.. autofunction:: format_byte_size
+.. autofunction:: format_bit_size
+
 .. autofunction:: mean
 .. function:: average(r)
 

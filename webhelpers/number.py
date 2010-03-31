@@ -1,5 +1,6 @@
 """Number formatting, numeric helpers, and numeric statistics"""
 
+import math
 import re
 
 def percent_of(part, whole):
@@ -12,6 +13,104 @@ def percent_of(part, whole):
     """
     # Use float to force true division.
     return float(part * 100) / whole
+
+def format_data_size(size, unit, precision=1, binary=False, full_name=False):
+    """Format a number using SI units (kilo, mega, etc.)
+
+    ``size``: The number as a float or int.
+
+    ``unit``: The unit name in plural form. Examples: "bytes", "B".
+
+    ``precision``: How many digits to the right of the decimal point. Default
+    is 1.  0 suppresses the decimal point.
+
+    ``binary``: If false, use base-10 decimal prefixes (kilo = K = 1000).  
+    If true, use base-2 binary prefixes (kibi = Ki = 1024).  
+
+    ``full_name``: If false (default), use the prefix abbreviation ("k" or
+    "Ki").  If true, use the full prefix ("kilo" or "kibi"). If false,
+    use abbreviation ("k" or "Ki").
+
+    Examples:
+
+    >>> format_data_size(1024, "B")
+    '1.0 kB'
+
+    >>> format_data_size(1024, "B", 2)
+    '1.02 kB'
+
+    >>> format_data_size(1024, "B", 2, binary=True)
+    '1.00 KiB'
+
+    >>> format_data_size(54000, "Wh", 0)
+    '54 kWh'
+
+    >>> format_data_size(85000, "m/h", 0)
+    '85 km/h'
+
+    >>> format_data_size(85000, "m/h", 0).replace("km/h", "clicks")
+    '85 clicks'
+    """
+    if full_name is None:
+        full_name = len(unit) > 1
+        
+    if not binary:
+        base = 1000
+        if full_name:
+            multiples = ('', 'kilo', 'mega', 'giga', 'tera', 'peta', 'exa', 'zetta', 'yotta')
+        else:
+            multiples = ('', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
+    else:
+        base = 1024
+        if full_name:
+            multiples = ('', 'kibi', 'mebi', 'gibi', 'tebi', 'pebi', 'exbi', 'zebi', 'yobi')
+        else:
+            multiples = ('', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi')
+            
+    m = int(math.log(size) / math.log(base))
+    if m > 8:
+        m = 8
+
+    if m == 0:
+        precision = '%.0f'
+    else:
+        precision = '%%.%df' % precision
+        
+    size = precision % (size / math.pow(base, m))
+
+    return '%s %s%s' % (size.strip(), multiples[m], unit)
+
+def format_byte_size(size, precision=1, binary=False, full_name=False):
+    """Same as ``format_data_size`` but specifically for bytes.
+    
+    Examples:
+
+    >>> format_byte_size(2048)
+    '2.0 kB'
+    
+    >>> format_byte_size(2048, full_name=True)
+    '2.0 kilobytes'
+    """
+    if full_name:
+        return format_data_size(size, "bytes", precision, binary, True)
+    else:
+        return format_data_size(size, "B", precision, binary, False)
+
+def format_bit_size(size, precision=1, binary=False, full_name=False):
+    """Same as ``format_data_size`` but specifically for bytes.
+
+    Examples:
+
+    >>> format_bit_size(2048)
+    '2.0 kb'
+    
+    >>> format_bit_size(2048, full_name=True)
+    '2.0 kilobits'
+    """
+    if full_name:
+        return format_data_size(size, "bits", precision, binary, True)
+    else:
+        return format_data_size(size, "b", precision, binary, False)
 
 def mean(r):
     """Return the mean (i.e., average) of a sequence of numbers.
