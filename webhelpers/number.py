@@ -51,6 +51,7 @@ def format_data_size(size, unit, precision=1, binary=False, full_name=False):
     >>> format_data_size(85000, "m/h", 0).replace("km/h", "clicks")
     '85 clicks'
     """
+    # Contributed by Wojciech Malinowski
     if full_name is None:
         full_name = len(unit) > 1
         
