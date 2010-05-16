@@ -4,19 +4,19 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
-* webhelpers.containers / webhelpers.misc:
+No changes yet.
 
-  - ``NotGiven`` moved to webhelpers.misc.
+1.0b7 (2010-05-16)
+------------------
+
+* webhelpers.containers:
+
   - Bugfix in ``canada_provinces``, reported by rpetrello.
 
 * webhelpers.html.grid / webhelpers.pylonslib.grid:
 
-  - Updates by Ergo, including SQLAlchemy object grid classes, and styling.
+  - Updates by Ergo, mainly styling and CSS classes.
   - Rename classes: ObjectGrid, PylonsGrid, PylonsObjectGrid.
-
-* webhelpers.misc:
-
-  - New function ``deprecate``.
 
 * webhelpers.paginate:
 
@@ -35,6 +35,22 @@ tip (development version)
 
   - New argument ``ignore_duplicate`` to prevent adding the same message
     multiple times.
+
+
+1.0b6 (2010-04-23)
+------------------
+
+* webhelpers.containers / webhelpers.misc:
+
+  - ``NotGiven`` moved to webhelpers.misc.
+
+* webhelpers.html.grid / webhelpers.pylonslib.grid:
+
+  - Updates by Ergo, including SQLAlchemy object grid classes.
+
+* webhelpers.misc:
+
+  - New function ``deprecate``.
 
 * webhelpers.number:
 
