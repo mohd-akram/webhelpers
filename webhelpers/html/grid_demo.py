@@ -50,13 +50,13 @@ table.stylized caption {
 
 
 
-table.stylized caption a:link,table.stylized caption a:visited{
+table.stylized caption a:link,table.stylized caption a:visited {
     color: #ffffff;
     text-decoration: none;
     font-weight: bold;
 }
 
-table.stylized caption a:link,table.stylized caption a:hover{
+table.stylized caption a:link,table.stylized caption a:hover {
     color: #ffcc00;
     text-decoration: none;
     font-weight: bold;
@@ -108,13 +108,8 @@ table.stylized .no {
     width: 30px;
 }
 
-table.stylized td.ordering.dsc {
-    background-color: #666666;
-    padding-right: 20px;
-}
-
-table.stylized td.ordering.asc {
-    background-color: #666666;
+table.stylized td.ordering{
+    background-color: #666666 !important;
     padding-right: 20px;
 }
 
@@ -124,14 +119,15 @@ table.stylized td.ordering.dsc .marker {
     display: block;
     float: right;
     margin: 0px -18px;
+/* background-image for neutral marker here */
+}
+
+table.stylized td.ordering.dsc .marker {
+/* background-image for dsc marker here */
 }
 
 table.stylized td.ordering.asc .marker {
-    height: 20px;
-    width: 20px;
-    display: block;
-    float: right;
-    margin: 0px -18px;
+/* background-image for asc marker here */
 }
 
 table.stylized .header a:link,table.stylized .header a:visited {
