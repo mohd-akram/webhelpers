@@ -5,8 +5,8 @@
 
 .. currentmodule:: webhelpers.pylonslib.grid
 
-.. autoclass:: GridPylons
+.. autoclass:: PylonsGrid
    :members:
 
-.. autoclass:: GridPylonsSqlalchemy
+.. autoclass:: PylonsObjectGrid
    :members:
