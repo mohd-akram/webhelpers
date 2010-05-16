@@ -66,3 +66,16 @@ class TestFlash(object):
         eq_(len(messages), 0)
         messages2 = flash.pop_messages()
         eq_(len(messages2), 0)
+
+    def test_duplicate_messages(self):
+        MESSAGE = "First message."
+        CATEGORY = "warning"
+        CATEGORY2 = "error"
+        flash = Flash()
+        flash(MESSAGE, CATEGORY, True)
+        flash(MESSAGE, CATEGORY, True)
+        flash(MESSAGE, CATEGORY2, True)
+        messages = flash.pop_messages()
+        eq_(len(messages), 1)
+        eq_(messages[0].message, MESSAGE)
+        eq_(messages[0].category, CATEGORY2)

@@ -16,6 +16,11 @@ tip (development version)
 
   - New function ``deprecate``.
 
+* webhelpers.pylonslib.flash:
+
+  - New argument ``ignore_duplicate`` to prevent adding the same message
+    multiple times.
+
 * webhelpers.number:
 
   - New functions ``format_data_size``, ``format_byte_size``, and

@@ -326,7 +326,7 @@ class Flash(object):
         if self.categories and self.default_category not in self.categories:
             raise ValueError("unrecognized default category %r" % (self.default_category,))
 
-    def __call__(self, message, category=None):
+    def __call__(self, message, category=None, ignore_duplicate=False):
         """Add a message to the session.
 
         ``message`` is the message text.
@@ -334,6 +334,12 @@ class Flash(object):
         ``category`` is the message's category. If not specified, the default
         category will be used.  Raise ``ValueError`` if the category is not
         in the list of allowed categories.
+        
+        If ``ignore_duplicate`` is true, don't add the message if another
+        message with identical text has already been added. If the new
+        message has a different category than the original message, change the
+        original message to the new category.
+        
         """
         if not category:
             category = self.default_category
@@ -341,8 +347,19 @@ class Flash(object):
             raise ValueError("unrecognized category %r" % (category,))
         # Don't store Message objects in the session, to avoid unpickling
         # errors in edge cases.
+        new_message_tuple = (category, message)
         from pylons import session
-        session.setdefault(self.session_key, []).append((category, message))
+        messages = session.setdefault(self.session_key, [])
+        # ``messages`` is a mutable list, so changes to the local variable are
+        # reflected in the session.
+        if ignore_duplicate:
+            for i, m in enumerate(messages):
+                if m[1] == message:
+                    if m[0] != category:
+                        messages[i] = new_message_tuple
+                        session.save()
+                    return    # Original message found, so exit early.
+        messages.append(new_message_tuple)
         session.save()
 
     def pop_messages(self):
