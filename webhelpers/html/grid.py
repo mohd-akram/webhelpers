@@ -112,7 +112,7 @@ of dicts, and a single dict.
     """
     def __init__(self, itemlist, columns, column_labels=None,
                   column_formats=None, start_number=1,
-                 order_column=None, order_direction='asc'):
+                 order_column=None, order_direction=None):
         self.labels = column_labels or {}
         self.exclude_ordering = columns
         self.itemlist = itemlist
@@ -156,11 +156,11 @@ of dicts, and a single dict.
         columns = []        
         for col_num, column in enumerate(self.columns):
             if column in self.column_formats:
-                r = self.column_formats[column](col_num,
+                r = self.column_formats[column](col_num + 1,
                                                 self. calc_row_no(i, column),
                                                 record)
             else:
-                r = self.default_column_format(col_num,
+                r = self.default_column_format(col_num + 1,
                                                self.calc_row_no(i, column),
                                                record, column)
             columns.append(r)
@@ -177,9 +177,9 @@ of dicts, and a single dict.
         for i, record in enumerate(self.itemlist):
             columns = self.make_columns(i, record)
             if hasattr(self, 'custom_record_format'):
-                r = self.custom_record_format(i, record, columns)
+                r = self.custom_record_format(i + 1, record, columns)
             else:
-                r = self.default_record_format(i, record, columns)
+                r = self.default_record_format(i + 1, record, columns)
             records.append(r)
         return HTML(*records)
     
@@ -208,9 +208,9 @@ of dicts, and a single dict.
 
     def default_record_format(self, i, record, columns):
         if i % 2 == 0:
-            class_name = "even"
+            class_name = "even r%s" % i
         else:
-            class_name = "odd"
+            class_name = "odd r%s" % i
         return HTML.tag("tr", columns, class_=class_name)
 
     def default_header_record_format(self, headers):
@@ -228,8 +228,13 @@ of dicts, and a single dict.
         header_label):
         if column_name == "_numbered":
             column_name = "numbered"
-        class_name = "c%s %s" % (column_number, column_name)
-        return HTML.tag("td", header_label, class_=class_name)
+        if column_name in self.exclude_ordering:
+            class_name = "c%s %s" % (column_number, column_name)
+            return HTML.tag("td", header_label, class_=class_name)
+        else:
+            header_label = HTML(header_label, HTML.tag("span", class_="marker"))
+            class_name = "c%s ordering %s" % (column_number, column_name)
+            return HTML.tag("td", header_label, class_=class_name)
 
 
 class GridSqlalchemy(Grid):

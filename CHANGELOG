@@ -10,7 +10,7 @@ tip (development version)
 
 * webhelpers.html.grid / webhelpers.pylonslib.grid:
 
-  - Updates by Ergo, including SQLAlchemy grid classes.
+  - Updates by Ergo, including SQLAlchemy grid classes, and styling.
 
 * webhelpers.misc:
 
