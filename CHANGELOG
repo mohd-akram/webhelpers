@@ -18,6 +18,10 @@ tip (development version)
 
 * webhelpers.paginate:
 
+ - New URL generation algorithm for ``Page.pager()``. You can pass a callback
+   function to the constructor, or it will fall back to ``pylons.url.current``
+   or ``routes.url_for`` (in that order). It will raise ``NotImplementedError`` if
+   none of these are available.
  - Don't allow extra positional args in constructor. The implementation does
    nothing with them, so it shouldn't allow them.
 

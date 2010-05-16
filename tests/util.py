@@ -46,12 +46,3 @@ class WebHelpersTestCase(TestCase):
             'wsgi.url_scheme': 'http'
             }
 
-    def setUp(self):
-        map = routes.Mapper()
-        map.connect('test')
-        map.connect(':controller/:action/:id')
-
-        self.routes_config = routes.request_config()
-        self.routes_config.mapper = map
-        self.routes_config.environ = self.test_environ()
-        assert self.routes_config.mapper_dict

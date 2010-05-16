@@ -4,6 +4,7 @@ import sys
 from routes import Mapper
 
 from webhelpers.paginate import Page
+from webhelpers.util import update_params
 
 
 def test_empty_list():
@@ -40,15 +41,13 @@ def test_one_page():
     assert page.pager() == ''
     assert page.pager(show_if_single_page=True) == '<span class="pager_curpage">1</span>'
 
+def my_url_generator(**kw):
+    return update_params("/content", **kw)
+
 def test_many_pages():
     """Test that 100 items fit on seven 15-item pages."""
-    # Create routes mapper so that webhelper can create URLs
-    # using webhelpers.url_for()
-    mapper = Mapper()
-    mapper.connect(':controller')
-
     items = range(100)
-    page = Page(items, page=0, items_per_page=15)
+    page = Page(items, page=0, items_per_page=15, url=my_url_generator)
     assert page.page == 1
     assert page.first_item == 1
     assert page.last_item == 15
