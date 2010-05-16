@@ -28,6 +28,8 @@ tip (development version)
    nothing with them, so it shouldn't allow them.
  - Import ``sqlalchemy.orm`` as well as ``sqlalchemy``. User Sybiam reports an
    error otherwise.
+ - Add code to work with other iterable containers, contributed by Marcin
+   Kuzminski.
 
 * webhelpers.pylonslib.flash:
 

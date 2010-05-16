@@ -203,9 +203,14 @@ def get_wrapper(obj, sqlalchemy_session=None):
     Auto-detect the kind of object and return a list/tuple
     to access items from the collection.
     """
-    # See if the collection is a sequence
+    # If the collection is a sequence we can use it directly
     if isinstance(obj, (list, tuple)):
         return obj
+
+    # If object is iterable we can use it directly
+    if hasattr(obj, "__iter__") and hasattr(obj, "__len__"):
+        return obj
+
     # Is SQLAlchemy 0.4 or better available? (0.3 is not supported - sorry)
     if sqlalchemy_available[:3] != '0.3':
         # Is the collection a query?
@@ -217,9 +222,9 @@ def get_wrapper(obj, sqlalchemy_session=None):
             or isinstance(obj, sqlalchemy.sql.expression.Select):
                 return _SQLAlchemySelect(obj, sqlalchemy_session)
 
-    raise TypeError("Sorry, your collection type is not supported by the paginate module. "
-            "You can either provide a list, a tuple, an SQLAlchemy 0.4 select object or an "
-            "SQLAlchemy 0.4 ORM-query object.")
+    raise TypeError("Sorry, your collection type is not supported by the "
+        "paginate module. You can provide a list, a tuple, a SQLAlchemy "
+        "select object or a SQLAlchemy ORM-query object.")
 
 class _SQLAlchemySelect(object):
     """
