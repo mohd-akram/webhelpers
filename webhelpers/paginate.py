@@ -192,6 +192,7 @@ from webhelpers.html import literal, HTML
 # import SQLAlchemy if available
 try:
     import sqlalchemy
+    import sqlalchemy.orm   # Some users report errors if this is not imported.
 except:
     sqlalchemy_available = False
 else:
