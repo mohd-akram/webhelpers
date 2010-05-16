@@ -256,7 +256,7 @@ class Page(list):
     """
     def __init__(self, collection, page=1, items_per_page=20,
         item_count=None, sqlalchemy_session=None, presliced_list=False,
-        *args, **kwargs):
+        **kwargs):
         """Create a "Page" instance.
 
         Parameters:
