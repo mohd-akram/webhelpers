@@ -16,7 +16,7 @@ Deleted packages
 ++++++++++++++++
 
 **The following deprecated packages were removed: rails, commands, hinclude,
-htmlgen, paginate, and string24.** Most of the functionality of the rails
+htmlgen, pagination, and string24.** Most of the functionality of the rails
 helpers was replaced by new helpers in the ``date``, ``html``, ``misc``,
 ``number``, and ``text`` packages. Prototype and Scriptaculous are not
 replaced; WebHelpers no longer ships with Javascript libraries.  ``pagination``
@@ -105,8 +105,16 @@ units ("1.2 kilobytes", "1.2 kB", "1.0 KiB").
 webhelpers.paginate
 +++++++++++++++++++
 
-``webhelpers.paginate`` has some enhancements for Javascript, works with all
-versions of SQLAlchemy 0.4 and higher, and has a presliced list option.
+``webhelpers.paginate`` has a new algorithm for generating URLs for page links,
+has some enhancements for Javascript, works with all versions of SQLAlchemy 0.4
+and higher, and has a presliced list option.
+
+On Pylons it will use ``pylons.url.current`` as the URL generator, or fall back
+to ``routes.url_for`` if that is not available. You can also pass a callback
+function to the constructor to implement a custom generator. If none of these
+are available, you'll get a ``NotImplementedError``. Previous versions of
+WebHelpers (through 1.0b5) used ``routes.url_for`` unconditionally, but that
+function is deprecated and is not supported in Pylons 1.x.
 
 webhelpers.pylonslib
 ++++++++++++++++++++
@@ -133,10 +141,8 @@ Experimental code
 
 ``webhelpers.html.grid`` and ``webhelpers.pylonslib.grid`` contain helpers to
 make an HTML table from a list of objects such as database records. It has
-a demo program and an optional stylesheet.  It's "experimental" because the API
-needs some changes and the docstrings aren't very clear. But it works.
-The next version will add support for more input types: a list of sequences, a
-list of dicts, or a single dict.
+a demo program and an optional stylesheet.  It's "experimental" because the
+docs aren't very clear and the API could maybe do with some changes.  But it works.
 
 ``webhelpers.pylonslib.minify`` contains versions of ``javascript_link()`` and
 ``stylesheet_link()`` that compress their files. It's experimental because

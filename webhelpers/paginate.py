@@ -69,13 +69,74 @@ A simple example (ipython session)::
     >> my_page.pager('$link_previous ~3~ $link_next (Page $page of $page_count)')
     1 2 [3] 4 5 6 .. 50 > (Page 3 of 50)
 
-Please see the documentation on *Page* and *Page.pager()*. There are many
+Please see the documentation on ``Page`` and ``Page.pager()``. There are many
 parameters that customize the Page's behavior.
+
+URL generator
+-------------
+
+The ``Page.pager()`` method requires a URL generator to create the links to the other
+pages. You can supply a callback function to the constructor, or let it
+fall back to ``pylons.url.current`` or ``routes.url_for`` (in that order). If
+none of these are available, you'll get a ``NotImplementedError``.
+
+Pylons applications can simply let it default to ``pylons.url.current``, which
+is available in Pylons 0.9.7 and later.
+
+Older versions of Paginate (up to 1.0b5) used ``routes.url_for`` in all cases.
+This caused an unnecessary dependency on Routes, and was untenable when
+``url_for`` was deprecated and Pylons 1.x no longer supported it. Nevertheless
+it remains for backward compatibility.
+
+To provide your own callback, create a function that takes a *page* argument
+and optional *partial* argument, and returns the URL to that page. Pass this
+function as the ``Page`` constructor's *url* argument.
+
+Note that the *page* and *partial* arguments may be called something else! You
+can rename these by specifying *page_param* and/or *partial_param* in
+``Page.pager()``. Just make sure to be consistent between the pager args and
+callback args.
+
+Also note that any extra keyword args passed to the ``Page`` constructor or
+``Page.pager()`` will be passed to the callback, so it should expect them.
+
+A typical callback will return the current page's URL, converting the keyword
+args to query parameters.  This is what ``pylons.url.current`` and
+``routes.url_for``, except that these also use keyword args to override path
+variables.
+
+The *partial* arg will be unspecified for a normal URL. It will have the value
+1 (int) for a partial URL.
+
+Examples::
+
+    # Example 1: explicitly use pylons.url.current
+    page = Page(MY_COLLECTION, url=pylons.url.current)
+
+    # Example 2: implicitly use pylons.url.current.
+    page = Page(MY_COLLECTION)
+
+    # Example 3: a dumb callback that uses string interpolation.
+    def get_page_url(page, partial=None):
+        url = "%s?page=%s" % (THE_URL, page)
+        if partial:
+            url += "&partial=1"
+        return url
+    page = Page(MY_COLLECTION, url=get_page_url) 
+
+    # Example 4: a smarter callback that uses ``update_params``, which converts
+    # keyword args to query parameters.
+    from webhelpers.tools import update_params
+    def get_page_url(**kw):
+        return update_params("/content", **kw)
+    page = Page(MY_COLLECTION, url=get_page_url)
+
+
 
 Can I use AJAX / AJAH?
 ------------------------
 
-Yes. See *partial_param* and *onclick* in *Page.pager()*.
+Yes. See *partial_param* and *onclick* in ``Page.pager()``.
 
 Notes
 -------
@@ -90,7 +151,7 @@ module.  It is **NOT** API compatible.
 
 This version of paginate is based on the code from
 http://workaround.org/cgi-bin/hg-paginate that is known at the
-"Paginate" module on PyPi.
+"Paginate" module on PyPI.
 """
 
 __version__ = '0.3.7'
@@ -256,7 +317,7 @@ class Page(list):
     """
     def __init__(self, collection, page=1, items_per_page=20,
         item_count=None, sqlalchemy_session=None, presliced_list=False,
-        **kwargs):
+        url=None, **kwargs):
         """Create a "Page" instance.
 
         Parameters:
@@ -289,8 +350,14 @@ class Page(list):
             Select objects do not have a database connection attached so it
             would not be able to execute the SELECT query.
 
+        url (optional)
+            A URL generator function. See module docstring for details.
+            This is used only by ``.pager()``.
+
         Further keyword arguments are used as link arguments in the pager().
         """
+        self._url_generator = url
+
         # 'page_nr' is deprecated.
         if 'page_nr' in kwargs:
             warnings.warn("'page_nr' is deprecated. Please use 'page' instead.")
@@ -621,6 +688,22 @@ class Page(list):
 
         return literal(result)
 
+    def get_url_generator(self):
+        """Return a URL generator. See module docstring for details."""
+        if self._url_generator is None:
+            try:
+                import pylons
+                self._url_generator = pylons.url.current
+            except (ImportError, AttributeError):
+                try:
+                    import routes
+                    self._url_generator = routes.url_for
+                except (ImportError, AttributeError):
+                    raise NotImplementedError("no URL generator available")
+        return self._url_generator
+
+
+    #### Private methods ####
     def _range(self, regexp_match):
         """
         Return range of linked pages (e.g. '1 2 [3] 4 5 6 7 8').
@@ -690,13 +773,13 @@ class Page(list):
 
         return self.separator.join(nav_items)
 
-    def _pagerlink(self, pagenr, text):
+    def _pagerlink(self, page, text):
         """
         Create a URL that links to another page using url_for().
 
         Parameters:
             
-        pagenr
+        page
             Number of the page that the link points to
 
         text
@@ -706,39 +789,53 @@ class Page(list):
         # Let the url_for() from webhelpers create a new link and set
         # the variable called 'page_param'. Example:
         # You are in '/foo/bar' (controller='foo', action='bar')
-        # and you want to add a parameter 'pagenr'. Then you
-        # call the navigator method with page_param='pagenr' and
-        # the url_for() call will create a link '/foo/bar?pagenr=...'
+        # and you want to add a parameter 'page'. Then you
+        # call the navigator method with page_param='page' and
+        # the url_for() call will create a link '/foo/bar?page=...'
         # with the respective page number added.
         link_params = {}
         # Use the instance kwargs from Page.__init__ as URL parameters
         link_params.update(self.kwargs)
         # Add keyword arguments from pager() to the link as parameters
         link_params.update(self.pager_kwargs)
-        link_params[self.page_param] = pagenr
+        link_params[self.page_param] = page
 
-        # get the configuration for the current request
-        config = request_config()
-        # if the Mapper is configured with explicit=True we have to fetch
-        # the controller and action manually
-        if config.mapper.explicit:
-            if hasattr(config, 'mapper_dict'):
-                for k, v in config.mapper_dict.items():
-                    link_params[k] = v
+        # Get the URL generator
+        if self._url_generator is not None:
+            url_generator = self._url_generator
+        else:
+            try:
+                import pylons
+                url_generator = pylons.url.current
+            except (ImportError, AttributeError):
+                try:
+                    import routes
+                    url_generator = routes.url_for
+                    config = routes.request_config()
+                except (ImportError, AttributeError):
+                    raise NotImplementedError("no URL generator available")
+                else:
+                    # if the Mapper is configured with explicit=True we have to fetch
+                    # the controller and action manually
+                    if config.mapper.explicit:
+                        if hasattr(config, 'mapper_dict'):
+                            for k, v in config.mapper_dict.items():
+                                link_params[k] = v
 
         # Create the URL to load a certain page
-        link_url = url_for(**link_params)
-        # Create the URL to load the page area part of a certain page (AJAX updates)
-        link_params[self.partial_param] = 1
-        partial_url = url_for(**link_params)
+        link_url = url_generator(**link_params)
 
         if self.onclick: # create link with onclick action for AJAX
+            # Create the URL to load the page area part of a certain page (AJAX
+            # updates)
+            link_params[self.partial_param] = 1
+            partial_url = url_generator(**link_params)
             try: # if '%s' is used in the 'onclick' parameter (backwards compatibility)
                 onclick_action = self.onclick % (partial_url,)
             except TypeError:
                 onclick_action = Template(self.onclick).safe_substitute({
                   "partial_url": partial_url,
-                  "page": pagenr
+                  "page": page
                 })
             return HTML.a(text, href=link_url, onclick=onclick_action, **self.link_attr)
         else: # return static link

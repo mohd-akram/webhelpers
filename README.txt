@@ -94,27 +94,11 @@ Requirements
 ------------
 
 WebHelpers does not have any install dependencies, but some functions depend
-on third-party libraries.
+on third-party libraries (Routes_, Pylons_, WebOb_, unidecode_) as specified in
+their documentation.
 
-Routes_
-
-    Version >= 1.7 must be installed and running in the current
-    web framework for:
-
-    - webhelpers.html.tags (required only for ``javascript_link()``,
-      ``stylesheet_link()``, or ``auto_discovery_link()`` functions).
-    - webhelpers.paginate
-    - the regression tests in the source distribution
-
-    Currently Pylons_, TurboGears_, and Aquarium_ support Routes.
-
-Pylons_
-
-    The helpers in ``webhelpers.pylonslib`` depend on Pylons context variables
-    (e.g., ``pylons.session``).  They can easily be reimplemented in another
-    web framework if desired.
 
 .. _Routes:  http://routes.groovie.org/
 .. _Pylons:  http://pylonshq.com/
-.. _TurboGears:  http://turbogears.org/
-.. _Aquarium:  http://aquarium.sourceforge.net/
+.. _WebOb:   http://pythonpaste.org/WebOb
+.. _unidecode:  http://python.org/pypi/Unidecode/
