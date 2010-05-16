@@ -10,7 +10,8 @@ tip (development version)
 
 * webhelpers.html.grid / webhelpers.pylonslib.grid:
 
-  - Updates by Ergo, including SQLAlchemy grid classes, and styling.
+  - Updates by Ergo, including SQLAlchemy object grid classes, and styling.
+  - Rename classes: ObjectGrid, PylonsGrid, PylonsObjectGrid.
 
 * webhelpers.misc:
 

@@ -11,7 +11,7 @@ import webhelpers.html.grid as grid
 class NoRequestError(Exception):
     pass
 
-class GridPylons(grid.Grid):
+class PylonsGrid(grid.Grid):
     """
     Subclass of Grid that can handle header link generation for quick building
     of tables that support ordering of their contents, paginated results etc.
@@ -53,7 +53,7 @@ class GridPylons(grid.Grid):
             return self.default_header_column_format(column_number, column,
                                                      label_text)
 
-class GridPylonsSqlalchemy(GridPylons):
+class PylonsObjectGrid(PylonsGrid):
     """ This grid will work well with sqlalchemy row instances """
     def default_column_format(self, column_number, i, record, column_name):
         class_name = "c%s" % (column_number)
