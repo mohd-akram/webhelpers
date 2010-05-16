@@ -520,4 +520,4 @@ def canada_provinces():
         ("Yukon", "YT"),
         ]
     provinces.sort()
-    return [(x[2], x[1]) for x in provinces]
+    return [(x[1], x[0]) for x in provinces]
