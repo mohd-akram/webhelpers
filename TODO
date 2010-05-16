@@ -1,26 +1,20 @@
 WebHelpers TODO
 ===============
 
+WebHelpers 1.x is in a soft feature freeze, so only bugfixes and small changes
+are likely to be made in the foreseeable future.
+
 See also the bug list at http://bigbucket.org/bbangert/webhelpers .
 
-``webhelpers.text.convert_misc_characters`` fails tests. It's producing
-incorrect output.  This affects ``remove_formatting`` too.
-
-``webhelpers.html.grid`` needs some API changes to make a table from a list of
-lists and from a dict. Some arguments will be changing also.
+``webhelpers.html.grid`` needs better docs. The API could maybe use some
+improvement too.
 
 The "unfinished" directory in the WebHelpers source distribution contains
 potential future helpers which are not finished enough for release. These are
 not installed by the installer; they are available only in the source tarball.
 
-Run tests on Python 2.4 to see if any 2.5isms have crept in.
+Port to Python 3.
 
 Too many strip_tags / sanitize / bleach functions.
-
-Finish the third-party page.
-
-Finish the Upgrading page.
-
-Make a high-level changes list based on the beta changelogs.
 
 grid_demo: usage message shows "__main__" rather than package.module.

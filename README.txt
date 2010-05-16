@@ -3,8 +3,8 @@ WebHelpers
 
 WebHelpers provides functions useful in web applications: generating HTML tags,
 showing results a pageful at a time, etc.  It may be used with any web
-framework or template engine.  A brief summary of the module layout is below;
-see the docstrings in the source for documentation.
+framework or template engine.  A brief outline is below, but see the
+documentation and module docstrings for a more complete list.
 
 ``constants``
     Country codes, states and provinces.
@@ -60,10 +60,6 @@ see the docstrings in the source for documentation.
     (request, response, session, etc) or other aspects of Pylons and its
     dependencies.  Most can be ported to other frameworks with little effort.
     
-``string24``
-    The ``string`` module from Python 2.4.  Useful if you're running on
-    Python 2.3.
-
 ``tags``
     Helpers producing simple HTML tags.
 
