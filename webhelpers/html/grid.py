@@ -237,8 +237,13 @@ of dicts, and a single dict.
             return HTML.tag("td", header_label, class_=class_name)
 
 
-class GridSqlalchemy(Grid):
-    """ This grid will work well with sqlalchemy row instances """
+class ObjectGrid(Grid):
+    """ A grid class for a sequence of objects.
+    
+    This grid class assumes that the rows are objects rather than dicts, and
+    uses attribute access to retrieve the column values. It works well with
+    SQLAlchemy ORM instances.
+    """
     def default_column_format(self, column_number, i, record, column_name):
         class_name = "c%s" % (column_number)
         return HTML.tag("td", getattr(record, column_name), class_=class_name)
