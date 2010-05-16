@@ -11,6 +11,6 @@ Sphinx
 # Optional enhancement for certain helpers
 Unidecode
 
-# Required by pylons.media.get_dimensions_pil()
-# (To avoid installing this, use pylons.media.get_dimensions() instead.)
+# Required by webhelpers.media.get_dimensions_pil()
+# (To avoid installing this, use webhelpers.media.get_dimensions() instead.)
 #Imaging
