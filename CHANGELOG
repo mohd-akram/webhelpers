@@ -16,6 +16,11 @@ tip (development version)
 
   - New function ``deprecate``.
 
+* webhelpers.paginate:
+
+ - Don't allow extra positional args in constructor. The implementation does
+   nothing with them, so it shouldn't allow them.
+
 * webhelpers.pylonslib.flash:
 
   - New argument ``ignore_duplicate`` to prevent adding the same message
