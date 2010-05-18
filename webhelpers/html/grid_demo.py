@@ -11,7 +11,7 @@ import os
 import urllib
 
 from webhelpers.html import *
-from webhelpers.html.grid import Grid
+from webhelpers.html.grid import *
 from webhelpers.html.tags import link_to
 from webhelpers.misc import subclasses_only
 # XXX You may find other helpers in webhelpers.html.tags useful too
@@ -236,7 +236,6 @@ This table shows a grid with order starting from 10."""
                  )
         return g
 
-
 class OrderingDirectionHeaderAwareDemo(_DemoBase):
     name = "OrderDirectionHeaderAwareDemo"
     description = """\
@@ -254,6 +253,27 @@ Options column has sorting set to "asc" """
         #enable ordering support
         g.exclude_ordering = []
         return g
+    
+    
+list_data = [
+             [1,'a',3,'c',5],
+             [11,'aa',33,'cc',55],
+             [111,'aaa',333,'ccc',555]
+             ]
+    
+class ListDemo(_DemoBase):
+    name = "List grid demo"
+    description = """\
+This table shows a basic grid generated from lists - it has customized order of columns."""
+
+    def get_grid(self):
+        """
+        basic demo
+        """
+        
+        g = ListGrid(list_data, columns=['1', '3', '2', '0'])
+        return g
+    
 demos = subclasses_only(_DemoBase, globals())
 
 #demos = [BasicDemo, CustomColumnDemo]
