@@ -247,3 +247,17 @@ class ObjectGrid(Grid):
     def default_column_format(self, column_number, i, record, column_name):
         class_name = "c%s" % (column_number)
         return HTML.tag("td", getattr(record, column_name), class_=class_name)
+
+class ListGrid(Grid):
+    """ A grid class for a sequence of lists.
+    
+    This grid class assumes that the rows are lists rather than dicts, and
+    uses attribute access to retrieve the column values.
+    The columns attribute during init MUST specify list indices as strings 
+    like this: grid = ListGrid(list_data, columns=['1', '3', '2', '0']) 
+    
+    """
+    
+    def default_column_format(self, column_number, i, record, column_name):
+        class_name = "c%s" % (column_number)
+        return HTML.tag("td", record[int(column_name)], class_=class_name)
