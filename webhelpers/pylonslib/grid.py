@@ -30,11 +30,9 @@ class PylonsGrid(grid.Grid):
         """ 
         from pylons import url
         # this will handle possible URL generation
-        request_copy = dict(self.request.copy().GET)
-        if not self.order_column: 
-            self.order_column = request_copy.pop("order_col", None)
-        if not self.order_dir:
-            self.order_dir = request_copy.pop("order_dir", 'asc')
+        request_copy = dict(self.request.copy().GET) 
+        self.order_column = request_copy.pop("order_col", None)
+        self.order_dir = request_copy.pop("order_dir", None)
         
         if column == self.order_column and self.order_dir == "asc":
             new_order_dir = "dsc"
