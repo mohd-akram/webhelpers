@@ -19,7 +19,7 @@ class PylonsGrid(grid.Grid):
     
     def __init__(self, request, *args, **kw):
         self.request = request
-        super(GridPylons, self).__init__(*args, **kw)
+        super(PylonsGrid, self).__init__(*args, **kw)
     
     def generate_header_link(self, column_number, column, label_text):
         """ This handles generation of link and then decides to call
