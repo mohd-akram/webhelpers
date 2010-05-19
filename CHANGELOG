@@ -4,7 +4,10 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
-No changes yet.
+* webhelpers.misc:
+
+ - New ``format_exception`` helper to display an exception as Python would but
+   without the traceback.
 
 1.0b7 (2010-05-16)
 ------------------
