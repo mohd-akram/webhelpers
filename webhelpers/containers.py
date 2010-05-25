@@ -320,7 +320,7 @@ def ordered_items(dic, key_order, other_keys=True, default=NotGiven):
             yield key, value
 
 def get_many(d, required=None, optional=None, one_of=None):
-    """Return a predictable number of dict values to handle optional keys.
+    """Extract values from a dict for unpacking into simple variables.
 
     ``d`` is a dict.
 
