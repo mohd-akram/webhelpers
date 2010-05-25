@@ -252,12 +252,37 @@ class ListGrid(Grid):
     """ A grid class for a sequence of lists.
     
     This grid class assumes that the rows are lists rather than dicts, and
-    uses attribute access to retrieve the column values.
-    The columns attribute during init MUST specify list indices as strings 
-    like this: grid = ListGrid(list_data, columns=['1', '3', '2', '0']) 
+    uses subscript access to retrieve the column values. Some constructor args
+    are also different.
+
+    If ``columns`` is not specified in the constructor, it will examine 
+    ``itemlist[0]`` to determine the number of columns, and display them in
+    order.  This works only if ``itemlist`` is a sequence and not just an
+    iterable.  Alternatively, you can pass an int to specify the number of
+    columns, or a list of int subscripts to override the column order.
+    Examples::
+    
+        grid = ListGrid(list_data)
+        grid = ListGrid(list_data, columns=4)
+        grid = ListGrid(list_data, columns=[1, 3, 2, 0]) 
+
+    ``column_labels`` may be a list of strings. The class will calculate the
+    appropriate subscripts for the superclass dict.
     
     """
-    
+    def __init__(self, itemlist, columns=None, column_labels=None, *args, **kw):
+        if columns is None:
+            columns = range(len(itemlist[0]))
+        elif isinstance(columns, int):
+            columns = range(columns)
+        # The superclass requires the ``columns`` elements to be strings.
+        super_columns = [str(x) for x in columns]
+        # The superclass requires ``column_labels`` to be a dict.
+        super_labels = column_labels
+        if isinstance(column_labels, (list, tuple)):
+            super_labels = dict(zip(super_columns, column_labels))
+        Grid.__init__(self, itemlist, super_columns, super_labels, *args, **kw)
+  
     def default_column_format(self, column_number, i, record, column_name):
         class_name = "c%s" % (column_number)
         return HTML.tag("td", record[int(column_name)], class_=class_name)

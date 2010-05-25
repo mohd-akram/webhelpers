@@ -271,7 +271,8 @@ This table shows a basic grid generated from lists - it has customized order of 
         basic demo
         """
         
-        g = ListGrid(list_data, columns=['1', '3', '2', '0'])
+        g = ListGrid(list_data, columns=[1, 3, 2, 0],
+            column_labels=["One", "Three", "Two", "Zero"])
         return g
     
 demos = subclasses_only(_DemoBase, globals())

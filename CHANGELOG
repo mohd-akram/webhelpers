@@ -4,6 +4,11 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
+* webhelpers.html.grid  / webhelpers.pylonslib.grid:
+
+ - A new ``ListGrid`` class to turn a list of lists into a table.
+ - Bugfixes by Ergo.
+
 * webhelpers.misc:
 
  - New ``format_exception`` helper to display an exception as Python would but
