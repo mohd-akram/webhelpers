@@ -4,6 +4,12 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
+* webhelpers.containers:
+
+ - ``get_many()``: Extract several values from a dict to unpack into simple
+   variables, allowing optional keys while still returning values in a 
+   predictable order. Contributed by Shazow.
+
 * webhelpers.feedgenerator:
 
  - Allow ``RssFeed`` base class to be instantiated. However, it sets the RSS
