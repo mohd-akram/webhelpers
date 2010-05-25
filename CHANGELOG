@@ -25,6 +25,11 @@ tip (development version)
  - New ``format_exception`` helper to display an exception as Python would but
    without the traceback.
 
+* webhelpers.number:
+
+  - Bugfix in format_data_size and derivatives if size <= 0. Found by
+    Marcin Kuzminski.
+
 1.0b7 (2010-05-16)
 ------------------
 
