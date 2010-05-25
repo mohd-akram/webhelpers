@@ -5,7 +5,7 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-version = '1.0b8'
+version = '1.0rc1'
 
 setup(
     name="WebHelpers",

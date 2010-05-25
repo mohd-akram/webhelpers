@@ -4,6 +4,12 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
+No changes yet.
+
+
+1.0rc1 (2010-05-24)
+-------------------
+
 * webhelpers.containers:
 
  - ``get_many()``: Extract several values from a dict to unpack into simple
