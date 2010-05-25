@@ -235,6 +235,7 @@ class Enclosure(object):
 
 class RssFeed(SyndicationFeed):
     mime_type = 'application/rss+xml'
+    _version = u"?"
     def write(self, outfile, encoding):
         handler = SimplerXMLGenerator(outfile, encoding)
         handler.startDocument()
