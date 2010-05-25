@@ -393,7 +393,10 @@ def format_data_size(size, unit, precision=1, binary=False, full_name=False):
         else:
             multiples = ('', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi')
             
-    m = int(math.log(size) / math.log(base))
+    if size <= 0:
+        m = 0
+    else:
+        m = int(math.log(size) / math.log(base))
     if m > 8:
         m = 8
 
