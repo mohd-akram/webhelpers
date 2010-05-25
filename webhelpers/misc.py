@@ -2,6 +2,7 @@
 """
 
 import itertools
+import traceback
 import types
 import warnings
 
@@ -204,6 +205,23 @@ class OverwriteError(Exception):
         message %= (filename,)
         Exception.__init__(self, message)
         self.filename = filename
+
+def format_exception(exc=None):
+    """Format the exception type and value for display, without the traceback.
+
+    This is the function you always wished were in the ``traceback`` module but
+    isn't. It's *different* from ``traceback.format_exception``, which includes
+    the traceback, returns a list of lines, and has a trailing newline.
+
+    If you don't provide an exception object as an argument, it will call
+    ``sys.exc_info()`` to get the current exception.
+    """
+    if exc:
+        exc_type = type(exc)
+    else:
+        exc_type, exc = sys.exc_info()[:2]
+    lines = traceback.format_exception_only(exc_type, exc)
+    return "".join(lines).rstrip()
 
 def deprecate(message, pending=False, stacklevel=2):
     """Issue a deprecation warning.
