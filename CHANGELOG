@@ -4,37 +4,18 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
-No changes yet.
+* webhelpers.html.tags:
 
-
-1.0rc1 (2010-05-24)
--------------------
-
-* webhelpers.containers:
-
- - ``get_many()``: Extract several values from a dict to unpack into simple
-   variables, allowing optional keys while still returning values in a 
-   predictable order. Contributed by Shazow.
-
-* webhelpers.feedgenerator:
-
- - Allow ``RssFeed`` base class to be instantiated. However, it sets the RSS
-   version attribute to "?", which is probably invalid.
-
-* webhelpers.html.grid  / webhelpers.pylonslib.grid:
-
- - A new ``ListGrid`` class to turn a list of lists into a table.
- - Bugfixes by Ergo.
+ - Change 'id' argument to all helpers. The default value is now NotGiven
+   rather than None. NotGiven tells WebHelpers to create an ID attribute based 
+   on the field name (formerly None did this). None suppresses the ID attribute
+   entirely (formerly "" did this, and still does for backward compatibility).
+   This behavior of None is consistent with other parts of WebHelpers.
 
 * webhelpers.misc:
 
  - New ``format_exception`` helper to display an exception as Python would but
    without the traceback.
-
-* webhelpers.number:
-
-  - Bugfix in format_data_size and derivatives if size <= 0. Found by
-    Marcin Kuzminski.
 
 1.0b7 (2010-05-16)
 ------------------

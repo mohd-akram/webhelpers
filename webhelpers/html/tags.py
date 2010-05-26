@@ -6,7 +6,7 @@ especially important for attributes that are identical to Python keywords;
 e.g., ``class_``.  Some helpers handle certain keywords specially; these are
 noted in the helpers' docstrings.
 
-to create your own custom tags, see ``webhelpers.html.builder``.
+To create your own custom tags, see ``webhelpers.html.builder``.
 
 A set of CSS styles complementing these helpers is in
 ``webhelpers/public/stylesheets/webhelpers.css``.
@@ -22,6 +22,7 @@ import urlparse
 from webhelpers import containers
 from webhelpers.html import escape, HTML, literal, url_escape
 import webhelpers.media as media
+from webhelpers.misc import NotGiven
 
 __all__ = [
            # Form tags
@@ -128,14 +129,14 @@ def end_form():
     return literal("</form>")
 
 
-def text(name, value=None, id=None, **attrs):
+def text(name, value=None, id=NotGiven, **attrs):
     """Create a standard text field.
     
     ``value`` is a string, the content of the text field.
 
     ``id`` is the HTML ID attribute, and should be passed as a keyword
     argument.  By default the ID is the same as the name filtered through
-    ``_make_safe_id_component()``.  Pass the empty string ("") to suppress the
+    ``_make_safe_id_component()``.  Pass None to suppress the
     ID attribute entirely.
 
     
@@ -157,7 +158,7 @@ def text(name, value=None, id=None, **attrs):
     return HTML.input(**attrs)
 
 
-def hidden(name, value=None, id=None, **attrs):
+def hidden(name, value=None, id=NotGiven, **attrs):
     """Create a hidden field.
     """
     _set_input_attrs(attrs, "hidden", name, value)
@@ -165,7 +166,7 @@ def hidden(name, value=None, id=None, **attrs):
     return HTML.input(**attrs)
 
 
-def file(name, value=None, id=None, **attrs):
+def file(name, value=None, id=NotGiven, **attrs):
     """Create a file upload field.
     
     If you are using file uploads then you will also need to set the 
@@ -182,7 +183,7 @@ def file(name, value=None, id=None, **attrs):
     return HTML.input(**attrs)
 
 
-def password(name, value=None, id=None, **attrs):
+def password(name, value=None, id=NotGiven, **attrs):
     """Create a password field.
     
     Takes the same options as ``text()``.
@@ -193,7 +194,7 @@ def password(name, value=None, id=None, **attrs):
     return HTML.input(**attrs)
 
 
-def textarea(name, content="", id=None, **attrs):
+def textarea(name, content="", id=NotGiven, **attrs):
     """Create a text input area.
     
     Example::
@@ -207,7 +208,7 @@ def textarea(name, content="", id=None, **attrs):
     return HTML.textarea(content, **attrs)
 
 
-def checkbox(name, value="1", checked=False, label=None, id=None, **attrs):
+def checkbox(name, value="1", checked=False, label=None, id=NotGiven, **attrs):
     """Create a check box.
 
     Arguments:
@@ -221,7 +222,7 @@ def checkbox(name, value="1", checked=False, label=None, id=None, **attrs):
 
     ``id`` is the HTML ID attribute, and should be passed as a keyword
     argument.  By default the ID is the same as the name filtered through
-    ``_make_safe_id_component()``.  Pass the empty string ("") to suppress the
+    ``_make_safe_id_component()``.  Pass None to suppress the
     ID attribute entirely.
 
     The following HTML attributes may be set by keyword argument:
@@ -279,14 +280,14 @@ def radio(name, value, checked=False, label=None, **attrs):
     return widget
 
 
-def submit(name, value, id=None, **attrs):
+def submit(name, value, id=NotGiven, **attrs):
     """Create a submit button with the text ``value`` as the caption."""
     _set_input_attrs(attrs, "submit", name, value)
     _set_id_attr(attrs, id, name)
     return HTML.input(**attrs)
 
 
-def select(name, selected_values, options, id=None, **attrs):
+def select(name, selected_values, options, id=NotGiven, **attrs):
     """Create a dropdown selection box.
 
     * ``name`` -- the name of this control.
@@ -303,7 +304,7 @@ def select(name, selected_values, options, id=None, **attrs):
 
     ``id`` is the HTML ID attribute, and should be passed as a keyword
     argument.  By default the ID is the same as the name.  filtered through
-    ``_make_safe_id_component()``.  Pass the empty string ("") to suppress the
+    ``_make_safe_id_component()``.  Pass None to suppress the
     ID attribute entirely.
 
 
@@ -1230,15 +1231,16 @@ def _set_input_attrs(attrs, type, name, value):
     attrs["name"] = name
     attrs["value"] = value
 
-def _set_id_attr(attrs, id, name):
-    if "id_" in attrs and id is not None:
-        raise TypeError("can't pass both 'id' and 'id_' arguments")
-    elif "id_" in attrs:
+def _set_id_attr(attrs, id_arg, name):
+    if "id_" in attrs:
+        if id_arg is not NotGiven:
+            raise TypeError("can't pass both 'id' and 'id_' args to helper")
         attrs["id"] = attrs.pop("id_")
-    elif id is None:
+    elif id_arg is NotGiven:
         attrs["id"] = _make_safe_id_component(name)
-    elif id != "":
-        attrs["id"] = id
+    elif id_arg is not None and id_arg != "":
+        attrs["id"] = id_arg
+    # Else id_arg is None or "", so do nothing.
 
 def _make_safe_id_component(idstring):
     """Make a string safe for including in an id attribute.
