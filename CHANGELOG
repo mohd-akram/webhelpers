@@ -6,11 +6,12 @@ tip (development version)
 
 * webhelpers.html.tags:
 
- - Change 'id' argument to all helpers. The default value is now NotGiven
-   rather than None. NotGiven tells WebHelpers to create an ID attribute based 
-   on the field name (formerly None did this). None suppresses the ID attribute
-   entirely (formerly "" did this, and still does for backward compatibility).
-   This behavior of None is consistent with other parts of WebHelpers.
+ - Change 'id' argument to all form field helpers. The default value is now
+   NotGiven rather than None. NotGiven tells WebHelpers to create an ID
+   attribute based on the field name (formerly None did this). None suppresses
+   the ID attribute entirely (formerly "" did this, and still does for backward
+   compatibility).  This behavior of None is consistent with other parts of
+   WebHelpers.
 
 * webhelpers.misc:
 
