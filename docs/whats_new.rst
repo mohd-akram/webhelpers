@@ -3,7 +3,7 @@ What's New in WebHelpers
 
 This is a high-level overview of recent changes. **Incompatible changes are
 in boldface;** these may require modifying your application.  See `Changelog
-<changes.html>`_ for the full changelog.
+<changelog.html>`_ for the full changelog.
 
 Version 1.0
 -----------
