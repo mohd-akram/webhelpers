@@ -34,11 +34,16 @@ class TestToolsHelper(WebHelpersTestCase):
             literal('http://www.pylonshq.com/contact;new?with=query&string=params'),
             literal('http://www.pylonshq.com/~minam/contact;new?with=query&string=params'),
             literal('http://en.wikipedia.org/wiki/Wikipedia:Today%27s_featured_picture_%28animation%29/January_20%2C_2007'),
-            literal('http://www.pylonshq.com/foo.cgi?date=01/01/01')
+            literal('http://www.pylonshq.com/foo.cgi?date=01/01/01'),
             ]
         for url in urls:
             self.assertEqual('<a href="%s">%s</a>' % (url, url),
                              auto_link(url))
+
+    def test_auto_link_with_brackets(self):
+        self.assertEqual(
+            '[<a href="http://www.example.com">http://www.example.com</a>]',
+            auto_link('[http://www.example.com]'))
 
     def test_auto_linking(self):
         raw_values = {

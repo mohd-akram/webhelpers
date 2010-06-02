@@ -43,7 +43,7 @@ AUTO_LINK_RE = re.compile(r"""
                           (?:\?[\w\+\/%&=.;-]+)?     # query string
                           (?:\#[\w\-]*)?           # trailing anchor
                         )
-                        ([\.,"'?!;:]|\s|<|$)       # trailing text
+                        ([\.,"'?!;:]|\s|<|\]|$)       # trailing text
                            """, re.X)
 
 
