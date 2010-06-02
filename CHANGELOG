@@ -4,6 +4,11 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
+No changes yet.
+
+1.0 (2010-06-01)
+-----------------
+
 * webhelpers.html.tools:
 
  - Bugfix re URLs surrounded by [].  Bug #32.
