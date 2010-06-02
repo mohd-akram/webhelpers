@@ -5,7 +5,7 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-version = '1.0rc2'
+version = '1.0'
 
 setup(
     name="WebHelpers",
@@ -19,11 +19,10 @@ contains a large number of functions not specific to the web, including text
 processing, number formatting, date calculations, container objects, etc.
 
 WebHelpers does not have any dependencies; however, certain helpers depend on
-`Routes <http://routes.groovie.org/>`_ or other packages as described in the
-module docstrings.
+third-party packages as described in the docs.
 
 The development version of WebHelpers is at
-<http://bitbucket.org/bbangert/webhelpers>`_ (Mercurial)
+http://bitbucket.org/bbangert/webhelpers (Mercurial)
 
 """,
     author='Mike Orr, Ben Bangert, Phil Jenvey',
