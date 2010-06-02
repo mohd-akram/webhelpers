@@ -59,6 +59,9 @@
 # - "if geom is not None" syntax fix in ``GeoFeedMixin.get_georss_element()``.
 # - Add a ``Geometry`` class for passing geometries to the Geo classes.
 # - ``GeoFeedMixin`` docstring.
+# - Add a dummy version attribute to ``RssFeed`` base class. 
+#   ``RssFeed._version = # "?"`` This avoids AttributeError when instantiating
+#   ``RssFeed`` directly, although it's obviously invalid RSS.
 
 
 """
