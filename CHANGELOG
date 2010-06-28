@@ -4,7 +4,10 @@ WebHelpers ChangeLog
 tip (development version)
 -------------------------
 
-No changes yet.
+* webhelpers.paginate:
+
+  - Remove stray Routes import. (Other conditional Routes imports remain for
+    backward compatibility; see module docstring.)
 
 1.0 (2010-06-01)
 -----------------
