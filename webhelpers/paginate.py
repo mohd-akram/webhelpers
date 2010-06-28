@@ -791,7 +791,6 @@ class Page(list):
         text
             Text to be printed in the A-HREF tag
         """
-        from routes import url_for, request_config
         # Let the url_for() from webhelpers create a new link and set
         # the variable called 'page_param'. Example:
         # You are in '/foo/bar' (controller='foo', action='bar')
