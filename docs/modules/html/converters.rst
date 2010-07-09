@@ -11,8 +11,4 @@
 
 .. autofunction:: nl2br
 
-.. autofunction:: render
-
-.. autofunction:: sanitize
-
 .. autofunction:: textilize

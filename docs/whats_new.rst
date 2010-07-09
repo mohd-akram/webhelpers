@@ -56,13 +56,16 @@ readability.
 webhelpers.html.converters
 ++++++++++++++++++++++++++
 
-New helpers to render HTML to text, and to sanitize user input by stripping
-HTML tags.
-
 ``markdown()`` adds an argument to choose a Markdown implementation.
 The Markdown included in WebHelpers will remain at version 1.7, but Markdown
 2.x is available on PyPI, and a separate implementation confusingly called
 "Markdown2" is also available on PyPI.
+
+webhelpers.html.render
+++++++++++++++++++++++
+
+New helpers to render HTML to text, and to sanitize user input by stripping
+HTML tags.
 
 webhelpers.html.tags
 ++++++++++++++++++++
