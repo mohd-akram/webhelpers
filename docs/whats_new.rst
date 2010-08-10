@@ -5,6 +5,18 @@ This is a high-level overview of recent changes. **Incompatible changes are
 in boldface;** these may require modifying your application.  See `Changelog
 <changelog.html>`_ for the full changelog.
 
+Version 1.1
+-----------
+
+*webhelpers.pylonslib.minify*
+
+    **The ``_jsmin`` module was removed due to a licensing issue.** (Fedora
+    could not distribute it due to a non-free clause in the license.) **To
+    minify Javascript, you must install the external "jsmin" package from
+    PyPI.** Otherwise the helper will pass Javascript through unchanged
+    and issue a warning. CSS minification is not affected.
+
+
 Version 1.0
 -----------
 
