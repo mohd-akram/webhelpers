@@ -15,7 +15,9 @@ three additional arguments:
 
 Dependencies: ``Pylons``, ``Beaker``, ``jsmin``, and ``cssutils`` (all
 available in PyPI). If "jsmin" is not installed, the helper issues a warning
-and passes Javascript through unchanged.
+and passes Javascript through unchanged. (Changed in WebHelpers 1.1: removed
+built-in "_jsmin" package due to licensing issues; details in 
+webhelpers/pylonslib/_jsmin.py .)
 
 Contributed by Pedro Algarvio and Domen Kozar <ufs@ufsoft.org>.
 URL: http://docs.fubar.si/minwebhelpers/
