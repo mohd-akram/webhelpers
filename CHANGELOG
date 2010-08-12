@@ -1,13 +1,35 @@
 WebHelpers ChangeLog
 ====================
 
-tip (development version)
+1.2 (unreleased)
 -------------------------
+
+* WebHelpers now depends on MarkupSafe. ``literal`` and ``escape`` now use it.
+  
+* webhelpers.html.builder:
+
+  - ``literal`` and ``escape`` now use MarkupSafe, which has a C speedup for
+    escaping, escapes single-quotes for security, and adds new methods to
+    ``literal``. Compatibility should not be a problem; but see the docs if
+    you encounter any edge cases.
+
+1.1 (2010-08-09)
+----------------
 
 * webhelpers.paginate:
 
   - Remove stray Routes import. (Other conditional Routes imports remain for
     backward compatibility; see module docstring.)
+
+* webhelpers.pylonslib.minify:
+
+  - Remove _jsmin module due to licensing issues. Details are in
+    webhelpers/pylonslib/_jsmin.py .  You can install the "jsmin" package in
+    PyPI (which has the same license), and the helper will use it. If that
+    package is installed, the helper will use it.  Otherwise the helper will
+    emit a warning and leave the Javascript unchanged. CSS minification is not
+    affected.
+
 
 1.0 (2010-06-01)
 -----------------

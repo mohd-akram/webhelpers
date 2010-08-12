@@ -2,7 +2,7 @@
 
 from nose.tools import eq_
 
-from webhelpers.html import HTML
+from webhelpers.html import HTML, literal
 from webhelpers.html.tags import *
 
 from util import raises
@@ -169,13 +169,13 @@ class TestLinkHelper(object):
                link_to(None, HTML.literal("http://www.example.com?q1=v1&amp;q2=v2")))
     
     def test_link_tag_with_custom_onclick(self):
-        eq_(u"<a href=\"http://www.example.com\" onclick=\"alert('yay!')\">Hello</a>", 
+        eq_(u"<a href=\"http://www.example.com\" onclick=\"alert(&#39;yay!&#39;)\">Hello</a>", 
                link_to("Hello", "http://www.example.com", onclick="alert('yay!')"))
     
 
 class TestAssetTagHelper(object):
     def test_auto_discovery_link_tag(self):
-        eq_('<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />',
+        eq_(literal(u'<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />'),
                          auto_discovery_link('http://feed.com/feed.xml'))
         eq_('<link href="http://feed.com/feed.xml" rel="alternate" title="ATOM" type="application/atom+xml" />',
                          auto_discovery_link('http://feed.com/feed.xml', feed_type='atom'))
@@ -215,7 +215,7 @@ class TestAssetTagHelper(object):
                          javascript_link('/js/pngfix.js', defer=True))
 
     def test_stylesheet_link_tag(self):
-        eq_('<link href="/dir/file.css" media="all" rel="stylesheet" type="text/css" />',
+        eq_(literal(u'<link href="/dir/file.css" media="all" rel="stylesheet" type="text/css" />'),
                          stylesheet_link('/dir/file.css', media='all'))
         eq_('<link href="style.css" media="all" rel="stylesheet" type="text/css" />',
                          stylesheet_link('style.css', media='all'))

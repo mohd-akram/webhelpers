@@ -13,7 +13,11 @@ three additional arguments:
   reduce page load time.
 * **beaker_kwargs** (dict): arguments to pass to ``beaker_cache``.
 
-Dependencies: ``Pylons``, ``Beaker``, and ``cssutils`` (all available in PyPI).
+Dependencies: ``Pylons``, ``Beaker``, ``jsmin``, and ``cssutils`` (all
+available in PyPI). If "jsmin" is not installed, the helper issues a warning
+and passes Javascript through unchanged. (Changed in WebHelpers 1.1: removed
+built-in "_jsmin" package due to licensing issues; details in 
+webhelpers/pylonslib/_jsmin.py .)
 
 Contributed by Pedro Algarvio and Domen Kozar <ufs@ufsoft.org>.
 URL: http://docs.fubar.si/minwebhelpers/
@@ -23,10 +27,26 @@ import re
 import os
 import logging
 import StringIO
+import warnings
 
 from webhelpers.html.tags import javascript_link as __javascript_link
 from webhelpers.html.tags import stylesheet_link as __stylesheet_link
-from webhelpers.pylonslib._jsmin import JavascriptMinify
+
+try:
+    from jsmin import JavascriptMinify
+except ImportError:
+    class JavascriptMinify(object):
+        def minify(self, instream, outstream):
+            warnings.warn(JSMIN_MISSING_MESSAGE, UserWarning)
+            data = instream.read()
+            outstream.write(data)
+            instream.close()
+
+JSMIN_MISSING_MESSAGE = """\
+_jsmin has been removed from WebHelpers due to licensing issues
+Your Javascript code has been passed through unchanged.
+You can install the "jsmin" package from PyPI, and this helper will use it.
+"""
 
 
 __all__ = ['javascript_link', 'stylesheet_link']
