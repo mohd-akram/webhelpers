@@ -22,7 +22,7 @@ representation.
 
 WebHelpers 1.2 uses MarkupSafe, a package which provides an enhanced
 implementation of this protocol. Mako and Pylons have also switched to
-MarkupSafe. MarkupSafe advantages are a C speedup for escaping,
+MarkupSafe. Its advantages are a C speedup for escaping,
 escaping single-quotes for security, and adding new methods to
 ``literal``. **literal** is now a subclass of ``markupsafe.Markup``.
 **escape** is ``markupsafe.escape_silent``. (The latter does not exist yet in
