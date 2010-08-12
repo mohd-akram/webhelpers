@@ -10,8 +10,8 @@ Version 1.2
 
 *webhelpers.html*: The HTML builder now uses Armin Ronacher's
 "MarkupSafe" package, which Mako and Pylons have also switched to.  MarkupSafe
-has a C speedup for escaping, escapes single-quotes for greater security, and
-adds new methods to ``literal``.
+has a C speedup for escaping, escapes single-quotes for greater security (to
+close a potential XSS attack route), and adds new methods to ``literal``.
 
 * **literal** is now a subclass of ``markupsafe.Markup``
 
