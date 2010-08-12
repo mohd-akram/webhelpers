@@ -5,17 +5,29 @@ This is a high-level overview of recent changes. **Incompatible changes are
 in boldface;** these may require modifying your application.  See `Changelog
 <changelog.html>`_ for the full changelog.
 
+Version 1.2
+-----------
+
+*webhelpers.html*: The HTML builder now uses Armin Ronacher's
+"MarkupSafe" package, which Mako and Pylons have also switched to.  MarkupSafe
+has a C speedup for escaping, escapes single-quotes for greater security, and
+adds new methods to ``literal``.
+
+* **literal** is now a subclass of ``markupsafe.Markup``
+
+* **escape** is ``markupsafe.escape_silent``
+
+*Note*: ``escape_silent`` does not exist yet in MarkupSafe 0.9.3, but
+WebHelpers has a fallback. 
+
 Version 1.1
 -----------
 
-*webhelpers.pylonslib.minify*
-
-    **The ``_jsmin`` module was removed due to a licensing issue.** (Fedora
-    could not distribute it due to a non-free clause in the license.) **To
-    minify Javascript, you must install the external "jsmin" package from
-    PyPI.** Otherwise the helper will pass Javascript through unchanged
-    and issue a warning. CSS minification is not affected.
-
+*webhelpers.pylonslib.minify*: The Javascript minification code was removed
+due to a non-free license. **The helper now minifies Javascript only if the
+"jsmin" package is installed.**  Otherwise it issues a warning and leaves the
+Javascript unchanged. CSS minification is not affected. Details are in
+webhelpers/pylonslib/_minify.py .
 
 Version 1.0
 -----------

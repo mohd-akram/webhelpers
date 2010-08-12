@@ -8,8 +8,8 @@ HTML Builder provides:
 
 * a smart ``escape()`` function that preserves literals but
   escapes other strings that may accidentally contain markup characters ("<",
-  ">", "&") or malicious Javascript tags.  Escaped strings are returned as
-  literals to prevent them from being double-escaped later.
+  ">", "&", '"', "'") or malicious Javascript tags.  Escaped strings are
+  returned as literals to prevent them from being double-escaped later.
 
 ``literal`` is a subclass of ``unicode``, so it works with all string methods
 and expressions.  The only thing special about it is the ``.__html__`` method,
@@ -20,12 +20,34 @@ want to import ``literal`` (and this create a dependency on WebHelpers) can put
 an ``.__html__`` method in their own classes returning the desired HTML
 representation.
 
-When used in a mixed expression containing both literals and ordinary strings,
-``literal`` tries hard to escape the strings and return a literal.  However,
-this depends on which value has "control" of the expression.  ``literal`` seems
-to be able to take control with all combinations of the ``+`` operator, but
-with ``%`` and ``join`` it must be on the left side of the expression.  So
-these all work::
+WebHelpers 1.2 uses MarkupSafe, a package which provides an enhanced
+implementation of this protocol. Mako and Pylons have also switched to
+MarkupSafe. MarkupSafe advantages are a C speedup for escaping,
+escaping single-quotes for security, and adding new methods to
+``literal``. **literal** is now a subclass of ``markupsafe.Markup``.
+**escape** is ``markupsafe.escape_silent``. (The latter does not exist yet in
+MarkupSafe 0.9.3, but WebHelpers itself converts None to "" in the meantime). 
+
+Single-quote escaping affects HTML attributes that are written like this:
+*alt='Some text.'* rather than the normal *alt="Some text."*  If the text is a
+replaceable parameter whose value contains a single quote, the browser would
+think the value ends earlier than it does, thus enabling a potential cross-site
+scripting (XSS) attack. WebHelpers 1.0 and earlier escaped double quotes but
+not single quotes. MarkupSafe escapes both double and single quotes, preventing
+this sort of attack.
+
+MarkupSafe has some slight differences which should not cause compatibility
+issues but may in the following edge cases.  (A) The ``force`` argument to
+``escape()`` is gone. We doubt it was ever used. (B) The default encoding of
+``literal()`` is "ascii" instead of "utf-8". (C) Double quotes are escaped as
+"&#34;" instead of "&quot;". Single quotes are escaped as "&#39;". 
+
+When ``literal`` is used in a mixed expression containing both literals and
+ordinary strings, it tries hard to escape the strings and return a literal.
+However, this depends on which value has "control" of the expression.
+``literal`` seems to be able to take control with all combinations of the ``+``
+operator, but with ``%`` and ``join`` it must be on the left side of the
+expression.  So these all work::
 
     "A" + literal("B")
     literal(", ").join(["A", literal("B")])
@@ -136,12 +158,42 @@ abuse ``_closed=False`` to produce them.
 import re
 from urllib import quote as url_escape
 from UserDict import DictMixin
-try:
-    set
-except NameError:
-    from sets import Set as set
 
-from webhelpers.util import cgi_escape
+import markupsafe
+try:
+    from markupsafe import escape_silent as escape
+except ImportError:
+    def escape(s):
+        if s is None:
+            return EMPTY
+        return markupsafe.escape(s)
+
+class literal(markupsafe.Markup):
+    """Represents an HTML literal.
+    
+    This subclass of unicode has a ``.__html__()`` method that is 
+    detected by the ``escape()`` function.
+    
+    Also, if you add another string to this string, the other string 
+    will be quoted and you will get back another literal object.  Also
+    ``literal(...) % obj`` will quote any value(s) from ``obj``.  If
+    you do something like ``literal(...) + literal(...)``, neither
+    string will be changed because ``escape(literal(...))`` doesn't
+    change the original literal.
+
+    Changed in WebHelpers 1.2: the implementation is now now a subclass of
+    ``markupsafe.Markup``.  This brings some new methods: ``.escape`` (class
+    method), ``.unescape``, and ``.striptags``.
+    
+    """
+    __slots__ = ()
+
+    @classmethod
+    def escape(cls, s):
+        if s is None:
+            return EMPTY
+        return super(literal, cls).escape(s)
+
 
 __all__ = ["HTML", "escape", "literal", "url_escape", "lit_sub"]
 
@@ -284,95 +336,6 @@ def format_attrs(**attrs):
         if value is not None]
     return literal("".join(strings))
 
-class literal(unicode):
-    """Represents an HTML literal.
-    
-    This subclass of unicode has a ``.__html__()`` method that is 
-    detected by the ``escape()`` function.
-    
-    Also, if you add another string to this string, the other string 
-    will be quoted and you will get back another literal object.  Also
-    ``literal(...) % obj`` will quote any value(s) from ``obj``.  If
-    you do something like ``literal(...) + literal(...)``, neither
-    string will be changed because ``escape(literal(...))`` doesn't
-    change the original literal.
-    
-    """
-    def __new__(cls, string='', encoding='utf-8', errors="strict"):
-        """Create the new literal string object."""
-        if isinstance(string, unicode):
-            obj = unicode.__new__(cls, string)
-        else:
-            obj = unicode.__new__(cls, string, encoding, errors)
-        obj.encoding = encoding
-        obj.error_mode = errors
-        return obj
-
-    def __str__(self):
-        return self.encode(self.encoding)
-
-    def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, unicode.__repr__(self))
-        
-    def __html__(self):
-        return self
-        
-    def __add__(self, other):
-        if hasattr(other, '__html__') or isinstance(other, basestring):
-            return self.__class__(unicode.__add__(self, escape(other)))
-        return NotImplemented
-        
-    def __radd__(self, other):
-        if hasattr(other, '__html__') or isinstance(other, basestring):
-            return self.__class__(unicode.__add__(escape(other), self))
-        return NotImplemented
-    
-    def __mul__(self, count):
-        return self.__class__(unicode.__mul__(self, count))
-    
-    def __mod__(self, obj):
-        if isinstance(obj, tuple):
-            escaped = [_EscapedItem(item, self.encoding,
-                                    self.error_mode) for item in obj]
-            return self.__class__(unicode.__mod__(self, tuple(escaped)))
-        else:
-            return self.__class__(unicode.__mod__(self, _EscapedItem(obj, self.encoding,
-                                                                     self.error_mode)))
-        
-    def join(self, items):
-        return self.__class__(unicode.join(self, ([escape(i) for i in items])))
-    
-    def split(self, *args, **kwargs):
-        return [literal(x) for x in unicode.split(self, *args, **kwargs)]
-
-    def rsplit(self, *args, **kwargs):
-        return [literal(x) for x in unicode.rsplit(self, *args, **kwargs)]
-    
-    def splitlines(self, *args, **kwargs):
-        return [literal(x) for x in unicode.splitlines(self, *args, **kwargs)]
-
-
-# Yes, this is rather sucky, but I really don't want to write all these
-# damn methods, so we write in all the appropriate literal results of these
-# functions on module load
-for k in dir(literal):
-    if k in ['__getslice__', '__getitem__', 'capitalize', 'center', 
-             'expandtabs', 'ljust', 'lower', 'lstrip', 'partition',
-             'replace', 'rjust', 'rpartition', 'rstrip', 'strip',
-             'swapcase', 'title', 'translate', 'upper', 'zfill']:
-        def wrapper(func):
-            def entangle(*args, **kwargs):
-                return literal(func(*args, **kwargs))
-            try:
-                entangle.__name__ = func.__name__
-            except TypeError:
-                # < Python 2.4 
-                pass
-            entangle.__doc__ = func.__doc__
-            return entangle
-        fun = getattr(unicode, k)
-        setattr(literal, k, wrapper(fun))
-
 
 def lit_sub(*args, **kw):
     """Literal-safe version of re.sub.  If the string to be operated on is
@@ -388,76 +351,14 @@ def lit_sub(*args, **kw):
         return result
 
 
-def escape(val, force=False):
-    """Does HTML-escaping of a value.
-    
-    Objects with a ``.__html__()`` method will have that method called,
-    and the return value will *not* be quoted.  Thus objects with that
-    magic method can be used to represent HTML that should not be
-    quoted.
-    
-    As a special case, ``escape(None)`` returns ''
-    
-    If ``force`` is true, then it will always be quoted regardless of
-    ``__html__()``.
-    
-    """
-    if val is None:
-        return literal('')
-    elif not force and hasattr(val, '__html__'):
-        return literal(val.__html__())
-    elif isinstance(val, basestring):
-        return literal(cgi_escape(val, True))
-    else:
-        return literal(cgi_escape(unicode(val), True))
-
-class _EscapedItem(DictMixin):
-    
-    """Wrapper/helper for literal(...) % obj
-    
-    This quotes the object during string substitution, and if the
-    object is dictionary(-like) it will quote all the values in the
-    dictionary.
-    
-    """
-    
-    def __init__(self, obj, encoding, error_mode):
-        self.obj = obj
-        self.encoding = encoding
-        self.error_mode = error_mode
-        
-    def __getitem__(self, key):
-        return _EscapedItem(self.obj[key], self.encoding, self.error_mode)
-        
-    def __str__(self):
-        v = escape(self.obj)
-        if isinstance(v, unicode):
-            v = v.encode(self.encoding)
-        return v
-        
-    def __unicode__(self):
-        v = escape(self.obj)
-        if isinstance(v, str):
-            v = v.decode(self.encoding, self.error_mode)
-        return v
-    
-    def __int__(self):
-        return int(self.obj)
-    
-    def __float__(self):
-        return float(self.obj)
-    
-    def __repr__(self):
-        return escape(repr(self.obj))
-
-
-empty_tags = set("area base basefont br col frame hr img input isindex link meta param".split())
+empty_tags = set(["area", "base", "basefont", "br", "col", "frame", "hr",
+    "img", "input", "isindex", "link", "meta", "param"])
 
 HTML = HTMLBuilder()
 
 # Constants depending on ``literal()`` and/or ``HTML``.
-NL = literal("\n")
-EMPTY = literal("")
+NL = literal(u"\n")
+EMPTY = literal(u"")
 BR = HTML.br(_nl=True)
 _CDATA_START = literal(u"<![CDATA[") 
 _CDATA_END = literal(u"]]>")
