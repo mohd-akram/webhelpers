@@ -1,6 +1,7 @@
 """"Test webhelpers.paginate package."""
 import sys
 
+from nose.tools import eq_
 from routes import Mapper
 
 from webhelpers.paginate import Page
@@ -48,23 +49,23 @@ def test_many_pages():
     """Test that 100 items fit on seven 15-item pages."""
     items = range(100)
     page = Page(items, page=0, items_per_page=15, url=my_url_generator)
-    assert page.page == 1
-    assert page.first_item == 1
-    assert page.last_item == 15
-    assert page.first_page == 1
-    assert page.last_page == 7
+    eq_(page.page, 1)
+    eq_(page.first_item, 1)
+    eq_(page.last_item, 15)
+    eq_(page.first_page, 1)
+    eq_(page.last_page, 7)
     assert page.previous_page is None
-    assert page.next_page == 2
-    assert page.items_per_page == 15
-    assert page.item_count == 100
-    assert page.page_count == 7
-    assert page.pager() == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2">2</a> <a class="pager_link" href="/content?page=3">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7">7</a>'
-    assert page.pager(separator='_') == '<span class="pager_curpage">1</span>_<a class="pager_link" href="/content?page=2">2</a>_<a class="pager_link" href="/content?page=3">3</a>_<span class="pager_dotdot">..</span>_<a class="pager_link" href="/content?page=7">7</a>'
-    assert page.pager(page_param='xy') == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?xy=2">2</a> <a class="pager_link" href="/content?xy=3">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?xy=7">7</a>'
-    assert page.pager(link_attr={'style':'s1'}, curpage_attr={'style':'s2'}, dotdot_attr={'style':'s3'}) == '<span style="s2">1</span> <a href="/content?page=2" style="s1">2</a> <a href="/content?page=3" style="s1">3</a> <span style="s3">..</span> <a href="/content?page=7" style="s1">7</a>'
-    assert page.pager(onclick="empty") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="empty">2</a> <a class="pager_link" href="/content?page=3" onclick="empty">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="empty">7</a>'
-    assert page.pager(onclick="load('$page')") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(\'2\')">2</a> <a class="pager_link" href="/content?page=3" onclick="load(\'3\')">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(\'7\')">7</a>'
+    eq_(page.next_page, 2)
+    eq_(page.items_per_page, 15)
+    eq_(page.item_count, 100)
+    eq_(page.page_count, 7)
+    eq_(page.pager(), '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2">2</a> <a class="pager_link" href="/content?page=3">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7">7</a>')
+    eq_(page.pager(separator='_'), '<span class="pager_curpage">1</span>_<a class="pager_link" href="/content?page=2">2</a>_<a class="pager_link" href="/content?page=3">3</a>_<span class="pager_dotdot">..</span>_<a class="pager_link" href="/content?page=7">7</a>')
+    eq_(page.pager(page_param='xy'), '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?xy=2">2</a> <a class="pager_link" href="/content?xy=3">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?xy=7">7</a>')
+    eq_(page.pager(link_attr={'style':'s1'}, curpage_attr={'style':'s2'}, dotdot_attr={'style':'s3'}), '<span style="s2">1</span> <a href="/content?page=2" style="s1">2</a> <a href="/content?page=3" style="s1">3</a> <span style="s3">..</span> <a href="/content?page=7" style="s1">7</a>')
+    eq_(page.pager(onclick="empty"), '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="empty">2</a> <a class="pager_link" href="/content?page=3" onclick="empty">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="empty">7</a>')
+    eq_(page.pager(onclick="load('$page')"), '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(&#39;2&#39;)">2</a> <a class="pager_link" href="/content?page=3" onclick="load(&#39;3&#39;)">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(&#39;7&#39;)">7</a>')
     if not sys.platform.startswith('java'):
         # XXX: these assume dict ordering
-        assert page.pager(onclick="load('%s')") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(\'/content?partial=1&amp;page=2\')">2</a> <a class="pager_link" href="/content?page=3" onclick="load(\'/content?partial=1&amp;page=3\')">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(\'/content?partial=1&amp;page=7\')">7</a>'
-        assert page.pager(onclick="load('$partial_url')") == '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(\'/content?partial=1&amp;page=2\')">2</a> <a class="pager_link" href="/content?page=3" onclick="load(\'/content?partial=1&amp;page=3\')">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(\'/content?partial=1&amp;page=7\')">7</a>'
+        eq_(page.pager(onclick="load('%s')"), '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(&#39;/content?partial=1&amp;page=2&#39;)">2</a> <a class="pager_link" href="/content?page=3" onclick="load(&#39;/content?partial=1&amp;page=3&#39;)">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(&#39;/content?partial=1&amp;page=7&#39;)">7</a>')
+        eq_(page.pager(onclick="load('$partial_url')"), '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(&#39;/content?partial=1&amp;page=2&#39;)">2</a> <a class="pager_link" href="/content?page=3" onclick="load(&#39;/content?partial=1&amp;page=3&#39;)">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(&#39;/content?partial=1&amp;page=7&#39;)">7</a>')

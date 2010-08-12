@@ -4,7 +4,14 @@ WebHelpers ChangeLog
 1.2 (unreleased)
 -------------------------
 
-No changes yet.
+* WebHelpers now depends on MarkupSafe. ``literal`` and ``escape`` now use it.
+  
+* webhelpers.html.builder:
+
+  - ``literal`` and ``escape`` now use MarkupSafe, which has a C speedup for
+    escaping, escapes single-quotes for security, and adds new methods to
+    ``literal``. Compatibility should not be a problem; but see the docs if
+    you encounter any edge cases.
 
 1.1 (2010-08-09)
 ----------------
