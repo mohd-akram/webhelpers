@@ -21,6 +21,10 @@ WebHelpers ChangeLog
     helper, including the magic ``_method`` field. The IDs will clash if there
     are multiple forms on the page.
 
+* webhelpers.html.tools:
+
+  - Preserve case of "method" arg in ``button_to()`` for XHTML compatibility. 
+
 1.1 (2010-08-09)
 ----------------
 
