@@ -6,6 +6,7 @@ Helpers for filtering, formatting, and transforming strings.
 
 import re
 import textwrap
+import urllib
 
 from webhelpers.html.tools import strip_tags
 
@@ -267,10 +268,14 @@ def urlify(string):
 
     Based on Ruby's stringex package
     (http://github.com/rsl/stringex/tree/master)
+
+    Changed in WebHelpers 1.2: urlecode the result in case it contains special
+    characters like "?". 
     """
     s = remove_formatting(string).lower()
     s = replace_whitespace(s, '-')
-    return collapse(s, '-')
+    s = collapse(s, '-')
+    return urllib.quote(s)
 
 
 def remove_formatting(string):
