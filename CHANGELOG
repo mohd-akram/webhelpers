@@ -24,6 +24,7 @@ WebHelpers ChangeLog
 * webhelpers.html.tools:
 
   - Preserve case of "method" arg in ``button_to()`` for XHTML compatibility. 
+    Patch by transducer.
 
 1.1 (2010-08-09)
 ----------------
