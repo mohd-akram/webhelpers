@@ -84,7 +84,6 @@ def cgi_escape(s, quote=False):
     Changed in WebHelpers 1.2: escape single-quote as well as double-quote.
 
     """
-    # Called by webhelpers.html.builder
     if '&' in s:
         s = s.replace("&", "&amp;") # Must be done first!
     if '<' in s:
