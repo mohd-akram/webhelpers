@@ -133,7 +133,7 @@ def end_form():
     return literal("</form>")
 
 
-def text(name, value=None, id=NotGiven, **attrs):
+def text(name, value=None, id=NotGiven, type="text", **attrs):
     """Create a standard text field.
     
     ``value`` is a string, the content of the text field.
@@ -142,6 +142,10 @@ def text(name, value=None, id=NotGiven, **attrs):
     argument.  By default the ID is the same as the name filtered through
     ``_make_safe_id_component()``.  Pass None to suppress the
     ID attribute entirely.
+
+    ``type`` is the input field type, normally "text". You can override it
+    for HTML 5 input fields that don't have their own helper; e.g.,
+    "search", "email", "date".
 
     
     Options:
@@ -154,9 +158,19 @@ def text(name, value=None, id=NotGiven, **attrs):
         will allow the user to enter.
     
     The remaining keyword args will be standard HTML attributes for the tag.
+
+    Example, a text input field::
+
+        >>> text("address")
+        literal(u'<input id="address" name="address" type="text" />')
+
+    HTML 5 example, a color picker:
+
+        >>> text("color", type="color")
+        literal(u'<input id="color" name="color" type="color" />')
     
     """
-    _set_input_attrs(attrs, "text", name, value)
+    _set_input_attrs(attrs, type, name, value)
     _set_id_attr(attrs, id, name)
     convert_boolean_attrs(attrs, ["disabled"])
     return HTML.input(**attrs)
