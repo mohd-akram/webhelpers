@@ -26,6 +26,11 @@ WebHelpers ChangeLog
   - Preserve case of "method" arg in ``button_to()`` for XHTML compatibility. 
     Patch by transducer.
 
+* webhelpers.text:
+
+  - Urlencode ``urlify()`` return value in case it contains special
+    characters like "?". Reported by mcd34@gmail.com.
+
 1.1 (2010-08-09)
 ----------------
 
