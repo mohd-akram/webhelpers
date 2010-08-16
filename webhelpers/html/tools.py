@@ -77,7 +77,7 @@ def button_to(name, url='', **html_attrs):
     
         # inside of controller for "feeds"
         >> button_to("Edit", url(action='edit', id=3))
-        <form method="POST" action="/feeds/edit/3" class="button-to">
+        <form method="post" action="/feeds/edit/3" class="button-to">
         <div><input value="Edit" type="submit" /></div>
         </form>
     
@@ -112,6 +112,10 @@ def button_to(name, url='', **html_attrs):
         not in the middle of a run of text, nor can you place a form
         within another form.
         (Bottom line: Always validate your HTML before going public.)
+
+    Changed in WebHelpers 1.2: Preserve case of "method" arg for XHTML
+    compatibility. E.g., "POST" or "PUT" causes *method="POST"*; "post" or
+    "put" causes *method="post"*.
     
     """
     if html_attrs:
@@ -122,8 +126,14 @@ def button_to(name, url='', **html_attrs):
     if method.upper() in ['PUT', 'DELETE']:
         method_tag = HTML.input(
             type='hidden', id='_method', name_='_method', value=method)
-    
-    form_method = (method.upper() == 'GET' and method) or 'POST'
+  
+    if method.upper() in ('GET', 'POST'):
+        form_method = method
+    elif method in ('put', 'delete'):
+        # preserve lowercasing of verb
+        form_method = 'post'
+    else:
+        form_method = 'POST'
     
     url, name = url, name or url
     
