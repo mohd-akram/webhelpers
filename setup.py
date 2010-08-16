@@ -5,7 +5,7 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-version = '1.0.1'
+version = '1.2'
 
 setup(
     name="WebHelpers",
@@ -32,10 +32,12 @@ http://bitbucket.org/bbangert/webhelpers (Mercurial)
     zip_safe=False,
     include_package_data=True,
     install_requires=[
+        'MarkupSafe>=0.9.2',
         ],
     tests_require=[ 
-      'nose',
-      'routes'
+      'Nose',
+      'Routes'
+      'WebOb',
       ], 
     test_suite='nose.collector',
     classifiers=["Development Status :: 4 - Beta",

@@ -155,7 +155,7 @@ class TestURLHelper(WebHelpersTestCase):
     def test_button_to_with_method_delete(self):
         self.assertEqual(u"<form action=\"http://www.example.com\" class=\"button-to\" method=\"POST\"><div><input id=\"_method\" name=\"_method\" type=\"hidden\" value=\"DELETE\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
             button_to("Hello", "http://www.example.com", method='DELETE'))
-        self.assertEqual(u"<form action=\"http://www.example.com\" class=\"button-to\" method=\"POST\"><div><input id=\"_method\" name=\"_method\" type=\"hidden\" value=\"delete\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
+        self.assertEqual(u"<form action=\"http://www.example.com\" class=\"button-to\" method=\"post\"><div><input id=\"_method\" name=\"_method\" type=\"hidden\" value=\"delete\" /><input type=\"submit\" value=\"Hello\" /></div></form>", 
             button_to("Hello", "http://www.example.com", method='delete'))
 
     def test_button_to_with_method_get(self):

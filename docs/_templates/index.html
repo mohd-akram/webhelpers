@@ -8,10 +8,13 @@ style="float:left; margin-right:1em" />
   
 <p>WebHelpers is a wide variety of utility functions for web applications and
 other applications. It can be used with any web framework.  <strong>Version
-1.0</strong> was released 2009-06-01, and contains many enhancements compared
-to 0.6.4 while remaining compatible.  See <a href="whats_new.html">What's
-New</a> for a list of changes in 1.0 and upgrading hints.  (The helpers
+1.2</strong> was released 2010-08-XX.  See <a href="{{ pathto('whats_new') }}">What's
+New</a> for a list of changes and upgrading hints.  (The helpers
 deprecated in 0.6 are removed in 1.0, including the entire rails suite.)</p>
+
+<p><strong>Security update in version 1.2:</strong> addresses a potential XSS
+attack; all users are recommended to upgrade. More in
+<a href="{{ pathto('whats_new') }}">What's New</a>.</p>
 
 <p>WebHelpers includes the widely-used HTML tag builder with smart escaping and
 convenience functions for common tags such as form fields. The common builder
@@ -24,8 +27,8 @@ calculate numerica statistics, and more.  There are also high-level container
 types, including a value counter and accumulator.  There are lists of country
 names, country codes, US states, Canadian provinces, and UK counties.</p>
 
-<p>WebHelpers is pure Python and has no dependencies.  However, a few
-helpers depend on 
+<p>WebHelpers itself depends only on MarkupSafe, which has an optional C
+speedup for HTML escaping. However, a few individual helpers depend on 
 <a href="http://routes.groovie.org/">Routes</a>, 
 <a href="http://python.org/pypi/Unidecode/">unidecode</a>, 
 <a href="http://pythonpaste.org/webob/">WebOb</a>, or
