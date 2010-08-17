@@ -18,17 +18,17 @@ except ImportError:   # Python < 2.6
     from cgi import parse_qs
 
 
-def update_params(url, **params):
+def update_params(_url, _debug=False, **params):
     """Update query parameters in a URL.
 
-    ``url`` is any URL.
-    ``params`` are query parameters to add or replace. If any value is None,
-    the corresponding parameter is deleted from the URL if present.
+    ``_url`` is any URL, with or without a query string.
+
+    ``\*\*params`` are query parameters to add or replace. Each value may be a
+    string, a list of strings, or None. Passing a list generates multiple
+    values for the same parameter. Passing None deletes the corresponding
+    parameter if present.
 
     Return the new URL.
-
-    This function does not handle multiple parameters with the same name.
-    It will arbitrarily choose one value and discard the others.
 
     *Debug mode:* if a pseudo-parameter ``_debug=True`` is passed,
     return a tuple: ``[0]`` is the URL without query string or fragment,
@@ -47,11 +47,13 @@ def update_params(url, **params):
     'http://example.com/foo?new1=NEW1#myfrag'
     >>> update_params("http://example.com/foo?new1=OLD1#myfrag", new1="NEW1", _debug=True)
     ('http://example.com/foo', {'new1': 'NEW1'}, 'myfrag')
+    >>> update_params("http://www.mau.de?foo=2", brrr=3)
+    'http://www.mau.de?foo=2&brrr=3'
+    >>> update_params("http://www.mau.de?foo=A&foo=B", foo=["C", "D"])
+    'http://www.mau.de?foo=C&foo=D'
 
     """
-    debug = params.pop("_debug", False)
-    orig_url = url
-    url, fragment = urlparse.urldefrag(url)
+    url, fragment = urlparse.urldefrag(_url)
     if "?" in url:
         url, qs = url.split("?", 1)
         query = parse_qs(qs)
@@ -62,9 +64,9 @@ def update_params(url, **params):
             query[key] = value
         elif key in query:
             del query[key]
-    if debug:
+    if _debug:
         return url, query, fragment
-    qs = urllib.urlencode(query)
+    qs = urllib.urlencode(query, True)
     if qs:
         qs = "?" + qs
     if fragment:
