@@ -33,13 +33,13 @@ WebHelpers ChangeLog
 
 * webhelpers.text:
 
-  - Urlencode ``urlify()`` return value in case it contains special
+  - Urlencode ``urlify`` return value in case it contains special
     characters like "?". Reported by mcd34@gmail.com.
 
 * webhelpers.util:
 
-  - Fix bug in handling existing query strings. Support multiple values per
-    parameter.
+  - Fix bug in ``update_params`` in handling existing query strings. Support
+    multiple values per parameter.
 
 1.1 (2010-08-09)
 ----------------
