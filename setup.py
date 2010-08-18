@@ -18,7 +18,7 @@ Pylons and TurboGears 2, but can be used with any web framework.  It also
 contains a large number of functions not specific to the web, including text
 processing, number formatting, date calculations, container objects, etc.
 
-WebHelpers does not have any dependencies; however, certain helpers depend on
+WebHelpers itself depends only on MarkupSafe, but certain helpers depend on
 third-party packages as described in the docs.
 
 The development version of WebHelpers is at
