@@ -4,7 +4,7 @@ WebHelpers ChangeLog
 1.3 (unreleased)
 ----------------
 
-*No changes yet.*
+* Some ``webhelpers.misc`` helpers were missing from the docs.
 
 1.2 (2010-08-18)
 ----------------
