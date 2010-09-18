@@ -4,7 +4,10 @@ WebHelpers ChangeLog
 1.3 (unreleased)
 ----------------
 
-*No changes yet.*
+* webhelpers.paginate:
+
+  - Support page parameter in the route path (e.g., "/help/page5") when using
+    Routes explicit mode without a URL generator.
 
 1.2 (2010-08-18)
 ----------------

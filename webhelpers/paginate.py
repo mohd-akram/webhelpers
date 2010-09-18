@@ -825,7 +825,8 @@ class Page(list):
                     if config.mapper.explicit:
                         if hasattr(config, 'mapper_dict'):
                             for k, v in config.mapper_dict.items():
-                                link_params[k] = v
+                                if k != self.page_param:
+                                    link_params[k] = v
 
         # Create the URL to load a certain page
         link_url = url_generator(**link_params)
