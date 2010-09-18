@@ -126,7 +126,7 @@ Examples::
 
     # Example 4: a smarter callback that uses ``update_params``, which converts
     # keyword args to query parameters.
-    from webhelpers.tools import update_params
+    from webhelpers.util import update_params
     def get_page_url(**kw):
         return update_params("/content", **kw)
     page = Page(MY_COLLECTION, url=get_page_url)
