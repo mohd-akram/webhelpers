@@ -42,3 +42,7 @@ class TestTextHelper(WebHelpersTestCase):
         eq_(control, strip_leading_whitespace(s))
 
     # @@MO wrap_paragraphs untested.
+
+    def test_urlify(self):
+        s = "What is this? It is a car."
+        control = "What%20is%20this%3f%20It%20is%20a%20car."
