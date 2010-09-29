@@ -141,7 +141,7 @@ def distance_of_time_in_words(from_time, to_time=0, granularity="second",
     
     carry_over = [('month', 'year', granularity_size['month']),
                   ('year', 'decade', granularity_size['year']),
-                  ('decade', 'centry', granularity_size['decade'])]
+                  ('decade', 'century', granularity_size['decade'])]
     
     _process_carryover(deltas, carry_over)
     

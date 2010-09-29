@@ -153,7 +153,7 @@ The needed CSS is very simple:
         -webkit-box-shadow: 0 0 5px silver;
     }
 
-Choosing different colours for the categories is left as an exersise
+Choosing different colours for the categories is left as an exercise
 for the reader.
 
 Next we create the javascript that will manage the needed behaviour (this
@@ -198,7 +198,7 @@ will pop up a new message.
 JSON integration
 ----------------
 
-It is not unusal to perform a remote task using a JSON call and show a
+It is not unusual to perform a remote task using a JSON call and show a
 result message to the user. This can easily be done using a simple wrapper
 around the ShowMessage method::
 
@@ -250,7 +250,7 @@ it yourself as well, for example::
    </script>
 
 This sets up a simple form which can be submitted normally by non-javascript
-enabled browsers. If a user does hava javascript an AJAX call will be made
+enabled browsers. If a user does have javascript an AJAX call will be made
 to the server and the result will be shown in a message. While the call is
 active the button will be marked with a *processing* class.
 
@@ -262,7 +262,7 @@ which will be used to determine the message category. For example::
     def handler(self):
        ..
        ..
-       return dict(message=u"Settings succesfully updated")
+       return dict(message=u"Settings successfully updated")
 """
 
 # Do not import Pylons at module level; only within functions.  All WebHelpers

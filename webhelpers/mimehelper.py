@@ -75,7 +75,7 @@ class MIMETypes(object):
             MIMETypes.add_alias('csv', 'text/csv')
             
             # code in a Pylons controller
-            def somaction(self):
+            def someaction(self):
                 # prepare a bunch of data
                 # ......
                 
