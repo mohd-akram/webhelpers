@@ -126,7 +126,7 @@ Examples::
 
     # Example 4: a smarter callback that uses ``update_params``, which converts
     # keyword args to query parameters.
-    from webhelpers.tools import update_params
+    from webhelpers.util import update_params
     def get_page_url(**kw):
         return update_params("/content", **kw)
     page = Page(MY_COLLECTION, url=get_page_url)
@@ -825,7 +825,8 @@ class Page(list):
                     if config.mapper.explicit:
                         if hasattr(config, 'mapper_dict'):
                             for k, v in config.mapper_dict.items():
-                                link_params[k] = v
+                                if k != self.page_param:
+                                    link_params[k] = v
 
         # Create the URL to load a certain page
         link_url = url_generator(**link_params)
