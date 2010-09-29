@@ -40,7 +40,7 @@ Version 1.0
 
 WebHelpers 1.0 has a lot of new features compared to 0.6.4. Several modules
 deprecated in 0.6.4 were removed, but otherwise there are only a few API
-incompatibilties with the 0.6 series.
+incompatibilities with the 0.6 series.
 
 Deleted packages
 ++++++++++++++++
@@ -127,7 +127,7 @@ webhelpers.misc
 New helpers to flatten nested lists and tuples, and to
 gather all the subclasses of a specified class. There's an exception
 ``OverwriteError``, a ``DeclarativeException`` class for making your own
-exceptions with constant messages, and a ``deprecate`` functioand n.
+exceptions with constant messages, and a ``deprecate`` function.
 
 webhelpers.number
 +++++++++++++++++

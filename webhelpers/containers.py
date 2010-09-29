@@ -64,7 +64,7 @@ class DumbObject(object):
     
     Alternatives to this class include ``collections.namedtuple`` in Python
     2.6, and ``formencode.declarative.Declarative`` in Ian Bicking's FormEncode
-    package.  Both alternatives offer more featues, but ``DumbObject``
+    package.  Both alternatives offer more features, but ``DumbObject``
     shines in its simplicity and lack of dependencies.
 
     """
@@ -267,7 +267,7 @@ def extract_keys(dic, keys):
     ::
 
         >> extract_keys({"From": "F", "To": "T", "Received", R"}, ["To", "From"]) 
-        ({"From": "F", "To": "T"}, {"Recived": "R"})
+        ({"From": "F", "To": "T"}, {"Received": "R"})
         >>> regular, extra = extract_keys({"From": "F", "To": "T", "Received": "R"}, ["To", "From"]) 
         >>> sorted(regular.keys())
         ['From', 'To']
@@ -329,7 +329,7 @@ def get_many(d, required=None, optional=None, one_of=None):
     of the keys are missing.
 
     ``optional`` is a list of optional keys. The corresponding values will be
-    appended to the return list, substititing None for missing keys.
+    appended to the return list, substituting None for missing keys.
 
     ``one_of`` is a list of alternative keys. Take the first key that exists 
     and append its value to the list. Raise KeyError if none of the keys exist.
@@ -569,8 +569,8 @@ def transpose(array):
     table is row major: it consists of several <tr> rows, each containing
     several <td> cells.  But a <div> layout consists of only one row, each
     containing an entire subarray. The <div>s have style "float:left", which
-    makes them appear horizonally. The items within each <div> are placed in
-    their own <div>'s or separatad by <br />, which makes them appear
+    makes them appear horizontally. The items within each <div> are placed in
+    their own <div>'s or separated by <br />, which makes them appear
     vertically.  The point is that an HTML table is row major (``array[0]`` is
     the first row), while a group of div columns is column major (``array[0]``
     is the first column). ``transpose()`` can be used to switch between the

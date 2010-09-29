@@ -134,7 +134,7 @@ def plural(n, singular, plural, with_number=True):
         return form
 
 def chop_at(s, sub, inclusive=False):
-    """Truncate string ``s`` at the first occurence of ``sub``.
+    """Truncate string ``s`` at the first occurrence of ``sub``.
 
     If ``inclusive`` is true, truncate just after ``sub`` rather than at it.
 
@@ -282,7 +282,7 @@ def remove_formatting(string):
     """Simplify HTML text by removing tags and several kinds of formatting.
     
     If the ``unidecode`` package is installed, it will also transliterate 
-    non-ASCII Unicode characters to their nearest pronounciation equivalent in
+    non-ASCII Unicode characters to their nearest pronunciation equivalent in
     ASCII.
 
     Based on Ruby's stringex package
