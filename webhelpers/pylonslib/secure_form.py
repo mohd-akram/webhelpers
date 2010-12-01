@@ -12,7 +12,7 @@ client's session.
 This ensures the request came from the originating page. See
 http://en.wikipedia.org/wiki/Cross-site_request_forgery for more information.
 
-Pylons provides an ``authenticate_form`` decorator that does this verfication
+Pylons provides an ``authenticate_form`` decorator that does this verification
 on the behalf of controllers.
 
 These helpers depend on Pylons' ``session`` object.  Most of them can be easily 

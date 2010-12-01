@@ -312,7 +312,7 @@ class Stats(SimpleStats):
 #### Number formatting ####
 
 def format_number(n, thousands=",", decimal="."):
-    """Format a number with a thousands separator and decimal delimeter.
+    """Format a number with a thousands separator and decimal delimiter.
 
     ``n`` may be an int, long, float, or numeric string.
     ``thousands`` is a separator to put after each thousand.
