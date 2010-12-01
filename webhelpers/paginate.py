@@ -17,7 +17,7 @@ How do I use it?
 ------------------
 
 One page of items is represented by the *Page* object. A *Page* gets
-initalized with two parameters at least:
+initialized with two parameters at least:
 
 - the collection of items to pick a range from
 - the page number that is required (default is 1 - the first page)
@@ -126,7 +126,7 @@ Examples::
 
     # Example 4: a smarter callback that uses ``update_params``, which converts
     # keyword args to query parameters.
-    from webhelpers.tools import update_params
+    from webhelpers.util import update_params
     def get_page_url(**kw):
         return update_params("/content", **kw)
     page = Page(MY_COLLECTION, url=get_page_url)
@@ -144,7 +144,7 @@ Notes
 Page numbers and item numbers start at 1. This concept has been used
 because users expect that the first page has number 1 and the first item
 on a page also has number 1. So if you want to use the page's items by
-their index number please note that you have to substract 1.
+their index number please note that you have to subtract 1.
 
 This module is the successor to the obsolete ``webhelpers.pagination``
 module.  It is **NOT** API compatible.
@@ -546,7 +546,7 @@ class Page(list):
             Default: '>'
 
         separator:
-            String that is used to seperate page links/numbers in the 
+            String that is used to separate page links/numbers in the 
             above range of pages.
 
             Default: ' '
@@ -573,7 +573,7 @@ class Page(list):
             action (onclick) then this parameter gets set and the application
             is supposed to return a partial content. And without
             Javascript this parameter is not set. The application thus has
-            to check for the existance of this parameter to determine
+            to check for the existence of this parameter to determine
             whether only a partial or a full page needs to be returned.
             See also the examples in this modules docstring.
 
@@ -721,7 +721,7 @@ class Page(list):
             radius of linked pages around the current page in
             regexp_match.group(1) as a string
 
-        This funtion is supposed to be called as a callable in 
+        This function is supposed to be called as a callable in 
         re.sub.
         
         """
@@ -825,7 +825,8 @@ class Page(list):
                     if config.mapper.explicit:
                         if hasattr(config, 'mapper_dict'):
                             for k, v in config.mapper_dict.items():
-                                link_params[k] = v
+                                if k != self.page_param:
+                                    link_params[k] = v
 
         # Create the URL to load a certain page
         link_url = url_generator(**link_params)

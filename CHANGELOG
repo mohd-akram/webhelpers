@@ -4,7 +4,16 @@ WebHelpers ChangeLog
 1.3 (unreleased)
 ----------------
 
-* Some ``webhelpers.misc`` helpers were missing from the docs.
+* Documentation:
+  
+  - Some ``webhelpers.misc`` helpers were undocumented.
+  
+  - Spelling corrections throughout, done by Marius Gedminas.
+  
+* webhelpers.paginate:
+
+  - Support page parameter in the route path (e.g., "/help/page5") when using
+    Routes explicit mode without a URL generator.
 
 1.2 (2010-08-18)
 ----------------
