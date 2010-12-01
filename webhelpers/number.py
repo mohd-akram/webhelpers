@@ -425,7 +425,7 @@ def format_byte_size(size, precision=1, binary=False, full_name=False):
         return format_data_size(size, "B", precision, binary, False)
 
 def format_bit_size(size, precision=1, binary=False, full_name=False):
-    """Same as ``format_data_size`` but specifically for bytes.
+    """Same as ``format_data_size`` but specifically for bits.
 
     Examples:
 
