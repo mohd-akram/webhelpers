@@ -9,6 +9,11 @@ WebHelpers ChangeLog
   - Some ``webhelpers.misc`` helpers were undocumented.
   
   - Spelling corrections throughout, done by Marius Gedminas.
+
+* webhelpers.date:
+
+  - Adjust test in 'test_date.py' to account for leap years. (#61, reported
+    by Andrey Rahmatullin / wrar)
   
 * webhelpers.paginate:
 

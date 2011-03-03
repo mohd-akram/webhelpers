@@ -13,8 +13,16 @@ class TestDateHelper(WebHelpersTestCase):
 
         # Test that if integers are supplied they are interpreted as seconds from now
         self.assertEqual("1 second", distance_of_time_in_words(1))
-        self.assertEqual("1 year", distance_of_time_in_words(0, 31536000))
-        self.assertEqual("1 year", distance_of_time_in_words(1, 31536001))
+        # The following two tests test the span from "now" to "a year from
+        # now".  Depending on when the test is run, the interval may include a
+        # leap year.  The 'try' assumes it's not a leap year, the 'except'
+        # tries it again as a leap year.
+        try:
+            self.assertEqual("1 year", distance_of_time_in_words(0, 31536000))
+            self.assertEqual("1 year", distance_of_time_in_words(1, 31536001))
+        except AssertionError:  # If the intervening year contains February 29th
+            self.assertEqual("11 months and 30 days", distance_of_time_in_words(0, 31536000))
+            self.assertEqual("11 months and 30 days", distance_of_time_in_words(1, 31536001))
          
         # Granularity is invalid
         self.assertRaises(Exception, distance_of_time_in_words, 0, 1, 'blah')
