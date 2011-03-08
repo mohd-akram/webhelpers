@@ -111,7 +111,10 @@ class Grid(object):
     """
     def __init__(self, itemlist, columns, column_labels=None,
                   column_formats=None, start_number=1,
-                 order_column=None, order_direction=None):
+                 order_column=None, order_direction=None, request=None,
+                 url_generator=None, **kw):
+        """ additional keywords are appended to self.additional_kw 
+        handy for url generation """
         self.labels = column_labels or {}
         self.exclude_ordering = columns
         self.itemlist = itemlist
@@ -124,6 +127,11 @@ class Grid(object):
         self.start_number = start_number
         self.order_dir = order_direction
         self.order_column = order_column
+        #bw compat with old pylons grid
+        if not hasattr(self,'request'):
+            self.request = request
+        self.url_generator = url_generator
+        self.additional_kw = kw
     
     def calc_row_no(self, i, column):
         if self.order_dir == 'dsc' and self.order_column == column:
@@ -186,6 +194,37 @@ class Grid(object):
         return self.__html__()
 
     def generate_header_link(self, column_number, column, label_text):
+        """ This handles generation of link and then decides to call
+        self.default_header_ordered_column_format 
+        or 
+        self.default_header_column_format 
+        based on if current column is the one that is used for sorting or not
+        
+        you need to implement ordering here, whole operation consists of setting
+        self.order_column and self.order_dir to their CURRENT values,
+        and generating new urls for state that header should set set after its
+        clicked
+        
+        (additional kw are passed to url gen. - like for webhelpers.paginate)
+        example URL generation code below:
+        
+        GET = dict(self.request.copy().GET) # needs dict() for py2.5 compat
+        self.order_column = GET.pop("order_col", None)
+        self.order_dir = GET.pop("order_dir", None)       
+        # determine new order
+        if column == self.order_column and self.order_dir == "asc":
+            new_order_dir = "dsc"
+        else:
+            new_order_dir = "asc"
+        self.additional_kw['order_col'] = column
+        self.additional_kw['order_dir'] = new_order_dir  
+        # generate new url for example url_generator uses 
+        # pylons's url.current() or pyramid's current_route_url()
+        new_url = self.url_generator(**self.additional_kw)
+        # set label for header with link
+        label_text = HTML.tag("a", href=new_url, c=label_text)
+        """ 
+        
         # Is the current column the one we're ordering on?
         if (column == self.order_column):
             return self.default_header_ordered_column_format(column_number,
@@ -193,7 +232,7 @@ class Grid(object):
                                                              label_text)
         else:
             return self.default_header_column_format(column_number, column,
-                                                     label_text)
+                                                     label_text)            
 
     #### Default HTML tag formats ####
 
