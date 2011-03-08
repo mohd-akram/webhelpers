@@ -200,7 +200,8 @@ class Grid(object):
         self.default_header_column_format 
         based on if current column is the one that is used for sorting or not
         
-        you need to implement ordering here, whole operation consists of setting
+        you need to extend Grid class and overload this method implementing
+        ordering here, whole operation consists of setting
         self.order_column and self.order_dir to their CURRENT values,
         and generating new urls for state that header should set set after its
         clicked
