@@ -7,6 +7,9 @@ show a status message on that page, such as "Changes saved" or
 THE IMPLEMENTATION DEPENDS ON PYLONS.  However, it can easily be adapted
 for another web framework.
 
+PYRAMID USERS: use the flash methods built into Pyramid's ``Session`` object.
+This implementation is incompatible with Pyramid.
+
 A typical Pylons application instantiates a ``Flash`` object in 
 myapp/lib/helpers.py::
 
