@@ -15,10 +15,12 @@ WebHelpers ChangeLog
   - Adjust test in 'test_date.py' to account for leap years. (#61, reported
     by Andrey Rahmatullin / wrar)
 
-* webhelpers.html.grid:
+* webhelpers.html.grid, webhelpers.pylonslib.grid:
 
    - Add 'request' and 'url_generator' args to support paged display,
-     following the latest Paginate precedent.
+     following the latest Paginate precedent. (webhelpers.html.grid only)
+   - Deprecate webhelpers.pylonslib.grid. It may be removed in a future
+     version.
   
 * webhelpers.paginate:
 

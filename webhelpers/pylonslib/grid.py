@@ -1,12 +1,16 @@
 """
-**This module is experimental. API changes are expected in the next version.
-If your application depends on the current API, please copy the module into
-your application.**
+This module is DEPRECATED. Please use ``webhelpers.html.grid`` in new
+applications. Support for paged grids has been added to that module in a
+framework-neutral way.
+
+PYRAMID USERS: This implementation is incompatible with Pyramid. Use
+``webhelpers.html.grid`` instead.
 """
 
 
 from webhelpers.html.builder import HTML, literal
 import webhelpers.html.grid as grid
+from webhelpers.misc import deprecate
 
 class NoRequestError(Exception):
     pass
@@ -18,6 +22,7 @@ class PylonsGrid(grid.Grid):
     """
     
     def __init__(self, request, *args, **kw):
+        deprecate("please migrate to webhelpers.html.grid")
         self.request = request
         super(PylonsGrid, self).__init__(*args, **kw)
     

@@ -5,6 +5,9 @@ attacks.
 Generates form tags that include client-specific authorization tokens to be
 verified by the destined web app.
 
+PYRAMID USERS: Use the csrf_token methods built into Pyramid's ``Session``
+object.  This implementation is incompatible with Pyramid.
+
 Authorization tokens are stored in the client's session. The web app can then
 verify the request's submitted authorization token with the value in the
 client's session.
@@ -15,7 +18,7 @@ http://en.wikipedia.org/wiki/Cross-site_request_forgery for more information.
 Pylons provides an ``authenticate_form`` decorator that does this verification
 on the behalf of controllers.
 
-These helpers depend on Pylons' ``session`` object.  Most of them can be easily 
+These helpers depend on Pylons' ``session`` object.  Most of them can be easily
 ported to another framework by changing the API calls.
 
 The helpers are implemented in such a way that it should be easy to create your
