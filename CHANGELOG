@@ -19,13 +19,15 @@ WebHelpers ChangeLog
 
    - Add 'request' and 'url_generator' args to support paged display,
      following the latest Paginate precedent.
-
-    
   
 * webhelpers.paginate:
 
   - Support page parameter in the route path (e.g., "/help/page5") when using
     Routes explicit mode without a URL generator.
+
+* setup.py:
+
+   - Fix typo in test requirements. (#60, Andrey Rahmatullin/wrar)
 
 1.2 (2010-08-18)
 ----------------
