@@ -6,6 +6,8 @@ stylesheet in your applcation and set your <table> class to "stylized".
 
 The documentation below is not very clear. This is a known bug. We need a
 native English speaker who uses the module to volunteer to rewrite it.
+
+This module is written and maintained by Ergo^.
 """
 
 from webhelpers.html.builder import HTML, literal
@@ -127,7 +129,7 @@ class Grid(object):
         self.start_number = start_number
         self.order_dir = order_direction
         self.order_column = order_column
-        #bw compat with old pylons grid
+        #backward compatibility with old pylons grid
         if not hasattr(self,'request'):
             self.request = request
         self.url_generator = url_generator
