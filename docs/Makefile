@@ -3,7 +3,7 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = PYTHONPATH=.. sphinx-build
+SPHINXBUILD   = sphinx-build
 PAPER         =
 
 # Internal variables.
@@ -11,12 +11,12 @@ PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d _build/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
-.PHONY: help clean html web htmlhelp latex changes linkcheck
+.PHONY: help clean html web pickle htmlhelp latex changes linkcheck
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html      to make standalone HTML files"
-	@echo "  web       to make files usable by Sphinx.web"
+	@echo "  pickle    to make pickle files (usable by e.g. sphinx-web)"
 	@echo "  htmlhelp  to make HTML files and a HTML help project"
 	@echo "  latex     to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
 	@echo "  changes   to make an overview over all changed/added/deprecated items"
@@ -25,21 +25,29 @@ help:
 clean:
 	-rm -rf _build/*
 
-html:
+html: _themes/
 	mkdir -p _build/html _build/doctrees
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) _build/html
 	@echo
 	@echo "Build finished. The HTML pages are in _build/html."
 
-web:
-	mkdir -p _build/web _build/doctrees
-	$(SPHINXBUILD) -b web $(ALLSPHINXOPTS) _build/web
+text:
+	mkdir -p _build/text _build/doctrees
+	$(SPHINXBUILD) -b text $(ALLSPHINXOPTS) _build/text
 	@echo
-	@echo "Build finished; now you can run"
-	@echo "  python -m sphinx.web _build/web"
-	@echo "to start the server."
+	@echo "Build finished. The HTML pages are in _build/text."
 
-htmlhelp:
+pickle:
+	mkdir -p _build/pickle _build/doctrees
+	$(SPHINXBUILD) -b pickle $(ALLSPHINXOPTS) _build/pickle
+	@echo
+	@echo "Build finished; now you can process the pickle files or run"
+	@echo "  sphinx-web _build/pickle"
+	@echo "to start the sphinx-web server."
+
+web: pickle
+
+htmlhelp: _themes
 	mkdir -p _build/htmlhelp _build/doctrees
 	$(SPHINXBUILD) -b htmlhelp $(ALLSPHINXOPTS) _build/htmlhelp
 	@echo
@@ -49,6 +57,10 @@ htmlhelp:
 latex:
 	mkdir -p _build/latex _build/doctrees
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) _build/latex
+	cp _static/*.png _build/latex
+	./convert_images.sh
+	cp _static/latex-warning.png _build/latex
+	cp _static/latex-note.png _build/latex
 	@echo
 	@echo "Build finished; the LaTeX files are in _build/latex."
 	@echo "Run \`make all-pdf' or \`make all-ps' in that directory to" \
@@ -66,3 +78,11 @@ linkcheck:
 	@echo
 	@echo "Link check complete; look for any errors in the above output " \
 	      "or in _build/linkcheck/output.txt."
+
+epub:
+	$(SPHINXBUILD) -b epub $(ALLSPHINXOPTS) _build/epub
+	@echo
+	@echo "Build finished. The epub file is in _build/epub."
+
+_themes:
+	git clone git://github.com/Pylons/pylons_sphinx_theme.git _themes

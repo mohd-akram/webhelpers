@@ -1,5 +1,4 @@
-:tocdepth: 2
-
-.. _changes:
+Full Changelog
+%%%%%%%%%%%%%%
 
 .. include:: ../CHANGELOG
