@@ -17,15 +17,17 @@ WebHelpers ChangeLog
 
 * webhelpers.html.grid, webhelpers.pylonslib.grid:
 
-   - Add 'request' and 'url_generator' args to support paged display,
-     following the latest Paginate precedent. (webhelpers.html.grid only)
+   - Add 'request' and 'url' args to support paged display.
+     (webhelpers.html.grid only)
    - Deprecate webhelpers.pylonslib.grid. It may be removed in a future
      version.
   
 * webhelpers.paginate:
 
-  - Support page parameter in the route path (e.g., "/help/page5") when using
-    Routes explicit mode without a URL generator.
+  - Add URL generator classes for new frameworks like Pyramid.
+  - In the Pylons backward compatibility code, support page parameter in the
+    route path (e.g., "/help/page5") when using Routes explicit mode without a
+    URL generator.
 
 * setup.py:
 
