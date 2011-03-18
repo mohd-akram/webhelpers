@@ -21,30 +21,24 @@ All helpers are organized into subpackages.
    modules/misc
    modules/number
    modules/paginate
+   modules/text
+   modules/util
+
+Pylons-specific subpackages
++++++++++++++++++++++++++++
+
+These work ONLY with the Pylons web framework and its derivatives (TurboGears 2).
+They are NOT compatible with Pyramid; see the submodule pages for
+alternatives.
+
+.. toctree::
+   :maxdepth: 1
+
    modules/pylonslib/__init__
    modules/pylonslib/flash
    modules/pylonslib/grid
    modules/pylonslib/minify
    modules/pylonslib/secure_form
-   modules/text
-   modules/util
-
-Metadata
-++++++++
-
-WebHelpers was originally created as a utility package for Pylons. Many of the
-helpers were ported from Ruby on Rails. Version 0.6 introduced the HTML tag
-builder and deprecated the rails helpers; new subpackages were added to replace
-the rails helpers. Version 1.0 builds on this with many additional helpers.
-
-.. toctree::
-   :maxdepth: 1
-
-   whats_new
-   changelog
-   third_party
-   development
-   todo
 
 Non-essential subpackages
 +++++++++++++++++++++++++
@@ -55,11 +49,3 @@ Non-essential subpackages
     modules/markdown
     modules/textile
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
