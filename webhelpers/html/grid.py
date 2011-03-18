@@ -21,7 +21,9 @@ class Grid(object):
     like a list of dictionaries, or sqlalchemy proxy or query object::
     
         grid = Grid(itemlist, ['_numbered','c1', 'c2','c4'])
-        where itemlist in this simple scenario is a list of dicts:
+
+    where itemlist in this simple scenario is a list of dicts:
+
         [{'c1':1,'c2'...}, {'c1'...}, ...]
     
     This helper also received the list that defines order in which
@@ -197,10 +199,10 @@ class Grid(object):
 
     def generate_header_link(self, column_number, column, label_text):
         """ This handles generation of link and then decides to call
-        self.default_header_ordered_column_format 
+        ``self.default_header_ordered_column_format`` 
         or 
-        self.default_header_column_format 
-        based on if current column is the one that is used for sorting or not
+        ``self.default_header_column_format`` 
+        based on whether current column is the one that is used for sorting.
         
         you need to extend Grid class and overload this method implementing
         ordering here, whole operation consists of setting
@@ -209,23 +211,23 @@ class Grid(object):
         clicked
         
         (additional kw are passed to url gen. - like for webhelpers.paginate)
-        example URL generation code below:
+        example URL generation code below::
         
-        GET = dict(self.request.copy().GET) # needs dict() for py2.5 compat
-        self.order_column = GET.pop("order_col", None)
-        self.order_dir = GET.pop("order_dir", None)       
-        # determine new order
-        if column == self.order_column and self.order_dir == "asc":
-            new_order_dir = "dsc"
-        else:
-            new_order_dir = "asc"
-        self.additional_kw['order_col'] = column
-        self.additional_kw['order_dir'] = new_order_dir  
-        # generate new url for example url_generator uses 
-        # pylons's url.current() or pyramid's current_route_url()
-        new_url = self.url_generator(**self.additional_kw)
-        # set label for header with link
-        label_text = HTML.tag("a", href=new_url, c=label_text)
+            GET = dict(self.request.copy().GET) # needs dict() for py2.5 compat
+            self.order_column = GET.pop("order_col", None)
+            self.order_dir = GET.pop("order_dir", None)       
+            # determine new order
+            if column == self.order_column and self.order_dir == "asc":
+                new_order_dir = "dsc"
+            else:
+                new_order_dir = "asc"
+            self.additional_kw['order_col'] = column
+            self.additional_kw['order_dir'] = new_order_dir  
+            # generate new url for example url_generator uses 
+            # pylons's url.current() or pyramid's current_route_url()
+            new_url = self.url_generator(**self.additional_kw)
+            # set label for header with link
+            label_text = HTML.tag("a", href=new_url, c=label_text)
         """ 
         
         # Is the current column the one we're ordering on?
