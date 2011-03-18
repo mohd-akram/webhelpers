@@ -420,7 +420,7 @@ class Page(list):
             if presliced_list:
                 self.items = self.collection
             else:
-                self.items = list(self.collection[self.first_item-1:self.last_item])
+                self.items = list(self.collection)[self.first_item-1:self.last_item]
 
             # Links to previous and next page
             if self.page > self.first_page:
