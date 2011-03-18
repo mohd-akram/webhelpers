@@ -5,6 +5,18 @@ This is a high-level overview of recent changes. **Incompatible changes are
 in boldface;** these may require modifying your application.  See `Changelog
 <changelog.html>`_ for the full changelog.
 
+Version 1.3
+-----------
+
+*webhelpers.paginate*: Add URL generator classes for new frameworks like
+Pyramid.
+
+*webhelpers.html.grid*: Add ability to use URL generator classes for paged
+display.
+
+*webhelpers.pylonslib.grid*: Deprecated. Use webhelpers.html.grid, which now
+supports paged display.
+
 Version 1.2
 -----------
 
