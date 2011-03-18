@@ -17,23 +17,32 @@ How do I use it?
 ------------------
 
 One page of items is represented by the *Page* object. A *Page* gets
-initialized with two parameters at least:
+initialized with at least two arguments and usually three:
 
-- the collection of items to pick a range from
-- the page number that is required (default is 1 - the first page)
+- The collection of items to pick a range from.
+- The page number we want to display. (Default is 1: the first page.)
+- A URL generator callback. (This tells what the URLs to other pages are.
+  It's required if using the ``pager()`` method, although it may be omitted
+  under Pylons for backward compatibility. It is required for Pyramid.)
 
-A simple example (ipython session)::
+Here's an interactive example.
 
-    # Set up the routes context (only if you are not using a Pylons application)
-    >>> import routes
-    >>> mapper=routes.Mapper()
-    >>> mapper.connect(None, '/{controller}')
+First we'll create a URL generator using the basic ``PageURL`` class, which
+works with all frameworks and has no dependencies.  It creates URLs by
+overriding the 'page' query parameter. ::
+
+    # Instantiate the URL generator, and call it to see what it does.
+    >>> url_for_page = PageURL("/articles/2013", {"page": "3"})
+    >>> url_for_page(page=2)
+    '/articles/2013?page=2'
+
+Now we can create a collection and instantiate the Page::
 
     # Create a sample collection of 1000 items
     >>> my_collection = range(1000)
 
     # Create a Page object for the 3rd page (20 items per page is the default)
-    >>> my_page = Page(my_collection, page=3)
+    >>> my_page = Page(my_collection, page=3, url=url_for_page)
 
     # The page object can be printed directly to get its details
     >>> my_page
@@ -59,8 +68,8 @@ A simple example (ipython session)::
     >>> for my_item in my_page: print my_item,
     40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59
 
-    # On a web page you will want to use a "pager" that creates links that
-    # the user can click on to load other pages in the set.
+    # The .pager() method returns an HTML fragment with links to surrounding
+    # pages.
     # [The ">>" prompt is to hide untestable examples from doctest.]
     >> my_page.pager()
     1 2 [3] 4 5 .. 50       (this is actually HTML)
@@ -69,68 +78,74 @@ A simple example (ipython session)::
     >> my_page.pager('$link_previous ~3~ $link_next (Page $page of $page_count)')
     1 2 [3] 4 5 6 .. 50 > (Page 3 of 50)
 
-Please see the documentation on ``Page`` and ``Page.pager()``. There are many
-parameters that customize the Page's behavior.
+There are many parameters that customize the Page's behavor. See the
+documentation on ``Page`` and ``Page.pager()``.
 
 URL generator
 -------------
 
-The ``Page.pager()`` method requires a URL generator to create the links to the other
-pages. You can supply a callback function to the constructor, or let it
-fall back to ``pylons.url.current`` or ``routes.url_for`` (in that order). If
-none of these are available, you'll get a ``NotImplementedError``.
+The constructor's ``url`` argument is a callback that returns URLs to other
+pages. It's required when using the ``Page.pager()`` method except under
+Pylons, where it will fall back to ``pylons.url.current`` (Pylons 1) and then
+``routes.url_for`` (Pylons 0.9.7).  If none of these are available, you'll get
+an exception "NotImplementedError: no URL generator available".
 
-Pylons applications can simply let it default to ``pylons.url.current``, which
-is available in Pylons 0.9.7 and later.
+WebHelpers 1.3 introduces a few URL generators for convenience. **PageURL** is
+described above. **PageURL_WebOb** takes a ``webobb.Request`` object, and is
+suitable for Pyramid, Pylons, TurboGears, and other frameworks that have a
+WebOb-compatible Request object. Both of these classes assume that the page
+number is in the 'page' query parameter.
 
-Older versions of Paginate (up to 1.0b5) used ``routes.url_for`` in all cases.
-This caused an unnecessary dependency on Routes, and was untenable when
-``url_for`` was deprecated and Pylons 1.x no longer supported it. Nevertheless
-it remains for backward compatibility.
+Here's an example for Pyramid and other WebOb-compatible frameworks::
 
-To provide your own callback, create a function that takes a *page* argument
-and optional *partial* argument, and returns the URL to that page. Pass this
-function as the ``Page`` constructor's *url* argument.
+    # Assume ``request`` is the current request.
+    import webhelpers.paginate as paginate
+    current_page = int(request.params["page"])
+    q = SOME_SQLALCHEMY_QUERY
+    page_url = paginate.PageURL_WebOb(request)
+    records = paginate.Page(q, current_page, url=page_url)
 
-Note that the *page* and *partial* arguments may be called something else! You
-can rename these by specifying *page_param* and/or *partial_param* in
-``Page.pager()``. Just make sure to be consistent between the pager args and
-callback args.
+If the page number is in the URL path, you'll have to use a framework-specific
+URL generator. For instance, in Pyramid if the current route is
+"/articles/{id}/page/{page}" and the current URL is 
+"/articles/ABC/page/3?print=1", you can use Pyramid's "current_route_url"
+function as follows::
 
-Also note that any extra keyword args passed to the ``Page`` constructor or
-``Page.pager()`` will be passed to the callback, so it should expect them.
+    # Assume ``request`` is the current request.
+    import webhelpers.paginate as paginate
+    from pyramid.url import current_route_url
+    def page_url(page):
+        return current_route_url(request, page=page, _query=request.GET)
+    q = SOME_SQLALCHEMY_QUERY
+    current_page = int(request.matchdict["page"])
+    records = Page(q, current_page, url=page_url)
 
-A typical callback will return the current page's URL, converting the keyword
-args to query parameters.  This is what ``pylons.url.current`` and
-``routes.url_for``, except that these also use keyword args to override path
-variables.
+This overrides the 'page' path variable, while leaving the 'id' variable and
+the query string intact.
 
-The *partial* arg will be unspecified for a normal URL. It will have the value
-1 (int) for a partial URL.
+The callback API is simple. 
 
-Examples::
+1. It must accept an integer argument 'page', which will be passed by name.
 
-    # Example 1: explicitly use pylons.url.current
-    page = Page(MY_COLLECTION, url=pylons.url.current)
+2. It should return the URL for that page.  
 
-    # Example 2: implicitly use pylons.url.current.
-    page = Page(MY_COLLECTION)
+3. If you're using AJAX 'partial' functionality described in the ``Page.pager``
+   docstring, the callback should also accept a 'partial' argument and, if
+   true, set a query parameter 'partial=1'.
 
-    # Example 3: a dumb callback that uses string interpolation.
-    def get_page_url(page, partial=None):
-        url = "%s?page=%s" % (THE_URL, page)
-        if partial:
-            url += "&partial=1"
-        return url
-    page = Page(MY_COLLECTION, url=get_page_url) 
+4. If you use the 'page_param' or 'partial_param' argument to ``Page.pager``,
+   the 'page' and 'partial' arguments will be renamed to whatever you specify.
+   In this case, the callback would also have to expect these other argument
+   names.
 
-    # Example 4: a smarter callback that uses ``update_params``, which converts
-    # keyword args to query parameters.
-    from webhelpers.util import update_params
-    def get_page_url(**kw):
-        return update_params("/content", **kw)
-    page = Page(MY_COLLECTION, url=get_page_url)
+The supplied classes adhere to this API in their
+``.__call__`` method, all except the fourth condition. So you can use their
+instances as callbacks as long as you don't use 'page_param' or 'partial_param'.
 
+For convenience in writing callbacks that update the 'page' query parameter, a
+``make_page_url`` function is available that assembles the pieces into a
+complete URL. Other callbacks may find ``webhelpers.utl.update_params`` useful,
+which overrides query parameters on a more general basis.
 
 
 Can I use AJAX / AJAH?
@@ -149,44 +164,18 @@ their index number please note that you have to subtract 1.
 This module is the successor to the obsolete ``webhelpers.pagination``
 module.  It is **NOT** API compatible.
 
-This version of paginate is based on the code from
+This module is based on the code from
 http://workaround.org/cgi-bin/hg-paginate that is known at the
-"Paginate" module on PyPI.
+"Paginate" module on PyPI. It was written by Christoph Haas
+<email@christoph-haas.de>, and modified by Christoph Haas and Mike Orr for
+WebHelpers. (c) 2007-2011.
 """
-
-__version__ = '0.3.7'
-__date__ = '2009-04-23'
-__author__ = 'Christoph Haas <email@christoph-haas.de>'
-__copyright__ = 'Copyright (c) 2007,2008 Christoph Haas <email@christoph-haas.de>'
-
-# License:
-# 
-# This software can be used under the terms of the MIT license:
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a 
-# copy of this software and associated documentation files (the 
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
-# distribute, sublicense, and/or sell copies of the Software, and to 
-# permit persons to whom the Software is furnished to do so, subject to 
-# the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
-# in all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
-# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
-# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
-# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
-# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import re
 from string import Template
+import urllib
 import warnings
 
-# Import the webhelpers to create URLs
 from webhelpers.html import literal, HTML
 
 # import SQLAlchemy if available
@@ -563,6 +552,12 @@ class Page(list):
             number the user wants to see. If you do not specify anything 
             else the default will be a parameter called 'page'.
 
+            Note: If you set this argument and are using a URL generator
+            callback, the callback must accept this name as an argument instead
+            of 'page'.
+            callback, becaust the callback requires its argument to be 'page'.
+            Instead the callback itself can return any URL necessary.
+
         partial_param:
             When using AJAX/AJAH to do partial updates of the page area the
             application has to know whether a partial update (only the
@@ -578,6 +573,10 @@ class Page(list):
             See also the examples in this modules docstring.
 
             Default: 'partial'
+
+            Note: If you set this argument and are using a URL generator
+            callback, the callback must accept this name as an argument instead
+            of 'partial'.
 
         show_if_single_page:
             if True the navigator will be shown even if there is only 
@@ -693,21 +692,6 @@ class Page(list):
         })
 
         return literal(result)
-
-    def get_url_generator(self):
-        """Return a URL generator. See module docstring for details."""
-        if self._url_generator is None:
-            try:
-                import pylons
-                self._url_generator = pylons.url.current
-            except (ImportError, AttributeError):
-                try:
-                    import routes
-                    self._url_generator = routes.url_for
-                except (ImportError, AttributeError):
-                    raise NotImplementedError("no URL generator available")
-        return self._url_generator
-
 
     #### Private methods ####
     def _range(self, regexp_match):
@@ -846,3 +830,84 @@ class Page(list):
             return HTML.a(text, href=link_url, onclick=onclick_action, **self.link_attr)
         else: # return static link
             return HTML.a(text, href=link_url, **self.link_attr)
+
+
+#### URL GENERATOR CLASSES
+def make_page_url(path, params, page, partial=False, sort=True):
+    """A helper function for URL generators.
+
+    I assemble a URL from its parts. I assume that a link to a certain page is
+    done by overriding the 'page' query parameter.
+
+    ``path`` is the current URL path, with or without a "scheme://host" prefix.
+
+    ``params`` is the current query parameters as a dict or dict-like object.
+
+    ``page`` is the target page number.
+
+    If ``partial`` is true, set query param 'partial=1'. This is to for AJAX
+    calls requesting a partial page.
+
+    If ``sort`` is true (default), the parameters will be sorted. Otherwise
+    they'll be in whatever order the dict iterates them.
+    """
+    params = params.copy()
+    params["page"] = page
+    if partial:
+        params["partial"] = "1"
+    if sort:
+        params = params.items()
+        params.sort()
+    qs = urllib.urlencode(params, True)
+    return "%s?%s" % (path, qs)
+    
+class PageURL(object):
+    """A simple page URL generator for any framework."""
+
+    def __init__(self, path, params):
+        """
+        ``path`` is the current URL path, with or without a "scheme://host"
+         prefix.
+
+        ``params`` is the current URL's query parameters as a dict or dict-like
+        object.
+        """
+        self.path = path
+        self.params = params
+
+    def __call__(self, page, partial=False):
+        """Generate a URL for the specified page."""
+        return make_page_url(self.path, self.params, page, partial)
+
+
+class PageURL_WebOb(object):
+    """A page URL generator for WebOb-compatible Request objects.
+    
+    I derive new URLs based on the current URL but overriding the 'page'
+    query parameter.
+
+    I'm suitable for Pyramid, Pylons, and TurboGears, as well as any other
+    framework whose Request object has 'application_url', 'path', and 'GET'
+    attributes that behave the same way as ``webob.Request``'s.
+    """
+    
+    def __init__(self, request, qualified=False):
+        """
+        ``request`` is a WebOb-compatible ``Request`` object.
+
+        If ``qualified`` is false (default), generated URLs will have just the
+        path and query string. If true, the "scheme://host" prefix will be
+        included. The default is false to match traditional usage, and to avoid
+        generating unuseable URLs behind reverse proxies (e.g., Apache's
+        mod_proxy). 
+        """
+        self.request = request
+        self.qualified = qualified
+
+    def __call__(self, page, partial=False):
+        """Generate a URL for the specified page."""
+        if self.qualified:
+            path = self.request.application_url
+        else:
+            path = self.request.path
+        return make_page_url(path, self.request.GET, page, partial)

@@ -116,7 +116,7 @@ class Grid(object):
     def __init__(self, itemlist, columns, column_labels=None,
                   column_formats=None, start_number=1,
                  order_column=None, order_direction=None, request=None,
-                 url_generator=None, **kw):
+                 url=None, **kw):
         """ additional keywords are appended to self.additional_kw 
         handy for url generation """
         self.labels = column_labels or {}
@@ -134,7 +134,7 @@ class Grid(object):
         #backward compatibility with old pylons grid
         if not hasattr(self,'request'):
             self.request = request
-        self.url_generator = url_generator
+        self.url_generator = url
         self.additional_kw = kw
     
     def calc_row_no(self, i, column):

@@ -3,15 +3,16 @@ import sys
 
 from nose.tools import eq_
 from routes import Mapper
+from webob.multidict import MultiDict
 
-from webhelpers.paginate import Page
+import webhelpers.paginate as paginate
 from webhelpers.util import update_params
 
 
 def test_empty_list():
     """Test whether an empty list is handled correctly."""
     items = []
-    page = Page(items, page=0)
+    page = paginate.Page(items, page=0)
     assert page.page == 0
     assert page.first_item is None
     assert page.last_item is None
@@ -28,7 +29,7 @@ def test_empty_list():
 def test_one_page():
     """Test that we fit 10 items on a single 10-item page."""
     items = range(10)
-    page = Page(items, page=0, items_per_page=10)
+    page = paginate.Page(items, page=0, items_per_page=10)
     assert page.page == 1
     assert page.first_item == 1
     assert page.last_item == 10
@@ -42,13 +43,13 @@ def test_one_page():
     assert page.pager() == ''
     assert page.pager(show_if_single_page=True) == '<span class="pager_curpage">1</span>'
 
-def my_url_generator(**kw):
+def url_generator(**kw):
     return update_params("/content", **kw)
 
 def test_many_pages():
     """Test that 100 items fit on seven 15-item pages."""
     items = range(100)
-    page = Page(items, page=0, items_per_page=15, url=my_url_generator)
+    page = paginate.Page(items, page=0, items_per_page=15, url=url_generator)
     eq_(page.page, 1)
     eq_(page.first_item, 1)
     eq_(page.last_item, 15)
@@ -69,3 +70,42 @@ def test_many_pages():
         # XXX: these assume dict ordering
         eq_(page.pager(onclick="load('%s')"), '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(&#39;/content?partial=1&amp;page=2&#39;)">2</a> <a class="pager_link" href="/content?page=3" onclick="load(&#39;/content?partial=1&amp;page=3&#39;)">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(&#39;/content?partial=1&amp;page=7&#39;)">7</a>')
         eq_(page.pager(onclick="load('$partial_url')"), '<span class="pager_curpage">1</span> <a class="pager_link" href="/content?page=2" onclick="load(&#39;/content?partial=1&amp;page=2&#39;)">2</a> <a class="pager_link" href="/content?page=3" onclick="load(&#39;/content?partial=1&amp;page=3&#39;)">3</a> <span class="pager_dotdot">..</span> <a class="pager_link" href="/content?page=7" onclick="load(&#39;/content?partial=1&amp;page=7&#39;)">7</a>')
+
+def test_make_page_url():
+    purl = paginate.make_page_url("/articles", {}, 2)
+    eq_(purl, "/articles?page=2")
+    purl = paginate.make_page_url("/articles", {"foo": "bar"}, 2)
+    eq_(purl, "/articles?foo=bar&page=2")
+    params = {"foo": "bar", "page": "1"}
+    purl = paginate.make_page_url("/articles", params, 2)
+    eq_(purl, "/articles?foo=bar&page=2")
+    params = MultiDict({"foo": "bar", "page": "1"})
+    params.add("foo", "bar2")
+    purl = paginate.make_page_url("/articles", params, 2)
+    eq_(purl, "/articles?foo=bar&foo=bar2&page=2")
+
+def test_pageurl():
+    purl = paginate.PageURL("/articles", {})
+    eq_(purl(2), "/articles?page=2")
+    purl = paginate.PageURL("/articles", {"foo": "bar"})
+    eq_(purl(2), "/articles?foo=bar&page=2")
+    params = {"foo": "bar", "page": "1"}
+    purl = paginate.PageURL("/articles", params)
+    eq_(purl(2), "/articles?foo=bar&page=2")
+
+class DummyRequest(object):
+    """A fake ``webob.Request`` for test_pageurl_webob``."""
+    def __init__(self, application_url, path, GET):
+        self.application_url = application_url
+        self.path = path
+        self.GET = GET
+
+def test_pageurl_webob():
+    path = "/articles"
+    application_url = "http://localhost:5000" + path
+    params = MultiDict({"blah": "boo"})
+    request = DummyRequest(application_url, path, params)
+    purl = paginate.PageURL_WebOb(request)
+    eq_(purl(2), "/articles?blah=boo&page=2")
+    purl = paginate.PageURL_WebOb(request, qualified=True)
+    eq_(purl(2), "http://localhost:5000/articles?blah=boo&page=2")
