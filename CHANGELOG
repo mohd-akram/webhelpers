@@ -1,3 +1,15 @@
+1.3b2 (2011-03-20)
+------------------
+
+* webhelpers.paginate:
+
+  - Revert Sprox patch (#59) from 1.3b1; it makes SQLAlchemy inefficient (#63).
+    The Sprox object is apparently incompatible because it's not sliceable.
+    Changed get_wrapper() test to require .__getslice__, and moved its stanza
+    below SQLAlchemy tests because SQLAlchemy queries and selects don't have
+    .__getslice__ either; but that's OK because their paginate wrappers
+    emulate it. 
+
 1.3b1 (2011-03-17)
 ------------------
 

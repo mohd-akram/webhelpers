@@ -184,8 +184,10 @@ try:
     import sqlalchemy.orm   # Some users report errors if this is not imported.
 except:
     sqlalchemy_available = False
+    sqlalchemy_version = None
 else:
-    sqlalchemy_available = sqlalchemy.__version__
+    sqlalchemy_available = True
+    sqlalchemy_version = sqlalchemy.__version__
 
 def get_wrapper(obj, sqlalchemy_session=None):
     """
@@ -196,12 +198,10 @@ def get_wrapper(obj, sqlalchemy_session=None):
     if isinstance(obj, (list, tuple)):
         return obj
 
-    # If object is iterable we can use it directly
-    if hasattr(obj, "__iter__") and hasattr(obj, "__len__"):
-        return obj
-
     # Is SQLAlchemy 0.4 or better available? (0.3 is not supported - sorry)
-    if sqlalchemy_available[:3] != '0.3':
+    # Note: SQLAlchemy objects aren't sliceable, so this has to be before
+    # the next if-stanza
+    if sqlalchemy_available and sqlalchemy_version[:3] != '0.3':
         # Is the collection a query?
         if isinstance(obj, sqlalchemy.orm.query.Query):
             return _SQLAlchemyQuery(obj)
@@ -210,6 +210,14 @@ def get_wrapper(obj, sqlalchemy_session=None):
         if isinstance(obj, sqlalchemy.sql.expression.CompoundSelect) \
             or isinstance(obj, sqlalchemy.sql.expression.Select):
                 return _SQLAlchemySelect(obj, sqlalchemy_session)
+
+    # If object is iterable and sliceable we can use it directly
+    required_methods = ["__iter__", "__len__", "__slice__"]
+    for meth in required_methods:
+        if not hasattr(obj, meth):
+            break
+    else:
+        return obj
 
     raise TypeError("Sorry, your collection type is not supported by the "
         "paginate module. You can provide a list, a tuple, a SQLAlchemy "
@@ -220,7 +228,10 @@ class _SQLAlchemySelect(object):
     Iterable that allows to get slices from an SQLAlchemy Select object
     """
     def __init__(self, obj, sqlalchemy_session=None):
-        if not isinstance(sqlalchemy_session, sqlalchemy.orm.scoping.ScopedSession):
+        session_types = (
+            sqlalchemy.orm.scoping.ScopedSession,
+            sqlalchemy.orm.Session)
+        if not isinstance(sqlalchemy_session, session_types):
             raise TypeError("If you want to page an SQLAlchemy 'select' object then you "
                     "have to provide a 'sqlalchemy_session' argument. See also: "
                     "http://www.sqlalchemy.org/docs/04/session.html")
@@ -420,7 +431,7 @@ class Page(list):
             if presliced_list:
                 self.items = self.collection
             else:
-                self.items = list(self.collection)[self.first_item-1:self.last_item]
+                self.items = list(self.collection[self.first_item-1:self.last_item])
 
             # Links to previous and next page
             if self.page > self.first_page:
