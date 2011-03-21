@@ -7,6 +7,9 @@ Nose
 Routes
 WebOb
 
+# Optional for testing paginate with SQLAlchemy queries
+#SQLAlchemy
+
 # Required for generating HTML documentation
 Sphinx
 
