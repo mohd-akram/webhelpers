@@ -1,7 +1,9 @@
 """"Test webhelpers.paginate package."""
 import sys
+import unittest
 
-from nose.tools import eq_
+from nose.plugins.skip import SkipTest
+from nose.tools import eq_, raises
 from routes import Mapper
 from webob.multidict import MultiDict
 
@@ -109,3 +111,85 @@ def test_pageurl_webob():
     eq_(purl(2), "/articles?blah=boo&page=2")
     purl = paginate.PageURL_WebOb(request, qualified=True)
     eq_(purl(2), "http://localhost:5000/articles?blah=boo&page=2")
+
+class UnsliceableSequence(object):
+   def __init__(self, seq):
+      self.l = seq
+   
+   def __iter__(self):
+       for i in self.l:
+           yield i
+
+   def __len__(self):
+       return len(self.l)
+
+class TestCollectionTypes(unittest.TestCase):
+    rng = list(range(10))   # A list in both Python 2 and 3.
+
+    def test_list(self):
+        paginate.Page(self.rng)
+
+    def test_tuple(self):
+        paginate.Page(tuple(self.rng))
+
+    @raises(TypeError)
+    def test_unsliceable_sequence(self):
+        paginate.Page(UnsliceableSequence(self.rng))
+
+
+class TestSQLAlchemyCollectionTypes(unittest.TestCase):
+    def setUp(self):
+        try:
+            import sqlalchemy as sa
+            import sqlalchemy.orm as orm
+        except ImportError:
+            raise SkipTest()
+        self.engine = engine = sa.create_engine("sqlite://") # Memory database
+        self.sessionmaker = orm.sessionmaker(bind=engine)
+        self.metadata = metadata = sa.MetaData(bind=engine)
+        self.notes = notes = sa.Table("Notes", metadata,
+            sa.Column("id", sa.Integer, primary_key=True))
+        class Note(object):
+            pass
+        self.Note = Note
+        notes.create()
+        orm.mapper(Note, notes)
+        insert = notes.insert()
+        records = [{"id": x} for x in range(1, 101)]
+        engine.execute(insert, records)
+            
+    def tearDown(self):
+        import sqlalchemy as sa
+        import sqlalchemy.orm as orm
+        orm.clear_mappers()
+        self.notes.drop()
+
+    def test_sqlalchemy_orm(self):
+        session = self.sessionmaker()
+        q = session.query(self.Note).order_by(self.Note.id)
+        page = paginate.Page(q)
+        records = list(page)
+        eq_(records[0].id, 1)
+        eq_(records[-1].id, 20)
+
+    '''
+    # The following test fails:
+    #Traceback (most recent call last):
+    #  File "WebHelpers/tests/test_paginate.py", line 181, in test_sqlalchemy_select
+    #    page = paginate.Page(sql, sqlalchemy_session=session)
+    #  File "WebHelpers/webhelpers/paginate.py", line 407, in __init__
+    #    self.item_count = len(self.collection)
+    #ValueError: __len__() should return >= 0
+    #
+    #(Pdb) p len(self.collection)
+    #*** ValueError: ValueError('__len__() should return >= 0',)
+    #(Pdb) p self.collection.__len__()
+    #-1
+    def test_sqlalchemy_select(self):
+        session = self.sessionmaker()
+        sql = self.notes.select(order_by=[self.notes.columns.id])
+        page = paginate.Page(sql, sqlalchemy_session=session)
+        records = self.engine.execute(page).fetchall()
+        eq_(records[0].id, 1)
+        eq_(records[-1].id, 20)
+    '''
