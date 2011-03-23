@@ -5,10 +5,10 @@
 
   - Revert Sprox patch (#59) from 1.3b1; it makes SQLAlchemy inefficient (#63).
     The Sprox object is apparently incompatible because it's not sliceable.
-    Changed get_wrapper() test to require .__getslice__, and moved its stanza
-    below SQLAlchemy tests because SQLAlchemy queries and selects don't have
-    .__getslice__ either; but that's OK because their paginate wrappers
-    emulate it. 
+    (We can't fully check whether it's sliceable. We'd have to call .__getitem__
+    with a slice and and guess what its exception means, and calling it may
+    cause side effects. But the Sprox error, a dict, and my test classes all
+    raise "TypeError: unhashable type", so I check for that.)
 
 1.3b1 (2011-03-17)
 ------------------
