@@ -178,6 +178,11 @@ import warnings
 
 from webhelpers.html import literal, HTML
 
+INCOMPATIBLE_COLLECTION_TYPE = """\
+Sorry, your collection type is not supported by the paginate module. You can
+provide a list, a tuple, a SQLAlchemy " "select object or a SQLAlchemy
+ORM-query object."""
+
 # import SQLAlchemy if available
 try:
     import sqlalchemy
@@ -211,17 +216,18 @@ def get_wrapper(obj, sqlalchemy_session=None):
             or isinstance(obj, sqlalchemy.sql.expression.Select):
                 return _SQLAlchemySelect(obj, sqlalchemy_session)
 
-    # If object is iterable and sliceable we can use it directly
-    required_methods = ["__iter__", "__len__", "__slice__"]
+    # If object is iterable we can use it.  (This is not true if it's
+    # non-sliceable but there doesn't appear to be a way to test for that. We'd
+    # have to call .__getitem__ with a slice and guess what the exception
+    # means, and calling it may cause side effects.)
+    required_methods = ["__iter__", "__len__", "__getitem__"]
     for meth in required_methods:
         if not hasattr(obj, meth):
             break
     else:
         return obj
 
-    raise TypeError("Sorry, your collection type is not supported by the "
-        "paginate module. You can provide a list, a tuple, a SQLAlchemy "
-        "select object or a SQLAlchemy ORM-query object.")
+    raise TypeError(INCOMPATIBLE_COLLECTION_TYPE)
 
 class _SQLAlchemySelect(object):
     """
@@ -431,7 +437,15 @@ class Page(list):
             if presliced_list:
                 self.items = self.collection
             else:
-                self.items = list(self.collection[self.first_item-1:self.last_item])
+                try:
+                    first = self.first_item - 1
+                    last = self.last_item
+                    self.items = list(self.collection[first:last])
+                except TypeError, e:
+                    if str(e) == "unhashable type":
+                        # Assume this means collection is unsliceable.
+                        raise TypeError(INCOMPATIBLE_COLLECTION_TYPE)
+                    raise
 
             # Links to previous and next page
             if self.page > self.first_page:

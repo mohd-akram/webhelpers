@@ -112,6 +112,7 @@ def test_pageurl_webob():
     purl = paginate.PageURL_WebOb(request, qualified=True)
     eq_(purl(2), "http://localhost:5000/articles?blah=boo&page=2")
 
+
 class UnsliceableSequence(object):
    def __init__(self, seq):
       self.l = seq
@@ -122,6 +123,11 @@ class UnsliceableSequence(object):
 
    def __len__(self):
        return len(self.l)
+
+
+class UnsliceableSequence2(UnsliceableSequence):
+   def __getitem__(self, key):
+        raise TypeError("unhashable type")
 
 class TestCollectionTypes(unittest.TestCase):
     rng = list(range(10))   # A list in both Python 2 and 3.
@@ -135,6 +141,10 @@ class TestCollectionTypes(unittest.TestCase):
     @raises(TypeError)
     def test_unsliceable_sequence(self):
         paginate.Page(UnsliceableSequence(self.rng))
+
+    @raises(TypeError)
+    def test_unsliceable_sequence2(self):
+        paginate.Page(UnsliceableSequence2(self.rng))
 
 
 class TestSQLAlchemyCollectionTypes(unittest.TestCase):
