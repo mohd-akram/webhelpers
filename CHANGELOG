@@ -1,14 +1,12 @@
-1.3b2 (2011-03-20)
+1.3 (2011-03-24)
 ------------------
 
 * webhelpers.paginate:
 
   - Revert Sprox patch (#59) from 1.3b1; it makes SQLAlchemy inefficient (#63).
-    The Sprox object is apparently incompatible because it's not sliceable.
-    (We can't fully check whether it's sliceable. We'd have to call .__getitem__
-    with a slice and and guess what its exception means, and calling it may
-    cause side effects. But the Sprox error, a dict, and my test classes all
-    raise "TypeError: unhashable type", so I check for that.)
+    The bug reporter's Sprox object seems to be unsliceable and therefore
+    incompatible with paginate. Changed error message to say this if the
+    slicing operation raises "TypeError: unhashable type".
 
 1.3b1 (2011-03-17)
 ------------------
