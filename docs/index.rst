@@ -1,6 +1,6 @@
 WebHelpers
 %%%%%%%%%%
-:Version: 1.3b1, released 2011-03-17
+:Version: 1.3, released 2011-03-23
 :PyPI: http://pypi.python.org/pypi/WebHelpers
 :Docs: http://sluggo.scrapping.cc/python/WebHelpers/index.html
 :Source: https://bitbucket.org/bbangert/webhelpers (Mercurial)
@@ -14,6 +14,10 @@ WebHelpers
 WebHelpers is a wide variety of utility functions for web applications and
 other applications. It can be used with any web framework.  See 
 `What's New`_ for a list of changes and upgrading hints.
+
+Version 1.3 improves Pyramid support in Paginate via URL generator classes.
+(Note: 1.3b1 had a performance regression in Paginate. This is fixed in 1.3
+final.)
 
 WebHelpers includes the widely-used HTML tag builder with smart escaping and
 convenience functions for common tags such as form fields. The common builder
