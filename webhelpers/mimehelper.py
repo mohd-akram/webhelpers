@@ -110,8 +110,7 @@ class MIMETypes(object):
             if '.' in last_part:
                 has_extension = True
         if 'HTTP_ACCEPT' in self.env:
-            possible_from_accept_header = webob.acceptparse.MIMEAccept('ACCEPT', 
-                self.env['HTTP_ACCEPT'])
+            possible_from_accept_header = webob.acceptparse.MIMEAccept(self.env['HTTP_ACCEPT'])
         if has_extension == False:
             if possible_from_accept_header is None:
                 return self._set_response_content_type(content_type)
