@@ -7,14 +7,14 @@ import webhelpers.feedgenerator as fg
 def test_simple_feed():
     pubdate = datetime.datetime(2009, 12, 18, 23, 45, 12)
     feed = fg.Rss201rev2Feed(
-        title=u"Poynter E-Media Tidbits",
-        link=u"http://www.poynter.org/column.asp?id=31",
-        description=u"A group weblog by the sharpest minds in online media/journalism/publishing.",
-        language=u"en",
+        title="Poynter E-Media Tidbits",
+        link="http://www.poynter.org/column.asp?id=31",
+        description="A group weblog by the sharpest minds in online media/journalism/publishing.",
+        language="en",
     )
     feed.add_item(
         title="Hello", 
-        link=u"http://www.holovaty.com/test/",
+        link="http://www.holovaty.com/test/",
         description="Testing.",  
         pubdate=pubdate)
     result = feed.writeString("utf-8")
@@ -25,14 +25,14 @@ def test_simple_feed():
 def test_escaping():
     pubdate = datetime.datetime(2009, 12, 18, 23, 45, 12)
     feed = fg.Rss201rev2Feed(
-        title=u"Poynter E-Media Tidbits",
-        link=u"http://www.poynter.org/column.asp?id=31",
-        description=u"A group weblog by the <em>sharpest</em> minds in online media & journalism.",
-        language=u"en",
+        title="Poynter E-Media Tidbits",
+        link="http://www.poynter.org/column.asp?id=31",
+        description="A group weblog by the <em>sharpest</em> minds in online media & journalism.",
+        language="en",
     )
     feed.add_item(
         title="Hello", 
-        link=u"http://www.holovaty.com/test/",
+        link="http://www.holovaty.com/test/",
         description="Testing.",  
         pubdate=pubdate)
     result = feed.writeString("utf-8")
@@ -42,14 +42,14 @@ def test_escaping():
 def test_geo_point_feed():
     pubdate = datetime.datetime(2009, 12, 18, 23, 45, 12)
     feed = fg.GeoAtom1Feed(
-        title=u"Poynter E-Media Tidbits",
-        link=u"http://www.poynter.org/column.asp?id=31",
-        description=u"A group weblog by the sharpest minds in online media/journalism/publishing.",
-        language=u"en",
+        title="Poynter E-Media Tidbits",
+        link="http://www.poynter.org/column.asp?id=31",
+        description="A group weblog by the sharpest minds in online media/journalism/publishing.",
+        language="en",
     )
     feed.add_item(
         title="Hello", 
-        link=u"http://www.holovaty.com/test/",
+        link="http://www.holovaty.com/test/",
         description="Testing.",  
         pubdate=pubdate,
         geometry=(-120.5, 50.5))
@@ -64,15 +64,15 @@ def test_geo_point_feed():
 def test_geo_point_feed_longitude_first():
     pubdate = datetime.datetime(2009, 12, 18, 23, 45, 12)
     feed = fg.GeoAtom1Feed(
-        title=u"Poynter E-Media Tidbits",
-        link=u"http://www.poynter.org/column.asp?id=31",
-        description=u"A group weblog by the sharpest minds in online media/journalism/publishing.",
-        language=u"en",
+        title="Poynter E-Media Tidbits",
+        link="http://www.poynter.org/column.asp?id=31",
+        description="A group weblog by the sharpest minds in online media/journalism/publishing.",
+        language="en",
     )
     feed.is_input_latitude_first = False
     feed.add_item(
         title="Hello", 
-        link=u"http://www.holovaty.com/test/",
+        link="http://www.holovaty.com/test/",
         description="Testing.",  
         pubdate=pubdate,
         geometry=(50.5, -120.5))

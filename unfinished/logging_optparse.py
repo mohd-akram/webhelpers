@@ -215,5 +215,5 @@ class OptionParser(optparse.OptionParser):
                 if logger == "__main__":
                     # Set root logger to same level.
                     logging.getLogger().setLevel(level)
-        except LogLevelError, e:
+        except LogLevelError as e:
             parser.error("log level '%s' not defined" % e.level)

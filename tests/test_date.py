@@ -61,11 +61,11 @@ class TestDateHelper(WebHelpersTestCase):
                          distance_of_time_in_words(to_time, from_time, granularity='second', round=True))
         
         # Pluralization
-        self.assertEquals(distance_of_time_in_words(datetime(200, 1,1), datetime(300, 1, 1)), "1 century")
-        self.assertEquals(distance_of_time_in_words(datetime(200, 1,1), datetime(500, 1, 1)), "3 centuries")
+        self.assertEqual(distance_of_time_in_words(datetime(200, 1,1), datetime(300, 1, 1)), "1 century")
+        self.assertEqual(distance_of_time_in_words(datetime(200, 1,1), datetime(500, 1, 1)), "3 centuries")
         
-        self.assertEquals(distance_of_time_in_words(datetime(2000, 1,1), datetime(2000, 2, 1)), "1 month")
-        self.assertEquals(distance_of_time_in_words(datetime(2000, 1,1), datetime(2000, 5, 1)), "4 months")
+        self.assertEqual(distance_of_time_in_words(datetime(2000, 1,1), datetime(2000, 2, 1)), "1 month")
+        self.assertEqual(distance_of_time_in_words(datetime(2000, 1,1), datetime(2000, 5, 1)), "4 months")
         
         # Spot checks
         from_time = datetime(200, 2, 2, 0, 12, 12, 0, None) # 12 minutes, 12 seconds past midnight on Feb 2 200AD

@@ -16,8 +16,8 @@ import datetime
 import logging
 import os
 import re
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 
 from webhelpers import containers
 from webhelpers.html import escape, HTML, literal, url_escape
@@ -109,7 +109,7 @@ def form(url, method="post", multipart=False, hidden_fields=None, **attrs):
         fields.append(field)
     if hidden_fields is not None:
         try:
-            it = hidden_fields.items()
+            it = list(hidden_fields.items())
         except AttributeError:
             it = hidden_fields
         for name, value in it:
@@ -368,10 +368,10 @@ def select(name, selected_values, options, id=NotGiven, **attrs):
     if selected_values is None:
         selected_values = ('',)
     # Turn a single string or integer into a list
-    elif isinstance(selected_values, (basestring, int, long)):
+    elif isinstance(selected_values, (str, int)):
         selected_values = (selected_values,)
     # Cast integer values to strings
-    selected_values = map(unicode, selected_values)
+    selected_values = list(map(str, selected_values))
     # Prepend the prompt
     prompt = attrs.pop("prompt", None)
     if prompt:
@@ -687,10 +687,10 @@ class Options(tuple):
                     continue
             else:
                 value = label = opt
-            if not isinstance(value, unicode):
-                value = unicode(value)
-            if not isinstance(label, unicode):  # Preserves literal.
-                label = unicode(label)
+            if not isinstance(value, str):
+                value = str(value)
+            if not isinstance(label, str):  # Preserves literal.
+                label = str(label)
             opt = Option(value, label)
             opts.append(opt)
         return super(Options, class_).__new__(class_, opts)
@@ -1239,9 +1239,9 @@ def convert_boolean_attrs(attrs, bool_attrs):
     
     """
     for a in bool_attrs:
-        if attrs.has_key(a) and attrs[a]:
+        if a in attrs and attrs[a]:
             attrs[a] = a
-        elif attrs.has_key(a):
+        elif a in attrs:
             del attrs[a]
 
 def _set_input_attrs(attrs, type, name, value):

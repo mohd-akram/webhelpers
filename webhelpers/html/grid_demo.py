@@ -8,7 +8,7 @@ Run this module as a script::
 
 import optparse
 import os
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from webhelpers.html import *
 from webhelpers.html.grid import *
@@ -283,10 +283,10 @@ demos = subclasses_only(_DemoBase, globals())
 def url(urlpath, **params):
     # This should be a helper and I think it's defined somewhere but I
     # can't think of where.
-    return urlpath + "?" + urllib.urlencode(params)
+    return urlpath + "?" + urllib.parse.urlencode(params)
 
 def write_file(dir, filename, content):
-    print "... writing '%s'" % filename
+    print("... writing '%s'" % filename)
     path = os.path.join(dir, filename)
     f = open(path, "w")
     f.write(content)
@@ -301,7 +301,7 @@ def main():
     dir = args[0]
     if not os.path.exists(dir):
         os.makedirs(dir)
-    print "Putting output in directory '%s'" % dir
+    print("Putting output in directory '%s'" % dir)
     write_file(dir, "demo.css", STYLESHEET)
     for class_ in demos:
         d = class_()

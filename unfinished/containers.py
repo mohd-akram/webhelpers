@@ -16,7 +16,7 @@ def columnize_as_rows(lis, columns, horizontal=False, fill=None):
         if n > 0:
             extension = [fill] * n
             lis.extend(extension)
-    return zip(*data)
+    return list(zip(*data))
 
 def izip_fill(*iterables, **kw):
     """Like itertools.izip but use a default value for the missing elements
@@ -26,18 +26,18 @@ def izip_fill(*iterables, **kw):
        ``default`` is the default value (default ``None``, must be a keyword
        arg.
     """
-    iterables = map(iter, iterables)
+    iterables = list(map(iter, iterables))
     default = kw.pop('default', None)
     if kw:
         raise TypeError("unrecognized keyword arguments")
     columns = len(iterables)
-    columns_range = range(columns)
+    columns_range = list(range(columns))
     while True:
         found_data = False
         row = [None] * columns
         for i in columns_range:
             try:
-                row[i] = iterables[i].next()
+                row[i] = next(iterables[i])
                 found_data = True
             except StopIteration:
                 row[i] = default

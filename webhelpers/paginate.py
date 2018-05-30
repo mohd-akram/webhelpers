@@ -173,7 +173,7 @@ WebHelpers. (c) 2007-2011.
 
 import re
 from string import Template
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import warnings
 
 from webhelpers.html import literal, HTML
@@ -247,7 +247,7 @@ class _SQLAlchemySelect(object):
 
     def __getitem__(self, range):
         if not isinstance(range, slice):
-            raise Exception, "__getitem__ without slicing not supported"
+            raise Exception("__getitem__ without slicing not supported")
         offset = range.start
         limit = range.stop - range.start
         select = self.obj.offset(offset).limit(limit)
@@ -265,7 +265,7 @@ class _SQLAlchemyQuery(object):
 
     def __getitem__(self, range):
         if not isinstance(range, slice):
-            raise Exception, "__getitem__ without slicing not supported"
+            raise Exception("__getitem__ without slicing not supported")
         return self.obj[range]
 
     def __len__(self):
@@ -441,7 +441,7 @@ class Page(list):
                     first = self.first_item - 1
                     last = self.last_item
                     self.items = list(self.collection[first:last])
-                except TypeError, e:
+                except TypeError as e:
                     if str(e) == "unhashable type":
                         # Assume this means collection is unsliceable.
                         raise TypeError(INCOMPATIBLE_COLLECTION_TYPE)
@@ -759,7 +759,7 @@ class Page(list):
                 text = HTML.span(c=text, **self.dotdot_attr)
             nav_items.append(text)
 
-        for thispage in xrange(leftmost_page, rightmost_page+1):
+        for thispage in range(leftmost_page, rightmost_page+1):
             # Hilight the current page number and do not use a link
             if thispage == self.page:
                 text = '%s' % (thispage,)
@@ -833,7 +833,7 @@ class Page(list):
                     # the controller and action manually
                     if config.mapper.explicit:
                         if hasattr(config, 'mapper_dict'):
-                            for k, v in config.mapper_dict.items():
+                            for k, v in list(config.mapper_dict.items()):
                                 if k != self.page_param:
                                     link_params[k] = v
 
@@ -881,9 +881,9 @@ def make_page_url(path, params, page, partial=False, sort=True):
     if partial:
         params["partial"] = "1"
     if sort:
-        params = params.items()
+        params = list(params.items())
         params.sort()
-    qs = urllib.urlencode(params, True)
+    qs = urllib.parse.urlencode(params, True)
     return "%s?%s" % (path, qs)
     
 class PageURL(object):

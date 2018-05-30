@@ -5,7 +5,7 @@ BeautifulSoup and HTMLTidy handle this well.
 """
 
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import warnings
 
 from webhelpers.html import HTML, literal, lit_sub, escape
@@ -206,7 +206,7 @@ def mail_to(email_address, name=None, cc=None, bcc=None, subject=None,
             if not isinstance(option, literal):
                 item = (item[0], escape(option))
             extras.append(item)
-    options_query = urllib.urlencode(extras).replace("+", "%20")
+    options_query = urllib.parse.urlencode(extras).replace("+", "%20")
     protocol = 'mailto:'
 
     email_address_obfuscated = email_address
@@ -300,7 +300,7 @@ def highlight(text, phrase, highlighter=None, case_sensitive=False,
         flags = re.IGNORECASE
     if highlighter:
         return _legacy_highlight(text, phrase, highlighter, flags)
-    if isinstance(phrase, basestring):
+    if isinstance(phrase, str):
         pat = re.escape(phrase)
         rx = re.compile(pat, flags)
     elif isinstance(phrase, (list, tuple)):
@@ -342,7 +342,7 @@ def auto_link(text, link="all", **href_attrs):
         
     """
     if not text:
-        return literal(u"")
+        return literal("")
     text = escape(text)
     if link == "all":
         return _auto_link_urls(_auto_link_email_addresses(text), **href_attrs)

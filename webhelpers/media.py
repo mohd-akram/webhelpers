@@ -117,19 +117,19 @@ def test_get_dimensions():
         sys.exit("usage: %s FILES ...\nPrints dimensions of each image")
     for file in files:
         apath = os.path.abspath(file)
-        print "%s:" % apath,
+        print("%s:" % apath, end=' ')
         if not os.path.isfile(file):
-            print "does not exist or is not a plain file"
+            print("does not exist or is not a plain file")
             continue
         width, height = get_dimensions(file)
         if width is None and height is None:
-            print "could not get dimensions"
+            print("could not get dimensions")
         else:
             if width is None:
                 width = "UNKNOWN"
             if height is None:
                 height = "UNKNOWN"
-            print "%s x %s" % (width, height)
+            print("%s x %s" % (width, height))
             
         
 if __name__ == "__main__":  test_get_dimensions()

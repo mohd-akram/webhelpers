@@ -35,18 +35,18 @@ def test_defaultdict_basic():
     eq_(d2["bar"], 2)
     eq_(d2[42], [])
     assert "foo" in d2
-    assert "foo" in d2.keys()
+    assert "foo" in list(d2.keys())
     assert "bar" in d2
-    assert "bar" in d2.keys()
+    assert "bar" in list(d2.keys())
     assert 42 in d2
-    assert 42 in d2.keys()
+    assert 42 in list(d2.keys())
     assert 12 not in d2
-    assert 12 not in d2.keys()
+    assert 12 not in list(d2.keys())
     d2.default_factory = None
     eq_(d2.default_factory, None)
     try:
         d2[15]
-    except KeyError, err:
+    except KeyError as err:
         eq_(err.args, (15,))
     else:
         message = "d2[15] didn't raise KeyError"
@@ -88,8 +88,8 @@ def test_defaultdict_print():
     try:
         f = open(tfn, "w+")
         try:
-            print >>f, d1
-            print >>f, d2
+            print(d1, file=f)
+            print(d2, file=f)
             f.seek(0)
             eq_(f.readline(), repr(d1) + "\n")
             eq_(f.readline(), repr(d2) + "\n")

@@ -6,7 +6,7 @@ Helpers for filtering, formatting, and transforming strings.
 
 import re
 import textwrap
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from webhelpers.html.tools import strip_tags
 
@@ -275,7 +275,7 @@ def urlify(string):
     s = remove_formatting(string).lower()
     s = replace_whitespace(s, '-')
     s = collapse(s, '-')
-    return urllib.quote(s)
+    return urllib.parse.quote(s)
 
 
 def remove_formatting(string):
@@ -356,7 +356,7 @@ def convert_misc_entities(string):
         "(#190|frac34)": "three fourths",
         "(#176|deg)": " degrees"
     }
-    for textiled, normal in replace_dict.items():
+    for textiled, normal in list(replace_dict.items()):
         string = re.sub(r'\&%s;' % textiled, normal, string)
     return re.sub(r'\&[^;]+;', '', string)
 

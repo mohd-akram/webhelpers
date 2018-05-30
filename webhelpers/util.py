@@ -7,13 +7,13 @@ would have been put in other subpackages if they have been created later.
 import cgi
 import copy
 import sys
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from UserDict import DictMixin
 from xml.sax.saxutils import XMLGenerator
 
 try:
-    from urlparse import parse_qs
+    from urllib.parse import parse_qs
 except ImportError:   # Python < 2.6
     from cgi import parse_qs
 
@@ -53,20 +53,20 @@ def update_params(_url, _debug=False, **params):
     'http://www.mau.de?foo=C&foo=D'
 
     """
-    url, fragment = urlparse.urldefrag(_url)
+    url, fragment = urllib.parse.urldefrag(_url)
     if "?" in url:
         url, qs = url.split("?", 1)
         query = parse_qs(qs)
     else:
         query = {}
-    for key, value in params.iteritems():
+    for key, value in params.items():
         if value is not None:
             query[key] = value
         elif key in query:
             del query[key]
     if _debug:
         return url, query, fragment
-    qs = urllib.urlencode(query, True)
+    qs = urllib.parse.urlencode(query, True)
     if qs:
         qs = "?" + qs
     if fragment:
@@ -113,13 +113,13 @@ def html_escape(s):
     """
     if s is None:
         return ''
-    if not isinstance(s, basestring):
+    if not isinstance(s, str):
         if hasattr(s, '__unicode__'):
-            s = unicode(s)
+            s = str(s)
         else:
             s = str(s)
     s = cgi_escape(s, True)
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         s = s.encode('ascii', 'xmlcharrefreplace')
     return s
 
@@ -144,7 +144,7 @@ def iri_to_uri(iri):
     # section 3.1 of RFC 3987.
     if iri is None:
         return iri
-    return urllib.quote(iri, safe='/#%[]=:;$&()+,!?')
+    return urllib.parse.quote(iri, safe='/#%[]=:;$&()+,!?')
 
 
 class Partial(object):
@@ -264,7 +264,7 @@ class UnicodeMultiDict(DictMixin):
         
         """
         unicode_mixed = {}
-        for key, value in self.multi.mixed().iteritems():
+        for key, value in self.multi.mixed().items():
             if isinstance(value, list):
                 value = [self._decode_value(value) for value in value]
             else:
@@ -275,7 +275,7 @@ class UnicodeMultiDict(DictMixin):
     def dict_of_lists(self):
         """Return dict where each key is associated with a list of values."""
         unicode_dict = {}
-        for key, value in self.multi.dict_of_lists().iteritems():
+        for key, value in self.multi.dict_of_lists().items():
             value = [self._decode_value(value) for value in value]
             unicode_dict[self._decode_key(key)] = value
         return unicode_dict
@@ -305,7 +305,7 @@ class UnicodeMultiDict(DictMixin):
         return (self._decode_key(k), self._decode_value(v))
 
     def __repr__(self):
-        items = ', '.join(['(%r, %r)' % v for v in self.items()])
+        items = ', '.join(['(%r, %r)' % v for v in list(self.items())])
         return '%s([%s])' % (self.__class__.__name__, items)
 
     def __len__(self):
@@ -316,25 +316,25 @@ class UnicodeMultiDict(DictMixin):
     ##
 
     def keys(self):
-        return [self._decode_key(k) for k in self.multi.iterkeys()]
+        return [self._decode_key(k) for k in self.multi.keys()]
 
     def iterkeys(self):
-        for k in self.multi.iterkeys():
+        for k in self.multi.keys():
             yield self._decode_key(k)
 
     __iter__ = iterkeys
 
     def items(self):
         return [(self._decode_key(k), self._decode_value(v)) for \
-                    k, v in self.multi.iteritems()]
+                    k, v in self.multi.items()]
 
     def iteritems(self):
-        for k, v in self.multi.iteritems():
+        for k, v in self.multi.items():
             yield (self._decode_key(k), self._decode_value(v))
 
     def values(self):
-        return [self._decode_value(v) for v in self.multi.itervalues()]
+        return [self._decode_value(v) for v in self.multi.values()]
 
     def itervalues(self):
-        for v in self.multi.itervalues():
+        for v in self.multi.values():
             yield self._decode_value(v)

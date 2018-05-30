@@ -59,7 +59,7 @@ def baseN_decode(s, alphabet):
     s = list(s)
     alphabet = list(alphabet)
     base = len(alphabet)
-    inverse_alphabet = dict(zip(alphabet, xrange(0, base)))
+    inverse_alphabet = dict(list(zip(alphabet, list(range(0, base)))))
     n = 0
     exp = 0
     for i in reversed(s):

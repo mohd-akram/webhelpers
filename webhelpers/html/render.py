@@ -39,8 +39,8 @@
 """An HTML-to-text formatter and HTML sanitizer.
 """
 
-from HTMLParser import HTMLParser
-import htmlentitydefs
+from html.parser import HTMLParser
+import html.entities
 import re
 import textwrap
 
@@ -189,12 +189,12 @@ class HTMLRenderer(HTMLParser):
 
     def handle_entityref(self, name):
         name = name.lower()
-        if name not in htmlentitydefs.entitydefs:
+        if name not in html.entities.entitydefs:
             # bad entity, just let it through
             # (like a &var=value in a URL)
             self.handle_data('&'+name)
             return
-        result = htmlentitydefs.entitydefs[name]
+        result = html.entities.entitydefs[name]
         if result.startswith('&'):
             self.handle_charref(result[2:-1])
         else:
@@ -202,7 +202,7 @@ class HTMLRenderer(HTMLParser):
 
     def handle_charref(self, name):
         try:
-            self.handle_data(unichr(int(name)))
+            self.handle_data(chr(int(name)))
         except ValueError:
             self.handle_data('&' + name)
         
@@ -315,7 +315,7 @@ class Paragraph:
                 return value.lower()
         return self._default_align
 
-    def __nonzero__(self):
+    def __bool__(self):
         for t in self.text:
             if t:
                 return True
@@ -335,7 +335,7 @@ class Table:
     def add_cell(self, value):
         self.rows[-1].append(value)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return not not self.rows
 
     def to_text(self, context):
@@ -380,7 +380,7 @@ class HTMLSanitizer(HTMLParser):
 def normalize(text):
     text = re.sub(r'\s+', ' ', text)
     # nbsp:
-    if not isinstance(text, unicode):
+    if not isinstance(text, str):
         text = text.replace('\xa0', ' ')
     return text
 
@@ -392,6 +392,6 @@ def main():
         prog = os.path.basename(sys.argv[0])
         sys.exit("usage: %s <HTML_FILE" % prog)
     html = sys.stdin.read()
-    print render(html)
+    print(render(html))
 
 if __name__ == "__main__":  main()

@@ -315,15 +315,15 @@ class ListGrid(Grid):
     """
     def __init__(self, itemlist, columns=None, column_labels=None, *args, **kw):
         if columns is None:
-            columns = range(len(itemlist[0]))
+            columns = list(range(len(itemlist[0])))
         elif isinstance(columns, int):
-            columns = range(columns)
+            columns = list(range(columns))
         # The superclass requires the ``columns`` elements to be strings.
         super_columns = [str(x) for x in columns]
         # The superclass requires ``column_labels`` to be a dict.
         super_labels = column_labels
         if isinstance(column_labels, (list, tuple)):
-            super_labels = dict(zip(super_columns, column_labels))
+            super_labels = dict(list(zip(super_columns, column_labels)))
         Grid.__init__(self, itemlist, super_columns, super_labels, *args, **kw)
   
     def default_column_format(self, column_number, i, record, column_name):

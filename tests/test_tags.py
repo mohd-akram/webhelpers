@@ -11,148 +11,148 @@ class TestFormTagHelper(object):
     def test_check_box(self):
         eq_(
             checkbox("admin"),
-            u'<input id="admin" name="admin" type="checkbox" value="1" />',
+            '<input id="admin" name="admin" type="checkbox" value="1" />',
         )
 
     def test_form(self):
         eq_(
             form(url="http://www.example.com"),
-            u'<form action="http://www.example.com" method="post">'
+            '<form action="http://www.example.com" method="post">'
         )
         eq_(
             form(url="http://www.example.com", method='GET'),
-            u'<form action="http://www.example.com" method="GET">'
+            '<form action="http://www.example.com" method="GET">'
         )
         eq_(
             form('/test/edit/1'),
-            u'<form action="/test/edit/1" method="post">'
+            '<form action="/test/edit/1" method="post">'
         )
 
     def test_form_multipart(self):
         eq_(
             form(url='http://www.example.com', multipart=True),
-            u'<form action="http://www.example.com" enctype="multipart/form-data" method="post">'
+            '<form action="http://www.example.com" enctype="multipart/form-data" method="post">'
         )
         
     def test_hidden_field(self):
         eq_(
             hidden("id", 3),
-            u'<input id="id" name="id" type="hidden" value="3" />'
+            '<input id="id" name="id" type="hidden" value="3" />'
         )
 
     def test_hidden_field_alt(self):
         eq_(
             hidden("id", '3'),
-            u'<input id="id" name="id" type="hidden" value="3" />'
+            '<input id="id" name="id" type="hidden" value="3" />'
         )
 
     def test_password_field(self):
         eq_(
             password("password"), 
-            u'<input id="password" name="password" type="password" />'
+            '<input id="password" name="password" type="password" />'
         )
 
     def test_radio_button(self):
         eq_(
             radio("people", "justin"),
-            u'<input id="people_justin" name="people" type="radio" value="justin" />'
+            '<input id="people_justin" name="people" type="radio" value="justin" />'
         )
         
         eq_(
             radio("num_people", 5),
-            u'<input id="num_people_5" name="num_people" type="radio" value="5" />'
+            '<input id="num_people_5" name="num_people" type="radio" value="5" />'
         )
 
         eq_(
             radio("num_people", 5),
-            u'<input id="num_people_5" name="num_people" type="radio" value="5" />'
+            '<input id="num_people_5" name="num_people" type="radio" value="5" />'
         )
         
         eq_(
             radio("gender", "m") + radio("gender", "f"),
-            u'<input id="gender_m" name="gender" type="radio" value="m" /><input id="gender_f" name="gender" type="radio" value="f" />'
+            '<input id="gender_m" name="gender" type="radio" value="m" /><input id="gender_f" name="gender" type="radio" value="f" />'
         )
         
         eq_(
             radio("opinion", "-1") + radio("opinion", "1"),
-            u'<input id="opinion_-1" name="opinion" type="radio" value="-1" /><input id="opinion_1" name="opinion" type="radio" value="1" />'
+            '<input id="opinion_-1" name="opinion" type="radio" value="-1" /><input id="opinion_1" name="opinion" type="radio" value="1" />'
         )
 
         eq_(
             radio("num_people", 5, checked=True),
-            u'<input checked="checked" id="num_people_5" name="num_people" type="radio" value="5" />'
+            '<input checked="checked" id="num_people_5" name="num_people" type="radio" value="5" />'
         )
 
     def test_submit(self):
         eq_(
-            u'<input id="commit" name="commit" type="submit" value="Save changes" />',
+            '<input id="commit" name="commit" type="submit" value="Save changes" />',
             submit("commit", "Save changes")
         )
 
     def test_text_area(self):
         eq_(
             textarea("aa", ""),
-            u'<textarea id="aa" name="aa"></textarea>'
+            '<textarea id="aa" name="aa"></textarea>'
         )
         eq_(
             textarea("aa", None),
-            u'<textarea id="aa" name="aa"></textarea>'
+            '<textarea id="aa" name="aa"></textarea>'
         )
         eq_(
             textarea("aa", "Hello!"),
-            u'<textarea id="aa" name="aa">Hello!</textarea>'
+            '<textarea id="aa" name="aa">Hello!</textarea>'
         )
 
     def test_text_area_size_string(self):
         eq_(
             textarea("body", "hello world", cols=20, rows=40),
-            u'<textarea cols="20" id="body" name="body" rows="40">hello world</textarea>'
+            '<textarea cols="20" id="body" name="body" rows="40">hello world</textarea>'
         )
 
     def test_text_field(self):
         eq_(
             text("title", ""),
-            u'<input id="title" name="title" type="text" value="" />'
+            '<input id="title" name="title" type="text" value="" />'
         )
         eq_(
             text("title", None),
-            u'<input id="title" name="title" type="text" />'
+            '<input id="title" name="title" type="text" />'
         )
         eq_(
             text("title", "Hello!"),
-            u'<input id="title" name="title" type="text" value="Hello!" />'
+            '<input id="title" name="title" type="text" value="Hello!" />'
         )
 
     def test_text_field_class_string(self):
         eq_(
             text( "title", "Hello!", class_= "admin"),
-            u'<input class="admin" id="title" name="title" type="text" value="Hello!" />'
+            '<input class="admin" id="title" name="title" type="text" value="Hello!" />'
         )
 
     def test_boolean_options(self):
         eq_(     
             checkbox("admin", 1, True, disabled = True, readonly="yes"),
-            u'<input checked="checked" disabled="disabled" id="admin" name="admin" readonly="readonly" type="checkbox" value="1" />'
+            '<input checked="checked" disabled="disabled" id="admin" name="admin" readonly="readonly" type="checkbox" value="1" />'
         )
         eq_(
             checkbox("admin", 1, True, disabled = False, readonly = None),
-            u'<input checked="checked" id="admin" name="admin" type="checkbox" value="1" />'
+            '<input checked="checked" id="admin" name="admin" type="checkbox" value="1" />'
         )
 
     def test_multiple_id_bug(self):
         # Don't set multiple id attributes for 'id_' argument.
         eq_(
             text("spam", "pizza", id="eggs"),
-            u'<input id="eggs" name="spam" type="text" value="pizza" />')
+            '<input id="eggs" name="spam" type="text" value="pizza" />')
         eq_(
             text("spam", "pizza", id_="eggs"), 
-            u'<input id="eggs" name="spam" type="text" value="pizza" />')
+            '<input id="eggs" name="spam" type="text" value="pizza" />')
         eq_(
             select("spam", [1,2], [2], id="eggs"),
-            u'<select id="eggs" name="spam">\n<option selected="selected" value="2">2</option>\n</select>')
+            '<select id="eggs" name="spam">\n<option selected="selected" value="2">2</option>\n</select>')
         eq_(
             select("spam", [1,2], [2], id_="eggs"),
-            u'<select id="eggs" name="spam">\n<option selected="selected" value="2">2</option>\n</select>')
+            '<select id="eggs" name="spam">\n<option selected="selected" value="2">2</option>\n</select>')
 
     def test_id_and_id_(self):
         raises(TypeError, text, "spam", "pizza", id="fubar", id_="eggs")
@@ -161,21 +161,21 @@ class TestFormTagHelper(object):
     
 class TestLinkHelper(object):
     def test_link_tag_with_query(self):
-        eq_(u"<a href=\"http://www.example.com?q1=v1&amp;q2=v2\">Hello</a>", 
+        eq_("<a href=\"http://www.example.com?q1=v1&amp;q2=v2\">Hello</a>", 
                link_to("Hello", "http://www.example.com?q1=v1&q2=v2"))
     
     def test_link_tag_with_query_and_no_name(self):
-        eq_(u"<a href=\"http://www.example.com?q1=v1&amp;q2=v2\">http://www.example.com?q1=v1&amp;q2=v2</a>", 
+        eq_("<a href=\"http://www.example.com?q1=v1&amp;q2=v2\">http://www.example.com?q1=v1&amp;q2=v2</a>", 
                link_to(None, HTML.literal("http://www.example.com?q1=v1&amp;q2=v2")))
     
     def test_link_tag_with_custom_onclick(self):
-        eq_(u"<a href=\"http://www.example.com\" onclick=\"alert(&#39;yay!&#39;)\">Hello</a>", 
+        eq_("<a href=\"http://www.example.com\" onclick=\"alert(&#39;yay!&#39;)\">Hello</a>", 
                link_to("Hello", "http://www.example.com", onclick="alert('yay!')"))
     
 
 class TestAssetTagHelper(object):
     def test_auto_discovery_link_tag(self):
-        eq_(literal(u'<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />'),
+        eq_(literal('<link href="http://feed.com/feed.xml" rel="alternate" title="RSS" type="application/rss+xml" />'),
                          auto_discovery_link('http://feed.com/feed.xml'))
         eq_('<link href="http://feed.com/feed.xml" rel="alternate" title="ATOM" type="application/atom+xml" />',
                          auto_discovery_link('http://feed.com/feed.xml', feed_type='atom'))
@@ -215,7 +215,7 @@ class TestAssetTagHelper(object):
                          javascript_link('/js/pngfix.js', defer=True))
 
     def test_stylesheet_link_tag(self):
-        eq_(literal(u'<link href="/dir/file.css" media="all" rel="stylesheet" type="text/css" />'),
+        eq_(literal('<link href="/dir/file.css" media="all" rel="stylesheet" type="text/css" />'),
                          stylesheet_link('/dir/file.css', media='all'))
         eq_('<link href="style.css" media="all" rel="stylesheet" type="text/css" />',
                          stylesheet_link('style.css', media='all'))

@@ -29,7 +29,7 @@ URL: http://docs.fubar.si/minwebhelpers/
 import re
 import os
 import logging
-import StringIO
+import io
 import warnings
 
 from webhelpers.html.tags import javascript_link as __javascript_link
@@ -63,7 +63,7 @@ def combine_sources(sources, ext, fs_root):
         return sources
 
     names = list()
-    js_buffer = StringIO.StringIO()
+    js_buffer = io.StringIO()
     base = os.path.commonprefix([os.path.dirname(s) for s in sources])
 
     for source in sources:
@@ -175,7 +175,7 @@ def get_serializer():
             def do_css_CSSStyleDeclaration(self, style, separator=None):
                 try:
                     color = style.getPropertyValue('color')
-                    if color and color is not u'':
+                    if color and color is not '':
                         color = self.change_colors(color)
                         style.setProperty('color', color)
                 except:

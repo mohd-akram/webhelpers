@@ -30,7 +30,7 @@ def test_empty_list():
 
 def test_one_page():
     """Test that we fit 10 items on a single 10-item page."""
-    items = range(10)
+    items = list(range(10))
     page = paginate.Page(items, page=0, items_per_page=10)
     assert page.page == 1
     assert page.first_item == 1
@@ -50,7 +50,7 @@ def url_generator(**kw):
 
 def test_many_pages():
     """Test that 100 items fit on seven 15-item pages."""
-    items = range(100)
+    items = list(range(100))
     page = paginate.Page(items, page=0, items_per_page=15, url=url_generator)
     eq_(page.page, 1)
     eq_(page.first_item, 1)

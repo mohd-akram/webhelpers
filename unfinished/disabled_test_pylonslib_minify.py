@@ -79,42 +79,42 @@ class MinificationTestCase(TestCase):
         # minify and combine
         js_source = self.minify.javascript_link('/deep/a.js', '/b.js', combined=True, minified=True)
         css_source = self.minify.stylesheet_link('/deep/a.css', '/b.css', combined=True, minified=True)
-        self.assert_('"/a.b.COMBINED.min.css"' in css_source)
-        self.assert_('"/a.b.COMBINED.min.js"' in js_source)
+        self.assertTrue('"/a.b.COMBINED.min.css"' in css_source)
+        self.assertTrue('"/a.b.COMBINED.min.js"' in js_source)
         
         # combine
         js_source = self.minify.javascript_link('/deep/a.js', '/b.js', combined=True)
         css_source = self.minify.stylesheet_link('/deep/a.css', '/b.css', combined=True)
-        self.assert_('"/a.b.COMBINED.css"' in css_source)
-        self.assert_('"/a.b.COMBINED.js"' in js_source)
+        self.assertTrue('"/a.b.COMBINED.css"' in css_source)
+        self.assertTrue('"/a.b.COMBINED.js"' in js_source)
 
         # minify
         js_source = self.minify.javascript_link('/deep/a.js', '/b.js', minified=True)
         css_source = self.minify.stylesheet_link('/deep/a.css', '/b.css', minified=True)
-        self.assert_('"/deep/a.min.css"' in css_source)
-        self.assert_('"/b.min.css"' in css_source)
-        self.assert_('"/deep/a.min.js"' in js_source)
-        self.assert_('"/b.min.js"' in js_source)
+        self.assertTrue('"/deep/a.min.css"' in css_source)
+        self.assertTrue('"/b.min.css"' in css_source)
+        self.assertTrue('"/deep/a.min.js"' in js_source)
+        self.assertTrue('"/b.min.js"' in js_source)
 
         # root minify and combined
         js_source = self.minify.javascript_link('/c.js', '/b.js', combined=True, minified=True)
         css_source = self.minify.stylesheet_link('/c.css', '/b.css', combined=True, minified=True)
-        self.assert_('"/c.b.COMBINED.min.css"' in css_source)
-        self.assert_('"/c.b.COMBINED.min.js"' in js_source)
+        self.assertTrue('"/c.b.COMBINED.min.css"' in css_source)
+        self.assertTrue('"/c.b.COMBINED.min.js"' in js_source)
 
         # root minify
         js_source = self.minify.javascript_link('/c.js', '/b.js', minified=True)
         css_source = self.minify.stylesheet_link('/c.css', '/b.css', minified=True)
-        self.assert_('"/b.min.css"' in css_source)
-        self.assert_('"/b.min.js"' in js_source)
-        self.assert_('"/c.min.js"' in js_source)
-        self.assert_('"/c.min.js"' in js_source)
+        self.assertTrue('"/b.min.css"' in css_source)
+        self.assertTrue('"/b.min.js"' in js_source)
+        self.assertTrue('"/c.min.js"' in js_source)
+        self.assertTrue('"/c.min.js"' in js_source)
 
         # both root minify and combined
         js_source = self.minify.javascript_link('/deep/a.js', '/deep/d.js', combined=True, minified=True)
         css_source = self.minify.stylesheet_link('/deep/a.css', '/deep/d.css', combined=True, minified=True)
-        self.assert_('"/deep/a.d.COMBINED.min.css"' in css_source)
-        self.assert_('"/deep/a.d.COMBINED.min.js"' in js_source)
+        self.assertTrue('"/deep/a.d.COMBINED.min.css"' in css_source)
+        self.assertTrue('"/deep/a.d.COMBINED.min.js"' in js_source)
 
         # Cleanup -- done by .tearDown()
         #self.purge_files('a.b.COMBINED.min.js', 'a.b.COMBINED.min.css')

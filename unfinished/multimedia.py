@@ -87,7 +87,7 @@ def open_image(image_path):
     """
     try:
         im = Image.open(image_path)
-    except IOError, e:
+    except IOError as e:
         if str(e) == "cannot identify image file":
             return None
         else:
@@ -118,7 +118,7 @@ def make_thumb(image_path, width):
         im = im.convert()   # Convert GIF palette to RGB mode.
     try:
         im.thumbnail((width, height), Image.ANTIALIAS)
-    except IOError, e:
+    except IOError as e:
         reason = str(e)
         if RX_DECODER_NOT_AVAILABLE.search(reason):
             return None   # PIL error, cannot thumbnail.
@@ -184,9 +184,9 @@ def get_thumb_path(image_path, width):
     return os.path.join(dir, new_name)
 
 def test():
-    print "Height for 600x480 @ width 200 is", choose_height(200, 600, 480)
-    print "Path 200 for a/foo.jpg is", get_thumb_path('a/foo.jpg', 200)
-    print "Path 200 for a/foo.png is", get_thumb_path('a/foo.png', 200)
+    print("Height for 600x480 @ width 200 is", choose_height(200, 600, 480))
+    print("Path 200 for a/foo.jpg is", get_thumb_path('a/foo.jpg', 200))
+    print("Path 200 for a/foo.png is", get_thumb_path('a/foo.png', 200))
 
 if __name__ == "__main__":  test()
 
@@ -328,7 +328,7 @@ if __name__ == "__main__":
     
     width = 200
     dst = make_pdf_thumbnail2(source_file, width)
-    print "Thumbnail made:", dst
+    print("Thumbnail made:", dst)
 
 #ps_cmd = "save pop currentglobal true setglobal false/product where{pop product(Ghostscript)search{pop pop pop revision 600 ge{pop true}if}{pop}ifelse}if{/pdfdict where{pop pdfdict begin/pdfshowpage_setpage[pdfdict/pdfshowpage_setpage get{dup type/nametype eq{dup/OutputFile eq{pop/AntiRotationHack}{dup/MediaBox eq revision 650 ge and{/THB.CropHack{1 index/CropBox pget{2 index exch/MediaBox exch put}if}def/THB.CropHack cvx}if}ifelse}if}forall]cvx def end}if}if setglobal"
 

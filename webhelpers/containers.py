@@ -40,7 +40,7 @@ except ImportError:   # Python < 2.5
                 args = tuple()
             else:
                 args = self.default_factory,
-            return type(self), args, None, None, self.items()
+            return type(self), args, None, None, list(self.items())
         def copy(self):
             return self.__copy__()
         def __copy__(self):
@@ -48,7 +48,7 @@ except ImportError:   # Python < 2.5
         def __deepcopy__(self, memo):
             import copy
             return type(self)(self.default_factory,
-                              copy.deepcopy(self.items()))
+                              copy.deepcopy(list(self.items())))
         def __repr__(self):
             return 'defaultdict(%s, %s)' % (self.default_factory,
                                             dict.__repr__(self))
@@ -116,8 +116,8 @@ class Counter(object):
 
         If ``max_items`` is provided, return no more than that many items.
         """
-        data = [(x[1], x[0]) for x in self.result.iteritems()]
-        data.sort(key=lambda x: (sys.maxint - x[0], x[1]))
+        data = [(x[1], x[0]) for x in self.result.items()]
+        data.sort(key=lambda x: (sys.maxsize - x[0], x[1]))
         if max_items:
             return data[:max_items]
         else:
@@ -126,7 +126,7 @@ class Counter(object):
     def get_sorted_items(self):
         """Return the result as a list of ``(item, count)`` pairs sorted by item.
         """
-        data = self.result.items()
+        data = list(self.result.items())
         data.sort()
         return data
 
@@ -279,7 +279,7 @@ def extract_keys(dic, keys):
             raise KeyError("key %r is not in original mapping" % k)
     r1 = {}
     r2 = {}
-    for k, v in dic.items():
+    for k, v in list(dic.items()):
         if k in keys:
             r1[k] = v
         else:
@@ -316,7 +316,7 @@ def ordered_items(dic, key_order, other_keys=True, default=NotGiven):
         elif default is not NotGiven:
             yield key, default
     if other_keys:
-        for key, value in d.iteritems():
+        for key, value in d.items():
             yield key, value
 
 def get_many(d, required=None, optional=None, one_of=None):

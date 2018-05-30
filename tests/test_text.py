@@ -27,8 +27,8 @@ class TestTextHelper(WebHelpersTestCase):
                          excerpt('This is a beautiful? morning', 'beautiful', 5))
 
     def test_excerpt_with_utf8(self):
-        self.assertEqual(u"...ﬃciency could not be ...",
-                         excerpt(u"That's why eﬃciency could not be helped", 'could', 8))
+        self.assertEqual("...ﬃciency could not be ...",
+                         excerpt("That's why eﬃciency could not be helped", 'could', 8))
 
 
     def test_truncate(self):

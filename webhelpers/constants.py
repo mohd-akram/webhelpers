@@ -107,7 +107,7 @@ def country_codes():
         return _country_codes
     else:
         
-        text_directly_from_iso_website = u"""
+        text_directly_from_iso_website = """
 A   	  
 AFGHANISTAN 	AF
 ÅLAND ISLANDS 	AX

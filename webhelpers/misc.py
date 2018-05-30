@@ -25,7 +25,7 @@ def all(seq, pred=None):
 
     From recipe in itertools docs.
     """
-    for elm in itertools.ifilterfalse(pred, seq):
+    for elm in itertools.filterfalse(pred, seq):
         return False
     return True
 
@@ -48,7 +48,7 @@ def any(seq, pred=None):
 
     From recipe in itertools docs.
     """
-    for elm in itertools.ifilter(pred, seq):
+    for elm in filter(pred, seq):
         return True
     return False
 
@@ -70,7 +70,7 @@ def no(seq, pred=None):
 
     From recipe in itertools docs.
     """
-    for elm in itertools.ifilter(pred, seq):
+    for elm in filter(pred, seq):
         return False
     return True
 
@@ -145,8 +145,8 @@ def subclasses_only(class_, it, exclude=None):
     This is mainly used to exclude abstract subclasses.
     """
     if isinstance(it, dict):
-        it = it.itervalues()
-    class_types = (type, types.ClassType)
+        it = iter(it.values())
+    class_types = (type, type)
     ignore = [class_]
     if exclude:
         ignore.extend(exclude)

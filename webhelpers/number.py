@@ -199,7 +199,7 @@ class SimpleStats(object):
         self.max = None
         self._init_stats()
         
-    def __nonzero__(self):
+    def __bool__(self):
         """The instance is true if it has seen any data."""
         return bool(self.count)
 

@@ -193,7 +193,7 @@ def _in_tag(text, tag):
 try:
     #from twisted.python import htmlizer
     import htmlizer
-    from StringIO import StringIO
+    from io import StringIO
 
     def _color(code):
         """Colorizer Python code.
@@ -264,7 +264,7 @@ def _debug(s, level=1):
     This function outputs debug information if DEBUGLEVEL is
     higher than a given treshold.
     """
-    if DEBUGLEVEL >= level: print >> sys.stderr, s
+    if DEBUGLEVEL >= level: print(s, file=sys.stderr)
 
 
 #############################
@@ -516,7 +516,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
 
     def normalize_attrs(self, attrs):
         # utility method to be called by descendants
-        attrs = [(k.lower(), sgmllib.charref.sub(lambda m: unichr(int(m.groups()[0])), v).strip()) for k, v in attrs]
+        attrs = [(k.lower(), sgmllib.charref.sub(lambda m: chr(int(m.groups()[0])), v).strip()) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
         return attrs
     
@@ -851,7 +851,7 @@ class Textiler:
 
         # Convert to desired output.
         if isinstance(text, str):
-            text = unicode(text, encoding)
+            text = str(text, encoding)
         text = text.encode(output, 'xmlcharrefreplace')
 
         # Sanitize?
@@ -984,19 +984,19 @@ class Textiler:
                         if extending and not captures.get('dot', None):
                             output[-1][1]['text'] += block
                             break 
-                        elif captures.has_key('dot'):
+                        elif 'dot' in captures:
                             del captures['dot']
                             
                         # If a signature matches, we are not extending a block.
                         extending = 0
 
                         # Check if we should extend this block.
-                        if captures.has_key('extend'):
+                        if 'extend' in captures:
                             extending = captures['extend']
                             del captures['extend']
                             
                         # Apply head_offset.
-                        if captures.has_key('header'):
+                        if 'header' in captures:
                             captures['header'] = int(captures['header']) + self.head_offset
 
                         # Apply clear.
@@ -1165,7 +1165,7 @@ class Textiler:
         output['style'] = output.get('style', '') + ''.join(style)
 
         # Remove excess whitespace.
-        if output.has_key('class'):
+        if 'class' in output:
             output['class'] = output['class'].strip()
 
         return output 
@@ -1180,7 +1180,7 @@ class Textiler:
         """
         # Open tag.
         open_tag = ['<%s' % tag]
-        for k,v in attributes.items():
+        for k,v in list(attributes.items()):
             # The ALT attribute can be empty.
             if k == 'alt' or v: open_tag.append(' %s="%s"' % (k, v))
 
@@ -1237,7 +1237,7 @@ class Textiler:
                 close_tag = '</p>'
 
                 # Pop the id because it must be unique.
-                if attributes.has_key('id'): del attributes['id']
+                if 'id' in attributes: del attributes['id']
 
                 # Break lines. 
                 line = preg_replace(r'(<br />|\n)+', '<br />\n', line)
@@ -1341,7 +1341,7 @@ class Textiler:
         attributes = self.parse_params(parameters, clear)
 
         # XHTML <code> can't have the attribute lang.
-        if attributes.has_key('lang'):
+        if 'lang' in attributes:
             lang = attributes['lang']
             del attributes['lang']
         else:
@@ -2804,7 +2804,7 @@ class Textiler:
                 query = query.replace(' ', '+')
 
                 # Look for smart search.
-                if self.searches.has_key(proto):
+                if proto in self.searches:
                     link = self.searches[proto] % query
                 
                 # Fix URL.
@@ -2879,4 +2879,4 @@ def textile(text, **args):
 
 
 if __name__ == '__main__':
-    print textile('tell me about textile.', head_offset=1)
+    print(textile('tell me about textile.', head_offset=1))

@@ -189,8 +189,8 @@ htmlhelp_basename = 'WebHelpersdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('contents', 'WebHelpers.tex', u'WebHelpers Documentation',
-   u'Ben Bangert', 'manual'),
+  ('contents', 'WebHelpers.tex', 'WebHelpers Documentation',
+   'Ben Bangert', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
